@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.util.mask_tools &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.util.mask_tools &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -354,7 +354,6 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pycocotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask</span> <span class="k">as</span> <span class="n">pycocotools_mask</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro._capi</span><span class="w"> </span><span class="kn">import</span> <span class="n">encode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_image</span><span class="p">,</span> <span class="n">load_image</span>
 
 
@@ -423,27 +422,27 @@ document.write(`
         <span class="n">inverse_colormap</span> <span class="o">=</span> <span class="n">_default_unpaint_colormap</span>
 
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">inverse_colormap</span><span class="p">):</span>
-        <span class="n">map_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">inverse_colormap</span><span class="p">((</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">map_fn</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">inverse_colormap</span><span class="p">((</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">map_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">inverse_colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(((</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">map_fn</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">inverse_colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(((</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">,</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="mi">255</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="n">painted_mask</span> <span class="o">=</span> <span class="n">painted_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">painted_mask</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">painted_mask</span> <span class="o">=</span> <span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">painted_mask</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span>
     <span class="n">uvals</span><span class="p">,</span> <span class="n">unpainted_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">painted_mask</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">palette</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">uvals</span><span class="p">:</span>
         <span class="n">class_id</span> <span class="o">=</span> <span class="n">map_fn</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">class_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Undeclared color </span><span class="si">{</span><span class="p">((</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">class_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">class_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">class_id</span> <span class="o">=</span> <span class="n">default_id</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_id</span><span class="p">)</span>
     <span class="n">palette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">palette</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uvals</span><span class="p">)))</span>
-    <span class="n">unpainted_mask</span> <span class="o">=</span> <span class="n">palette</span><span class="p">[</span><span class="n">unpainted_mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">painted_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">unpainted_mask</span></div>
+    <span class="k">return</span> <span class="n">palette</span><span class="p">[</span><span class="n">unpainted_mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">painted_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span></div>
 
 
 
@@ -464,12 +463,14 @@ document.write(`
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">colormap</span><span class="p">):</span>
         <span class="n">map_fn</span> <span class="o">=</span> <span class="n">colormap</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">map_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">map_fn</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
     <span class="n">palette</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">([</span><span class="n">map_fn</span><span class="p">(</span><span class="n">c</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span> <span class="mi">256</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
     <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-    <span class="n">painted_mask</span> <span class="o">=</span> <span class="n">palette</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">painted_mask</span></div>
+    <span class="k">return</span> <span class="n">palette</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span></div>
 
 
 
@@ -537,22 +538,19 @@ document.write(`
     <span class="k">if</span> <span class="n">ignore_index</span> <span class="o">==</span> <span class="n">flipped_zero_np_scalar</span><span class="p">:</span>
         <span class="n">flipped_index</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="o">~</span><span class="p">(</span><span class="n">binary_mask</span> <span class="o">*</span> <span class="n">flipped_index</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">ignore_index</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">ignore_index</span><span class="p">:</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">ignore_index</span> <span class="o">-</span> <span class="n">index</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">binary_mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">diff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">mask</span> <span class="o">+=</span> <span class="n">index</span>
         <span class="k">return</span> <span class="n">mask</span>
-    <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">ignore_index</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">ignore_index</span><span class="p">:</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="n">ignore_index</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">binary_mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">diff</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">mask</span> <span class="o">+=</span> <span class="n">ignore_index</span>
         <span class="k">return</span> <span class="n">mask</span>
 
     <span class="c1"># index == ignore_index</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;index == ignore_index. &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;It will create an index mask filling with a single value, index=</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;index == ignore_index. It will create an index mask filling with a single value, index=</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
@@ -587,9 +585,8 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.load_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_mask</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">inverse_colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">inverse_colormap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">mask</span> <span class="o">=</span> <span class="n">unpaint_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">inverse_colormap</span><span class="p">,</span> <span class="n">default_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inverse_colormap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">unpaint_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">inverse_colormap</span><span class="p">,</span> <span class="n">default_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mask</span></div>
 
 
@@ -604,7 +601,12 @@ document.write(`
 <div class="viewcode-block" id="mask_to_rle">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.mask_to_rle">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mask_to_rle</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">encode</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro._capi</span><span class="w"> </span><span class="kn">import</span> <span class="n">encode</span>
+
+        <span class="k">return</span> <span class="n">encode</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">NameError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mask_to_rle_py</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">)</span></div>
 
 
 
@@ -646,9 +648,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
-    <span class="n">contours</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span>
-        <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">RETR_EXTERNAL</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_TC89_KCOS</span>
-    <span class="p">)</span>
+    <span class="n">contours</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">RETR_EXTERNAL</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_TC89_KCOS</span><span class="p">)</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">:</span>
@@ -817,8 +817,7 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">rles_to_mask</span><span class="p">(</span><span class="n">rles</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
     <span class="n">rles</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">(</span><span class="n">rles</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
     <span class="n">rles</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">mask</span></div>
+    <span class="k">return</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span></div>
 
 
 
@@ -831,8 +830,7 @@ document.write(`
 <span class="sd">    the datumaro.util.mask_tools.mask_to_rle() function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">resulting_mask</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">(</span><span class="n">rle_uncompressed</span><span class="p">,</span> <span class="o">*</span><span class="n">rle_uncompressed</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
-    <span class="n">resulting_mask</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">resulting_mask</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">resulting_mask</span></div>
+    <span class="k">return</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">resulting_mask</span><span class="p">)</span></div>
 
 
 

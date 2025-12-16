@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kaggle.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.kaggle.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -355,14 +355,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">defusedxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AnnotationType</span><span class="p">,</span>
-    <span class="n">Bbox</span><span class="p">,</span>
-    <span class="n">ExtractedMask</span><span class="p">,</span>
-    <span class="n">Label</span><span class="p">,</span>
-    <span class="n">LabelCategories</span><span class="p">,</span>
-    <span class="n">MaskCategories</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">MaskCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">SubsetBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">InvalidFieldError</span><span class="p">,</span> <span class="n">MissingFieldError</span>
@@ -421,18 +414,14 @@ document.write(`
         <span class="c1"># expected to output [x1, y1, x2, y2]</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_load_annotations</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">datas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span> <span class="n">bbox_flag</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span> <span class="n">bbox_flag</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
             <span class="n">label_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_indices</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">list_values</span> <span class="o">=</span> <span class="n">datas</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="n">index_to_label</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">label_indices</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-                <span class="n">present_labels</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">index_to_label</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_values</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
-                <span class="p">]</span>
+                <span class="n">present_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">index_to_label</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_values</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
 
                 <span class="k">for</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">present_labels</span><span class="p">:</span>
                     <span class="n">label</span><span class="p">,</span> <span class="n">cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
@@ -508,17 +497,8 @@ document.write(`
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">indices</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bbox_index</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox_index</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">indices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                    <span class="p">{</span>
-                        <span class="n">key</span><span class="p">:</span> <span class="n">df_fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bbox_index</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-                        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">bbox_indices</span>
-                        <span class="k">if</span> <span class="n">bbox_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                    <span class="p">}</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="n">bbox_indices</span>
-                <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="n">bbox_indices</span>
-            <span class="p">):</span>
+                <span class="n">indices</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">df_fields</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bbox_index</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">bbox_indices</span> <span class="k">if</span> <span class="n">bbox_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)})</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">({</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="n">bbox_indices</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="n">bbox_indices</span><span class="p">):</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Insufficient box coordinate is given for importing bounding boxes.&quot;</span><span class="p">)</span>
                 <span class="n">bbox_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -611,9 +591,7 @@ document.write(`
                     <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="ow">in</span> <span class="n">bbox_columns</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">])</span>
                     <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="n">item</span> <span class="ow">in</span> <span class="n">bbox_columns</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">])</span>
                 <span class="p">):</span>
-                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s2">&quot;Insufficient box coordinate is given for importing bounding boxes.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Insufficient box coordinate is given for importing bounding boxes.&quot;</span><span class="p">)</span>
                     <span class="n">bbox_flag</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">columns</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bbox_columns</span><span class="p">)</span>
 
@@ -709,9 +687,7 @@ document.write(`
             <span class="n">anns</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">mask_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask_path</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">mask_name</span><span class="p">:</span>
-                    <span class="n">index_mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span>
-                        <span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask_path</span><span class="p">,</span> <span class="n">mask_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
-                    <span class="p">)</span>
+                    <span class="n">index_mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask_path</span><span class="p">,</span> <span class="n">mask_name</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">label_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_ids</span><span class="p">:</span>
                         <span class="n">anns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">ExtractedMask</span><span class="p">(</span>
@@ -783,9 +759,7 @@ document.write(`
             <span class="n">img_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">img_filename</span><span class="p">)</span>
             <span class="n">ann_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ann_path</span><span class="p">,</span> <span class="n">item_id</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ann_extensions</span><span class="p">)</span>
 
-            <span class="n">annotations</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_annotations</span><span class="p">(</span><span class="n">img_file</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
-            <span class="p">)</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_annotations</span><span class="p">(</span><span class="n">img_file</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">)</span> <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
@@ -816,7 +790,7 @@ document.write(`
             <span class="n">label_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">object_elem</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="n">bbox_elem</span> <span class="o">=</span> <span class="n">object_elem</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;bndbox&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">bbox_elem</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bbox_elem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="s2">&quot;bndbox&quot;</span><span class="p">)</span>
 
             <span class="n">xmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">bbox_elem</span><span class="p">,</span> <span class="s2">&quot;xmin&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
@@ -829,9 +803,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
                 <span class="n">label_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
 
-            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">Bbox</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">obj_id</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ymin</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Bbox</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">obj_id</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">xmin</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ymin</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">annotations</span>
 
@@ -841,8 +813,7 @@ document.write(`
         <span class="k">if</span> <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span>

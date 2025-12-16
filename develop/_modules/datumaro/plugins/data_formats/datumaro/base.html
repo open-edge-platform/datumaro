@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -483,9 +483,7 @@ document.write(`
         <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">actual_media_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">item_desc</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span>
-            <span class="n">_gen</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">item_descs</span><span class="p">)</span>
-        <span class="p">):</span>
+        <span class="k">for</span> <span class="n">item_desc</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">_gen</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">item_descs</span><span class="p">)):</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_item</span><span class="p">(</span><span class="n">item_desc</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -552,9 +550,7 @@ document.write(`
             <span class="k">if</span> <span class="n">media</span> <span class="ow">and</span> <span class="n">video_frame_info</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="n">STR_MULTIPLE_MEDIA</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">video_frame_info</span><span class="p">:</span>
-                <span class="n">video_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_video_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">video_frame_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_path&quot;</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">video_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_video_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">video_frame_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_path&quot;</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">video_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_videos</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_videos</span><span class="p">[</span><span class="n">video_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Video</span><span class="p">(</span><span class="n">video_path</span><span class="p">)</span>
                 <span class="n">video</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_videos</span><span class="p">[</span><span class="n">video_path</span><span class="p">]</span>
@@ -573,18 +569,14 @@ document.write(`
                 <span class="n">step</span> <span class="o">=</span> <span class="n">video_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">start_frame</span> <span class="o">=</span> <span class="n">video_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_frame&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="n">end_frame</span> <span class="o">=</span> <span class="n">video_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_frame&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="n">media</span> <span class="o">=</span> <span class="n">Video</span><span class="p">(</span>
-                    <span class="n">path</span><span class="o">=</span><span class="n">video_path</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">start_frame</span><span class="o">=</span><span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span><span class="o">=</span><span class="n">end_frame</span>
-                <span class="p">)</span>
+                <span class="n">media</span> <span class="o">=</span> <span class="n">Video</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">video_path</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">start_frame</span><span class="o">=</span><span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span><span class="o">=</span><span class="n">end_frame</span><span class="p">)</span>
 
             <span class="n">media_desc</span> <span class="o">=</span> <span class="n">item_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;media&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">media</span> <span class="ow">and</span> <span class="n">media_desc</span> <span class="ow">and</span> <span class="n">media_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">):</span>
                 <span class="n">media</span> <span class="o">=</span> <span class="n">MediaElement</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">media_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">))</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span>
-                <span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_annotations</span><span class="p">(</span><span class="n">item_desc</span><span class="p">)</span>
@@ -739,11 +731,9 @@ document.write(`
                         <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span>
-                    <span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">loaded</span>
 

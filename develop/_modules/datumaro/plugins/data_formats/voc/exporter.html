@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.voc.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.voc.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -357,14 +357,7 @@ document.write(`
 <span class="c1"># Disable B410: import_lxml - the library is used for writing</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>  <span class="c1"># nosec</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AnnotationType</span><span class="p">,</span>
-    <span class="n">Bbox</span><span class="p">,</span>
-    <span class="n">CompiledMask</span><span class="p">,</span>
-    <span class="n">Label</span><span class="p">,</span>
-    <span class="n">LabelCategories</span><span class="p">,</span>
-    <span class="n">Mask</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">CompiledMask</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetExportError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
@@ -454,7 +447,7 @@ document.write(`
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
 
 <div class="viewcode-block" id="VocExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.build_cmdline_parser">[docs]</a>
@@ -466,7 +459,7 @@ document.write(`
             <span class="s2">&quot;--apply-colormap&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">str_to_bool</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use colormap for class and instance masks &quot;</span> <span class="s2">&quot;(default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use colormap for class and instance masks (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--label-map&quot;</span><span class="p">,</span>
@@ -484,14 +477,13 @@ document.write(`
             <span class="s2">&quot;--keep-empty&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">str_to_bool</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Write subset lists even if they are empty &quot;</span> <span class="s2">&quot;(default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Write subset lists even if they are empty (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--task&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_task_string</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;VOC task filter, one of list {</span><span class="si">%s</span><span class="s2">} &quot;</span>
-            <span class="s2">&quot;(default: voc)&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">VocTask</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;VOC task filter, one of list {</span><span class="si">%s</span><span class="s2">} (default: voc)&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">VocTask</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parser</span></div>
@@ -512,9 +504,7 @@ document.write(`
 
         <span class="n">task</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span> <span class="k">if</span> <span class="n">task</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">task</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">VocTask</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The task must be an instance of </span><span class="si">{</span><span class="n">VocTask</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2"> is given.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The task must be an instance of </span><span class="si">{</span><span class="n">VocTask</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2"> is given.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">task</span>
 
@@ -665,7 +655,7 @@ document.write(`
                     <span class="n">depth</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">size_elem</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">depth</span>
 
-            <span class="n">item_segmented</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span>
+            <span class="n">item_segmented</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
             <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">root_elem</span><span class="p">,</span> <span class="s2">&quot;segmented&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">item_segmented</span><span class="p">))</span>
 
             <span class="n">objects_with_parts</span> <span class="o">=</span> <span class="p">[]</span>
@@ -691,15 +681,9 @@ document.write(`
                 <span class="k">if</span> <span class="s2">&quot;pose&quot;</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">:</span>
                     <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;pose&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">attr</span><span class="p">[</span><span class="s2">&quot;pose&quot;</span><span class="p">])</span>
 
-                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;truncated&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span>
-                    <span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span>
-                <span class="p">)</span>
-                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;occluded&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span>
-                    <span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span>
-                <span class="p">)</span>
-                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;difficult&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span>
-                    <span class="s2">&quot;difficult&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span>
-                <span class="p">)</span>
+                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;truncated&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span><span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;occluded&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">obj_elem</span><span class="p">,</span> <span class="s2">&quot;difficult&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_convert_attr</span><span class="p">(</span><span class="s2">&quot;difficult&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
                 <span class="n">bbox</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">bbox</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -769,17 +753,12 @@ document.write(`
 
             <span class="n">lists</span><span class="o">.</span><span class="n">clsdet_list</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">in</span> <span class="p">[</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">,</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span><span class="p">,</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span><span class="p">]</span>
-            <span class="ow">and</span> <span class="n">masks</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">in</span> <span class="p">[</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">,</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span><span class="p">,</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span><span class="p">]</span> <span class="ow">and</span> <span class="n">masks</span><span class="p">:</span>
             <span class="n">compiled_mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="o">.</span><span class="n">from_instance_masks</span><span class="p">(</span>
                 <span class="n">masks</span><span class="p">,</span> <span class="n">instance_labels</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">]</span>
             <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">save_segm</span><span class="p">(</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segm_dir</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">SEGM_EXT</span><span class="p">),</span> <span class="n">compiled_mask</span><span class="o">.</span><span class="n">class_mask</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_segm</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segm_dir</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">SEGM_EXT</span><span class="p">),</span> <span class="n">compiled_mask</span><span class="o">.</span><span class="n">class_mask</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">save_segm</span><span class="p">(</span>
                 <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inst_dir</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">SEGM_EXT</span><span class="p">),</span>
                 <span class="n">compiled_mask</span><span class="o">.</span><span class="n">instance_mask</span><span class="p">,</span>
@@ -942,7 +921,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_layout_lists">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_layout_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">layout_list</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_layouts</span><span class="p">):</span>
-            <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
             <span class="k">if</span> <span class="n">item_layouts</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">obj_id</span> <span class="ow">in</span> <span class="n">item_layouts</span><span class="p">:</span>
@@ -992,24 +971,15 @@ document.write(`
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_map_source</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">label_map_source</span> <span class="ow">in</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">]</span>
-            <span class="ow">and</span> <span class="n">label_map_source</span> <span class="o">!=</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">label_map_source</span> <span class="ow">in</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">]</span> <span class="ow">and</span> <span class="n">label_map_source</span> <span class="o">!=</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">make_voc_label_map</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
-            <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
             <span class="c1"># generate colormap for input labels</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[]])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
-            <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
             <span class="c1"># use source colormap</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
             <span class="n">colors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
@@ -1031,8 +1001,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
                 <span class="s2">&quot;Wrong labelmap specified: &#39;</span><span class="si">%s</span><span class="s2">&#39;, &quot;</span>
-                <span class="s2">&quot;expected one of </span><span class="si">%s</span><span class="s2"> or a file path&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">label_map_source</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">))</span>
+                <span class="s2">&quot;expected one of </span><span class="si">%s</span><span class="s2"> or a file path&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label_map_source</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">))</span>
             <span class="p">)</span>
 
         <span class="n">bg_label</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">label_map</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
@@ -1055,9 +1024,7 @@ document.write(`
             <span class="n">colormap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span>
             <span class="k">for</span> <span class="n">label_id</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colormap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">label_id</span><span class="p">:</span>
-                    <span class="n">label_desc</span> <span class="o">=</span> <span class="n">label_map</span><span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-                    <span class="p">]</span>
+                    <span class="n">label_desc</span> <span class="o">=</span> <span class="n">label_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
                     <span class="n">label_desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span> <span class="o">=</span> <span class="n">label_map</span>
@@ -1067,10 +1034,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">label_desc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">label_desc</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">label_desc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">label_desc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_actions</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -1087,13 +1051,9 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="n">void_labels</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">src_label</span> <span class="k">for</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">src_labels</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">src_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst_labels</span>
-        <span class="p">]</span>
+        <span class="n">void_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_label</span> <span class="k">for</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">src_labels</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">src_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst_labels</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">void_labels</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The following labels are remapped to background: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">void_labels</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The following labels are remapped to background: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">void_labels</span><span class="p">))</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Saving segmentations with the following label mapping: </span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span>
             <span class="o">%</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>

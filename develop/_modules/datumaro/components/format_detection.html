@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.format_detection &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.format_detection &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -410,8 +410,8 @@ document.write(`
     <span class="n">confidence</span><span class="p">:</span> <span class="n">FormatDetectionConfidence</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="s2">&quot;DetectedFormat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">__o</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;DetectedFormat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
@@ -555,14 +555,11 @@ document.write(`
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_start_requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;a requirement (</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">) can&#39;t be placed directly within &quot;</span> <span class="s2">&quot;a &#39;require_any&#39; block&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;a requirement (</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">) can&#39;t be placed directly within a &#39;require_any&#39; block&quot;</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FormatDetectionContext.raise_unsupported">
@@ -665,9 +662,7 @@ document.write(`
         <span class="n">requirement_desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;dataset must contain a file matching pattern &quot;</span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
 
         <span class="k">if</span> <span class="n">exclude_fnames</span><span class="p">:</span>
-            <span class="n">requirement_desc</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="s2">&quot; (but not named &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exclude_fnames</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
-            <span class="p">)</span>
+            <span class="n">requirement_desc</span> <span class="o">+=</span> <span class="s2">&quot; (but not named &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exclude_fnames</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_path_within_root</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">requirement_desc</span><span class="p">)</span>
@@ -783,7 +778,7 @@ document.write(`
             <span class="c1"># If no alternatives succeeded, and none failed, then there were</span>
             <span class="c1"># no alternatives at all.</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;a &#39;require_any&#39; block must contain &quot;</span> <span class="s2">&quot;at least one &#39;alternative&#39; block&quot;</span>
+                <span class="s2">&quot;a &#39;require_any&#39; block must contain at least one &#39;alternative&#39; block&quot;</span>
             <span class="p">)</span>
 
             <span class="k">raise</span> <span class="n">FormatRequirementsUnmet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span>
@@ -803,9 +798,7 @@ document.write(`
 <span class="sd">        Must only be used directly within a `with context.requirements()` block.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;An &#39;alternative&#39; block must be directly within &quot;</span> <span class="s2">&quot;a &#39;require_any&#39; block&quot;</span>
-        <span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="s2">&quot;An &#39;alternative&#39; block must be directly within a &#39;require_any&#39; block&quot;</span>
 
         <span class="n">saved_one_or_more_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="kc">None</span>
@@ -872,8 +865,7 @@ document.write(`
         <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">reason</span><span class="p">:</span> <span class="n">RejectionReason</span><span class="p">,</span>
         <span class="n">human_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="o">...</span></div>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span></div>
 
 
 
@@ -917,8 +909,7 @@ document.write(`
             <span class="n">rejection_callback</span><span class="p">(</span>
                 <span class="n">format_name</span><span class="p">,</span>
                 <span class="n">RejectionReason</span><span class="o">.</span><span class="n">insufficient_confidence</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Another format (</span><span class="si">{</span><span class="n">format_with_more_confidence</span><span class="si">}</span><span class="s2">) &quot;</span>
-                <span class="s2">&quot;was matched with more confidence&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Another format (</span><span class="si">{</span><span class="n">format_with_more_confidence</span><span class="si">}</span><span class="s2">) was matched with more confidence&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="n">max_confidence</span> <span class="o">=</span> <span class="mi">0</span>
@@ -954,9 +945,7 @@ document.write(`
     <span class="c1"># We must revisit this after fixing detect().</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_give_more_priority_to_with_subset_dirs</span><span class="p">(</span><span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]):</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">match</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
-            <span class="n">with_subset_dir_match</span> <span class="o">=</span> <span class="n">DetectedFormat</span><span class="p">(</span>
-                <span class="k">match</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_with_subset_dirs&quot;</span>
-            <span class="p">)</span>
+            <span class="n">with_subset_dir_match</span> <span class="o">=</span> <span class="n">DetectedFormat</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_with_subset_dirs&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">with_subset_dir_match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
                 <span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>

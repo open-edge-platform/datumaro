@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.voc.importer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.voc.importer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -377,9 +377,7 @@ document.write(`
             <span class="n">task_dirs</span> <span class="o">=</span> <span class="p">{</span><span class="n">task_dir</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
             <span class="k">for</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">task_dirs</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                    <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">,</span> <span class="n">task_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">,</span> <span class="n">task_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -388,7 +386,7 @@ document.write(`
         <span class="c1"># find root path for the dataset and use it for all tasks</span>
         <span class="n">root_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">extractor_type</span><span class="p">,</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="o">==</span> <span class="n">task_dir</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="o">!=</span> <span class="n">task_dir</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="n">task_subsets</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>

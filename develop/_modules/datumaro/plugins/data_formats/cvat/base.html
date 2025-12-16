@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.cvat.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.cvat.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -523,9 +523,7 @@ document.write(`
 
                     <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">subset</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">:</span>
                         <span class="n">frame_desc</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">],</span> <span class="p">{</span><span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">[]})</span>
-                        <span class="n">frame_desc</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_shape_ann</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">frame_desc</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_shape_ann</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">image</span><span class="p">))</span>
                         <span class="n">items</span><span class="p">[</span><span class="n">shape</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">frame_desc</span>
 
                     <span class="n">shape</span> <span class="o">=</span> <span class="kc">None</span>
@@ -563,7 +561,7 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_size</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;CVAT XML file should have only one &lt;original_size&gt; tag.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">frame_size</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">),</span>
@@ -632,7 +630,7 @@ document.write(`
                 <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;polygon&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span>
                 <span class="n">points</span><span class="p">,</span>
                 <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
@@ -642,7 +640,7 @@ document.write(`
                 <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;points&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;points&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Points</span><span class="p">(</span>
                 <span class="n">points</span><span class="p">,</span>
                 <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
@@ -652,7 +650,7 @@ document.write(`
                 <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;box&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;box&quot;</span><span class="p">:</span>
             <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># xtl, ytl</span>
             <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># xbr, ybr</span>
             <span class="n">w</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span>
@@ -690,7 +688,7 @@ document.write(`
                 <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;mask&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;mask&quot;</span><span class="p">:</span>
             <span class="n">rle</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rle&quot;</span><span class="p">)</span>
             <span class="n">mask_w</span><span class="p">,</span> <span class="n">mask_h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">))</span>
             <span class="n">mask_l</span><span class="p">,</span> <span class="n">mask_t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">))</span>
@@ -719,8 +717,7 @@ document.write(`
                 <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unknown annotation type &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">ann_type</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unknown annotation type &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">ann_type</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_tag_ann</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
@@ -735,9 +732,7 @@ document.write(`
             <span class="n">name</span> <span class="o">=</span> <span class="n">item_desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;frame_</span><span class="si">%06d</span><span class="s2">.png&quot;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame_id</span><span class="p">))</span>
 
             <span class="n">image_path_opt_1</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="n">image_path_opt_2</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">)</span>
+            <span class="n">image_path_opt_2</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image_path_opt_1</span><span class="p">):</span>
                 <span class="n">image</span> <span class="o">=</span> <span class="n">image_path_opt_1</span>
             <span class="k">elif</span> <span class="n">image_path_opt_2</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image_path_opt_2</span><span class="p">):</span>
@@ -818,9 +813,7 @@ document.write(`
             <span class="k">elif</span> <span class="n">meta_root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">sources</span> <span class="o">+=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                    <span class="s2">&quot;CVAT XML file should have a &lt;meta&gt; -&gt; &lt;task&gt; or &lt;meta&gt; -&gt; &lt;project&gt; subtree.&quot;</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;CVAT XML file should have a &lt;meta&gt; -&gt; &lt;task&gt; or &lt;meta&gt; -&gt; &lt;project&gt; subtree.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sources</span></div>
 

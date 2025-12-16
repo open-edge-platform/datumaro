@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.environment &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.environment &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -431,8 +431,7 @@ document.write(`
                 <span class="c1"># a module with a dot in the name won&#39;t load correctly</span>
                 <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">name_parts</span><span class="p">):</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Python file &#39;</span><span class="si">%s</span><span class="s2">&#39; in directory &#39;</span><span class="si">%s</span><span class="s2">&#39; can&#39;t be imported &quot;</span>
-                        <span class="s2">&quot;due to a dot in the name; skipping.&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Python file &#39;</span><span class="si">%s</span><span class="s2">&#39; in directory &#39;</span><span class="si">%s</span><span class="s2">&#39; can&#39;t be imported due to a dot in the name; skipping.&quot;</span><span class="p">,</span>
                         <span class="n">path_rel</span><span class="p">,</span>
                         <span class="n">plugins_dir</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -452,20 +451,17 @@ document.write(`
                     <span class="k">continue</span>
                 <span class="n">exports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">symbol</span><span class="p">))</span>
 
-        <span class="n">exports</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">return</span> <span class="p">[</span>
             <span class="n">s</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">exports</span>
             <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
             <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">types</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span>
             <span class="ow">and</span> <span class="p">(</span>
-                <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Custom plugin (in the Datumaro project) can be a single file and have no module</span>
+                <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Custom plugin (in the Datumaro project) can be a single file and have no module</span>
                 <span class="ow">or</span> <span class="ow">not</span> <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">__package__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;datumaro.components&quot;</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">exports</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_plugins</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module_names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">importer</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -487,8 +483,7 @@ document.write(`
                 <span class="k">continue</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Imported the following symbols from </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span>
-                <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">exports</span><span class="p">))</span>
+                <span class="s2">&quot;Imported the following symbols from </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">exports</span><span class="p">))</span>
             <span class="p">)</span>
             <span class="n">all_exports</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">exports</span><span class="p">)</span>
 
@@ -510,9 +505,7 @@ document.write(`
             <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins</span>
 
             <span class="n">plugins_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
-            <span class="n">module_names</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="n">module_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">)]</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_plugins</span><span class="p">(</span><span class="n">module_names</span><span class="p">,</span> <span class="n">importer</span><span class="o">=</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span>
 
@@ -520,18 +513,14 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Environment.load_plugins">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugins_dir</span><span class="p">):</span>
         <span class="n">module_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">)</span>
-        <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_plugins</span><span class="p">(</span>
-            <span class="n">module_names</span><span class="p">,</span> <span class="n">importer</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">import_foreign_module</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">plugins_dir</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">plugins</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_plugins</span><span class="p">(</span><span class="n">module_names</span><span class="p">,</span> <span class="n">importer</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">import_foreign_module</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">plugins_dir</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">register_plugins</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_register_builtin_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_plugins</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_load_builtin_plugins</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_lazy_import</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_builtin_plugins_from_importlib</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_builtin_plugins</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_lazy_import</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_builtin_plugins_from_importlib</span><span class="p">()</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Environment.register_plugins">
@@ -612,14 +601,10 @@ document.write(`
                 <span class="k">break</span>
 
         <span class="n">max_conf</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">max</span><span class="p">(</span><span class="n">all_matched_formats</span><span class="p">)</span><span class="o">.</span><span class="n">confidence</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_matched_formats</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="k">else</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">NONE</span>
+            <span class="nb">max</span><span class="p">(</span><span class="n">all_matched_formats</span><span class="p">)</span><span class="o">.</span><span class="n">confidence</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_matched_formats</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">NONE</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span> <span class="k">for</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">all_matched_formats</span> <span class="k">if</span> <span class="nb">format</span><span class="o">.</span><span class="n">confidence</span> <span class="o">==</span> <span class="n">max_conf</span><span class="p">]</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span> <span class="k">for</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">all_matched_formats</span> <span class="k">if</span> <span class="nb">format</span><span class="o">.</span><span class="n">confidence</span> <span class="o">==</span> <span class="n">max_conf</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

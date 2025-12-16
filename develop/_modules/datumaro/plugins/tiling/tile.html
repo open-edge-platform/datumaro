@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.tiling.tile &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.tiling.tile &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -347,8 +347,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sg</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">so</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span> <span class="k">as</span> <span class="n">ShapelyPolygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseGeometry</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
@@ -374,9 +375,9 @@ document.write(`
 <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_apply_offset</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseGeometry</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sg</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseGeometry</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_offset</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">BaseGeometry</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseGeometry</span><span class="p">:</span>
     <span class="n">offset_x</span><span class="p">,</span> <span class="n">offset_y</span> <span class="o">=</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">bounds</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">so</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">offset_x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">offset_y</span><span class="p">),</span> <span class="n">geom</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geom</span><span class="p">,</span> <span class="n">transformation</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">offset_x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">offset_y</span><span class="p">),</span> <span class="n">interleaved</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tile_mask</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">roi_int</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mask</span><span class="p">:</span>
@@ -388,8 +389,8 @@ document.write(`
     <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tile_points</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Points</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Points</span><span class="p">]:</span>
-    <span class="n">points</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">MultiPoint</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tile_points</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Points</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Points</span><span class="p">]:</span>
+    <span class="n">points</span> <span class="o">=</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">covers</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -404,14 +405,14 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tile_polygon</span><span class="p">(</span>
-    <span class="n">ann</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">threshold_drop_ann</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="n">ann</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">,</span> <span class="n">threshold_drop_ann</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Polygon</span><span class="p">]:</span>
-    <span class="n">polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
+    <span class="n">polygon</span> <span class="o">=</span> <span class="n">ShapelyPolygon</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">polygon</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">inter</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">roi_box</span><span class="p">)</span>
+    <span class="n">inter</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">roi_box</span><span class="p">)</span>
     <span class="n">prop_area</span> <span class="o">=</span> <span class="n">inter</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="n">polygon</span><span class="o">.</span><span class="n">area</span>
 
     <span class="k">if</span> <span class="n">prop_area</span> <span class="o">&lt;</span> <span class="n">threshold_drop_ann</span><span class="p">:</span>
@@ -419,13 +420,11 @@ document.write(`
 
     <span class="n">inter</span> <span class="o">=</span> <span class="n">_apply_offset</span><span class="p">(</span><span class="n">inter</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span>
-        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">xy</span> <span class="ow">in</span> <span class="n">inter</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">xy</span><span class="p">],</span> <span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">xy</span> <span class="ow">in</span> <span class="n">inter</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">xy</span><span class="p">],</span> <span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tile_polyline</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">PolyLine</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PolyLine</span><span class="p">]:</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tile_polyline</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">PolyLine</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PolyLine</span><span class="p">]:</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">covers</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -438,15 +437,13 @@ document.write(`
     <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tile_bbox</span><span class="p">(</span>
-    <span class="n">ann</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">threshold_drop_ann</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Bbox</span><span class="p">]:</span>
-    <span class="n">bbox</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tile_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">,</span> <span class="n">threshold_drop_ann</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Bbox</span><span class="p">]:</span>
+    <span class="n">bbox</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">bbox</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">inter</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">roi_box</span><span class="p">)</span>
+    <span class="n">inter</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">roi_box</span><span class="p">)</span>
     <span class="n">prop_area</span> <span class="o">=</span> <span class="n">inter</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="n">bbox</span><span class="o">.</span><span class="n">area</span>
 
     <span class="k">if</span> <span class="n">prop_area</span> <span class="o">&lt;</span> <span class="n">threshold_drop_ann</span><span class="p">:</span>
@@ -458,9 +455,7 @@ document.write(`
     <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_tile_depth_annotation</span><span class="p">(</span>
-    <span class="n">ann</span><span class="p">:</span> <span class="n">DepthAnnotation</span><span class="p">,</span> <span class="n">roi_int</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DepthAnnotation</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tile_depth_annotation</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">DepthAnnotation</span><span class="p">,</span> <span class="n">roi_int</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DepthAnnotation</span><span class="p">:</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">roi_int</span>
     <span class="n">tiled_img</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">image</span><span class="p">[</span><span class="n">y</span> <span class="p">:</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">tiled_img</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
@@ -478,7 +473,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.tile.html#datumaro.plugins.tiling.Tile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tile</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Apply tile tranformation to items in the dataset.</span>
+<span class="sd">    Apply tile transformation to items in the dataset.</span>
 <span class="sd">    This transformation is useful for detecting small objects [1]_.</span>
 <span class="sd">    The high-resolution input images are divided into overlapping small tile images</span>
 <span class="sd">    so that the relative area of small objects increases with respect to the images.</span>
@@ -576,9 +571,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.tile.html#datumaro.plugins.tiling.Tile.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">MediaTypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;item.media should be Image, but type(item.media)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.media should be Image, but type(item.media)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_rois</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span>
@@ -627,7 +620,7 @@ document.write(`
         <span class="k">return</span> <span class="n">attributes</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_tiled_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">roi</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
-        <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">roi</span><span class="p">))</span>
+        <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">roi</span><span class="p">))</span>
 
         <span class="n">tiled_anns</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>

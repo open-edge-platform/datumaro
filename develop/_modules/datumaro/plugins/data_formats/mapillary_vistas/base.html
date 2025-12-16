@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.mapillary_vistas.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.mapillary_vistas.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -352,13 +352,7 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AnnotationType</span><span class="p">,</span>
-    <span class="n">ExtractedMask</span><span class="p">,</span>
-    <span class="n">LabelCategories</span><span class="p">,</span>
-    <span class="n">MaskCategories</span><span class="p">,</span>
-    <span class="n">Polygon</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">MaskCategories</span><span class="p">,</span> <span class="n">Polygon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
@@ -408,14 +402,12 @@ document.write(`
             <span class="n">expected_dirs</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MapillaryVistasPath</span><span class="o">.</span><span class="n">ANNOTATION_DIRS</span><span class="p">[</span><span class="n">format_version</span><span class="p">])</span>
             <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span>
                 <span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t find annotation directory at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected one of these directories: </span><span class="si">{</span><span class="n">expected_dirs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t find annotation directory at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. Expected one of these directories: </span><span class="si">{</span><span class="n">expected_dirs</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations_dirs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations_dirs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">skipped_dirs</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">annotations_dirs</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Directory(-es): </span><span class="si">{</span><span class="n">skipped_dirs</span><span class="si">}</span><span class="s2"> will be skipped, dataset should &quot;</span>
-                <span class="s2">&quot;contain only one annotation directory&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Directory(-es): </span><span class="si">{</span><span class="n">skipped_dirs</span><span class="si">}</span><span class="s2"> will be skipped, dataset should contain only one annotation directory&quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_use_original_config</span> <span class="o">=</span> <span class="n">use_original_config</span>
@@ -432,9 +424,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_instances_items</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">panoptic_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_panoptic_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_panoptic_categories</span><span class="p">(</span>
-                <span class="n">panoptic_config</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">],</span> <span class="n">keep_original_category_ids</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_panoptic_categories</span><span class="p">(</span><span class="n">panoptic_config</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">],</span> <span class="n">keep_original_category_ids</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_panoptic_items</span><span class="p">(</span><span class="n">panoptic_config</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_panoptic_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -445,9 +435,7 @@ document.write(`
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">panoptic_config_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find panoptic config file&quot;</span><span class="p">,</span> <span class="n">panoptic_config_path</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find panoptic config file&quot;</span><span class="p">,</span> <span class="n">panoptic_config_path</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">panoptic_config_path</span><span class="p">)</span>
 
@@ -499,9 +487,7 @@ document.write(`
                     <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_image_size</span><span class="p">(</span><span class="n">images_info</span><span class="p">[</span><span class="n">item_id</span><span class="p">]),</span>
                 <span class="p">)</span>
 
-            <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">MapillaryVistasPath</span><span class="o">.</span><span class="n">PANOPTIC_DIR</span><span class="p">,</span> <span class="n">item_ann</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">MapillaryVistasPath</span><span class="o">.</span><span class="n">PANOPTIC_DIR</span><span class="p">,</span> <span class="n">item_ann</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">])</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span><span class="n">mask_path</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_pan_mask</span><span class="p">)</span>
 
             <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
@@ -534,9 +520,7 @@ document.write(`
                     <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">point</span><span class="p">]</span>
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">))</span>
 
-            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span>
-            <span class="p">)</span>
+            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
@@ -571,9 +555,7 @@ document.write(`
             <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">uval</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np_index_mask</span><span class="p">):</span>
                 <span class="n">label_id</span><span class="p">,</span> <span class="n">instance_id</span> <span class="o">=</span> <span class="n">uval</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">,</span> <span class="n">uval</span> <span class="o">&amp;</span> <span class="mi">255</span>
-                <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">ExtractedMask</span><span class="p">(</span><span class="n">index_mask</span><span class="o">=</span><span class="n">index_mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">uval</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">instance_id</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExtractedMask</span><span class="p">(</span><span class="n">index_mask</span><span class="o">=</span><span class="n">index_mask</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">uval</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">instance_id</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_polygon</span><span class="p">:</span>
                 <span class="n">polygon_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">polygon_dir</span><span class="p">,</span> <span class="n">item_id</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
@@ -592,9 +574,7 @@ document.write(`
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
-            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span>
-            <span class="p">)</span>
+            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">items</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
@@ -608,8 +588,7 @@ document.write(`
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_pan_mask</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">bgr2index</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">mask</span>
+        <span class="k">return</span> <span class="n">bgr2index</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
         <span class="n">cat_id</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category_id&quot;</span><span class="p">)</span>

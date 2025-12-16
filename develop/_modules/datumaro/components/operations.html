@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.operations &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.operations &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -345,6 +345,7 @@ document.write(`
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
@@ -362,7 +363,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="mean_std">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.mean_std">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.mean_std">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mean_std</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="n">counter</span> <span class="o">=</span> <span class="n">_MeanStdCounter</span><span class="p">()</span>
 
@@ -385,8 +386,7 @@ document.write(`
         <span class="n">size</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
         <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t detect image size, &quot;</span>
-                <span class="s2">&quot;the image will be skipped from pixel statistics&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t detect image size, the image will be skipped from pixel statistics&quot;</span><span class="p">,</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
@@ -420,8 +420,11 @@ document.write(`
             <span class="n">stats</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">stats</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">mean</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">var</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">var</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># make variance unbiased</span>
         <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">stats</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="n">counts</span> <span class="o">/</span> <span class="p">(</span><span class="n">counts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="n">stats</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
@@ -478,9 +481,7 @@ document.write(`
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">counts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">m</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">_pairwise_stats</span><span class="p">(</span>
-                <span class="n">counts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">m</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">m</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stats</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">_pairwise_stats</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">m</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">m</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stats</span><span class="p">),</span> <span class="n">v</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">stats</span><span class="p">))</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">_pairwise_stats</span><span class="p">(</span>
             <span class="o">*</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_compute_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">[:</span><span class="n">h</span><span class="p">],</span> <span class="n">counts</span><span class="p">[:</span><span class="n">h</span><span class="p">],</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span>
@@ -503,12 +504,11 @@ document.write(`
 
 
 <div class="viewcode-block" id="compute_image_statistics">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.compute_image_statistics">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.compute_image_statistics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_image_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">Image</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Your dataset&#39;s media_type is </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="s2">&quot;but only Image media_type is allowed.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Your dataset&#39;s media_type is </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="s2">, but only Image media_type is allowed.&quot;</span>
         <span class="p">)</span>
 
     <span class="n">stats</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">IMAGE_STATS_SCHEMA</span><span class="p">)</span>
@@ -535,9 +535,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_extractor_stats</span><span class="p">(</span><span class="n">subset_name</span><span class="p">):</span>
         <span class="n">sub_counter</span> <span class="o">=</span> <span class="n">_MeanStdCounter</span><span class="p">()</span>
         <span class="n">sub_counter</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stats_counter</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">subset_name</span> <span class="ow">and</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">subset_name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">subset_name</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stats_counter</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="p">(</span><span class="n">subset_name</span> <span class="ow">and</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">subset_name</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">subset_name</span>
         <span class="p">}</span>
 
         <span class="n">available</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_counter</span><span class="o">.</span><span class="n">_stats</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
@@ -568,7 +566,7 @@ document.write(`
         <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">][</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_extractor_stats</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span>
 
     <span class="n">unique_items</span> <span class="o">=</span> <span class="n">unique_counter</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
-    <span class="n">repeated_items</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">unique_items</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)]</span>
+    <span class="n">repeated_items</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">unique_items</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="p">{</span>
@@ -584,7 +582,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="compute_ann_statistics">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.compute_ann_statistics">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.compute_ann_statistics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_ann_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
         <span class="s2">&quot;We are planning to change the type of stats[&#39;annotations&#39;][&#39;labels&#39;][&#39;distribution&#39;] &quot;</span>
@@ -703,7 +701,7 @@ document.write(`
                 <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">),</span>
                 <span class="s2">&quot;percent&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">),</span>
             <span class="p">}</span>
-            <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">pairwise</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
         <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">stats</span></div>
@@ -717,9 +715,7 @@ document.write(`
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">) has no image &quot;</span> <span class="s2">&quot;info, counted as unique&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span>
-            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">) has no image info, counted as unique&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="c1"># Disable B303:md5, because the hash is not used in a security context</span>
@@ -744,7 +740,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="find_unique_images">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.find_unique_images">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.find_unique_images">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_unique_images</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">item_hash</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">matcher</span> <span class="o">=</span> <span class="n">_ItemMatcher</span><span class="p">(</span><span class="n">item_hash</span><span class="o">=</span><span class="n">item_hash</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
@@ -754,7 +750,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="match_classes">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.match_classes">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.match_classes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">match_classes</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">):</span>
     <span class="n">a_label_cat</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
     <span class="n">b_label_cat</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
@@ -770,7 +766,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="match_items_by_id">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.match_items_by_id">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.match_items_by_id">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">match_items_by_id</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="n">a_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">a</span><span class="p">)</span>
     <span class="n">b_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">b</span><span class="p">)</span>
@@ -784,7 +780,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="match_items_by_image_hash">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.cli.commands.stats.match_items_by_image_hash">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.match_items_by_image_hash">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">match_items_by_image_hash</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="n">a_hash</span> <span class="o">=</span> <span class="n">find_unique_images</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
     <span class="n">b_hash</span> <span class="o">=</span> <span class="n">find_unique_images</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>

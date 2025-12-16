@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.tabular &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.tabular &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -432,9 +432,8 @@ document.write(`
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">TabularCategories</span> <span class="o">=</span> <span class="n">TabularCategories</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span> <span class="ow">or</span> <span class="s2">&quot;output&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Target should have both &quot;input&quot; and &quot;output&quot;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;input&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span> <span class="ow">or</span> <span class="s2">&quot;output&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Target should have both &quot;input&quot; and &quot;output&quot;&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -461,13 +460,7 @@ document.write(`
                 <span class="n">target_dtype</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">target_</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">target_dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">CategoricalDtype</span><span class="p">()]:</span>
                     <span class="c1"># &#39;int&#39; can be categorical, but we don&#39;t know this unless user gives information.</span>
-                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                        <span class="p">[</span>
-                            <span class="n">feature</span>
-                            <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
-                        <span class="p">]</span>
-                    <span class="p">)</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">feature</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">feature</span><span class="p">)])</span>
                     <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>  <span class="c1"># update labels if they are different.</span>
@@ -476,9 +469,7 @@ document.write(`
                     <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Unsupported type &#39;</span><span class="si">{</span><span class="n">target_dtype</span><span class="si">}</span><span class="s2">&#39; for target column &#39;</span><span class="si">{</span><span class="n">target_</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type &#39;</span><span class="si">{</span><span class="n">target_dtype</span><span class="si">}</span><span class="s2">&#39; for target column &#39;</span><span class="si">{</span><span class="n">target_</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="c1"># load annotations</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>

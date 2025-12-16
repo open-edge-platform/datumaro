@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.util.pickle_util &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.util.pickle_util &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -349,6 +349,7 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>  <span class="c1"># nosec B403</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy._core.numeric</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.core.multiarray</span>
 
 
@@ -358,12 +359,11 @@ document.write(`
 <div class="viewcode-block" id="RestrictedUnpickler.find_class">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.pickle_util.html#datumaro.util.pickle_util.RestrictedUnpickler.find_class">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;numpy.core.multiarray&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy._core.multiarray&quot;</span><span class="p">]</span>
-            <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">safe_numpy</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;numpy.core.multiarray&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy._core.multiarray&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">safe_numpy</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">multiarray</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">module</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">safe_numpy</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;numpy.core.numeric&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy._core.numeric&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">safe_numpy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">numeric</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">safe_numpy</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">numpy</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="c1"># No in unpickling in this particular line</span>
         <span class="c1"># nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle</span>
@@ -379,6 +379,7 @@ document.write(`
         <span class="s2">&quot;dtype&quot;</span><span class="p">,</span>
         <span class="s2">&quot;ndarray&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_reconstruct&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_frombuffer&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
 <div class="viewcode-block" id="PickleLoader.restricted_load">

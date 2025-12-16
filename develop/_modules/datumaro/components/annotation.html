@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.annotation &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.annotation &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -350,27 +350,13 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">zip_longest</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Any</span><span class="p">,</span>
-    <span class="n">Callable</span><span class="p">,</span>
-    <span class="n">Dict</span><span class="p">,</span>
-    <span class="n">Iterable</span><span class="p">,</span>
-    <span class="n">Iterator</span><span class="p">,</span>
-    <span class="n">List</span><span class="p">,</span>
-    <span class="n">Optional</span><span class="p">,</span>
-    <span class="n">Sequence</span><span class="p">,</span>
-    <span class="n">Set</span><span class="p">,</span>
-    <span class="n">Tuple</span><span class="p">,</span>
-    <span class="n">Type</span><span class="p">,</span>
-    <span class="n">TypeVar</span><span class="p">,</span>
-    <span class="n">Union</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">attr</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span> <span class="k">as</span> <span class="n">ShapelyPolygon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
@@ -522,9 +508,7 @@ document.write(`
     <span class="k">class</span><span class="w"> </span><span class="nc">LabelGroup</span><span class="p">:</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">not_empty</span><span class="p">)</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[],</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
-        <span class="n">group_type</span><span class="p">:</span> <span class="n">GroupType</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-            <span class="n">default</span><span class="o">=</span><span class="n">GroupType</span><span class="o">.</span><span class="n">EXCLUSIVE</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="n">GroupType</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="n">group_type</span><span class="p">:</span> <span class="n">GroupType</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">GroupType</span><span class="o">.</span><span class="n">EXCLUSIVE</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="n">GroupType</span><span class="p">))</span></div>
 
 
     <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
@@ -625,8 +609,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">value</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
@@ -675,17 +658,14 @@ document.write(`
 
 
     <span class="n">colormap</span><span class="p">:</span> <span class="n">Colormap</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
-    <span class="n">_inverse_colormap</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">RgbColor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">_inverse_colormap</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">RgbColor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">inverse_colormap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">RgbColor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">invert_colormap</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_colormap</span> <span class="o">=</span> <span class="n">invert_colormap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colormap</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_colormap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">colormap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_colormap</span> <span class="o">=</span> <span class="n">invert_colormap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colormap</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_colormap</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -724,9 +704,7 @@ document.write(`
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span>
     <span class="n">_image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BinaryMaskImage</span><span class="p">,</span> <span class="n">BinaryMaskImageCallable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">z_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -794,9 +772,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_index_mask</span>
 
-        <span class="k">return</span> <span class="n">make_index_mask</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">ignore_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">make_index_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">ignore_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Mask.get_area">
@@ -911,7 +887,7 @@ document.write(`
 <span class="sd">        and 1 for foreground.</span>
 
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">        &gt;&gt;&gt; from datumaro.components.annotation import ExtractedMask</span>
+<span class="sd">        &gt;&gt;&gt; from datumaro.components.field import ExtractedMask</span>
 <span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; index_mask = np.random.randint(low=0, high=2, size=(10, 10), dtype=np.uint8)</span>
 <span class="sd">        &gt;&gt;&gt; mask1 = ExtractedMask(index_mask=index_mask, index=0, label=0)  # 0 for background</span>
@@ -968,9 +944,7 @@ document.write(`
 
         <span class="n">instance_ids</span> <span class="o">=</span> <span class="n">instance_ids</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="n">instance_labels</span> <span class="o">=</span> <span class="n">instance_labels</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="n">masks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="n">zip_longest</span><span class="p">(</span><span class="n">instance_masks</span><span class="p">,</span> <span class="n">instance_ids</span><span class="p">,</span> <span class="n">instance_labels</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">z_order</span>
-        <span class="p">)</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">instance_masks</span><span class="p">,</span> <span class="n">instance_ids</span><span class="p">,</span> <span class="n">instance_labels</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">z_order</span><span class="p">)</span>
 
         <span class="n">max_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">index_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">max_index</span><span class="p">)</span>
@@ -1013,9 +987,7 @@ document.write(`
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">instance_map</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_index</span><span class="p">)):</span>
             <span class="n">merged_instance_mask</span> <span class="o">=</span> <span class="n">index_mask</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">merged_instance_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">instance_map</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">instance_map</span><span class="p">))[</span>
-                <span class="n">index_mask</span>
-            <span class="p">]</span>
+            <span class="n">merged_instance_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">instance_map</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">instance_map</span><span class="p">))[</span><span class="n">index_mask</span><span class="p">]</span>
 
         <span class="n">merged_class_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">class_map</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">class_map</span><span class="p">))[</span><span class="n">index_mask</span><span class="p">]</span>
 
@@ -1058,16 +1030,11 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">class_shift</span> <span class="o">=</span> <span class="mi">16</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">uint32</span>
-        <span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-        <span class="n">instance_labels</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nb">int</span><span class="p">(</span><span class="n">k</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span> <span class="o">&gt;&gt;</span> <span class="n">class_shift</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="n">instance_labels</span></div>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">k</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span> <span class="o">&gt;&gt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="CompiledMask.extract">
@@ -1112,9 +1079,7 @@ document.write(`
         <span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="p">)</span>
 
-    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">z_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -1124,7 +1089,7 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the area of the shape.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Shape.as_polygon">
@@ -1133,7 +1098,7 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the shape into a polygon representation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Shape.get_bbox">
@@ -1234,9 +1199,7 @@ document.write(`
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span>
     <span class="n">_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@_points</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_points_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
@@ -1369,9 +1332,7 @@ document.write(`
 <span class="sd">            AssertionError: If the number of points is not even or less than 3 pairs of coordinates.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># keep the message on a single line to produce informative output</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="mi">3</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;Wrong polygon points: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span>
-        <span class="p">)</span></div>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Wrong polygon points: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span></div>
 
 
 <div class="viewcode-block" id="Polygon.get_area">
@@ -1388,8 +1349,7 @@ document.write(`
         <span class="c1"># x, y, w, h = self.get_bbox()</span>
         <span class="c1"># rle = mask_utils.frPyObjects([self.points], y + h, x + w)</span>
         <span class="c1"># area = mask_utils.area(rle)[0]</span>
-        <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_shoelace_area</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">area</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_shoelace_area</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Polygon.as_polygon">
@@ -1418,17 +1378,13 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="n">Annotation</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_order</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">z_order</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Annotation</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_order</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">z_order</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">self_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
         <span class="n">other_points</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
-        <span class="n">self_polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">self_points</span><span class="p">)</span>
-        <span class="n">other_polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">other_points</span><span class="p">)</span>
+        <span class="n">self_polygon</span> <span class="o">=</span> <span class="n">ShapelyPolygon</span><span class="p">(</span><span class="n">self_points</span><span class="p">)</span>
+        <span class="n">other_polygon</span> <span class="o">=</span> <span class="n">ShapelyPolygon</span><span class="p">(</span><span class="n">other_points</span><span class="p">)</span>
         <span class="c1"># if polygon is not valid, compare points</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">self_polygon</span><span class="o">.</span><span class="n">is_valid</span> <span class="ow">and</span> <span class="n">other_polygon</span><span class="o">.</span><span class="n">is_valid</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">self_points</span> <span class="o">==</span> <span class="n">other_points</span>
@@ -1893,9 +1849,7 @@ document.write(`
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_2d</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">)</span>
+    <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">optional</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">z_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">y_3d</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -1937,12 +1891,9 @@ document.write(`
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: vector&quot;&quot;&quot;</span>
         <span class="n">ground_points_lidar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
-        <span class="n">ground_points_lidar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">ground_points_lidar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ground_points_lidar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">)</span>
+        <span class="n">ground_points_lidar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">ground_points_lidar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ground_points_lidar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ground_points_cam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Tr_velo_to_cam_homo</span><span class="p">,</span> <span class="n">ground_points_lidar</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">denorm</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Cuboid2D</span><span class="o">.</span><span class="n">_get_plane_equation</span><span class="p">(</span><span class="n">ground_points_cam</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">denorm</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">Cuboid2D</span><span class="o">.</span><span class="n">_get_plane_equation</span><span class="p">(</span><span class="n">ground_points_cam</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_3d_points</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">rotation_y</span><span class="p">,</span> <span class="n">denorm</span><span class="p">):</span>
@@ -1973,7 +1924,7 @@ document.write(`
         <span class="n">theta</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">denorm_norm</span><span class="p">,</span> <span class="n">ori_denorm</span><span class="p">))</span>
         <span class="n">n_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">denorm</span><span class="p">,</span> <span class="n">ori_denorm</span><span class="p">)</span>
         <span class="n">n_vector_norm</span> <span class="o">=</span> <span class="n">n_vector</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">n_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">n_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">rotation_matrix</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="n">theta</span> <span class="o">*</span> <span class="n">n_vector_norm</span><span class="p">)</span>
+        <span class="n">rotation_matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Rodrigues</span><span class="p">(</span><span class="n">theta</span> <span class="o">*</span> <span class="n">n_vector_norm</span><span class="p">)</span>
         <span class="n">corners_3d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotation_matrix</span><span class="p">,</span> <span class="n">corners_3d</span><span class="p">)</span>
         <span class="n">corners_3d</span> <span class="o">=</span> <span class="n">corners_3d</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">corners_3d</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1995,9 +1946,7 @@ document.write(`
         <span class="n">pts_2d</span> <span class="o">=</span> <span class="n">P</span> <span class="o">@</span> <span class="n">pts_3d_homo</span>
         <span class="n">pts_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">pts_2d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">pts_2d</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:])</span>
         <span class="n">pts_2d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">pts_2d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">pts_2d</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:])</span>
-        <span class="n">pts_2d</span> <span class="o">=</span> <span class="n">pts_2d</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">return</span> <span class="n">pts_2d</span>
+        <span class="k">return</span> <span class="n">pts_2d</span><span class="p">[:</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span>
 
 <div class="viewcode-block" id="Cuboid2D.from_3d">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Cuboid2D.from_3d">[docs]</a>
@@ -2069,8 +2018,7 @@ document.write(`
         <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
             <span class="n">delta_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="n">widths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_x</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">widths</span><span class="p">)</span>
@@ -2079,8 +2027,7 @@ document.write(`
         <span class="n">pairs</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
             <span class="n">delta_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-                <span class="o">+</span> <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">recon_3d</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="p">)</span>
             <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_z</span><span class="p">)</span>
         <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
@@ -2121,9 +2068,7 @@ document.write(`
 <div class="viewcode-block" id="PointsCategories.Category.positions_validator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.PointsCategories.Category.positions_validator">[docs]</a>
         <span class="nd">@positions</span><span class="o">.</span><span class="n">validator</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">positions_validator</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span> <span class="n">positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">positions_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span> <span class="n">positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].</span>
 
@@ -2199,8 +2144,8 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">joints</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">positions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">joints</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">positions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">joints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">joints</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2317,16 +2262,8 @@ document.write(`
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The bounding box as [x0, y0, width, height].</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">p</span>
-            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span>
-        <span class="p">]</span>
-        <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">p</span>
-            <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span>
-        <span class="p">]</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span><span class="p">]</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span><span class="p">]</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">x1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">y0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -2554,9 +2491,7 @@ document.write(`
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_iterable</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span>
-            <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span>
-        <span class="p">],</span>
+        <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TabularCategories</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a TabularCategories from iterable.</span>
@@ -2660,9 +2595,7 @@ document.write(`
 
 <div class="viewcode-block" id="Annotations.get_semantic_seg_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.Annotations.get_semantic_seg_mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_seg_mask</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_seg_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract semantic segmentation mask from a collection of Datumaro `Mask`s.</span>
 
 <span class="sd">        Args:</span>

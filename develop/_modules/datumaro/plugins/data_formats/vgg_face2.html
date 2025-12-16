@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.vgg_face2 &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.vgg_face2 &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -352,12 +352,7 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Points</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AnnotationExportError</span><span class="p">,</span>
-    <span class="n">DatasetImportError</span><span class="p">,</span>
-    <span class="n">InvalidAnnotationError</span><span class="p">,</span>
-    <span class="n">MediaTypeError</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationExportError</span><span class="p">,</span> <span class="n">DatasetImportError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
@@ -407,9 +402,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">{</span><span class="n">subset</span><span class="p">}</span> <span class="k">if</span> <span class="n">subset</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">annotation_files</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span><span class="n">subset</span><span class="p">}</span> <span class="k">if</span> <span class="n">subset</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">annotation_files</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -441,7 +434,7 @@ document.write(`
                 <span class="n">objects</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">class_name</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">class_name</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">class_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -497,14 +490,10 @@ document.write(`
 
                 <span class="n">annotations</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
                 <span class="k">if</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                        <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: an image can have only one &quot;</span> <span class="s2">&quot;set of landmarks&quot;</span> <span class="o">%</span> <span class="n">item_id</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: an image can have only one set of landmarks&quot;</span> <span class="o">%</span> <span class="n">item_id</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
-                    <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">Points</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;NAME_ID&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Points</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;NAME_ID&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span>
@@ -532,9 +521,7 @@ document.write(`
 
                 <span class="n">annotations</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
                 <span class="k">if</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                        <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: an image can have only one &quot;</span> <span class="s2">&quot;bbox&quot;</span> <span class="o">%</span> <span class="n">item_id</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: an image can have only one bbox&quot;</span> <span class="o">%</span> <span class="n">item_id</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -609,10 +596,9 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_get_name_id</span><span class="p">(</span><span class="n">item_parts</span><span class="p">,</span> <span class="n">label_name</span><span class="p">):</span>
-            <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">label_name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">label_name</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">label_name</span><span class="p">,</span> <span class="o">*</span><span class="n">item_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">label_name</span><span class="p">,</span> <span class="o">*</span><span class="n">item_parts</span><span class="p">])</span>
+            <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">label_name</span><span class="p">,</span> <span class="o">*</span><span class="n">item_parts</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
@@ -641,32 +627,27 @@ document.write(`
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
                 <span class="n">item_parts</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
-                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                        <span class="n">p</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">labels</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
                             <span class="n">image_dir</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-                            <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="ow">and</span> <span class="n">image_dir</span> <span class="o">==</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">image_dir</span> <span class="o">==</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                                 <span class="n">image_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">image_dir</span> <span class="o">=</span> <span class="n">VggFace2Path</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span>
-                        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="ow">and</span> <span class="n">image_dir</span> <span class="o">==</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">image_dir</span> <span class="o">==</span> <span class="n">item_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                             <span class="n">image_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))</span>
 
                 <span class="n">landmarks</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
-                <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">landmarks</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">landmarks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">AnnotationExportError</span><span class="p">(</span>
-                        <span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">): an image can have only one &quot;</span>
-                        <span class="s2">&quot;set of landmarks&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+                        <span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">): an image can have only one set of landmarks&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="n">landmarks</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                        <span class="n">name_id</span> <span class="o">=</span> <span class="n">_get_name_id</span><span class="p">(</span>
-                            <span class="n">item_parts</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-                        <span class="p">)</span>
+                        <span class="n">name_id</span> <span class="o">=</span> <span class="n">_get_name_id</span><span class="p">(</span><span class="n">item_parts</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">name_id</span> <span class="o">=</span> <span class="n">_get_name_id</span><span class="p">(</span><span class="n">item_parts</span><span class="p">,</span> <span class="n">VggFace2Path</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span><span class="p">)</span>
                     <span class="n">points</span> <span class="o">=</span> <span class="n">landmarks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">points</span>
@@ -690,9 +671,9 @@ document.write(`
                         <span class="p">)</span>
 
                 <span class="n">bboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span>
-                <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">AnnotationExportError</span><span class="p">(</span>
-                        <span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">): an image can have only one &quot;</span> <span class="s2">&quot;bbox&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+                        <span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">): an image can have only one bbox&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="n">bboxes</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">bboxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">bboxes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
@@ -718,9 +699,7 @@ document.write(`
                     <span class="n">landmarks_table</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;NAME_ID&quot;</span><span class="p">:</span> <span class="n">name_id</span><span class="p">})</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">landmarks</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bboxes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
-                    <span class="n">landmarks_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="p">{</span><span class="s2">&quot;NAME_ID&quot;</span><span class="p">:</span> <span class="n">_get_name_id</span><span class="p">(</span><span class="n">item_parts</span><span class="p">,</span> <span class="n">VggFace2Path</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span><span class="p">)}</span>
-                    <span class="p">)</span>
+                    <span class="n">landmarks_table</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;NAME_ID&quot;</span><span class="p">:</span> <span class="n">_get_name_id</span><span class="p">(</span><span class="n">item_parts</span><span class="p">,</span> <span class="n">VggFace2Path</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span><span class="p">)})</span>
 
             <span class="n">landmarks_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                 <span class="n">save_dir</span><span class="p">,</span>

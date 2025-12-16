@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.transforms &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.transforms &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -347,7 +347,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -534,7 +536,7 @@ document.write(`
         <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
         <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_instances</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span>
         <span class="n">segments</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_segments</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_include_polygons</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">]</span>
-        <span class="n">segments</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="n">segments</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="n">annotations</span> <span class="o">+=</span> <span class="n">segments</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
@@ -591,9 +593,7 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.MergeInstanceSegments.find_instances">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_instances</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">find_instances</span><span class="p">(</span>
-            <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">}</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">find_instances</span><span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">})</span></div>
 </div>
 
 
@@ -680,10 +680,7 @@ document.write(`
 <div class="viewcode-block" id="BoxesToPolygons.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.BoxesToPolygons.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">convert_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span> <span class="k">else</span> <span class="n">ann</span>
-            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span>
-        <span class="p">]</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span> <span class="k">else</span> <span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
 
@@ -849,9 +846,7 @@ document.write(`
 <div class="viewcode-block" id="ReindexAnnotations.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.ReindexAnnotations.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
-        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cur_idx</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cur_idx</span><span class="p">)]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cur_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex_each_item</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cur_idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
 
@@ -884,7 +879,10 @@ document.write(`
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;key must be a function with one argument.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="n">key</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -905,7 +903,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_mapping_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
         <span class="k">return</span> <span class="n">parts</span>
 
 <div class="viewcode-block" id="MapSubsets.build_cmdline_parser">
@@ -968,7 +966,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
 <div class="viewcode-block" id="RandomSplit.build_cmdline_parser">
@@ -982,8 +980,7 @@ document.write(`
             <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_arg</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;splits&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsets in the form: &#39;&lt;subset&gt;:&lt;ratio&gt;&#39; &quot;</span>
-            <span class="s2">&quot;(repeatable, default: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsets in the form: &#39;&lt;subset&gt;:&lt;ratio&gt;&#39; (repeatable, default: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Random seed&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
@@ -995,16 +992,14 @@ document.write(`
         <span class="k">if</span> <span class="n">splits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">splits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_split</span>
 
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">splits</span><span class="p">),</span> <span class="s2">&quot;Expected at least one split&quot;</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">),</span> <span class="p">(</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">splits</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Expected at least one split&quot;</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">r</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">),</span> <span class="p">(</span>
             <span class="s2">&quot;Ratios are expected to be in the range [0; 1], but got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">splits</span>
         <span class="p">)</span>
 
         <span class="n">total_ratio</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total_ratio</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-7</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
 
         <span class="n">dataset_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">dataset_size</span><span class="p">))</span>
@@ -1100,12 +1095,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_suffix_length</span> <span class="o">=</span> <span class="n">suffix_length</span>
         <span class="k">if</span> <span class="n">suffix_length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The &#39;suffix_length&#39; must be greater than 0. Received: </span><span class="si">{</span><span class="n">suffix_length</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_max_retry</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_RETRY</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SUFFIX_LETTERS</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suffix_length</span><span class="p">)</span>
-        <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The &#39;suffix_length&#39; must be greater than 0. Received: </span><span class="si">{</span><span class="n">suffix_length</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_retry</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_RETRY</span><span class="p">,</span> <span class="nb">pow</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SUFFIX_LETTERS</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suffix_length</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_unique_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1136,9 +1127,8 @@ document.write(`
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_unique</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_unique_suffix</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Can&#39;t change item id for item &#39;</span><span class="si">%s</span><span class="s2">&#39;: &quot;</span> <span class="s2">&quot;item has no path info&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">item</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Can&#39;t change item id for item &#39;</span><span class="si">%s</span><span class="s2">&#39;: item has no path info&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span></div>
 </div>
 
 
@@ -1182,7 +1172,7 @@ document.write(`
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-e&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--regex&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Regex for renaming in the form &quot;</span> <span class="s2">&quot;&#39;&lt;sep&gt;&lt;search&gt;&lt;sep&gt;&lt;replacement&gt;&lt;sep&gt;&#39;&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Regex for renaming in the form &#39;&lt;sep&gt;&lt;search&gt;&lt;sep&gt;&lt;replacement&gt;&lt;sep&gt;&#39;&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -1253,7 +1243,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
 <div class="viewcode-block" id="RemapLabels.build_cmdline_parser">
@@ -1338,9 +1328,7 @@ document.write(`
 
             <span class="n">dst_index</span> <span class="o">=</span> <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dst_label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">dst_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">dst_index</span> <span class="o">=</span> <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                    <span class="n">dst_label</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">dst_index</span> <span class="o">=</span> <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dst_label</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
             <span class="n">id_mapping</span><span class="p">[</span><span class="n">src_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">dst_index</span>
 
         <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
@@ -1357,7 +1345,7 @@ document.write(`
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;#</span><span class="si">%s</span><span class="s2"> &#39;</span><span class="si">%s</span><span class="s2">&#39; -&gt; &lt;deleted&gt;&quot;</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_map_id</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">src_id</span><span class="p">:</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map_id</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">src_id</span><span class="p">:</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">dst_label_cat</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst_label_cat</span><span class="p">:</span>
@@ -1500,9 +1488,7 @@ document.write(`
                     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst_label</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
                     <span class="n">src_label</span> <span class="o">=</span> <span class="n">src_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dst_label</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">src_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                            <span class="n">dst_label</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dst_label</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dst_label</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1526,9 +1512,7 @@ document.write(`
 
             <span class="c1"># Generate new colors for new labels, keep old untouched</span>
             <span class="n">existing_colors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dst_mask_cat</span><span class="o">.</span><span class="n">colormap</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="n">color_bank</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span>
-                <span class="n">mask_tools</span><span class="o">.</span><span class="n">generate_colormap</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dst_label_cat</span><span class="p">),</span> <span class="n">include_background</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-            <span class="p">)</span>
+            <span class="n">color_bank</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">mask_tools</span><span class="o">.</span><span class="n">generate_colormap</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dst_label_cat</span><span class="p">),</span> <span class="n">include_background</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
             <span class="k">for</span> <span class="n">new_id</span><span class="p">,</span> <span class="n">new_label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dst_label_cat</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">new_label</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">src_label_cat</span><span class="p">:</span>
                     <span class="k">continue</span>
@@ -1556,10 +1540,9 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_make_label_id_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_label_cat</span><span class="p">,</span> <span class="n">dst_label_cat</span><span class="p">):</span>
         <span class="n">id_mapping</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">src_id</span><span class="p">:</span> <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">src_label_cat</span><span class="p">[</span><span class="n">src_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">src_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">src_label_cat</span> <span class="ow">or</span> <span class="p">()))</span>
+            <span class="n">src_id</span><span class="p">:</span> <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">src_label_cat</span><span class="p">[</span><span class="n">src_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">src_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">src_label_cat</span> <span class="ow">or</span> <span class="p">()))</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_map_id</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">src_id</span><span class="p">:</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map_id</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">src_id</span><span class="p">:</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ProjectLabels.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.ProjectLabels.categories">[docs]</a>
@@ -1686,9 +1669,7 @@ document.write(`
         <span class="k">def</span><span class="w"> </span><span class="nf">_resize_image</span><span class="p">():</span>
             <span class="c1"># Can use only NEAREST for masks,</span>
             <span class="c1"># because we can&#39;t have interpolated values</span>
-            <span class="n">rescaled_mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
-                <span class="n">mask</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">new_size</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_NEAREST</span>
-            <span class="p">)</span>
+            <span class="n">rescaled_mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">new_size</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_NEAREST</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">rescaled_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">_resize_image</span>
@@ -1707,9 +1688,7 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.ResizeTransform.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: image info is required for this &quot;</span> <span class="s2">&quot;transform&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,)</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: image info is required for this transform&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,))</span>
 
         <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
         <span class="n">xscale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -1735,11 +1714,7 @@ document.write(`
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="p">(</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">Points</span><span class="p">,</span> <span class="n">PolyLine</span><span class="p">)):</span>
                 <span class="n">resized_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span>
-                        <span class="n">points</span><span class="o">=</span><span class="p">[</span>
-                            <span class="n">p</span>
-                            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">((</span><span class="n">x</span> <span class="o">*</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">yscale</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-                            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">t</span>
-                        <span class="p">]</span>
+                        <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">((</span><span class="n">x</span> <span class="o">*</span> <span class="n">xscale</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">yscale</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">t</span><span class="p">]</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
@@ -1779,7 +1754,7 @@ document.write(`
         <span class="n">full_id</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span>
-                <span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span> <span class="s2">&quot;Expected a &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. Expected a &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">full_id</span>
 
@@ -1837,8 +1812,7 @@ document.write(`
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span>
                 <span class="kc">None</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span>
-                <span class="s2">&quot;Expected &#39;name:subset:ann_id&#39; or &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. Expected &#39;name:subset:ann_id&#39; or &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">full_id</span>
 
@@ -1879,9 +1853,7 @@ document.write(`
 
         <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">ann_ids</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span> <span class="o">==</span> <span class="n">item_id</span><span class="p">:</span>
-                <span class="n">updated_anns</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ann_ids</span><span class="p">]</span> <span class="k">if</span> <span class="n">ann_ids</span> <span class="k">else</span> <span class="p">[]</span>
-                <span class="p">)</span>
+                <span class="n">updated_anns</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ann_ids</span><span class="p">]</span> <span class="k">if</span> <span class="n">ann_ids</span> <span class="k">else</span> <span class="p">[]</span>
                 <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">annotations</span><span class="o">=</span><span class="n">updated_anns</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">item</span></div>
@@ -1917,7 +1889,7 @@ document.write(`
         <span class="n">full_id</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_id</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span>
-                <span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span> <span class="s2">&quot;Expected a &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Invalid id format of &#39;</span><span class="si">%s</span><span class="s2">&#39;. Expected a &#39;name:subset&#39; pair.&quot;</span> <span class="o">%</span> <span class="n">s</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">full_id</span>
 
@@ -1940,8 +1912,7 @@ document.write(`
             <span class="s2">&quot;--attr&quot;</span><span class="p">,</span>
             <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Attribute name to be removed. If not specified, &quot;</span>
-            <span class="s2">&quot;removes all attributes (repeatable)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Attribute name to be removed. If not specified, removes all attributes (repeatable)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -1959,8 +1930,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_filter_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">exclude_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">exclude_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RemoveAttributes.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.RemoveAttributes.transform_item">[docs]</a>
@@ -1970,9 +1940,7 @@ document.write(`
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="n">filtered_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_attrs</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">)))</span>
 
-            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span>
-                <span class="n">attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_attrs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="n">filtered_annotations</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_filter_attrs</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="p">),</span> <span class="n">annotations</span><span class="o">=</span><span class="n">filtered_annotations</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span></div>
 </div>
 
@@ -2052,8 +2020,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_caption_value</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">caption_type</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">cat</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">cat</span><span class="o">.</span><span class="n">dtype</span>
-            <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">())</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">cat</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">())</span>
         <span class="p">}</span>
 
 <div class="viewcode-block" id="Correct.categories">
@@ -2063,17 +2030,13 @@ document.write(`
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_ann_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_analyze_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">rep</span> <span class="ow">in</span> <span class="n">report</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rep</span><span class="p">[</span><span class="s2">&quot;anomaly_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">MissingLabelCategories</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-                <span class="n">unique_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-                    <span class="nb">list</span><span class="p">({</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">})</span>
-                <span class="p">)</span>
-                <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
-                    <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">]</span>
-                <span class="p">)</span>
+                <span class="n">unique_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">({</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">}))</span>
+                <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">unique_labels</span><span class="p">])</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                         <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">}</span>
@@ -2257,9 +2220,7 @@ document.write(`
                     <span class="bp">self</span><span class="o">.</span><span class="n">_caption_value</span><span class="p">[</span><span class="n">caption</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
             <span class="k">elif</span> <span class="n">caption_type</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_remove_items</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                    <span class="n">item_key</span>
-                    <span class="k">for</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">captions</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty_captions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span>
+                    <span class="n">item_key</span> <span class="k">for</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">captions</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty_captions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span>
                 <span class="p">)</span></div>
 
 
@@ -2285,14 +2246,10 @@ document.write(`
             <span class="n">sep_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">_sep_token</span>
             <span class="n">id_mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">_indices</span>
             <span class="n">label_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_value</span>
-            <span class="n">annotations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                <span class="n">Label</span><span class="p">(</span><span class="n">id_mapping</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}{</span><span class="n">sep_token</span><span class="si">}{</span><span class="n">label_value</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span>
-            <span class="p">)</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">id_mapping</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}{</span><span class="n">sep_token</span><span class="si">}{</span><span class="n">label_value</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">captions</span><span class="p">:</span>
             <span class="n">caption_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caption_value</span>
-            <span class="n">annotations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                <span class="n">Caption</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">caption</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">caption_value</span><span class="p">[</span><span class="n">caption</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span>
-            <span class="p">)</span>
+            <span class="n">annotations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Caption</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">caption</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">caption_value</span><span class="p">[</span><span class="n">caption</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">annotations</span></div>
 
 
@@ -2397,9 +2354,7 @@ document.write(`
                 <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap_far_from_mean</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">far_from_mean_captions</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">empty_labels</span> <span class="ow">or</span> <span class="n">empty_captions</span><span class="p">:</span>
-                <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_missing_value</span><span class="p">(</span>
-                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">empty_labels</span><span class="p">,</span> <span class="n">empty_captions</span>
-                <span class="p">)</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_missing_value</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">empty_labels</span><span class="p">,</span> <span class="n">empty_captions</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ann_ids</span><span class="p">:</span>
                 <span class="n">updated_attrs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -2410,9 +2365,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                     <span class="n">new_ann</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">and</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">updated_attrs</span><span class="p">:</span>
-                        <span class="n">new_ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                            <span class="p">{</span><span class="n">attr_name</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">updated_attrs</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]}</span>
-                        <span class="p">)</span>
+                        <span class="n">new_ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">attr_name</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">updated_attrs</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]})</span>
                     <span class="n">updated_anns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_ann</span><span class="p">)</span>
                 <span class="k">yield</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">annotations</span><span class="o">=</span><span class="n">updated_anns</span><span class="p">)</span></div>
 
@@ -2444,7 +2397,7 @@ document.write(`
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="n">parts</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">results</span>
 
@@ -2473,9 +2426,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_sep_token</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span>
 
         <span class="k">if</span> <span class="n">extractor</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span> <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">tabular</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">ann_types</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">AnnotationTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Annotation type is not Tabular. This transform only support tabular annotation&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AnnotationTypeError</span><span class="p">(</span><span class="s2">&quot;Annotation type is not Tabular. This transform only support tabular annotation&quot;</span><span class="p">)</span>
 
         <span class="c1"># Turn off for default setting</span>
         <span class="k">assert</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)),</span> <span class="s2">&quot;Mapping must be dict, or list&quot;</span>
@@ -2500,9 +2451,7 @@ document.write(`
                     <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dst_label</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">dst_parent</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{})</span>
                 <span class="n">dst_label_cat</span><span class="o">.</span><span class="n">add_label_group</span><span class="p">(</span><span class="n">src_cat</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">src_cat</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">group_type</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                    <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="p">[]</span>
-                <span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">src_cat</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">src_cat</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">dst_label_cat</span>
 
 <div class="viewcode-block" id="AstypeAnnotations.categories">
@@ -2587,10 +2536,7 @@ document.write(`
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1"># Convert to lowercase</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^A-Za-z\s]+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>  <span class="c1"># Remove special characters and punctuation</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># Remove extra whitespaces</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># Remove stopwords</span>
-        <span class="k">return</span> <span class="n">text</span></div>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span><span class="p">])</span>  <span class="c1"># Remove stopwords</span></div>
 
 
 <div class="viewcode-block" id="Clean.check_outlier">
@@ -2659,14 +2605,13 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">refine_tabular_media</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">media</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">media</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
-        <span class="n">str_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">]</span>
-        <span class="n">float_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">]</span>
-        <span class="n">int_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">]</span>
+        <span class="n">str_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="n">float_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">]</span>
+        <span class="n">int_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span> <span class="k">if</span> <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">]</span>
         <span class="n">countable_cols</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">col</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">CategoricalDtype</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">CategoricalDtype</span><span class="p">)</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span>
         <span class="p">]</span>
 
         <span class="n">df</span><span class="p">[</span><span class="n">str_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">str_cols</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_unnecessary_char</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -2676,25 +2621,17 @@ document.write(`
         <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">int_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">int_cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cap_outliers</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_missing_value</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">check_missing_value</span><span class="p">(</span>
-                <span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">],</span> <span class="n">float_cols</span><span class="p">,</span> <span class="n">countable_cols</span>
-            <span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_missing_value</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_missing_value</span><span class="p">(</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">],</span> <span class="n">float_cols</span><span class="p">,</span> <span class="n">countable_cols</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">float_cols</span> <span class="o">+</span> <span class="n">countable_cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_missing_value</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">TableRow</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span>
-            <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">table</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">index</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">TableRow</span><span class="o">.</span><span class="n">from_data</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">table</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Clean.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.Clean.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">TableRow</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: TableRow info is required for this &quot;</span> <span class="s2">&quot;transform&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,)</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: TableRow info is required for this transform&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,))</span>
 
         <span class="n">sep_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sep_token</span>
         <span class="n">refined_media</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">refine_tabular_media</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_data</span> <span class="k">else</span> <span class="kc">None</span>
@@ -2702,17 +2639,15 @@ document.write(`
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Tabular</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;If the item has a tabular annotation, it should have one annotation.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If the item has a tabular annotation, it should have one annotation.&quot;</span><span class="p">)</span>
                 <span class="n">annotation_values</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">key</span><span class="p">:</span> <span class="n">refined_media</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">refined_media</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
                 <span class="p">}</span>  <span class="c1"># only for tabular</span>
                 <span class="n">ann</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">annotation_values</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Caption</span><span class="p">):</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}{</span><span class="n">sep_token</span><span class="si">}{</span><span class="n">refined_media</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">refined_media</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">refined_media</span><span class="o">.</span><span class="n">data</span>
                     <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">caption</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="p">]</span>
                 <span class="n">ann</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>

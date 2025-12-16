@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.arrow.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.arrow.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -346,19 +346,12 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CategoriesInfo</span><span class="p">,</span>
-    <span class="n">DatasetBase</span><span class="p">,</span>
-    <span class="n">DatasetInfo</span><span class="p">,</span>
-    <span class="n">DatasetItem</span><span class="p">,</span>
-    <span class="n">IDataset</span><span class="p">,</span>
-    <span class="n">SubsetBase</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">SubsetBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_identicalness</span>
@@ -382,11 +375,9 @@ document.write(`
         <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span><span class="p">],</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]</span> <span class="o">=</span> <span class="n">Image</span><span class="p">,</span>
-        <span class="n">ann_types</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ann_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">lookup</span><span class="p">),</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span> <span class="n">ann_types</span><span class="o">=</span><span class="n">ann_types</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span>
-        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">lookup</span><span class="p">),</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span> <span class="n">ann_types</span><span class="o">=</span><span class="n">ann_types</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span> <span class="o">=</span> <span class="n">lookup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="n">infos</span>
@@ -455,9 +446,7 @@ document.write(`
         <span class="n">_infos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
         <span class="n">infos</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="n">_load_infos</span><span class="p">({</span><span class="s2">&quot;infos&quot;</span><span class="p">:</span> <span class="n">_infos</span><span class="p">})</span>
 
-        <span class="n">_categories</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span>
-            <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">_categories</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">({</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="n">_categories</span><span class="p">})</span>
 
         <span class="p">(</span><span class="n">media_type</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;media_type&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
@@ -492,16 +481,15 @@ document.write(`
 
         <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">table_path</span> <span class="ow">in</span> <span class="n">file_paths</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
-                    <span class="n">table</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)):</span>
-                        <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">][</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
-                        <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-                            <span class="n">ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-                        <span class="n">pbar</span><span class="o">.</span><span class="n">report_status</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
-                        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)):</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">][</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                        <span class="n">ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">report_status</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
+                    <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span> <span class="o">=</span> <span class="n">ann_types</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kitti_raw.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.kitti_raw.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -411,9 +411,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span>
-            <span class="s2">&quot;boost_serialization&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="s2">&quot;serialization::archive&quot;</span><span class="p">}</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;boost_serialization&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="s2">&quot;serialization::archive&quot;</span><span class="p">})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -649,9 +647,7 @@ document.write(`
             <span class="n">frame_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">frame_id</span> <span class="ow">in</span> <span class="n">name_mapping</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                    <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: frame id </span><span class="si">%s</span><span class="s2"> is repeated in the dataset&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: frame id </span><span class="si">%s</span><span class="s2"> is repeated in the dataset&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">))</span>
             <span class="n">name_mapping</span><span class="p">[</span><span class="n">frame_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
 
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
@@ -697,16 +693,12 @@ document.write(`
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">if</span> <span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
                         <span class="c1"># Tracks have fixed scale in the format</span>
-                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                            <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching track shapes, &quot;</span>
-                            <span class="s2">&quot;track id </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching track shapes, track id </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">))</span>
 
                     <span class="k">if</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;objectType&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">label</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
                             <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching track labels, &quot;</span>
-                            <span class="s2">&quot;track id </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span>
-                            <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">,</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;objectType&quot;</span><span class="p">],</span> <span class="n">label</span><span class="p">)</span>
+                            <span class="s2">&quot;track id </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">,</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;objectType&quot;</span><span class="p">],</span> <span class="n">label</span><span class="p">)</span>
                         <span class="p">)</span>
 
                     <span class="c1"># If there is a skip in track frames, add missing as outside</span>
@@ -724,9 +716,8 @@ document.write(`
                 <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">VISIBLE</span>
                 <span class="k">if</span> <span class="s2">&quot;occlusion&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
                     <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;occlusion&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-                <span class="k">elif</span> <span class="s2">&quot;occluded&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;occluded&quot;</span><span class="p">]:</span>
-                        <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">PARTLY</span>
+                <span class="k">elif</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">):</span>
+                    <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">PARTLY</span>
 
                 <span class="n">truncation</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="o">.</span><span class="n">IN_IMAGE</span>
                 <span class="k">if</span> <span class="s2">&quot;truncation&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
@@ -770,9 +761,7 @@ document.write(`
         <span class="k">return</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_name_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_mapping</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">NAME_MAPPING_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">NAME_MAPPING_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
@@ -788,9 +777,7 @@ document.write(`
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_point_cloud</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">KittiRawPath</span><span class="o">.</span><span class="n">PCD_DIR</span><span class="p">)</span>
 
-            <span class="n">images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-                <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">extra_images</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">img</span><span class="p">:</span> <span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-            <span class="p">)</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">extra_images</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">img</span><span class="p">:</span> <span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
                     <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
@@ -816,11 +803,8 @@ document.write(`
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dataset_meta</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_meta_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Kitti RAW format supports only a single &quot;</span>
-                <span class="s2">&quot;subset. Subset information will be ignored on export.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Kitti RAW format supports only a single subset. Subset information will be ignored on export.&quot;</span><span class="p">)</span>
 
         <span class="n">tracklets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_tracklets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">ANNO_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.arrow.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.arrow.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -457,9 +457,7 @@ document.write(`
             <span class="k">with</span> <span class="n">consumer_generator</span><span class="p">(</span><span class="n">producer_generator</span><span class="o">=</span><span class="n">_producer_gen</span><span class="p">())</span> <span class="k">as</span> <span class="n">consumer_gen</span><span class="p">:</span>
 
                 <span class="k">def</span><span class="w"> </span><span class="nf">_gen_with_pbar</span><span class="p">():</span>
-                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span>
-                        <span class="n">consumer_gen</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Exporting&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
-                    <span class="p">):</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">consumer_gen</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Exporting&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)):</span>
                         <span class="k">yield</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_file</span><span class="p">(</span><span class="n">_gen_with_pbar</span><span class="p">())</span>
@@ -483,11 +481,8 @@ document.write(`
                 <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">new_file</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
-                    <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">record_batch</span><span class="p">)</span>
-
-        <span class="k">pass</span>
+            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">new_file</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">record_batch</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ArrowExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.exporter.html#datumaro.plugins.data_formats.arrow.ArrowExporter.patch">[docs]</a>
@@ -536,46 +531,34 @@ document.write(`
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="s2">&quot;Both &#39;num_shards&#39; or &#39;max_shard_size&#39; cannot be provided at the same time.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_shards</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Both &#39;num_shards&#39; or &#39;max_shard_size&#39; cannot be provided at the same time.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_shards</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_shards should be non-negative but num_shards=</span><span class="si">{</span><span class="n">num_shards</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;max_shard_size should be non-negative but max_shard_size=</span><span class="si">{</span><span class="n">max_shard_size</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_shard_size should be non-negative but max_shard_size=</span><span class="si">{</span><span class="n">max_shard_size</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_shards</span> <span class="o">=</span> <span class="n">num_shards</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span> <span class="o">=</span> <span class="n">max_shard_size</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_image_ext</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_image_ext</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="si">}</span><span class="s2"> is unkonwn ext. Available exts are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="si">}</span><span class="s2"> is unkonwn ext. Available exts are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">_source_path</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="s2">&quot;_source_path&quot;</span><span class="p">)</span>
-            <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">_source_path</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="s2">&quot;_source_path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
         <span class="n">total_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
@@ -586,25 +569,17 @@ document.write(`
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_shard_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">size</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_len</span><span class="p">,</span> <span class="n">max_shard_size</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">total_len</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_len</span>
-        <span class="p">),</span> <span class="s2">&quot;Sum of chunk sizes should be the number of total items.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">size</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_len</span><span class="p">,</span> <span class="n">max_shard_size</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">total_len</span><span class="p">]))</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_len</span><span class="p">,</span> <span class="s2">&quot;Sum of chunk sizes should be the number of total items.&quot;</span>
 
         <span class="n">num_shard_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_digits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">num_shard_files</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="n">DatumaroArrow</span><span class="o">.</span><span class="n">create_schema_with_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">subset_name</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span>
-        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span><span class="n">subset_name</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())}</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_item_to_dict_record</span><span class="p">(</span>

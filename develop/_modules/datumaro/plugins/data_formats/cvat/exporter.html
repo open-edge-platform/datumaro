@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.cvat.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.cvat.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -632,9 +632,7 @@ document.write(`
             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_label</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="n">tid</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">}</span>
-            <span class="p">)</span>
+            <span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="n">tid</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">})</span>
 
         <span class="k">return</span> <span class="n">tracks</span>
 
@@ -771,15 +769,9 @@ document.write(`
 
         <span class="k">if</span> <span class="n">write_frame</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))))]))</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
 
         <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -839,10 +831,7 @@ document.write(`
                         <span class="p">(</span>
                             <span class="s2">&quot;points&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                                <span class="p">(</span>
-                                    <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
-                                    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
-                                <span class="p">)</span>
+                                <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">))</span>
                             <span class="p">),</span>
                         <span class="p">),</span>
                     <span class="p">]</span>
@@ -872,9 +861,7 @@ document.write(`
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
                     <span class="n">attr_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">attr_value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span>
-                    <span class="n">shape</span><span class="o">.</span><span class="n">label</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">label</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span>
                         <span class="n">OrderedDict</span><span class="p">(</span>
                             <span class="p">[</span>
@@ -926,9 +913,7 @@ document.write(`
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
                 <span class="n">attr_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">attr_value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span>
-                <span class="n">label</span><span class="o">.</span><span class="n">label</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">label</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span>
                     <span class="n">OrderedDict</span><span class="p">(</span>
                         <span class="p">[</span>

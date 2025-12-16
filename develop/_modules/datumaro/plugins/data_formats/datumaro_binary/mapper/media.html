@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro_binary.mapper.media &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro_binary.mapper.media &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -363,18 +363,17 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ImageMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PointCloudMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">VideoMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO_FRAME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO_FRAME</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">VideoFrameMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MediaElementMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MediaMapper.backward">
@@ -390,18 +389,17 @@ document.write(`
 
         <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="mi">4</span>
-        <span class="k">elif</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ImageMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PointCloudMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">VideoMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO_FRAME</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO_FRAME</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">VideoFrameMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MediaElementMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
 </div>
 
 
@@ -495,9 +493,7 @@ document.write(`
         <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">8</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
-                <span class="n">path</span><span class="o">=</span><span class="n">media_dict</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAGIC_SIZE_FOR_NONE</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="p">),</span>
+            <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">media_dict</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAGIC_SIZE_FOR_NONE</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
             <span class="n">offset</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>

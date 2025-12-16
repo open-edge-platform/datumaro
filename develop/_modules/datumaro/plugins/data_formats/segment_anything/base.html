@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.segment_anything.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.segment_anything.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -377,11 +377,9 @@ document.write(`
         <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NOTSET</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
         <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,)</span> <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="k">else</span> <span class="bp">cls</span>
-        <span class="k">raise</span> <span class="n">InvalidFieldTypeError</span><span class="p">(</span>
-            <span class="n">key</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span> <span class="n">expected</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InvalidFieldTypeError</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">actual</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span> <span class="n">expected</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
 
@@ -437,9 +435,7 @@ document.write(`
                 <span class="n">file_name</span> <span class="o">=</span> <span class="n">parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">&quot;file_name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
                 <span class="n">item_kwargs</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">item_kwargs</span><span class="p">[</span><span class="s2">&quot;media&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
-                    <span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span>
-                <span class="p">)</span>
+                <span class="n">item_kwargs</span><span class="p">[</span><span class="s2">&quot;media&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
@@ -489,9 +485,7 @@ document.write(`
 
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Bbox has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 4 values.&quot;</span>
-                            <span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bbox has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 4 values.&quot;</span><span class="p">)</span>
                         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">bbox</span>
                         <span class="n">item_kwargs</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">Bbox</span><span class="p">(</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.open_images &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.open_images &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -366,12 +366,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DatasetError</span><span class="p">,</span>
-    <span class="n">MediaTypeError</span><span class="p">,</span>
-    <span class="n">RepeatedItemError</span><span class="p">,</span>
-    <span class="n">UndefinedLabel</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetError</span><span class="p">,</span> <span class="n">MediaTypeError</span><span class="p">,</span> <span class="n">RepeatedItemError</span><span class="p">,</span> <span class="n">UndefinedLabel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
@@ -555,16 +550,12 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="n">load_image_meta_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">image_meta</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">image_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="n">load_image_meta_file</span><span class="p">(</span>
-                    <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="n">load_image_meta_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">has_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">()</span>
@@ -599,15 +590,12 @@ document.write(`
             <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
         <span class="p">]</span>
 
-        <span class="n">class_desc_files</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">file</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">class_desc_patterns</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="n">class_desc_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">class_desc_patterns</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="n">pattern</span><span class="p">)]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">class_desc_files</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
                 <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span>
-                <span class="s2">&quot;Can&#39;t find class description file, the &quot;</span>
-                <span class="s2">&quot;annotations directory does&#39;t contain any of these files&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Can&#39;t find class description file, the annotations directory does&#39;t contain any of these files&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">class_desc_patterns</span><span class="p">),</span>
             <span class="p">)</span>
 
@@ -669,7 +657,7 @@ document.write(`
                     <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="p">]</span>
-            <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
         <span class="p">}</span>
 
         <span class="n">items_by_id</span> <span class="o">=</span> <span class="p">{}</span>
@@ -732,9 +720,7 @@ document.write(`
 
         <span class="c1"># TODO: implement reading of machine-annotated labels</span>
 
-        <span class="k">for</span> <span class="n">label_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span>
-            <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span>
-        <span class="p">):</span>
+        <span class="k">for</span> <span class="n">label_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">):</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">label_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">label_reader</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">label_description</span> <span class="ow">in</span> <span class="n">label_reader</span><span class="p">:</span>
                     <span class="n">image_id</span> <span class="o">=</span> <span class="n">label_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
@@ -755,9 +741,7 @@ document.write(`
                             <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span>
                             <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
                         <span class="p">)</span>
-                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">confidence</span><span class="p">})</span>
-                    <span class="p">)</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">confidence</span><span class="p">}))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_bboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
@@ -795,9 +779,7 @@ document.write(`
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
                         <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;Can&#39;t decode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-                        <span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t decode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                         <span class="k">continue</span>
 
                     <span class="n">x_min_norm</span><span class="p">,</span> <span class="n">x_max_norm</span><span class="p">,</span> <span class="n">y_min_norm</span><span class="p">,</span> <span class="n">y_max_norm</span> <span class="o">=</span> <span class="p">[</span>
@@ -877,9 +859,7 @@ document.write(`
                     <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
                         <span class="n">image_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;Can&#39;t decode mask for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-                        <span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t decode mask for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                         <span class="k">continue</span>
 
                     <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -904,24 +884,22 @@ document.write(`
                     <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">box_coord_fields</span><span class="p">):</span>
                         <span class="c1"># Try to find the box annotation corresponding to the</span>
                         <span class="c1"># current mask.</span>
-                        <span class="n">mask_box_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                            <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">box_coord_fields</span><span class="p">]</span>
-                        <span class="p">)</span>
+                        <span class="n">mask_box_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">box_coord_fields</span><span class="p">])</span>
 
                         <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                             <span class="k">if</span> <span class="p">(</span>
                                 <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span>
                                 <span class="ow">and</span> <span class="n">annotation</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">label_index</span>
-                            <span class="p">):</span>
-                                <span class="c1"># In the original OID, mask box coordinates are stored</span>
-                                <span class="c1"># with 6 digit precision, hence the tolerance.</span>
-                                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
                                     <span class="n">mask_box_coords</span><span class="p">,</span>
                                     <span class="n">normalized_coords</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">annotation</span><span class="p">)],</span>
                                     <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                                     <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
-                                <span class="p">):</span>
-                                    <span class="n">group</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">group</span>
+                                <span class="p">)</span>
+                            <span class="p">):</span>
+                                <span class="c1"># In the original OID, mask box coordinates are stored</span>
+                                <span class="c1"># with 6 digit precision, hence the tolerance.</span>
+                                <span class="n">group</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">group</span>
 
                     <span class="k">if</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;PredictedIoU&quot;</span><span class="p">]:</span>
                         <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;predicted_iou&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;PredictedIoU&quot;</span><span class="p">])</span>
@@ -935,9 +913,7 @@ document.write(`
                                     <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
                                     <span class="n">mask_path</span><span class="p">,</span>
                                 <span class="p">),</span>
-                                <span class="n">loader</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_load_and_resize_mask</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span>
-                                <span class="p">),</span>
+                                <span class="n">loader</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_and_resize_mask</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span><span class="p">),</span>
                             <span class="p">),</span>
                             <span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span>
                             <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
@@ -982,9 +958,9 @@ document.write(`
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)):</span>
-                <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">OpenImagesBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
-            <span class="k">elif</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">pattern</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span> <span class="ow">or</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">pattern</span><span class="p">)</span>
+            <span class="p">):</span>
                 <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">OpenImagesBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
@@ -1081,8 +1057,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_unwritten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">file_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_POSSIBLE_ANNOTATION_FILE_PATTERNS</span>
+                <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_POSSIBLE_ANNOTATION_FILE_PATTERNS</span>
             <span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
 
@@ -1171,10 +1146,7 @@ document.write(`
         <span class="n">root_node</span> <span class="o">=</span> <span class="p">{</span>
             <span class="c1"># Create an OID-like label name that isn&#39;t already used by a real label</span>
             <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span>
-                <span class="n">root_name</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">root_name</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/m/</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">root_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_label_names</span>
+                <span class="n">root_name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="k">for</span> <span class="n">root_name</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/m/</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">root_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_label_names</span>
             <span class="p">),</span>
             <span class="c1"># If an orphan has no children, then it makes no semantic difference</span>
             <span class="c1"># whether it&#39;s listed in the hierarchy file or not. So strip such nodes</span>
@@ -1182,9 +1154,7 @@ document.write(`
             <span class="s2">&quot;Subcategory&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">orphan_nodes</span> <span class="k">if</span> <span class="s2">&quot;Subcategory&quot;</span> <span class="ow">in</span> <span class="n">node</span><span class="p">],</span>
         <span class="p">}</span>
 
-        <span class="n">hierarchy_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">HIERARCHY_FILE_NAME</span>
-        <span class="p">)</span>
+        <span class="n">hierarchy_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">HIERARCHY_FILE_NAME</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">hierarchy_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hierarchy_file</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">hierarchy_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1201,19 +1171,24 @@ document.write(`
 
             <span class="n">image_description_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">-images-with-rotation.csv&quot;</span>
 
-            <span class="k">with</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span>
-                <span class="n">image_description_name</span><span class="p">,</span>
-                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGE_DESCRIPTION_FIELDS</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">image_description_writer</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
-                <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
-                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FIELDS</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">label_description_writer</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
-                <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
-                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FIELDS</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">bbox_description_writer</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
-                <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
-                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FIELDS</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">mask_description_writer</span><span class="p">:</span>
+            <span class="k">with</span> <span class="p">(</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span>
+                    <span class="n">image_description_name</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGE_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">image_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">label_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">bbox_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">mask_description_writer</span><span class="p">,</span>
+            <span class="p">):</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
                     <span class="n">image_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
                         <span class="p">{</span>
@@ -1224,9 +1199,7 @@ document.write(`
 
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span>
-                                <span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">)</span>
-                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39; has no image&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
@@ -1281,9 +1254,7 @@ document.write(`
                         <span class="n">image_meta</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
                         <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;Can&#39;t encode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-                        <span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t encode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                         <span class="k">continue</span>
 
                     <span class="n">bbox_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
@@ -1296,9 +1267,7 @@ document.write(`
                             <span class="s2">&quot;XMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
                             <span class="s2">&quot;YMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span>
                             <span class="o">**</span><span class="p">{</span>
-                                <span class="n">bool_attr</span><span class="o">.</span><span class="n">oid_name</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span>
-                                    <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bool_attr</span><span class="o">.</span><span class="n">datumaro_name</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                                <span class="p">)</span>
+                                <span class="n">bool_attr</span><span class="o">.</span><span class="n">oid_name</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bool_attr</span><span class="o">.</span><span class="n">datumaro_name</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
                                 <span class="k">for</span> <span class="n">bool_attr</span> <span class="ow">in</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_BOOLEAN_ATTRIBUTES</span>
                             <span class="p">},</span>
                         <span class="p">}</span>
@@ -1341,8 +1310,7 @@ document.write(`
                             <span class="p">}</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                                <span class="s2">&quot;Can&#39;t encode box coordinates for a mask&quot;</span>
-                                <span class="s2">&quot; for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;Can&#39;t encode box coordinates for a mask for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span>
                                 <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                             <span class="p">)</span>
 
@@ -1357,9 +1325,7 @@ document.write(`
                         <span class="p">}</span>
                     <span class="p">)</span>
 
-                    <span class="n">save_image</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mask_dir</span><span class="p">,</span> <span class="n">mask_file_name</span><span class="p">),</span> <span class="n">annotation</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">create_dir</span><span class="o">=</span><span class="kc">True</span>
-                    <span class="p">)</span></div>
+                    <span class="n">save_image</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mask_dir</span><span class="p">,</span> <span class="n">mask_file_name</span><span class="p">),</span> <span class="n">annotation</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">create_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>
 

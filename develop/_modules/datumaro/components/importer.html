@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.importer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.importer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -369,13 +369,13 @@ document.write(`
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;FailingImportErrorPolicy&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ImportContext&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ImportErrorPolicy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Importer&quot;</span><span class="p">,</span>
     <span class="s2">&quot;NullImportContext&quot;</span><span class="p">,</span>
     <span class="s2">&quot;_ImportFail&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Importer&quot;</span><span class="p">,</span>
     <span class="s2">&quot;with_subset_dirs&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImportErrorPolicy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FailingImportErrorPolicy&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -401,14 +401,14 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.importer.Importer.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Importer.find_sources">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.importer.Importer.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Importer.find_sources_with_params">
@@ -434,9 +434,7 @@ document.write(`
             <span class="k">if</span> <span class="n">stream</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_stream</span><span class="p">:</span>
                 <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="k">elif</span> <span class="n">stream</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_stream</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> cannot stream, but stream=True.&quot;</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> cannot stream, but stream=True.&quot;</span><span class="p">)</span>
 
             <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
             <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
@@ -486,8 +484,7 @@ document.write(`
             <span class="ow">not</span> <span class="n">ext</span>
             <span class="ow">and</span> <span class="n">dirname</span>
             <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">dirname</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
-            <span class="ow">in</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
+            <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">dirname</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
         <span class="p">):</span>
             <span class="n">sources</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -495,9 +492,7 @@ document.write(`
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">sources</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                     <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">ext</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span>
-                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">ext</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nb">callable</span><span class="p">(</span><span class="n">file_filter</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file_filter</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">file_filter</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">sources</span><span class="p">:</span>
@@ -582,9 +577,7 @@ document.write(`
                     <span class="n">source</span> <span class="o">=</span> <span class="n">input_cls</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_path</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_params</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;@with_subset_dirs only allows one source format from </span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">.&quot;</span>
-                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@with_subset_dirs only allows one source format from </span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="s2">&quot;subset&quot;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                         <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>

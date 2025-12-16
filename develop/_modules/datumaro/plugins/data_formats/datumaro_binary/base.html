@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro_binary.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro_binary.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -346,20 +346,21 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span><span class="p">,</span> <span class="n">Pool</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">,</span> <span class="n">VideoFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBase</span><span class="p">,</span> <span class="n">JsonReader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBinaryPath</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntListMapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.dataset_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemMapper</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..datumaro.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBase</span><span class="p">,</span> <span class="n">JsonReader</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
 
 
 <div class="viewcode-block" id="DatumaroBinaryBase">
@@ -391,8 +392,7 @@ document.write(`
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="n">fp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_signature</span><span class="p">()</span>
-            <span class="n">dm_format_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_version</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">dm_format_version</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_version</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Actual implementation of loading Datumaro binary format.&quot;&quot;&quot;</span>
@@ -418,9 +418,7 @@ document.write(`
         <span class="n">_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">len_byte</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">_bytes</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                <span class="s2">&quot;Encrypted files are no longer supported since Datumaro 1.12.0.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Encrypted files are no longer supported since Datumaro 1.12.0.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">len_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
@@ -475,9 +473,7 @@ document.write(`
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_mp</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">async_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AsyncResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
@@ -499,12 +495,8 @@ document.write(`
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">async_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MP_TIMEOUT</span><span class="p">)</span>
             <span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_sp</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-        <span class="n">items_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_read_blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blob_size</span><span class="p">),</span> <span class="n">media_path_prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob_size</span> <span class="ow">in</span> <span class="n">blob_sizes</span>
-        <span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_sp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+        <span class="n">items_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_read_blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blob_size</span><span class="p">),</span> <span class="n">media_path_prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob_size</span> <span class="ow">in</span> <span class="n">blob_sizes</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">items_list</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
 

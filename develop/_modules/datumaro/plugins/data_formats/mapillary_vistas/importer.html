@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.mapillary_vistas.importer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.mapillary_vistas.importer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -405,7 +405,7 @@ document.write(`
 
         <span class="n">tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">task</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">))</span>
         <span class="n">selected_task</span> <span class="o">=</span> <span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">task_types</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Found potentially conflicting source types: </span><span class="si">{</span><span class="n">task_types</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -414,28 +414,22 @@ document.write(`
 
         <span class="k">if</span> <span class="n">selected_task</span> <span class="o">==</span> <span class="n">MapillaryVistasTask</span><span class="o">.</span><span class="n">instances</span><span class="p">:</span>
             <span class="n">has_config</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config</span><span class="p">))</span>
-                    <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">MapillaryVistasPath</span><span class="o">.</span><span class="n">CONFIG_FILES</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-                <span class="p">]</span>
+                <span class="p">[</span><span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">config</span><span class="p">))</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">MapillaryVistasPath</span><span class="o">.</span><span class="n">CONFIG_FILES</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_config</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">extra_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;use_original_config&quot;</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">DatasetNotFoundError</span><span class="p">(</span>
                     <span class="n">path</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
-                    <span class="s2">&quot;Failed to find config*.json at &#39;</span><span class="si">{path}</span><span class="s2">&#39;. &quot;</span>
-                    <span class="s2">&quot;See extra args for using original configs.&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Failed to find config*.json at &#39;</span><span class="si">{path}</span><span class="s2">&#39;. See extra args for using original configs.&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="k">return</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">[</span><span class="n">task</span><span class="p">]</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extra_params</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">subset_info</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subset_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="n">selected_task</span>
         <span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">sources</span>
 
 <div class="viewcode-block" id="MapillaryVistasImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mapillary_vistas.importer.html#datumaro.plugins.data_formats.mapillary_vistas.importer.MapillaryVistasImporter.find_sources">[docs]</a>

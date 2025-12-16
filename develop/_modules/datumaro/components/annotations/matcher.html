@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.annotations.matcher &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.annotations.matcher &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -344,6 +344,8 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -352,30 +354,23 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMergerContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMatcherContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">Points</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">OKS</span><span class="p">,</span>
-    <span class="n">approximate_line</span><span class="p">,</span>
-    <span class="n">bbox_iou</span><span class="p">,</span>
-    <span class="n">max_bbox</span><span class="p">,</span>
-    <span class="n">mean_bbox</span><span class="p">,</span>
-    <span class="n">segment_iou</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKS</span><span class="p">,</span> <span class="n">approximate_line</span><span class="p">,</span> <span class="n">bbox_iou</span><span class="p">,</span> <span class="n">max_bbox</span><span class="p">,</span> <span class="n">mean_bbox</span><span class="p">,</span> <span class="n">segment_iou</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;match_segments_pair&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;match_segments_more_than_pair&quot;</span><span class="p">,</span>
     <span class="s2">&quot;AnnotationMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LabelMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ShapeMatcher&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BboxMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PolygonMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MaskMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PointsMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LineMatcher&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CaptionsMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Cuboid2DMatcher&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Cuboid3dMatcher&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ImageAnnotationMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Cuboid2DMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LabelMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LineMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MaskMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PointsMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PolygonMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ShapeMatcher&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;match_segments_more_than_pair&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;match_segments_pair&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -417,7 +412,7 @@ document.write(`
                 <span class="p">[</span><span class="ow">not</span> <span class="n">label_matcher</span><span class="p">(</span><span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span><span class="p">)</span> <span class="k">for</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">b_segms</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span>
             <span class="p">)</span>  <span class="c1"># prioritize those with same label, keep score order</span>
             <span class="k">for</span> <span class="n">b_idx</span> <span class="ow">in</span> <span class="n">b_indices</span><span class="p">:</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">b_matches</span><span class="p">[</span><span class="n">b_idx</span><span class="p">]:</span>  <span class="c1"># assign a_segm with max conf</span>
+                <span class="k">if</span> <span class="n">b_matches</span><span class="p">[</span><span class="n">b_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># assign a_segm with max conf</span>
                     <span class="k">continue</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">a_idx</span><span class="p">,</span> <span class="n">b_idx</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">dist_thresh</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">max_dist</span><span class="p">:</span>
@@ -509,7 +504,7 @@ document.write(`
 <div class="viewcode-block" id="AnnotationMatcher.match_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.AnnotationMatcher.match_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 
@@ -529,7 +524,7 @@ document.write(`
 <div class="viewcode-block" id="LabelMatcher.match_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.LabelMatcher.match_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="p">[])]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="p">[])]</span></div>
 </div>
 
 
@@ -604,7 +599,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">adjacent</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cluster_dist</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_close_enough</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">cluster_dist</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_close_enough</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
                         <span class="k">continue</span>
                     <span class="k">if</span> <span class="n">_has_same_source</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
                         <span class="k">continue</span>
@@ -735,7 +730,7 @@ document.write(`
 <div class="viewcode-block" id="CaptionsMatcher.match_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.CaptionsMatcher.match_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 
@@ -747,7 +742,7 @@ document.write(`
 <div class="viewcode-block" id="Cuboid3dMatcher.distance">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.Cuboid3dMatcher.distance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 
@@ -759,7 +754,7 @@ document.write(`
 <div class="viewcode-block" id="ImageAnnotationMatcher.match_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.ImageAnnotationMatcher.match_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 
@@ -771,7 +766,7 @@ document.write(`
 <div class="viewcode-block" id="TabularMatcher.match_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.annotations.merger.html#datumaro.components.annotations.matcher.TabularMatcher.match_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 

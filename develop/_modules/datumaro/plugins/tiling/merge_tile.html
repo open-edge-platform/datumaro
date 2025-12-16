@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.tiling.merge_tile &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.tiling.merge_tile &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -350,8 +350,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sg</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">so</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">MultiPoint</span><span class="p">,</span> <span class="n">box</span><span class="p">,</span> <span class="n">transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span> <span class="k">as</span> <span class="n">ShapelyPolygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseGeometry</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
@@ -372,17 +373,15 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.tiling.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">x1y1x2y2_to_xywh</span><span class="p">,</span> <span class="n">xywh_to_x1y1x2y2</span>
 
-<span class="n">AnnotationsForMerge</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Annotation</span><span class="p">,</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">]]</span>
+<span class="n">AnnotationsForMerge</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Annotation</span><span class="p">,</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="n">ShapelyPolygon</span><span class="p">]]</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_apply_offset</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseGeometry</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">sg</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseGeometry</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_offset</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">BaseGeometry</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseGeometry</span><span class="p">:</span>
     <span class="n">offset_x</span><span class="p">,</span> <span class="n">offset_y</span> <span class="o">=</span> <span class="n">roi_box</span><span class="o">.</span><span class="n">bounds</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">so</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">offset_x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">offset_y</span><span class="p">),</span> <span class="n">geom</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">geom</span><span class="p">,</span> <span class="n">transformation</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">offset_x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">offset_y</span><span class="p">),</span> <span class="n">interleaved</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_merge_mask</span><span class="p">(</span>
-    <span class="n">anns</span><span class="p">:</span> <span class="n">AnnotationsForMerge</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Mask</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_mask</span><span class="p">(</span><span class="n">anns</span><span class="p">:</span> <span class="n">AnnotationsForMerge</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Mask</span><span class="p">]:</span>
     <span class="n">merged_masks</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">group_by_label</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
@@ -410,7 +409,7 @@ document.write(`
     <span class="n">merged_points</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">roi_box</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">:</span>
-        <span class="n">points</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">MultiPoint</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">MultiPoint</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
 
         <span class="n">points</span> <span class="o">=</span> <span class="n">_apply_offset</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)</span>
 
@@ -434,9 +433,9 @@ document.write(`
         <span class="n">group_by_id</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">ann</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)]</span>
 
     <span class="k">for</span> <span class="n">grouped_anns</span> <span class="ow">in</span> <span class="n">group_by_id</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">()</span>
+        <span class="n">polygon</span> <span class="o">=</span> <span class="n">ShapelyPolygon</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">roi_box</span> <span class="ow">in</span> <span class="n">grouped_anns</span><span class="p">:</span>
-            <span class="n">polygon</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">_apply_offset</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">()),</span> <span class="n">roi_box</span><span class="p">))</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">_apply_offset</span><span class="p">(</span><span class="n">ShapelyPolygon</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">()),</span> <span class="n">roi_box</span><span class="p">))</span>
 
         <span class="n">merged_polygons</span> <span class="o">+=</span> <span class="p">[</span>
             <span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span>
@@ -452,7 +451,7 @@ document.write(`
     <span class="n">merged_polylines</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">roi_box</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">:</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">LineString</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get_points</span><span class="p">())</span>
 
         <span class="n">lines</span> <span class="o">=</span> <span class="n">_apply_offset</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)</span>
 
@@ -478,7 +477,7 @@ document.write(`
         <span class="n">minx</span><span class="p">,</span> <span class="n">miny</span><span class="p">,</span> <span class="n">maxx</span><span class="p">,</span> <span class="n">maxy</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span>
 
         <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">roi_box</span> <span class="ow">in</span> <span class="n">grouped_anns</span><span class="p">:</span>
-            <span class="n">bbox</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()))</span>
+            <span class="n">bbox</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()))</span>
             <span class="n">bbox</span> <span class="o">=</span> <span class="n">_apply_offset</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)</span>
             <span class="n">c_minx</span><span class="p">,</span> <span class="n">c_miny</span><span class="p">,</span> <span class="n">c_maxx</span><span class="p">,</span> <span class="n">c_maxy</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">bounds</span>
             <span class="n">minx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">minx</span><span class="p">,</span> <span class="n">c_minx</span><span class="p">)</span>
@@ -513,9 +512,7 @@ document.write(`
     <span class="k">return</span> <span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">depth_img</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))]</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_merge_by_copy</span><span class="p">(</span>
-    <span class="n">anns</span><span class="p">:</span> <span class="n">AnnotationsForMerge</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_by_copy</span><span class="p">(</span><span class="n">anns</span><span class="p">:</span> <span class="n">AnnotationsForMerge</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span><span class="p">]:</span>
     <span class="n">new_anns</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">:</span>
         <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -566,8 +563,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.merge_tile.html#datumaro.plugins.tiling.merge_tile.MergeTile.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">parser</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">):</span>
@@ -598,7 +594,7 @@ document.write(`
             <span class="n">max_h</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_h</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
         <span class="n">img_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_h</span><span class="p">,</span> <span class="n">max_w</span><span class="p">)</span>
 
-        <span class="n">merged_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span>
             <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
             <span class="n">media</span><span class="o">=</span><span class="n">MosaicImage</span><span class="o">.</span><span class="n">from_image_roi_pairs</span><span class="p">(</span>
@@ -615,8 +611,6 @@ document.write(`
             <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_merge_tiled_annotations</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">img_size</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">merged_item</span>
-
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_merge_tiled_attributes</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -628,14 +622,12 @@ document.write(`
         <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;roi&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">attrs</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_tiled_annotations</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_tiled_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">anns_to_merge</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">AnnotationsForMerge</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
             <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi&quot;</span><span class="p">)</span>
-            <span class="n">roi_box</span><span class="p">:</span> <span class="n">sg</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">roi</span><span class="p">))</span>
+            <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">roi</span><span class="p">))</span>
 
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="n">anns_to_merge</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">ann</span><span class="p">,</span> <span class="n">roi</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">)]</span>
@@ -643,9 +635,7 @@ document.write(`
         <span class="n">merged_anns</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">ann_type</span><span class="p">,</span> <span class="n">anns</span> <span class="ow">in</span> <span class="n">anns_to_merge</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">merged_anns</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_anns_func_map</span><span class="p">[</span><span class="n">ann_type</span><span class="p">](</span>
-                <span class="n">anns</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">img_size</span><span class="o">=</span><span class="n">img_size</span><span class="p">,</span> <span class="n">ann_type</span><span class="o">=</span><span class="n">ann_type</span>
-            <span class="p">)</span>
+            <span class="n">merged_anns</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_anns_func_map</span><span class="p">[</span><span class="n">ann_type</span><span class="p">](</span><span class="n">anns</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">img_size</span><span class="o">=</span><span class="n">img_size</span><span class="p">,</span> <span class="n">ann_type</span><span class="o">=</span><span class="n">ann_type</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">merged_anns</span></div>
 

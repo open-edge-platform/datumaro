@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.merge.exact_merge &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.merge.exact_merge &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -445,8 +445,8 @@ document.write(`
         <span class="n">merged</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">|</span> <span class="n">b</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">a_val</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">b_val</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">a_val</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">b_val</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
                 <span class="n">m_val</span> <span class="o">=</span> <span class="n">b_val</span>
@@ -462,9 +462,7 @@ document.write(`
         <span class="k">return</span> <span class="n">merged</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_media</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">item_a</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">item_b</span><span class="p">:</span> <span class="n">DatasetItem</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Image</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_media</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_a</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">item_b</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Image</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">]:</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">)</span>
         <span class="p">):</span>
@@ -489,13 +487,9 @@ document.write(`
                 <span class="n">item_b_path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">item_a_path</span> <span class="ow">and</span> <span class="n">item_b_path</span> <span class="ow">and</span> <span class="n">item_a_path</span> <span class="o">!=</span> <span class="n">item_b_path</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">(</span>
-                        <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span>
-                    <span class="p">)</span>
-                <span class="k">elif</span> <span class="n">item_a_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">item_b_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">MismatchingMediaError</span><span class="p">(</span>
-                        <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">item_a_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">item_b_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">MismatchingMediaError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="p">)</span>
 
                 <span class="n">media</span> <span class="o">=</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span> <span class="k">if</span> <span class="n">item_a_path</span> <span class="k">else</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span>
 
@@ -531,18 +525,10 @@ document.write(`
                 <span class="c1"># Different paths can aclually point to the same file,</span>
                 <span class="c1"># but it&#39;s not the case we&#39;d like to allow here to be</span>
                 <span class="c1"># a &quot;simple&quot; merging strategy used for extractor joining</span>
-                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span>
-                <span class="ow">and</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span>
-                <span class="ow">and</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
-            <span class="p">):</span>
-                <span class="k">raise</span> <span class="n">MismatchingImageInfoError</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span> <span class="ow">and</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span> <span class="ow">and</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MismatchingImageInfoError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
             <span class="c1"># Avoid direct comparison here for better performance</span>
             <span class="c1"># If there are 2 &quot;data-only&quot; images, they won&#39;t be compared and</span>
@@ -583,9 +569,7 @@ document.write(`
             <span class="n">item_b_path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">item_a_path</span> <span class="ow">and</span> <span class="n">item_b_path</span> <span class="ow">and</span> <span class="n">item_a_path</span> <span class="o">!=</span> <span class="n">item_b_path</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a_path</span><span class="p">,</span> <span class="n">item_b_path</span><span class="p">)</span>
 
             <span class="c1"># Avoid direct comparison here for better performance</span>
             <span class="c1"># If there are 2 &quot;data-only&quot; pointclouds, they won&#39;t be compared and</span>
@@ -641,9 +625,7 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">MultiframeImage</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">MultiframeImage</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span> <span class="ow">and</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span> <span class="o">!=</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MismatchingMediaPathError</span><span class="p">((</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">),</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
                 <span class="n">media</span> <span class="o">=</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span>

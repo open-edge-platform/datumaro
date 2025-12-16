@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.segment_anything.importer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.segment_anything.importer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -357,7 +357,7 @@ document.write(`
 <div class="viewcode-block" id="SegmentAnythingImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.segment_anything.importer.html#datumaro.plugins.data_formats.segment_anything.SegmentAnythingImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SegmentAnythingImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_N_JSON_TO_TEST</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">_N_JSON_TO_TEST</span> <span class="o">=</span> <span class="mi">9</span>
     <span class="n">_MAX_ANNOTATION_SECTION_BYTES</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 100 MiB</span>
     <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
 
@@ -369,9 +369,7 @@ document.write(`
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FormatDetectionConfidence</span><span class="p">]:</span>
         <span class="c1"># test maximum 10 annotation files only</span>
-        <span class="n">ctr</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">require_files_iter</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
-            <span class="n">ctr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">ctr</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_files_iter</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)):</span>
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
                 <span class="n">file</span><span class="p">,</span> <span class="s2">&quot;Annotation format is not Segmentat-Anything format&quot;</span><span class="p">,</span> <span class="n">is_binary_file</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>

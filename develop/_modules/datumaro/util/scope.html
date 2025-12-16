@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.util.scope &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.util.scope &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -355,6 +355,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ContextManager</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">frozen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">optional_arg_decorator</span>
 
@@ -362,7 +363,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Scope">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Scope</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A context manager that allows to register error and exit callbacks.</span>
@@ -386,16 +387,14 @@ document.write(`
     <span class="k">class</span><span class="w"> </span><span class="nc">_ErrorHandler</span><span class="p">(</span><span class="n">_ExitHandler</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">exc_type</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span>
-                    <span class="n">exc_type</span><span class="o">=</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="o">=</span><span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="o">=</span><span class="n">exc_traceback</span>
-                <span class="p">)</span>
+                <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="o">=</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="o">=</span><span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="o">=</span><span class="n">exc_traceback</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span> <span class="o">=</span> <span class="n">ExitStack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="Scope.on_error_do">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.on_error_do">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.on_error_do">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_error_do</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -420,7 +419,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Scope.on_exit_do">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.on_exit_do">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.on_exit_do">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_exit_do</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -445,8 +444,8 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">handler_type</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-        <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">args</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">:</span>
@@ -455,7 +454,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">handler_type</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">))</span>
 
 <div class="viewcode-block" id="Scope.add">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.add">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.add">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enters a context manager and adds it to the exit stack.</span>
@@ -467,24 +466,24 @@ document.write(`
 
 
 <div class="viewcode-block" id="Scope.enable">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.enable">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.enable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">enable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="Scope.disable">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.disable">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.disable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">disable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="Scope.close">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.close">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scope</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
@@ -495,14 +494,14 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">pop_all</span><span class="p">()</span>  <span class="c1"># prevent issues on repetitive calls</span>
 
 <div class="viewcode-block" id="Scope.current">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.current">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.current">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">current</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scope</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_thread_locals</span><span class="o">.</span><span class="n">current</span></div>
 
 
 <div class="viewcode-block" id="Scope.as_current">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.Scope.as_current">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.as_current">[docs]</a>
     <span class="nd">@contextmanager</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">previous</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_locals</span><span class="p">,</span> <span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -516,7 +515,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="scoped">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.scoped">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.scoped">[docs]</a>
 <span class="nd">@optional_arg_decorator</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">scoped</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">arg_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -541,21 +540,21 @@ document.write(`
 
 <span class="c1"># Shorthands for common cases</span>
 <div class="viewcode-block" id="on_error_do">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.on_error_do">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.on_error_do">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">on_error_do</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Scope</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">on_error_do</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="on_exit_do">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.on_exit_do">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.on_exit_do">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">on_exit_do</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Scope</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">on_exit_do</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="scope_add">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.cli.commands.stats.scope_add">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.scope_add">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">scope_add</span><span class="p">(</span><span class="n">cm</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Scope</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
 

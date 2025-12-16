@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kitti.importer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.kitti.importer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -375,9 +375,9 @@ document.write(`
         <span class="c1"># TODO: should be removed when proper label merging is implemented</span>
         <span class="n">conflicting_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;kitti_segmentation&quot;</span><span class="p">,</span> <span class="s2">&quot;kitti_detection&quot;</span><span class="p">}</span>
         <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">conflicting_types</span>
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_types</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">selected_ann_type</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ann_types</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Not implemented: &quot;</span>
                 <span class="s2">&quot;Found potentially conflicting source types with labels: </span><span class="si">%s</span><span class="s2">. &quot;</span>
@@ -387,12 +387,9 @@ document.write(`
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ann_files</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">ann_type</span><span class="p">,</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="n">ann_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">conflicting_types</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">selected_ann_type</span><span class="p">:</span>
-                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;Not implemented: &quot;</span> <span class="s2">&quot;conflicting source &#39;</span><span class="si">%s</span><span class="s2">&#39; is skipped.&quot;</span> <span class="o">%</span> <span class="n">ann_file</span>
-                        <span class="p">)</span>
-                        <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">conflicting_types</span> <span class="ow">and</span> <span class="n">ann_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">selected_ann_type</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not implemented: conflicting source &#39;</span><span class="si">%s</span><span class="s2">&#39; is skipped.&quot;</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
+                    <span class="k">continue</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found a dataset at &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
 
                 <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>

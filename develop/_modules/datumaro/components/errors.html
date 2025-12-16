@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.errors &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.errors &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -561,7 +561,7 @@ document.write(`
     <span class="n">path</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a project already exists &quot;</span> <span class="sa">f</span><span class="s2">&quot;at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a project already exists at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
@@ -572,7 +572,7 @@ document.write(`
     <span class="n">path</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a version control system already exists &quot;</span> <span class="sa">f</span><span class="s2">&quot;at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a version control system already exists at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
@@ -732,9 +732,7 @@ document.write(`
 <span class="sd">    The error itself is supposed to be in the `__cause__` member.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">tuple</span><span class="p">),</span> <span class="n">has_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
-    <span class="p">)</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">tuple</span><span class="p">),</span> <span class="n">has_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)])</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    (id, subset) of the item with problem.</span>
 <span class="sd">    If id or subset cannot be reported, such field is set to None.</span>
@@ -773,9 +771,8 @@ document.write(`
     <span class="n">formats</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;Failed to detect dataset format automatically:&quot;</span>
-            <span class="s2">&quot; data matches more than one format: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: data matches more than one format: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formats</span>
         <span class="p">)</span></div>
 
 
@@ -784,7 +781,7 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.NoMatchingFormatsError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NoMatchingFormatsError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: &quot;</span> <span class="s2">&quot;no matching formats found&quot;</span></div>
+        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: no matching formats found&quot;</span></div>
 
 
 
@@ -850,9 +847,7 @@ document.write(`
     <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Failed to export the subset &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="si">}</span><span class="s2">&#39;: subset name contains path separator(s).&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Failed to export the subset &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="si">}</span><span class="s2">&#39;: subset name contains path separator(s).&quot;</span></div>
 
 
 
@@ -892,7 +887,7 @@ document.write(`
     <span class="n">group</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: annotation group has wrong labels: &quot;</span> <span class="s2">&quot;found </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">, group </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: annotation group has wrong labels: found </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">, group </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">found</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">,</span>
@@ -991,7 +986,7 @@ document.write(`
     <span class="n">ann</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t find matching annotation &quot;</span> <span class="s2">&quot;in sources </span><span class="si">%s</span><span class="s2">, annotation is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t find matching annotation in sources </span><span class="si">%s</span><span class="s2">, annotation is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ann</span><span class="p">,</span>
@@ -1038,7 +1033,7 @@ document.write(`
     <span class="n">ann</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: attribute voting failed &quot;</span> <span class="s2">&quot;for ann </span><span class="si">%s</span><span class="s2">, votes </span><span class="si">%s</span><span class="s2">, sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: attribute voting failed for ann </span><span class="si">%s</span><span class="s2">, votes </span><span class="si">%s</span><span class="s2">, sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ann</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">votes</span><span class="p">,</span>
@@ -1099,7 +1094,7 @@ document.write(`
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MissingLabelCategories</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Metadata (ex. LabelCategories) should be defined&quot;</span> <span class="s2">&quot; to validate a dataset.&quot;</span></div>
+        <span class="k">return</span> <span class="s2">&quot;Metadata (ex. LabelCategories) should be defined to validate a dataset.&quot;</span></div>
 
 
 
@@ -1110,7 +1105,7 @@ document.write(`
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), &quot;</span> <span class="s2">&quot;but not found.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
 
 
 
@@ -1121,7 +1116,7 @@ document.write(`
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs whole &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), &quot;</span> <span class="s2">&quot;but missed some.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs whole &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), but missed some.&quot;</span></div>
 
 
 
@@ -1132,7 +1127,7 @@ document.write(`
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item should have the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), &quot;</span> <span class="s2">&quot;but not found.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item should have the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
 
 
 
@@ -1143,9 +1138,7 @@ document.write(`
     <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Item should have the caption &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), &quot;</span> <span class="s2">&quot;but not found.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item should have the caption &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
 
 
 
@@ -1166,7 +1159,7 @@ document.write(`
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="sa">f</span><span class="s2">&quot;for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 
@@ -1177,7 +1170,7 @@ document.write(`
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item has the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; which &quot;</span> <span class="s2">&quot;is not defined in metadata.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item has the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; which is not defined in metadata.&quot;</span></div>
 
 
 
@@ -1203,10 +1196,7 @@ document.write(`
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; is defined in &quot;</span>
-            <span class="s2">&quot;metadata, but not found in the dataset.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; is defined in metadata, but not found in the dataset.&quot;</span></div>
 
 
 
@@ -1262,10 +1252,7 @@ document.write(`
     <span class="n">count</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The number of samples in the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; might be too low. Found &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39; samples.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The number of samples in the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; might be too low. Found &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39; samples.&quot;</span></div>
 
 
 
@@ -1347,7 +1334,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;There is an imbalance in the distribution of attribute&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="w"> </span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -1360,9 +1347,7 @@ document.write(`
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Values of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; are not evenly &quot;</span> <span class="sa">f</span><span class="s2">&quot;distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; label.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Values of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; are not evenly distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; label.&quot;</span></div>
 
 
 
@@ -1373,7 +1358,7 @@ document.write(`
     <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Values are not evenly &quot;</span> <span class="sa">f</span><span class="s2">&quot;distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; caption.&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Values are not evenly distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; caption.&quot;</span></div>
 
 
 
@@ -1420,11 +1405,7 @@ document.write(`
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
-            <span class="s2">&quot;the item has an inf or a NaN value of &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in the item has an inf or a NaN value of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 

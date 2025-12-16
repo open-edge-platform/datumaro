@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>attr._make &#8212; Datumaro 1.12.0 documentation</title>
+    <title>attr._make &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -354,6 +354,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
@@ -457,7 +458,7 @@ document.write(`
     <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">converter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">kw_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">eq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">on_setattr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -500,6 +501,9 @@ document.write(`
 <span class="sd">       *eq*, *order*, and *cmp* also accept a custom callable</span>
 <span class="sd">    .. versionchanged:: 21.1.0 *cmp* undeprecated</span>
 <span class="sd">    .. versionadded:: 22.2.0 *alias*</span>
+<span class="sd">    .. versionchanged:: 25.4.0</span>
+<span class="sd">       *kw_only* can now be None, and its default is also changed from False to</span>
+<span class="sd">       None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">eq</span><span class="p">,</span> <span class="n">eq_key</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">order_key</span> <span class="o">=</span> <span class="n">_determine_attrib_eq_order</span><span class="p">(</span>
         <span class="n">cmp</span><span class="p">,</span> <span class="n">eq</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="kc">True</span>
@@ -718,7 +722,12 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_transform_attrs</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">these</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">collect_by_mro</span><span class="p">,</span> <span class="n">field_transformer</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">these</span><span class="p">,</span>
+    <span class="n">auto_attribs</span><span class="p">,</span>
+    <span class="n">kw_only</span><span class="p">,</span>
+    <span class="n">collect_by_mro</span><span class="p">,</span>
+    <span class="n">field_transformer</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Attributes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform all `_CountingAttr`s on a class into `Attribute`s.</span>
@@ -773,8 +782,15 @@ document.write(`
         <span class="p">)</span>
 
     <span class="n">fca</span> <span class="o">=</span> <span class="n">Attribute</span><span class="o">.</span><span class="n">from_counting_attr</span>
+    <span class="n">no</span> <span class="o">=</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">KeywordOnly</span><span class="o">.</span><span class="n">NO</span>
     <span class="n">own_attrs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">fca</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">anns</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span> <span class="ow">in</span> <span class="n">ca_list</span>
+        <span class="n">fca</span><span class="p">(</span>
+            <span class="n">attr_name</span><span class="p">,</span>
+            <span class="n">ca</span><span class="p">,</span>
+            <span class="n">kw_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">no</span><span class="p">,</span>
+            <span class="n">anns</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span> <span class="ow">in</span> <span class="n">ca_list</span>
     <span class="p">]</span>
 
     <span class="k">if</span> <span class="n">collect_by_mro</span><span class="p">:</span>
@@ -786,7 +802,7 @@ document.write(`
             <span class="bp">cls</span><span class="p">,</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">own_attrs</span><span class="p">}</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">kw_only</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">kw_only</span> <span class="ow">is</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">KeywordOnly</span><span class="o">.</span><span class="n">FORCE</span><span class="p">:</span>
         <span class="n">own_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">own_attrs</span><span class="p">]</span>
         <span class="n">base_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">base_attrs</span><span class="p">]</span>
 
@@ -996,38 +1012,31 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
         <span class="n">these</span><span class="p">,</span>
-        <span class="n">slots</span><span class="p">,</span>
-        <span class="n">frozen</span><span class="p">,</span>
-        <span class="n">weakref_slot</span><span class="p">,</span>
-        <span class="n">getstate_setstate</span><span class="p">,</span>
-        <span class="n">auto_attribs</span><span class="p">,</span>
-        <span class="n">kw_only</span><span class="p">,</span>
-        <span class="n">cache_hash</span><span class="p">,</span>
-        <span class="n">is_exc</span><span class="p">,</span>
-        <span class="n">collect_by_mro</span><span class="p">,</span>
-        <span class="n">on_setattr</span><span class="p">,</span>
-        <span class="n">has_custom_setattr</span><span class="p">,</span>
-        <span class="n">field_transformer</span><span class="p">,</span>
+        <span class="n">auto_attribs</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">props</span><span class="p">:</span> <span class="n">ClassProps</span><span class="p">,</span>
+        <span class="n">has_custom_setattr</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">attrs</span><span class="p">,</span> <span class="n">base_attrs</span><span class="p">,</span> <span class="n">base_map</span> <span class="o">=</span> <span class="n">_transform_attrs</span><span class="p">(</span>
             <span class="bp">cls</span><span class="p">,</span>
             <span class="n">these</span><span class="p">,</span>
             <span class="n">auto_attribs</span><span class="p">,</span>
-            <span class="n">kw_only</span><span class="p">,</span>
-            <span class="n">collect_by_mro</span><span class="p">,</span>
-            <span class="n">field_transformer</span><span class="p">,</span>
+            <span class="n">props</span><span class="o">.</span><span class="n">kw_only</span><span class="p">,</span>
+            <span class="n">props</span><span class="o">.</span><span class="n">collected_fields_by_mro</span><span class="p">,</span>
+            <span class="n">props</span><span class="o">.</span><span class="n">field_transformer</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span> <span class="o">=</span> <span class="bp">cls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="k">if</span> <span class="n">slots</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">is_slotted</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span> <span class="o">=</span> <span class="n">attrs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">base_attrs</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_attr_map</span> <span class="o">=</span> <span class="n">base_map</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_attr_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span> <span class="o">=</span> <span class="n">slots</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span> <span class="o">=</span> <span class="n">frozen</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_weakref_slot</span> <span class="o">=</span> <span class="n">weakref_slot</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span> <span class="o">=</span> <span class="n">cache_hash</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">is_slotted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">is_frozen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_weakref_slot</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">has_weakref_slot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">props</span><span class="o">.</span><span class="n">hashability</span> <span class="ow">is</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE_CACHED</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__attrs_pre_init__&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span><span class="p">:</span>
@@ -1038,20 +1047,21 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pre_init_signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_post_init</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__attrs_post_init__&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_delete_attribs</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">these</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span> <span class="o">=</span> <span class="n">is_exc</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">=</span> <span class="n">on_setattr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">is_exception</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">on_setattr_hook</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_custom_setattr</span> <span class="o">=</span> <span class="n">has_custom_setattr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wrote_own_setattr</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__attrs_attrs__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__attrs_props__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span>
 
-        <span class="k">if</span> <span class="n">frozen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">is_frozen</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__setattr__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_frozen_setattrs</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__delattr__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_frozen_delattrs</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_wrote_own_setattr</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">elif</span> <span class="n">on_setattr</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="ow">in</span> <span class="p">(</span>
             <span class="n">_DEFAULT_ON_SETATTR</span><span class="p">,</span>
             <span class="n">setters</span><span class="o">.</span><span class="n">validate</span><span class="p">,</span>
             <span class="n">setters</span><span class="o">.</span><span class="n">convert</span><span class="p">,</span>
@@ -1067,18 +1077,18 @@ document.write(`
                     <span class="k">break</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="p">(</span>
-                    <span class="n">on_setattr</span> <span class="o">==</span> <span class="n">_DEFAULT_ON_SETATTR</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">==</span> <span class="n">_DEFAULT_ON_SETATTR</span>
                     <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_validator</span> <span class="ow">or</span> <span class="n">has_converter</span><span class="p">)</span>
                 <span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="n">on_setattr</span> <span class="o">==</span> <span class="n">setters</span><span class="o">.</span><span class="n">validate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_validator</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="n">on_setattr</span> <span class="o">==</span> <span class="n">setters</span><span class="o">.</span><span class="n">convert</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_converter</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">==</span> <span class="n">setters</span><span class="o">.</span><span class="n">validate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_validator</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">==</span> <span class="n">setters</span><span class="o">.</span><span class="n">convert</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_converter</span><span class="p">)</span>
             <span class="p">):</span>
                 <span class="c1"># If class-level on_setattr is set to convert + validate, but</span>
                 <span class="c1"># there&#39;s no field to convert or validate, pretend like there&#39;s</span>
                 <span class="c1"># no on_setattr.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">getstate_setstate</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_pickling</span><span class="p">:</span>
             <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__getstate__&quot;</span><span class="p">],</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__setstate__&quot;</span><span class="p">],</span>
@@ -1129,6 +1139,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_eval_snippets</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_slots_class</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="n">__attrs_base_of_slotted__</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch_original_class</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">PY_3_10_PLUS</span><span class="p">:</span>
@@ -1189,6 +1200,10 @@ document.write(`
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr_names</span><span class="p">),</span> <span class="s2">&quot;__dict__&quot;</span><span class="p">,</span> <span class="s2">&quot;__weakref__&quot;</span><span class="p">)</span>
         <span class="p">}</span>
+
+        <span class="c1"># 3.14.0rc2+</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;_clear_type_descriptors&quot;</span><span class="p">):</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">_clear_type_descriptors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">)</span>
 
         <span class="c1"># If our class doesn&#39;t have its own implementation of __setattr__</span>
         <span class="c1"># (either from the user or by us), check the bases, if one of them has</span>
@@ -1673,6 +1688,7 @@ document.write(`
     <span class="n">field_transformer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">match_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">force_kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class decorator that adds :term:`dunder methods` according to the</span>
@@ -1739,6 +1755,10 @@ document.write(`
 <span class="sd">       If a class has an *inherited* classmethod called</span>
 <span class="sd">       ``__attrs_init_subclass__``, it is executed after the class is created.</span>
 <span class="sd">    .. deprecated:: 24.1.0 *hash* is deprecated in favor of *unsafe_hash*.</span>
+<span class="sd">    .. versionchanged:: 25.4.0</span>
+<span class="sd">       *kw_only* now only applies to attributes defined in the current class,</span>
+<span class="sd">       and respects attribute-level ``kw_only=False`` settings.</span>
+<span class="sd">    .. versionadded:: 25.4.0 *force_kw_only*</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">repr_ns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -1760,6 +1780,7 @@ document.write(`
         <span class="n">on_setattr</span> <span class="o">=</span> <span class="n">setters</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="o">*</span><span class="n">on_setattr</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="nb">hash</span>
         <span class="n">is_frozen</span> <span class="o">=</span> <span class="n">frozen</span> <span class="ow">or</span> <span class="n">_has_frozen_base_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="n">is_exc</span> <span class="o">=</span> <span class="n">auto_exc</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">)</span>
         <span class="n">has_own_setattr</span> <span class="o">=</span> <span class="n">auto_detect</span> <span class="ow">and</span> <span class="n">_has_own_attribute</span><span class="p">(</span>
@@ -1770,84 +1791,112 @@ document.write(`
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Can&#39;t freeze a class with a custom __setattr__.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">builder</span> <span class="o">=</span> <span class="n">_ClassBuilder</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span>
-            <span class="n">these</span><span class="p">,</span>
-            <span class="n">slots</span><span class="p">,</span>
-            <span class="n">is_frozen</span><span class="p">,</span>
-            <span class="n">weakref_slot</span><span class="p">,</span>
-            <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">is_exc</span> <span class="ow">and</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="n">eq_</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__eq__&quot;</span><span class="p">,</span> <span class="s2">&quot;__ne__&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">Hashability</span> <span class="o">=</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">Hashability</span>
+
+        <span class="k">if</span> <span class="n">is_exc</span><span class="p">:</span>
+            <span class="n">hashability</span> <span class="o">=</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">LEAVE_ALONE</span>
+        <span class="k">elif</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">hashability</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE_CACHED</span>
+                <span class="k">if</span> <span class="n">cache_hash</span>
+                <span class="k">else</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">hashability</span> <span class="o">=</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">LEAVE_ALONE</span>
+        <span class="k">elif</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">auto_detect</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">_has_own_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__hash__&quot;</span><span class="p">):</span>
+                <span class="n">hashability</span> <span class="o">=</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">LEAVE_ALONE</span>
+            <span class="k">elif</span> <span class="n">eq</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_frozen</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">hashability</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE_CACHED</span>
+                    <span class="k">if</span> <span class="n">cache_hash</span>
+                    <span class="k">else</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">eq</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">hashability</span> <span class="o">=</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">LEAVE_ALONE</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hashability</span> <span class="o">=</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">UNHASHABLE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for hash.  Must be True, False, or None.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">KeywordOnly</span> <span class="o">=</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">KeywordOnly</span>
+        <span class="k">if</span> <span class="n">kw_only</span><span class="p">:</span>
+            <span class="n">kwo</span> <span class="o">=</span> <span class="n">KeywordOnly</span><span class="o">.</span><span class="n">FORCE</span> <span class="k">if</span> <span class="n">force_kw_only</span> <span class="k">else</span> <span class="n">KeywordOnly</span><span class="o">.</span><span class="n">YES</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwo</span> <span class="o">=</span> <span class="n">KeywordOnly</span><span class="o">.</span><span class="n">NO</span>
+
+        <span class="n">props</span> <span class="o">=</span> <span class="n">ClassProps</span><span class="p">(</span>
+            <span class="n">is_exception</span><span class="o">=</span><span class="n">is_exc</span><span class="p">,</span>
+            <span class="n">is_frozen</span><span class="o">=</span><span class="n">is_frozen</span><span class="p">,</span>
+            <span class="n">is_slotted</span><span class="o">=</span><span class="n">slots</span><span class="p">,</span>
+            <span class="n">collected_fields_by_mro</span><span class="o">=</span><span class="n">collect_by_mro</span><span class="p">,</span>
+            <span class="n">added_init</span><span class="o">=</span><span class="n">_determine_whether_to_implement</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__init__&quot;</span><span class="p">,)</span>
+            <span class="p">),</span>
+            <span class="n">added_repr</span><span class="o">=</span><span class="n">_determine_whether_to_implement</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="nb">repr</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__repr__&quot;</span><span class="p">,)</span>
+            <span class="p">),</span>
+            <span class="n">added_eq</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span>
+            <span class="n">added_ordering</span><span class="o">=</span><span class="ow">not</span> <span class="n">is_exc</span>
+            <span class="ow">and</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span>
+                <span class="n">order_</span><span class="p">,</span>
+                <span class="n">auto_detect</span><span class="p">,</span>
+                <span class="p">(</span><span class="s2">&quot;__lt__&quot;</span><span class="p">,</span> <span class="s2">&quot;__le__&quot;</span><span class="p">,</span> <span class="s2">&quot;__gt__&quot;</span><span class="p">,</span> <span class="s2">&quot;__ge__&quot;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">hashability</span><span class="o">=</span><span class="n">hashability</span><span class="p">,</span>
+            <span class="n">added_match_args</span><span class="o">=</span><span class="n">match_args</span><span class="p">,</span>
+            <span class="n">kw_only</span><span class="o">=</span><span class="n">kwo</span><span class="p">,</span>
+            <span class="n">has_weakref_slot</span><span class="o">=</span><span class="n">weakref_slot</span><span class="p">,</span>
+            <span class="n">added_str</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">added_pickling</span><span class="o">=</span><span class="n">_determine_whether_to_implement</span><span class="p">(</span>
                 <span class="bp">cls</span><span class="p">,</span>
                 <span class="n">getstate_setstate</span><span class="p">,</span>
                 <span class="n">auto_detect</span><span class="p">,</span>
                 <span class="p">(</span><span class="s2">&quot;__getstate__&quot;</span><span class="p">,</span> <span class="s2">&quot;__setstate__&quot;</span><span class="p">),</span>
                 <span class="n">default</span><span class="o">=</span><span class="n">slots</span><span class="p">,</span>
             <span class="p">),</span>
-            <span class="n">auto_attribs</span><span class="p">,</span>
-            <span class="n">kw_only</span><span class="p">,</span>
-            <span class="n">cache_hash</span><span class="p">,</span>
-            <span class="n">is_exc</span><span class="p">,</span>
-            <span class="n">collect_by_mro</span><span class="p">,</span>
-            <span class="n">on_setattr</span><span class="p">,</span>
-            <span class="n">has_own_setattr</span><span class="p">,</span>
-            <span class="n">field_transformer</span><span class="p">,</span>
+            <span class="n">on_setattr_hook</span><span class="o">=</span><span class="n">on_setattr</span><span class="p">,</span>
+            <span class="n">field_transformer</span><span class="o">=</span><span class="n">field_transformer</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="nb">repr</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__repr__&quot;</span><span class="p">,)</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">props</span><span class="o">.</span><span class="n">is_hashable</span> <span class="ow">and</span> <span class="n">cache_hash</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for cache_hash.  To use hash caching, hashing must be either explicitly or implicitly enabled.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">_ClassBuilder</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">these</span><span class="p">,</span>
+            <span class="n">auto_attribs</span><span class="o">=</span><span class="n">auto_attribs</span><span class="p">,</span>
+            <span class="n">props</span><span class="o">=</span><span class="n">props</span><span class="p">,</span>
+            <span class="n">has_custom_setattr</span><span class="o">=</span><span class="n">has_own_setattr</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_repr</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_repr</span><span class="p">(</span><span class="n">repr_ns</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">str</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_str</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_str</span><span class="p">()</span>
 
-        <span class="n">eq</span> <span class="o">=</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="n">eq_</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__eq__&quot;</span><span class="p">,</span> <span class="s2">&quot;__ne__&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exc</span> <span class="ow">and</span> <span class="n">eq</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_eq</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_eq</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exc</span> <span class="ow">and</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="n">order_</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__lt__&quot;</span><span class="p">,</span> <span class="s2">&quot;__le__&quot;</span><span class="p">,</span> <span class="s2">&quot;__gt__&quot;</span><span class="p">,</span> <span class="s2">&quot;__ge__&quot;</span><span class="p">)</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_ordering</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_order</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">frozen</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_setattr</span><span class="p">()</span>
 
-        <span class="k">nonlocal</span> <span class="nb">hash</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="n">auto_detect</span> <span class="ow">is</span> <span class="kc">True</span>
-            <span class="ow">and</span> <span class="n">_has_own_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__hash__&quot;</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="nb">hash</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">if</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span> <span class="ow">and</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Can&#39;t use `hash in` because 1 == True for example.</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for hash.  Must be True, False, or None.&quot;</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">hash</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">eq</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_exc</span><span class="p">:</span>
-            <span class="c1"># Don&#39;t do anything. Should fall back to __object__&#39;s __hash__</span>
-            <span class="c1"># which is by id.</span>
-            <span class="k">if</span> <span class="n">cache_hash</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for cache_hash.  To use hash caching, hashing must be either explicitly or implicitly enabled.&quot;</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">eq</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">is_frozen</span> <span class="ow">is</span> <span class="kc">True</span>
-        <span class="p">):</span>
-            <span class="c1"># Build a __hash__ if told so, or if it&#39;s safe.</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">is_hashable</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_hash</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Raise TypeError on attempts to hash.</span>
-            <span class="k">if</span> <span class="n">cache_hash</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for cache_hash.  To use hash caching, hashing must be either explicitly or implicitly enabled.&quot;</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">props</span><span class="o">.</span><span class="n">hashability</span> <span class="ow">is</span> <span class="n">Hashability</span><span class="o">.</span><span class="n">UNHASHABLE</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">make_unhashable</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__init__&quot;</span><span class="p">,)</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">props</span><span class="o">.</span><span class="n">added_init</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_init</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_attrs_init</span><span class="p">()</span>
@@ -2474,8 +2523,9 @@ document.write(`
     <span class="p">)</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">extra_lines</span><span class="p">)</span>
 
-    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">kw_only_args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Parameters in the definition of __init__</span>
+    <span class="n">pre_init_args</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Parameters in the call to __attrs_pre_init__</span>
+    <span class="n">kw_only_args</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Used for both &#39;args&#39; and &#39;pre_init_args&#39; above</span>
     <span class="n">attrs_to_validate</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># This is a dictionary of names to validator and converter callables.</span>
@@ -2553,6 +2603,7 @@ document.write(`
                 <span class="n">kw_only_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="n">pre_init_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -2572,6 +2623,7 @@ document.write(`
                 <span class="n">kw_only_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="n">pre_init_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;if </span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2"> is not NOTHING:&quot;</span><span class="p">)</span>
 
             <span class="n">init_factory_name</span> <span class="o">=</span> <span class="n">_INIT_FACTORY_PAT</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,)</span>
@@ -2614,6 +2666,7 @@ document.write(`
                 <span class="n">kw_only_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+                <span class="n">pre_init_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -2670,7 +2723,7 @@ document.write(`
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BaseException.__init__(self, </span><span class="si">{</span><span class="n">vals</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">pre_init_args</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="n">pre_init_args</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pre_init_args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">kw_only_args</span><span class="p">:</span>
         <span class="c1"># leading comma &amp; kw_only args</span>
         <span class="n">args</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">*, </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kw_only_args</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -2685,7 +2738,7 @@ document.write(`
         <span class="n">pre_init_args</span> <span class="o">+=</span> <span class="n">pre_init_kw_only_args</span>
 
     <span class="k">if</span> <span class="n">call_pre_init</span> <span class="ow">and</span> <span class="n">pre_init_has_args</span><span class="p">:</span>
-        <span class="c1"># If pre init method has arguments, pass same arguments as `__init__`.</span>
+        <span class="c1"># If pre init method has arguments, pass the values given to __init__.</span>
         <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;self.__attrs_pre_init__(</span><span class="si">{</span><span class="n">pre_init_args</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="c1"># Python &lt;3.12 doesn&#39;t allow backslashes in f-strings.</span>
@@ -2834,7 +2887,11 @@ document.write(`
         <span class="k">raise</span> <span class="n">FrozenInstanceError</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_counting_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">_CountingAttr</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_counting_attr</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">_CountingAttr</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="c1"># The &#39;kw_only&#39; argument is the class-level setting, and is used if the</span>
+        <span class="c1"># attribute itself does not explicitly set &#39;kw_only&#39;.</span>
         <span class="c1"># type holds the annotated value. deal with conflicts:</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">type</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">type</span>
@@ -2853,7 +2910,7 @@ document.write(`
             <span class="n">ca</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
             <span class="nb">type</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">converter</span><span class="p">,</span>
-            <span class="n">ca</span><span class="o">.</span><span class="n">kw_only</span><span class="p">,</span>
+            <span class="n">kw_only</span> <span class="k">if</span> <span class="n">ca</span><span class="o">.</span><span class="n">kw_only</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ca</span><span class="o">.</span><span class="n">kw_only</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">eq_key</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
@@ -3087,6 +3144,188 @@ document.write(`
 
 
 <span class="n">_CountingAttr</span> <span class="o">=</span> <span class="n">_add_eq</span><span class="p">(</span><span class="n">_add_repr</span><span class="p">(</span><span class="n">_CountingAttr</span><span class="p">))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ClassProps</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Effective class properties as derived from parameters to `attr.s()` or</span>
+<span class="sd">    `define()` decorators.</span>
+
+<span class="sd">    This is the same data structure that *attrs* uses internally to decide how</span>
+<span class="sd">    to construct the final class.</span>
+
+<span class="sd">    Warning:</span>
+
+<span class="sd">        This feature is currently **experimental** and is not covered by our</span>
+<span class="sd">        strict backwards-compatibility guarantees.</span>
+
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        is_exception (bool):</span>
+<span class="sd">            Whether the class is treated as an exception class.</span>
+
+<span class="sd">        is_slotted (bool):</span>
+<span class="sd">            Whether the class is `slotted &lt;slotted classes&gt;`.</span>
+
+<span class="sd">        has_weakref_slot (bool):</span>
+<span class="sd">            Whether the class has a slot for weak references.</span>
+
+<span class="sd">        is_frozen (bool):</span>
+<span class="sd">            Whether the class is frozen.</span>
+
+<span class="sd">        kw_only (KeywordOnly):</span>
+<span class="sd">            Whether / how the class enforces keyword-only arguments on the</span>
+<span class="sd">            ``__init__`` method.</span>
+
+<span class="sd">        collected_fields_by_mro (bool):</span>
+<span class="sd">            Whether the class fields were collected by method resolution order.</span>
+<span class="sd">            That is, correctly but unlike `dataclasses`.</span>
+
+<span class="sd">        added_init (bool):</span>
+<span class="sd">            Whether the class has an *attrs*-generated ``__init__`` method.</span>
+
+<span class="sd">        added_repr (bool):</span>
+<span class="sd">            Whether the class has an *attrs*-generated ``__repr__`` method.</span>
+
+<span class="sd">        added_eq (bool):</span>
+<span class="sd">            Whether the class has *attrs*-generated equality methods.</span>
+
+<span class="sd">        added_ordering (bool):</span>
+<span class="sd">            Whether the class has *attrs*-generated ordering methods.</span>
+
+<span class="sd">        hashability (Hashability): How `hashable &lt;hashing&gt;` the class is.</span>
+
+<span class="sd">        added_match_args (bool):</span>
+<span class="sd">            Whether the class supports positional `match &lt;match&gt;` over its</span>
+<span class="sd">            fields.</span>
+
+<span class="sd">        added_str (bool):</span>
+<span class="sd">            Whether the class has an *attrs*-generated ``__str__`` method.</span>
+
+<span class="sd">        added_pickling (bool):</span>
+<span class="sd">            Whether the class has *attrs*-generated ``__getstate__`` and</span>
+<span class="sd">            ``__setstate__`` methods for `pickle`.</span>
+
+<span class="sd">        on_setattr_hook (Callable[[Any, Attribute[Any], Any], Any] | None):</span>
+<span class="sd">            The class&#39;s ``__setattr__`` hook.</span>
+
+<span class="sd">        field_transformer (Callable[[Attribute[Any]], Attribute[Any]] | None):</span>
+<span class="sd">            The class&#39;s `field transformers &lt;transform-fields&gt;`.</span>
+
+<span class="sd">    .. versionadded:: 25.4.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Hashability</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The hashability of a class.</span>
+
+<span class="sd">        .. versionadded:: 25.4.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">HASHABLE</span> <span class="o">=</span> <span class="s2">&quot;hashable&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a ``__hash__``.&quot;&quot;&quot;</span>
+        <span class="n">HASHABLE_CACHED</span> <span class="o">=</span> <span class="s2">&quot;hashable_cache&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write a ``__hash__`` and cache the hash.&quot;&quot;&quot;</span>
+        <span class="n">UNHASHABLE</span> <span class="o">=</span> <span class="s2">&quot;unhashable&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set ``__hash__`` to ``None``.&quot;&quot;&quot;</span>
+        <span class="n">LEAVE_ALONE</span> <span class="o">=</span> <span class="s2">&quot;leave_alone&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Don&#39;t touch ``__hash__``.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">KeywordOnly</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        How attributes should be treated regarding keyword-only parameters.</span>
+
+<span class="sd">        .. versionadded:: 25.4.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">NO</span> <span class="o">=</span> <span class="s2">&quot;no&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attributes are not keyword-only.&quot;&quot;&quot;</span>
+        <span class="n">YES</span> <span class="o">=</span> <span class="s2">&quot;yes&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attributes in current class without kw_only=False are keyword-only.&quot;&quot;&quot;</span>
+        <span class="n">FORCE</span> <span class="o">=</span> <span class="s2">&quot;force&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All attributes are keyword-only.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># noqa: RUF023 -- order matters for __init__</span>
+        <span class="s2">&quot;is_exception&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;is_slotted&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;has_weakref_slot&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;is_frozen&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kw_only&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;collected_fields_by_mro&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_init&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_repr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_eq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_ordering&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hashability&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_match_args&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_str&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;added_pickling&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;on_setattr_hook&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;field_transformer&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">is_exception</span><span class="p">,</span>
+        <span class="n">is_slotted</span><span class="p">,</span>
+        <span class="n">has_weakref_slot</span><span class="p">,</span>
+        <span class="n">is_frozen</span><span class="p">,</span>
+        <span class="n">kw_only</span><span class="p">,</span>
+        <span class="n">collected_fields_by_mro</span><span class="p">,</span>
+        <span class="n">added_init</span><span class="p">,</span>
+        <span class="n">added_repr</span><span class="p">,</span>
+        <span class="n">added_eq</span><span class="p">,</span>
+        <span class="n">added_ordering</span><span class="p">,</span>
+        <span class="n">hashability</span><span class="p">,</span>
+        <span class="n">added_match_args</span><span class="p">,</span>
+        <span class="n">added_str</span><span class="p">,</span>
+        <span class="n">added_pickling</span><span class="p">,</span>
+        <span class="n">on_setattr_hook</span><span class="p">,</span>
+        <span class="n">field_transformer</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_exception</span> <span class="o">=</span> <span class="n">is_exception</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_slotted</span> <span class="o">=</span> <span class="n">is_slotted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_weakref_slot</span> <span class="o">=</span> <span class="n">has_weakref_slot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_frozen</span> <span class="o">=</span> <span class="n">is_frozen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kw_only</span> <span class="o">=</span> <span class="n">kw_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collected_fields_by_mro</span> <span class="o">=</span> <span class="n">collected_fields_by_mro</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_init</span> <span class="o">=</span> <span class="n">added_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_repr</span> <span class="o">=</span> <span class="n">added_repr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_eq</span> <span class="o">=</span> <span class="n">added_eq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_ordering</span> <span class="o">=</span> <span class="n">added_ordering</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hashability</span> <span class="o">=</span> <span class="n">hashability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_match_args</span> <span class="o">=</span> <span class="n">added_match_args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_str</span> <span class="o">=</span> <span class="n">added_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_pickling</span> <span class="o">=</span> <span class="n">added_pickling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_setattr_hook</span> <span class="o">=</span> <span class="n">on_setattr_hook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_transformer</span> <span class="o">=</span> <span class="n">field_transformer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_hashable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hashability</span> <span class="ow">is</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">hashability</span> <span class="ow">is</span> <span class="n">ClassProps</span><span class="o">.</span><span class="n">Hashability</span><span class="o">.</span><span class="n">HASHABLE_CACHED</span>
+        <span class="p">)</span>
+
+
+<span class="n">_cas</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Attribute</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">NOTHING</span><span class="p">,</span>
+        <span class="n">validator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">cmp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">hash</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">inherited</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">alias</span><span class="o">=</span><span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">name</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ClassProps</span><span class="o">.</span><span class="vm">__slots__</span>
+<span class="p">]</span>
+
+<span class="n">ClassProps</span> <span class="o">=</span> <span class="n">_add_eq</span><span class="p">(</span><span class="n">_add_repr</span><span class="p">(</span><span class="n">ClassProps</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">_cas</span><span class="p">),</span> <span class="n">attrs</span><span class="o">=</span><span class="n">_cas</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Factory</span><span class="p">:</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.icdar.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.icdar.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -463,9 +463,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
                     <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                            <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mask #</span><span class="si">%s</span><span class="s2"> has invalid color&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mask #</span><span class="si">%s</span><span class="s2"> has invalid color&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
 
                     <span class="n">color</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -494,9 +492,7 @@ document.write(`
                 <span class="n">annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">group</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">group</span>
 
-            <span class="n">mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="o">.</span><span class="n">from_instance_masks</span><span class="p">(</span>
-                <span class="n">anns</span><span class="p">,</span> <span class="n">instance_labels</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="o">.</span><span class="n">from_instance_masks</span><span class="p">(</span><span class="n">anns</span><span class="p">,</span> <span class="n">instance_labels</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">])</span>
             <span class="n">mask</span> <span class="o">=</span> <span class="n">paint_mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">class_mask</span><span class="p">,</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">colormap</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colormap</span><span class="p">))})</span>
             <span class="n">save_image</span><span class="p">(</span>
                 <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s2">&quot;_GT&quot;</span> <span class="o">+</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">GT_EXT</span><span class="p">),</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.dataset_storage &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.dataset_storage &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -356,11 +356,7 @@ document.write(`
     <span class="n">DatasetItem</span><span class="p">,</span>
     <span class="n">IDataset</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DatasetItemStorage</span><span class="p">,</span>
-    <span class="n">DatasetItemStorageDatasetView</span><span class="p">,</span>
-    <span class="n">ItemStatus</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemStorage</span><span class="p">,</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">,</span> <span class="n">ItemStatus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CategoriesRedefinedError</span><span class="p">,</span>
     <span class="n">ConflictingCategoriesError</span><span class="p">,</span>
@@ -408,7 +404,7 @@ document.write(`
         <span class="n">infos</span><span class="p">:</span> <span class="n">DatasetInfo</span><span class="p">,</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">,</span>
         <span class="n">updated_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ItemStatus</span><span class="p">],</span>
-        <span class="n">updated_subsets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ItemStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">updated_subsets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ItemStatus</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">infos</span> <span class="o">=</span> <span class="n">infos</span>
@@ -592,10 +588,7 @@ document.write(`
                     <span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">removed</span>
-            <span class="k">elif</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">modified</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">current_status</span> <span class="o">!=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">added</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">modified</span>
-            <span class="k">elif</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">added</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">modified</span> <span class="ow">or</span> <span class="n">new_status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">added</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">current_status</span> <span class="o">!=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">added</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">modified</span>
             <span class="k">else</span><span class="p">:</span>
@@ -634,9 +627,7 @@ document.write(`
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">media_type</span><span class="p">):</span>
                 <span class="c1"># TODO: make it statically available</span>
-                <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Transforms are not allowed to change media &quot;</span> <span class="s2">&quot;type of dataset items&quot;</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Transforms are not allowed to change media type of dataset items&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_drop_malformed_transforms</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">malformed_transform_indices</span><span class="p">)</span>
 
@@ -743,7 +734,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_merged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_unchanged_wrapper</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="p">,</span>
@@ -761,44 +752,38 @@ document.write(`
 <div class="viewcode-block" id="DatasetStorage.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.DatasetStorage.infos">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">():</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
-        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DatasetStorage.define_infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.DatasetStorage.define_infos">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">define_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">:</span> <span class="n">DatasetInfo</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetInfosRedefinedError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">DatasetInfosRedefinedError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="n">infos</span></div>
 
 
 <div class="viewcode-block" id="DatasetStorage.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.DatasetStorage.categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">():</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
-        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DatasetStorage.define_categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.DatasetStorage.define_categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">define_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">CategoriesRedefinedError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">CategoriesRedefinedError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">categories</span></div>
 
 
@@ -956,9 +941,7 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">patch</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">DatasetPatch</span><span class="p">(</span>
-            <span class="n">patch</span><span class="p">,</span> <span class="n">infos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">,</span> <span class="n">updated_items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">DatasetPatch</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="n">infos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_infos</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">,</span> <span class="n">updated_items</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DatasetStorage.flush_changes">
@@ -976,7 +959,7 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">DatasetPatch</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span>
 
             <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">updated_items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
@@ -986,9 +969,7 @@ document.write(`
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">):</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectLabels</span>
 
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ProjectLabels</span><span class="p">(</span>
-                <span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
-            <span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ProjectLabels</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
@@ -1117,8 +1098,7 @@ document.write(`
 <div class="viewcode-block" id="StreamDatasetStorage.init_cache">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.init_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">init_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This function has no effect on streaming.&quot;</span><span class="p">)</span>
-        <span class="k">pass</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This function has no effect on streaming.&quot;</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>

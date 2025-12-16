@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.merge.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.merge.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -385,9 +385,7 @@ document.write(`
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Duplicated infos field </span><span class="si">%s</span><span class="s2">: overwrite from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span>
-                    <span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Duplicated infos field </span><span class="si">%s</span><span class="s2">: overwrite from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
                 <span class="n">infos</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">return</span> <span class="n">infos</span></div>
 
@@ -405,8 +403,7 @@ document.write(`
                         <span class="n">categories</span><span class="p">[</span><span class="n">cat_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_cat</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
-                            <span class="s2">&quot;Merging of datasets with different categories is &quot;</span>
-                            <span class="s2">&quot;only allowed in &#39;merge&#39; command.&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;Merging of datasets with different categories is only allowed in &#39;merge&#39; command.&quot;</span><span class="p">,</span>
                             <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">source_idx</span><span class="p">)),</span>
                         <span class="p">)</span>
         <span class="k">return</span> <span class="n">categories</span></div>
@@ -419,9 +416,7 @@ document.write(`
         <span class="k">if</span> <span class="n">sources</span><span class="p">:</span>
             <span class="n">media_type</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">media_type</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span>
-                    <span class="n">media_type</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">media_type</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">media_type</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">media_type</span><span class="p">()):</span>
                     <span class="c1"># Symmetric comparison is needed in the case of subclasses:</span>
                     <span class="c1"># eg. Image and RoIImage</span>
                     <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Datasets have different media types&quot;</span><span class="p">)</span>

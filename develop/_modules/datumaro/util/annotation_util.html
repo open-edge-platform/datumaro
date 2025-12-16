@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.util.annotation_util &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.util.annotation_util &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -387,12 +387,11 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="p">(</span><span class="n">Shape</span><span class="p">,</span> <span class="n">Mask</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ann</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The value of type &#39;</span><span class="si">%s</span><span class="s2">&#39; can&#39;t be treated as a &quot;</span> <span class="s2">&quot;bounding box&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The value of type &#39;</span><span class="si">%s</span><span class="s2">&#39; can&#39;t be treated as a bounding box&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="max_bbox">
@@ -519,12 +518,11 @@ document.write(`
         <span class="k">def</span><span class="w"> </span><span class="nf">_to_rle</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">([</span><span class="n">ann</span><span class="o">.</span><span class="n">points</span><span class="p">],</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">rle</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">([</span><span class="n">mask_to_rle</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">image</span><span class="p">)],</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unexpected arguments: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unexpected arguments: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="n">_to_rle</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">_to_rle</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
@@ -608,8 +606,8 @@ document.write(`
 <span class="sd">        The size is [(segments + 1) * 2], the layout is [x0, y0, x1, y1, ...].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">assert</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">segments</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">segments</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="n">points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -663,10 +661,7 @@ document.write(`
 
     <span class="n">source_labels</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">label</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">src_labels</span> <span class="ow">or</span> <span class="p">())}</span>
     <span class="n">target_labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dst_labels</span> <span class="ow">or</span> <span class="p">())}</span>
-    <span class="n">id_mapping</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">src_id</span><span class="p">:</span> <span class="n">target_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">fallback</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">source_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">}</span>
+    <span class="n">id_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">src_id</span><span class="p">:</span> <span class="n">target_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">fallback</span><span class="p">)</span> <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">source_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">map_id</span><span class="p">(</span><span class="n">src_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">,</span> <span class="n">fallback</span><span class="p">)</span>

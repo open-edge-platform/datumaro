@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kitti.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.kitti.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -362,14 +362,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">paint_mask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_meta_file</span><span class="p">,</span> <span class="n">parse_meta_file</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">KittiLabelMap</span><span class="p">,</span>
-    <span class="n">KittiPath</span><span class="p">,</span>
-    <span class="n">KittiTask</span><span class="p">,</span>
-    <span class="n">make_kitti_categories</span><span class="p">,</span>
-    <span class="n">parse_label_map</span><span class="p">,</span>
-    <span class="n">write_label_map</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">KittiLabelMap</span><span class="p">,</span> <span class="n">KittiPath</span><span class="p">,</span> <span class="n">KittiTask</span><span class="p">,</span> <span class="n">make_kitti_categories</span><span class="p">,</span> <span class="n">parse_label_map</span><span class="p">,</span> <span class="n">write_label_map</span>
 
 
 <div class="viewcode-block" id="LabelmapType">
@@ -398,7 +391,7 @@ document.write(`
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
 
 <div class="viewcode-block" id="KittiExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kitti.exporter.html#datumaro.plugins.data_formats.kitti.exporter.KittiExporter.build_cmdline_parser">[docs]</a>
@@ -456,9 +449,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">detection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                    <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">()</span>
-                <span class="p">)</span>
+                <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
             <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -469,9 +460,7 @@ document.write(`
 
         <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">segmentation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span>
-                    <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">INSTANCES_DIR</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span>
-                <span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">INSTANCES_DIR</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
@@ -482,16 +471,10 @@ document.write(`
                     <span class="n">compiled_class_mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="o">.</span><span class="n">from_instance_masks</span><span class="p">(</span>
                         <span class="n">masks</span><span class="p">,</span> <span class="n">instance_labels</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">]</span>
                     <span class="p">)</span>
-                    <span class="n">color_mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">SEMANTIC_RGB_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span>
-                    <span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">save_mask</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">color_mask_path</span><span class="p">),</span> <span class="n">compiled_class_mask</span><span class="o">.</span><span class="n">class_mask</span>
-                    <span class="p">)</span>
+                    <span class="n">color_mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">SEMANTIC_RGB_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_mask</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">color_mask_path</span><span class="p">),</span> <span class="n">compiled_class_mask</span><span class="o">.</span><span class="n">class_mask</span><span class="p">)</span>
 
-                    <span class="n">labelids_mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">SEMANTIC_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span>
-                    <span class="p">)</span>
+                    <span class="n">labelids_mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">SEMANTIC_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">save_mask</span><span class="p">(</span>
                         <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">labelids_mask_path</span><span class="p">),</span>
                         <span class="n">compiled_class_mask</span><span class="o">.</span><span class="n">class_mask</span><span class="p">,</span>
@@ -502,13 +485,9 @@ document.write(`
                     <span class="c1"># TODO: optimize second merging</span>
                     <span class="n">compiled_instance_mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="o">.</span><span class="n">from_instance_masks</span><span class="p">(</span>
                         <span class="n">masks</span><span class="p">,</span>
-                        <span class="n">instance_labels</span><span class="o">=</span><span class="p">[</span>
-                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masks</span>
-                        <span class="p">],</span>
+                        <span class="n">instance_labels</span><span class="o">=</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masks</span><span class="p">],</span>
                     <span class="p">)</span>
-                    <span class="n">inst_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">INSTANCES_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span>
-                    <span class="p">)</span>
+                    <span class="n">inst_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">INSTANCES_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">MASK_EXT</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">save_mask</span><span class="p">(</span>
                         <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">inst_path</span><span class="p">),</span>
                         <span class="n">compiled_instance_mask</span><span class="o">.</span><span class="n">class_mask</span><span class="p">,</span>
@@ -518,26 +497,18 @@ document.write(`
 
                 <span class="n">bboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">bboxes</span> <span class="ow">and</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">detection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-                    <span class="n">labels_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">LABELS_DIR</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.txt&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-                    <span class="p">)</span>
+                    <span class="n">labels_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">LABELS_DIR</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.txt&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">labels_file</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">labels_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
                             <span class="n">label_line</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">16</span>
                             <span class="n">label_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
-                            <span class="n">label_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-                                <span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;truncated&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_TRUNCATED</span>
-                            <span class="p">)</span>
-                            <span class="n">label_line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-                                <span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_OCCLUDED</span>
-                            <span class="p">)</span>
+                            <span class="n">label_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;truncated&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_TRUNCATED</span><span class="p">)</span>
+                            <span class="n">label_line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_OCCLUDED</span><span class="p">)</span>
                             <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
                             <span class="n">label_line</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">w</span>
 
-                            <span class="n">label_line</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-                                <span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_SCORE</span>
-                            <span class="p">)</span>
+                            <span class="n">label_line</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">DEFAULT_SCORE</span><span class="p">)</span>
 
                             <span class="n">label_line</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">label_line</span><span class="p">)</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">label_line</span><span class="p">)</span>
@@ -566,18 +537,12 @@ document.write(`
             <span class="c1"># use the default KITTI colormap</span>
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">KittiLabelMap</span>
 
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
-            <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
             <span class="c1"># generate colormap for input labels</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
-            <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="n">label_map_source</span> <span class="o">==</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span> <span class="ow">and</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">():</span>
             <span class="c1"># use source colormap</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
             <span class="n">colors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
@@ -598,8 +563,7 @@ document.write(`
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                <span class="s2">&quot;Wrong labelmap specified, &quot;</span>
-                <span class="s2">&quot;expected one of </span><span class="si">%s</span><span class="s2"> or a file path&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">)</span>
+                <span class="s2">&quot;Wrong labelmap specified, expected one of </span><span class="si">%s</span><span class="s2"> or a file path&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">make_kitti_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">)</span>
@@ -612,13 +576,9 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="n">void_labels</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">src_label</span> <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">src_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">src_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst_labels</span>
-        <span class="p">]</span>
+        <span class="n">void_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_label</span> <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">src_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">src_label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dst_labels</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">void_labels</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The following labels are remapped to background: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">void_labels</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The following labels are remapped to background: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">void_labels</span><span class="p">))</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Saving segmentations with the following label mapping: </span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span>
             <span class="o">%</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>

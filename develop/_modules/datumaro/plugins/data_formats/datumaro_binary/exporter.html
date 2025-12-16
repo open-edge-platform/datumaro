@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro_binary.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro_binary.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -349,9 +349,8 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedWriter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplyResult</span><span class="p">,</span> <span class="n">Pool</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span><span class="p">,</span> <span class="n">PathSeparatorInSubsetNameError</span>
@@ -364,6 +363,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntListMapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mapper.dataset_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemMapper</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedWriter</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SubsetWriter</span><span class="p">(</span><span class="n">__SubsetWriter</span><span class="p">):</span>
@@ -545,9 +547,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span> <span class="o">=</span> <span class="n">max_blob_size</span>
@@ -564,9 +564,7 @@ document.write(`
 
 <div class="viewcode-block" id="DatumaroBinaryExporter.create_writer">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.exporter.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryExporter.create_writer">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_writer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pcd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">video_dir</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SubsetWriter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pcd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">video_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SubsetWriter</span><span class="p">:</span>
         <span class="n">export_context</span> <span class="o">=</span> <span class="n">ExportContextComponent</span><span class="p">(</span>
             <span class="n">save_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
             <span class="n">save_media</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">,</span>

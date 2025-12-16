@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.icdar.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.icdar.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -390,9 +390,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_recognition_items</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">elif</span> <span class="n">task</span> <span class="ow">in</span> <span class="p">{</span><span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_localization</span><span class="p">,</span> <span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_segmentation</span><span class="p">}:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span>
-                    <span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t read dataset directory with annotation files&quot;</span><span class="p">,</span> <span class="n">path</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t read dataset directory with annotation files&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
                 <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -417,7 +415,7 @@ document.write(`
                     <span class="n">captions</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                         <span class="k">if</span> <span class="n">caption</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">or</span> <span class="n">caption</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">:</span>
-                            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number &quot;</span> <span class="s2">&quot;of quotes&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">captions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">caption</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -427,9 +425,7 @@ document.write(`
                 <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">image_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">),</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">item_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-                    <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                        <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">))</span>
 
                 <span class="n">annotations</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
                 <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span><span class="p">:</span>
@@ -471,38 +467,36 @@ document.write(`
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="n">objects</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                                <span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number &quot;</span> <span class="s2">&quot;of quotes in filename&quot;</span> <span class="o">%</span> <span class="n">line</span>
-                            <span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes in filename&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                     <span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="mi">8</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
                         <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[:</span><span class="mi">8</span><span class="p">]]</span>
 
                         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
                         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
 
                         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">))</span>
-                    <span class="k">elif</span> <span class="mi">4</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
                         <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                         <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                         <span class="n">w</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="n">x</span>
                         <span class="n">h</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">-</span> <span class="n">y</span>
 
                         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
                         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
@@ -566,8 +560,7 @@ document.write(`
                         <span class="n">objects</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                            <span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2"> contains the wrong number &quot;</span>
-                            <span class="s1">&#39;of arguments, e.g. </span><span class="se">\&#39;</span><span class="s1">241 73 144 1 4 0 3 1 4 &quot;h&quot;&#39;</span> <span class="o">%</span> <span class="n">line</span>
+                            <span class="s1">&#39;Line </span><span class="si">%s</span><span class="s1"> contains the wrong number of arguments, e.g. </span><span class="se">\&#39;</span><span class="s1">241 73 144 1 4 0 3 1 4 &quot;h&quot;&#39;</span> <span class="o">%</span> <span class="n">line</span>
                         <span class="p">)</span>
 
                     <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">objects</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>

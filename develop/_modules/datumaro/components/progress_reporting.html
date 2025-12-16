@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.progress_reporting &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.progress_reporting &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -401,15 +401,13 @@ document.write(`
 <div class="viewcode-block" id="ProgressReporter.finish">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.progress_reporting.html#datumaro.components.dataset.ProgressReporter.finish">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finishes the progress bar&quot;&quot;&quot;</span>
-        <span class="k">pass</span>  <span class="c1"># pylint: disable=unnecessary-pass</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finishes the progress bar&quot;&quot;&quot;</span></div>
 
+        <span class="c1"># pylint: disable=unnecessary-pass</span>
 
 <div class="viewcode-block" id="ProgressReporter.iter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.progress_reporting.html#datumaro.components.dataset.ProgressReporter.iter">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Traverses the iterable and reports progress simultaneously.</span>
 
@@ -435,11 +433,7 @@ document.write(`
 
         <span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">total</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="n">display_step</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">%</span> <span class="n">display_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">total</span> <span class="ow">or</span> <span class="p">(</span><span class="n">display_step</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">%</span> <span class="n">display_step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">report_status</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
@@ -488,9 +482,7 @@ document.write(`
 
 <div class="viewcode-block" id="NullProgressReporter.iter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.progress_reporting.html#datumaro.components.dataset.NullProgressReporter.iter">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
         <span class="k">yield from</span> <span class="n">iterable</span></div>
 
 
@@ -528,10 +520,7 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.progress_reporting.html#datumaro.components.dataset.SimpleProgressReporter.report_status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">status</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_desc</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_desc</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">status</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">progress</span><span class="si">:</span><span class="s2">0</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="p">))</span><span class="si">}</span><span class="s2">d</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">progress</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
-        <span class="p">)</span>
+        <span class="n">status</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">progress</span><span class="si">:</span><span class="s2">0</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="p">))</span><span class="si">}</span><span class="s2">d</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">progress</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">%)&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div>
 
 

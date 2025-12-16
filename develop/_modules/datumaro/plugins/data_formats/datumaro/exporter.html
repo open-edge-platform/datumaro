@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro.exporter &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro.exporter &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -467,7 +467,7 @@ document.write(`
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">PointsCategories</span><span class="p">):</span>
                 <span class="n">converted_desc</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_convert_points_categories</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
             <span class="n">dict_cat</span><span class="p">[</span><span class="n">ann_type</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">converted_desc</span>
 
         <span class="k">return</span> <span class="n">dict_cat</span></div>
@@ -514,9 +514,7 @@ document.write(`
 
     <span class="nd">@staticmethod</span>
     <span class="nd">@contextmanager</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">context_save_media</span><span class="p">(</span>
-        <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">context_save_media</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implicitly change the media path and save it if save_media=True.</span>
 <span class="sd">        When done, revert it&#39;s path as before.</span>
 
@@ -668,7 +666,7 @@ document.write(`
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Cuboid2D</span><span class="p">):</span>
                 <span class="n">converted_ann</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_cuboid_2d_object</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
             <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converted_ann</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">item_desc</span>
@@ -951,15 +949,11 @@ document.write(`
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">status</span> <span class="o">==</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">removed</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="n">image_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">save_dir</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">conv</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">image_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">conv</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">image_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
 
-            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">save_dir</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">PCD_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">conv</span><span class="o">.</span><span class="n">_make_pcd_filename</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">PCD_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">conv</span><span class="o">.</span><span class="n">_make_pcd_filename</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pcd_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">pcd_path</span><span class="p">)</span>
 

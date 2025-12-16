@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.validators &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.validators &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -348,12 +348,7 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AnnotationType</span><span class="p">,</span>
-    <span class="n">GroupType</span><span class="p">,</span>
-    <span class="n">LabelCategories</span><span class="p">,</span>
-    <span class="n">TabularCategories</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">GroupType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">TabularCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AttributeDefinedButNotFound</span><span class="p">,</span>
@@ -432,8 +427,7 @@ document.write(`
             <span class="s2">&quot;--few-samples-thr&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">DEFAULT_FEW_SAMPLES_THR</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Threshold for giving a warning for minimum number of &quot;</span>
-            <span class="s2">&quot;samples per class (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Threshold for giving a warning for minimum number of samples per class (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-ir&quot;</span><span class="p">,</span>
@@ -589,9 +583,7 @@ document.write(`
                 <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">):</span>
                     <span class="n">label_name</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
 
-                    <span class="n">label_stats</span> <span class="o">=</span> <span class="n">undefined_label_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                        <span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_label_template</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">label_stats</span> <span class="o">=</span> <span class="n">undefined_label_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_label_template</span><span class="p">))</span>
                     <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;items_with_undefined_label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
 
                     <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -617,9 +609,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_attrs</span><span class="p">:</span>
                         <span class="n">undefined_attr_stats</span> <span class="o">=</span> <span class="n">undefined_attr_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">{})</span>
-                        <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">undefined_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                            <span class="n">attr</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_attr_template</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">undefined_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_attr_template</span><span class="p">))</span>
                         <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;items_with_undefined_attr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">defined_attr_stats</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
@@ -688,9 +678,7 @@ document.write(`
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">MissingLabelCategories</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">error</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">MissingLabelCategories</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -745,9 +733,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_label_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">count_by_defined_labels</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
-        <span class="n">labels_not_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">]</span>
+        <span class="n">labels_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">labels_not_found</span><span class="p">:</span>
             <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
@@ -759,9 +745,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_attribute_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">attrs_not_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">attr_name</span>
-            <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span> <span class="ow">in</span> <span class="n">attr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">attr_name</span> <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span> <span class="ow">in</span> <span class="n">attr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">attrs_not_found</span><span class="p">:</span>
@@ -775,14 +759,10 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_only_one_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">count_by_defined_labels</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
-        <span class="n">labels_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">]</span>
+        <span class="n">labels_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels_found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">OnlyOneLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">labels_found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OnlyOneLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">labels_found</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -792,9 +772,7 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">OnlyOneAttributeValue</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OnlyOneAttributeValue</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -804,15 +782,11 @@ document.write(`
 
         <span class="n">defined_label_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
         <span class="n">labels_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+            <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">labels_with_few_samples</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">FewSamplesInLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FewSamplesInLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -821,16 +795,12 @@ document.write(`
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">few_samples_thr</span>
 
         <span class="n">attr_values_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+            <span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_values_with_few_samples</span><span class="p">:</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">FewSamplesInAttribute</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FewSamplesInAttribute</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -1179,9 +1149,7 @@ document.write(`
 
             <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span> <span class="ow">in</span> <span class="n">bbox_attr_label</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_far_from_attr_mean</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span><span class="p">)</span>
-                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span>
-                    <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span>
-                <span class="p">)</span>
+                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">reports</span></div>
 
@@ -1210,20 +1178,14 @@ document.write(`
                     <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
                     <span class="n">valid_attrs</span> <span class="o">=</span> <span class="n">base_valid_attrs</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
 
-                    <span class="n">point_label_stats</span> <span class="o">=</span> <span class="n">dist_by_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                        <span class="n">label_name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="n">ann_point_info</span><span class="p">,</span> <span class="n">_has_error</span> <span class="o">=</span> <span class="n">update_stats_by_label</span><span class="p">(</span>
-                        <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">point_label_stats</span>
-                    <span class="p">)</span>
+                    <span class="n">point_label_stats</span> <span class="o">=</span> <span class="n">dist_by_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">))</span>
+                    <span class="n">ann_point_info</span><span class="p">,</span> <span class="n">_has_error</span> <span class="o">=</span> <span class="n">update_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">point_label_stats</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">valid_attrs</span><span class="p">:</span>
                         <span class="n">point_attr_label</span> <span class="o">=</span> <span class="n">dist_by_attr</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">{})</span>
                         <span class="n">point_attr_stats</span> <span class="o">=</span> <span class="n">point_attr_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="p">{})</span>
-                        <span class="n">point_val_stats</span> <span class="o">=</span> <span class="n">point_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                            <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">point_val_stats</span> <span class="o">=</span> <span class="n">point_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">))</span>
 
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_error</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_update_prop_distributions</span><span class="p">(</span><span class="n">ann_point_info</span><span class="p">,</span> <span class="n">point_val_stats</span><span class="p">)</span>
@@ -1576,9 +1538,7 @@ document.write(`
 
             <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span> <span class="ow">in</span> <span class="n">mask_attr_label</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_far_from_attr_mean</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span><span class="p">)</span>
-                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span>
-                    <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span>
-                <span class="p">)</span>
+                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">reports</span></div>
 </div>
@@ -1586,7 +1546,7 @@ document.write(`
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 
@@ -1606,14 +1566,12 @@ document.write(`
         <span class="k">return</span> <span class="n">instance</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">()</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tabular_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">()</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">cat</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_categories</span><span class="p">]</span>
 
@@ -1623,17 +1581,14 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">defined_captions</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">redundancies</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">cat</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;stopword&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;emoji&quot;</span><span class="p">:</span> <span class="p">[]}</span>
-                <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span>
+                <span class="n">cat</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;stopword&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;emoji&quot;</span><span class="p">:</span> <span class="p">[]}</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span>
             <span class="p">}</span>
 
 <div class="viewcode-block" id="TabularValidationStats.to_dict">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidationStats.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">empty_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_empty_labels_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_labels</span><span class="p">,</span> <span class="s2">&quot;items_with_empty_label&quot;</span><span class="p">)</span>
-        <span class="n">empty_captions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_empty_labels_dict</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span><span class="p">,</span> <span class="s2">&quot;items_with_empty_caption&quot;</span>
-        <span class="p">)</span>
+        <span class="n">empty_captions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_empty_labels_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span><span class="p">,</span> <span class="s2">&quot;items_with_empty_caption&quot;</span><span class="p">)</span>
         <span class="n">redundancies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_redundancies_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redundancies</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span>
@@ -1758,7 +1713,7 @@ document.write(`
         <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">filtered_items</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_contain_redundancies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">item_key</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">redundancies</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">redundancies</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -1815,7 +1770,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_by_caption</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">stats</span> <span class="ow">in</span> <span class="n">dist_by_caption</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
             <span class="n">prop_dist</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;distribution&quot;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="k">if</span> <span class="n">prop_dist</span><span class="p">:</span>
@@ -1880,9 +1835,7 @@ document.write(`
             <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
         <span class="p">]</span>
 
-        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">cap</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_template</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">num_caption_columns</span>
-        <span class="p">}</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">cap</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_template</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">num_caption_columns</span><span class="p">}</span>
         <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_dataset_item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Collect property distribution</span>
@@ -1973,9 +1926,7 @@ document.write(`
         <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span> <span class="ow">in</span> <span class="n">empty_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="ow">in</span> <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;items_with_empty_label&quot;</span><span class="p">]:</span>
                 <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_subset</span><span class="p">,</span> <span class="n">label_name</span><span class="p">)</span>
-                <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                    <span class="n">EmptyLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-                <span class="p">)</span>
+                <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">EmptyLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -1998,9 +1949,7 @@ document.write(`
 
         <span class="n">defined_caption_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;caption_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_captions&quot;</span><span class="p">]</span>
         <span class="n">captions_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+            <span class="p">(</span><span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">captions_with_few_samples</span><span class="p">:</span>
@@ -2011,7 +1960,7 @@ document.write(`
         <span class="k">return</span> <span class="n">validation_reports</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_far_from_caption_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">):</span>
-        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
         <span class="k">if</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mean</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
@@ -2032,14 +1981,12 @@ document.write(`
                 <span class="n">lower_bound</span><span class="p">,</span>
                 <span class="n">val</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">FarFromCaptionMean</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FarFromCaptionMean</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_caption_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">):</span>
-        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
         <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;outlier&quot;</span><span class="p">]</span>
         <span class="n">items_outlier</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;items_outlier&quot;</span><span class="p">]</span>
 
@@ -2054,9 +2001,7 @@ document.write(`
                 <span class="n">upper_bound</span><span class="p">,</span>
                 <span class="n">val</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">OutlierInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OutlierInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
@@ -2067,7 +2012,7 @@ document.write(`
         <span class="n">captions_with_redundancies</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">cap_column</span><span class="p">,</span> <span class="n">cap_stats</span> <span class="ow">in</span> <span class="n">redundancies_in_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">cap_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">items</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">items</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">captions_with_redundancies</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cap_column</span><span class="p">,</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]))</span>
 
         <span class="k">for</span> <span class="n">cap_column</span><span class="p">,</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">captions_with_redundancies</span><span class="p">:</span>
@@ -2091,9 +2036,7 @@ document.write(`
         <span class="n">count_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">count_by_caption_labels</span><span class="p">)</span>
         <span class="n">balance</span> <span class="o">=</span> <span class="n">count_max</span> <span class="o">/</span> <span class="n">count_min</span> <span class="k">if</span> <span class="n">count_min</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">balance</span> <span class="o">&gt;=</span> <span class="n">thr</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">ImbalancedCaptions</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">ImbalancedCaptions</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 

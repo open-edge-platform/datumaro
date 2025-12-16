@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.imagenet &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.imagenet &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -412,9 +412,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span>
-            <span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_depth</span><span class="p">,</span> <span class="n">min_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_depth</span>
-        <span class="p">):</span>
+        <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_depth</span><span class="p">,</span> <span class="n">min_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_depth</span><span class="p">):</span>
             <span class="n">label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>  <span class="c1"># image is located in the root directory</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">ImagenetPath</span><span class="o">.</span><span class="n">IMAGE_DIR_NO_LABEL</span>
@@ -423,9 +421,7 @@ document.write(`
             <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                        <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">))</span>
                     <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
@@ -437,9 +433,7 @@ document.write(`
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span>
-                        <span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">items</span>
 
@@ -481,9 +475,7 @@ document.write(`
         <span class="c1"># Images must not be under a directory whose name is blacklisted.</span>
         <span class="k">for</span> <span class="n">dname</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">dname</span> <span class="ow">in</span> <span class="n">SUBSET_NAME_WHITELIST</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Following directory names are not permitted: </span><span class="si">{</span><span class="n">SUBSET_NAME_WHITELIST</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Following directory names are not permitted: </span><span class="si">{</span><span class="n">SUBSET_NAME_WHITELIST</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">rel_dname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">)</span>
             <span class="n">level</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rel_dname</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MIN_DEPTH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MIN_DEPTH</span> <span class="ow">and</span> <span class="n">filenames</span><span class="p">:</span>
@@ -491,13 +483,12 @@ document.write(`
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MAX_DEPTH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">level</span> <span class="o">&gt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MAX_DEPTH</span> <span class="ow">and</span> <span class="n">filenames</span><span class="p">:</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Found files out of the directory level bounds.&quot;</span><span class="p">)</span>
             <span class="n">dpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">rel_dname</span>
-            <span class="k">if</span> <span class="n">dpath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">rel_dname</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">SUBSET_NAME_BLACKLIST</span><span class="p">:</span>
-                    <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dname</span><span class="si">}</span><span class="s2"> is found in </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="si">}</span><span class="s2">. &quot;</span>
-                        <span class="s2">&quot;However, Images must not be under a directory whose name is blacklisted &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;(SUBSET_NAME_BLACKLIST=</span><span class="si">{</span><span class="n">SUBSET_NAME_BLACKLIST</span><span class="si">}</span><span class="s2">).&quot;</span>
-                    <span class="p">)</span>
+            <span class="k">if</span> <span class="n">dpath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">rel_dname</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">SUBSET_NAME_BLACKLIST</span><span class="p">:</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dname</span><span class="si">}</span><span class="s2"> is found in </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="s2">&quot;However, Images must not be under a directory whose name is blacklisted &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(SUBSET_NAME_BLACKLIST=</span><span class="si">{</span><span class="n">SUBSET_NAME_BLACKLIST</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></div>
 
@@ -597,14 +588,13 @@ document.write(`
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># e.g. item.id = my_img_1</span>
                 <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># e.g. item.id = label_1:my_img_1</span>
-                <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># &quot;:&quot; is not allowed in windows</span>
+            <span class="c1"># e.g. item.id = label_1:my_img_1</span>
+            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># &quot;:&quot; is not allowed in windows</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">USE_SUBSET_DIRS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">USE_SUBSET_DIRS</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;There are more than one subset in the dataset (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span><span class="si">}</span><span class="s2">). &quot;</span>
                 <span class="s2">&quot;However, ImageNet format exports all dataset items into the same directory. &quot;</span>
@@ -623,9 +613,7 @@ document.write(`
                 <span class="n">label_name</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">][</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span>
                     <span class="n">item</span><span class="p">,</span>
-                    <span class="n">subdir</span><span class="o">=</span><span class="n">root_dir</span> <span class="o">/</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">/</span> <span class="n">label_name</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">USE_SUBSET_DIRS</span>
-                    <span class="k">else</span> <span class="n">root_dir</span> <span class="o">/</span> <span class="n">label_name</span><span class="p">,</span>
+                    <span class="n">subdir</span><span class="o">=</span><span class="n">root_dir</span> <span class="o">/</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">/</span> <span class="n">label_name</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">USE_SUBSET_DIRS</span> <span class="k">else</span> <span class="n">root_dir</span> <span class="o">/</span> <span class="n">label_name</span><span class="p">,</span>
                     <span class="n">name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
                 <span class="p">)</span>
 

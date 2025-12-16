@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.visualizer &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.components.visualizer &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -538,13 +538,11 @@ document.write(`
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignore unknown ann.type=</span><span class="si">{</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">color</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">)]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_sort_by_z_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_sort_key</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">):</span>
-            <span class="n">z_order</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;z_order&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">z_order</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;z_order&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_sort_key</span><span class="p">)</span>
 
@@ -553,9 +551,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">get_random_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get random samples from the dataset&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> should be less than the dataset size (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> should be less than the dataset size (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
 
         <span class="c1"># Disable B311: random - used for general random sampling not for security/crypto</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>  <span class="c1"># nosec B311</span></div>
@@ -593,7 +589,6 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
@@ -620,7 +615,6 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
@@ -640,7 +634,6 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
 <div class="viewcode-block" id="Visualizer.vis_gallery">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer.vis_gallery">[docs]</a>
@@ -667,16 +660,12 @@ document.write(`
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">subsets</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>  <span class="c1"># expand it to have len(ids)</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">)</span>
-        <span class="p">),</span> <span class="s2">&quot;ids, ann_ids, subset should have the same length&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">),</span> <span class="s2">&quot;ids, ann_ids, subset should have the same length&quot;</span>
 
         <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">_infer_grid_size</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="n">grid_size</span><span class="p">)</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="n">subsets</span>
-        <span class="p">),</span> <span class="s2">&quot;If subset is a list, it should have the same length as ids.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">),</span> <span class="s2">&quot;If subset is a list, it should have the same length as ids.&quot;</span>
 
         <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_id</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">subsets</span><span class="p">,</span> <span class="n">ann_ids</span><span class="p">,</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vis_one_sample</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
@@ -710,7 +699,6 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plot of the :class:`DatasetItem`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">vis_one_sample</span><span class="p">(</span>
@@ -735,7 +723,6 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plot of the :class:`DatasetItem`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
 <div class="viewcode-block" id="Visualizer.vis_one_sample">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer.vis_one_sample">[docs]</a>
@@ -768,21 +755,17 @@ document.write(`
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">item_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span>
-            <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
                 <span class="n">subset</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span>
                 <span class="k">return</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;item_id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">, and item=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is an invalid input.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item_id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">, and item=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is an invalid input.&quot;</span><span class="p">)</span>
 
         <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="n">_parse_inputs</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Cannot find id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Image</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Media type should be Image, Current media type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Image</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Media type should be Image, Current media type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
@@ -799,9 +782,7 @@ document.write(`
         <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_by_z_order</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">categories</span>
-            <span class="k">else</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">categories</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
         <span class="n">context</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -869,8 +850,7 @@ document.write(`
         <span class="n">source</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">image</span>
         <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Mask should has dtype == bool, but its dtype == </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="s2">&quot;Try to change it to bool dtype.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Mask should has dtype == bool, but its dtype == </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. Try to change it to bool dtype.&quot;</span>
             <span class="p">)</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -981,9 +961,7 @@ document.write(`
             <span class="c1"># https://stackoverflow.com/a/41271773/16880031</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
             <span class="n">drawed_bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
-            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
-                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">CAPTION_BBOX_PAD</span><span class="p">)</span> <span class="o">*</span> <span class="n">drawed_bbox</span><span class="o">.</span><span class="n">height</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">CAPTION_BBOX_PAD</span><span class="p">)</span> <span class="o">*</span> <span class="n">drawed_bbox</span><span class="o">.</span><span class="n">height</span><span class="p">])</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span>
 
@@ -1041,9 +1019,7 @@ document.write(`
 
         <span class="c1"># Draw each face</span>
         <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">:</span>
-            <span class="n">polygon</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span>
-                <span class="n">face</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox_linewidth</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span>
-            <span class="p">)</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox_linewidth</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_draw_super_resolution_annotation</span><span class="p">(</span>
@@ -1054,9 +1030,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;It cannot visualize more than one SuperResolutionAnnotation per item.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;It cannot visualize more than one SuperResolutionAnnotation per item.&quot;</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;SuperResolutionAnnotation overdraws the high-resolution image over the original image. &quot;</span>

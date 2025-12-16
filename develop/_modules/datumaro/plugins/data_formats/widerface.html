@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.widerface &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.widerface &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -413,15 +413,10 @@ document.write(`
                     <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span><span class="p">)</span>
-            <span class="n">subset_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">SUBSET_DIR</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR</span>
-            <span class="p">)</span>
+            <span class="n">subset_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">SUBSET_DIR</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subset_path</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">images_dir</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">subset_path</span><span class="p">)):</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">))</span>
-                        <span class="ow">and</span> <span class="n">images_dir</span> <span class="o">!=</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span>
-                    <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">))</span> <span class="ow">and</span> <span class="n">images_dir</span> <span class="o">!=</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span><span class="p">:</span>
                         <span class="k">if</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">images_dir</span><span class="p">:</span>
                             <span class="n">images_dir</span> <span class="o">=</span> <span class="n">images_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
                         <span class="k">if</span> <span class="n">images_dir</span> <span class="o">!=</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span><span class="p">:</span>
@@ -438,9 +433,7 @@ document.write(`
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
         <span class="n">line_ids</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">line_idx</span>
-            <span class="k">for</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">line</span>
+            <span class="n">line_idx</span> <span class="k">for</span> <span class="n">line_idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">line</span>
         <span class="p">]</span>  <span class="c1"># a heuristic for paths</span>
 
         <span class="k">for</span> <span class="n">line_idx</span> <span class="ow">in</span> <span class="n">line_ids</span><span class="p">:</span>
@@ -484,7 +477,7 @@ document.write(`
             <span class="n">bbox_lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">line_idx</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">line_idx</span> <span class="o">+</span> <span class="n">bbox_count</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bbox_lines</span><span class="p">:</span>
                 <span class="n">bbox_list</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="k">if</span> <span class="mi">4</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
                         <span class="n">label_name</span> <span class="o">=</span> <span class="n">bbox_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -494,7 +487,7 @@ document.write(`
                         <span class="n">label</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
                     <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="k">if</span> <span class="mi">10</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox_list</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="n">i</span> <span class="o">=</span> <span class="mi">4</span>
                         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">BBOX_ATTRIBUTES</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">bbox_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
@@ -536,9 +529,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.widerface.html#datumaro.plugins.data_formats.widerface.WiderFaceImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
-            <span class="n">path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">,</span> <span class="s2">&quot;wider_face&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">,</span> <span class="s2">&quot;wider_face&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WiderFaceImporter.get_file_extensions">
@@ -582,17 +573,13 @@ document.write(`
                         <span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">--</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span>
-                        <span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span>
-                    <span class="p">)</span>
+                    <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR_NO_LABEL</span><span class="p">)</span>
                 <span class="n">wider_annotation</span> <span class="o">+=</span> <span class="n">image_path</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span>
-                        <span class="n">item</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">image_path</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">,</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">image_path</span><span class="p">))</span>
 
                 <span class="n">bboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">wider_annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">bboxes</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
                     <span class="n">wider_bb</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">())</span>
@@ -606,12 +593,9 @@ document.write(`
                                 <span class="n">attr_counter</span> <span class="o">+=</span> <span class="mi">1</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">wider_attr</span> <span class="o">+=</span> <span class="s2">&quot;- &quot;</span>
-                        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">attr_counter</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">attr_counter</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">wider_annotation</span> <span class="o">+=</span> <span class="n">wider_attr</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">label_categories</span><span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span>
-                        <span class="ow">and</span> <span class="n">bbox</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">WiderFacePath</span><span class="o">.</span><span class="n">DEFAULT_LABEL</span> <span class="ow">and</span> <span class="n">bbox</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">wider_annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
                     <span class="n">wider_annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.market1501 &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.market1501 &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -465,9 +465,7 @@ document.write(`
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">dirname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span><span class="p">)</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="n">dirname</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span><span class="p">)):</span>
                 <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">Market1501Base</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span></div>
 
 
@@ -512,14 +510,8 @@ document.write(`
                     <span class="n">cid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;camera_id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">tid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;track_id&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                     <span class="n">bbid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bbox_id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-                    <span class="n">fid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-                        <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                            <span class="s2">&quot;frame_id&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">used_frames</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">pid</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">tid</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span>
-                        <span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="n">image_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">image_name</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">_c</span><span class="si">{</span><span class="n">cid</span><span class="si">}</span><span class="s2">s</span><span class="si">{</span><span class="n">tid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">fid</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">bbid</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
+                    <span class="n">fid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame_id&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">used_frames</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">pid</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">tid</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                    <span class="n">image_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">image_name</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">_c</span><span class="si">{</span><span class="n">cid</span><span class="si">}</span><span class="s2">s</span><span class="si">{</span><span class="n">tid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">fid</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">bbid</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">dirname</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
@@ -531,9 +523,7 @@ document.write(`
                     <span class="n">used_frames</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
                 <span class="n">annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">image_path</span>
 
-            <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span> <span class="o">+</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
-            <span class="p">)</span>
+            <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span> <span class="o">+</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span></div>
 

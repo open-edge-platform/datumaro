@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.yolo.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.yolo.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -354,19 +354,10 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">LabelCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DatasetImportError</span><span class="p">,</span>
-    <span class="n">InvalidAnnotationError</span><span class="p">,</span>
-    <span class="n">UndeclaredLabelError</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">UndeclaredLabelError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageFromFile</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span>
-    <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span>
-    <span class="n">ImageMeta</span><span class="p">,</span>
-    <span class="n">load_image_meta_file</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span> <span class="n">ImageMeta</span><span class="p">,</span> <span class="n">load_image_meta_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_meta_file</span><span class="p">,</span> <span class="n">parse_meta_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_subset_name_from_parent</span><span class="p">,</span> <span class="n">find_files</span><span class="p">,</span> <span class="n">split_path</span>
 
@@ -374,7 +365,7 @@ document.write(`
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YoloStrictBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloLooseBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloUltralyticsBase&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YoloLooseBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloStrictBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloUltralyticsBase&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="localize_path">
@@ -438,10 +429,7 @@ document.write(`
                 <span class="n">label_categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">],</span>
             <span class="p">)</span>
 
-            <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset_name</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">item</span>
+            <span class="k">return</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset_name</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">UndeclaredLabelError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_name</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -508,9 +496,7 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">desired_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <div class="viewcode-block" id="YoloStrictBase">
@@ -542,9 +528,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Failed to parse names file path from config&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">names_path</span><span class="p">))</span>
-            <span class="p">)</span>
+            <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">names_path</span><span class="p">)))</span>
         <span class="p">}</span>
 
         <span class="c1"># The original format is like this:</span>
@@ -569,9 +553,7 @@ document.write(`
                 <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find &#39;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">&#39; subset list file&quot;</span><span class="p">)</span>
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">list_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">items</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_from_path</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="p">)</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">name_from_path</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="n">subset</span> <span class="o">=</span> <span class="n">_Subset</span><span class="p">(</span>
                 <span class="n">subset_name</span><span class="o">=</span><span class="n">subset_name</span><span class="p">,</span>
@@ -585,9 +567,7 @@ document.write(`
 <div class="viewcode-block" id="YoloStrictBase.parse_image_info">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.plugins.data_formats.yolo.base.YoloStrictBase.parse_image_info">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">parse_image_info</span><span class="p">(</span>
-        <span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ImageMeta</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageMeta</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_image_info</span><span class="p">(</span><span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ImageMeta</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageMeta</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">image_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">image_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">image_info</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">)</span>
@@ -613,7 +593,7 @@ document.write(`
         <span class="n">path</span> <span class="o">=</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="n">parts</span> <span class="o">=</span> <span class="n">split_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># pylint: disable=no-value-for-parameter</span>
 
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
@@ -742,9 +722,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_annotations</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">anno_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">ImageFromFile</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">:</span> <span class="n">LabelCategories</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">_Subset</span><span class="o">.</span><span class="n">_parse_annotations</span><span class="p">(</span>
-            <span class="n">anno_path</span><span class="o">=</span><span class="n">anno_path</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">label_categories</span><span class="o">=</span><span class="n">label_categories</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_Subset</span><span class="o">.</span><span class="n">_parse_annotations</span><span class="p">(</span><span class="n">anno_path</span><span class="o">=</span><span class="n">anno_path</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">label_categories</span><span class="o">=</span><span class="n">label_categories</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">desired_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_Subset</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">desired_type</span><span class="o">=</span><span class="n">desired_type</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">)</span>

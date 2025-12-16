@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.datumaro_binary.mapper.annotation &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.datumaro_binary.mapper.annotation &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -494,9 +494,7 @@ document.write(`
         <span class="n">offset</span> <span class="o">+=</span> <span class="n">len_counts</span>
 
         <span class="k">return</span> <span class="p">(</span>
-            <span class="n">RleMask</span><span class="p">(</span>
-                <span class="n">rle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">],</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="n">counts</span><span class="p">},</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">z_order</span><span class="o">=</span><span class="n">z_order</span><span class="p">,</span> <span class="o">**</span><span class="n">ann_dict</span>
-            <span class="p">),</span>
+            <span class="n">RleMask</span><span class="p">(</span><span class="n">rle</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">],</span> <span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="n">counts</span><span class="p">},</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">z_order</span><span class="o">=</span><span class="n">z_order</span><span class="p">,</span> <span class="o">**</span><span class="n">ann_dict</span><span class="p">),</span>
             <span class="n">offset</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
@@ -730,12 +728,8 @@ document.write(`
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;Bqqi&quot;</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">object_id</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
-        <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="n">_ShapeMapper</span><span class="o">.</span><span class="n">forward_optional_label</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">ann</span><span class="o">.</span><span class="n">z_order</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="n">FloatListMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="n">coord</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">points</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">point</span><span class="p">])</span>
-        <span class="p">)</span>
+        <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="n">_ShapeMapper</span><span class="o">.</span><span class="n">forward_optional_label</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">ann</span><span class="o">.</span><span class="n">z_order</span><span class="p">))</span>
+        <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">FloatListMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="n">coord</span> <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">points</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">point</span><span class="p">]))</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">_bytearray</span><span class="p">)</span></div>
 
 
@@ -799,7 +793,7 @@ document.write(`
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Cuboid2D</span><span class="p">):</span>
                 <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Cuboid2DMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">_bytearray</span><span class="p">)</span></div>
 

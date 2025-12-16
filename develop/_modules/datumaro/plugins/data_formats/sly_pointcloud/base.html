@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.sly_pointcloud.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.sly_pointcloud.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -403,7 +403,7 @@ document.write(`
             <span class="n">applicable_to</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;applicable_type&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">applicable_to</span> <span class="o">==</span> <span class="s2">&quot;imagesOnly&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>  <span class="c1"># an image attribute</span>
-            <span class="k">elif</span> <span class="n">applicable_to</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;objectsOnly&quot;</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="n">applicable_to</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;objectsOnly&quot;</span><span class="p">}:</span>
                 <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">applicable_to</span><span class="p">)</span>
 
             <span class="n">applicable_classes</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;classes&quot;</span><span class="p">,</span> <span class="p">[])</span>
@@ -459,9 +459,7 @@ document.write(`
 
             <span class="k">for</span> <span class="n">figure</span> <span class="ow">in</span> <span class="n">ann_data</span><span class="p">[</span><span class="s2">&quot;figures&quot;</span><span class="p">]:</span>
                 <span class="n">geometry</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">dst_field</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="nb">float</span><span class="p">(</span><span class="n">figure</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">][</span><span class="n">src_field</span><span class="p">][</span><span class="n">axis</span><span class="p">])</span> <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]</span>
-                    <span class="p">]</span>
+                    <span class="n">dst_field</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">figure</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">][</span><span class="n">src_field</span><span class="p">][</span><span class="n">axis</span><span class="p">])</span> <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">]]</span>
                     <span class="k">for</span> <span class="n">src_field</span><span class="p">,</span> <span class="n">dst_field</span> <span class="ow">in</span> <span class="p">{</span>
                         <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="s2">&quot;position&quot;</span><span class="p">,</span>
                         <span class="s2">&quot;rotation&quot;</span><span class="p">:</span> <span class="s2">&quot;rotation&quot;</span><span class="p">,</span>
@@ -501,9 +499,7 @@ document.write(`
         <span class="k">for</span> <span class="n">frame_id</span><span class="p">,</span> <span class="n">frame_desc</span> <span class="ow">in</span> <span class="n">parsed</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">pcd_name</span> <span class="o">=</span> <span class="n">frame_desc</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">pcd_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_rootdir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">POINT_CLOUD_DIR</span><span class="p">,</span> <span class="n">pcd_name</span>
-            <span class="p">)</span>
+            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rootdir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">POINT_CLOUD_DIR</span><span class="p">,</span> <span class="n">pcd_name</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">pcd_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pcd&quot;</span><span class="p">),</span> <span class="n">pcd_path</span>
 
             <span class="n">related_images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -514,9 +510,7 @@ document.write(`
             <span class="p">)</span>
             <span class="n">related_images</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">related_images_dir</span><span class="p">):</span>
-                <span class="n">related_images</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">related_images_dir</span><span class="p">)</span>
-                <span class="p">]</span>
+                <span class="n">related_images</span> <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">related_images_dir</span><span class="p">)]</span>
 
             <span class="n">parsed</span><span class="p">[</span><span class="n">frame_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>

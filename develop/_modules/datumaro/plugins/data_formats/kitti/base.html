@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kitti.base &#8212; Datumaro 1.12.0 documentation</title>
+    <title>datumaro.plugins.data_formats.kitti.base &#8212; Datumaro 2.0.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=51b770b3"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -383,13 +383,9 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">==</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">segmentation</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories_segmentation</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">==</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">detection</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">==</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">detection</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">has_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="k">return</span> <span class="p">{</span>
-                    <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
-                        <span class="n">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                    <span class="p">)</span>
-                <span class="p">}</span>
+                <span class="k">return</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
 
             <span class="k">return</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">()}</span>
 
@@ -411,8 +407,7 @@ document.write(`
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
         <span class="n">image_path_by_id</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">p</span>
-            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">image_dir</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">image_dir</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">}</span>
 
         <span class="n">segm_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">INSTANCES_DIR</span><span class="p">)</span>
@@ -443,9 +438,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">image</span><span class="p">:</span>
                     <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
 
-                <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                    <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span>
-                <span class="p">)</span>
+                <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
 
         <span class="n">det_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">KittiPath</span><span class="o">.</span><span class="n">LABELS_DIR</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">==</span> <span class="n">KittiTask</span><span class="o">.</span><span class="n">detection</span><span class="p">:</span>
@@ -491,17 +484,13 @@ document.write(`
                 <span class="k">if</span> <span class="n">image</span><span class="p">:</span>
                     <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
 
-                <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                    <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span>
-                <span class="p">)</span>
+                <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">anns</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">image_path_by_id</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">item_id</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">items</span>
 
