@@ -24,10 +24,12 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      - name: Install uv and set the python version
+        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a # v7.1.5
         with:
+          enable-cache: false
           python-version: "3.10"
+          version: "0.8.15"
 
       - name: Installing dependencies
         run: |
