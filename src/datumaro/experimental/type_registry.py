@@ -18,6 +18,7 @@ import numpy as np
 import polars as pl
 
 from datumaro.components.annotation import Points
+from datumaro.experimental.errors import ArrayStructureError
 
 logger = logging.getLogger(__name__)
 
@@ -154,15 +155,31 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
                 return None
 
             if numpy_value.dtype == object:
-                nested_func = np.vectorize(lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char)
-                numpy_value = nested_func(numpy_value)
+                try:
+                    nested_func = np.vectorize(lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char)
+                    numpy_value = nested_func(numpy_value)
+                except ArrayStructureError as e:
+                    # Re-raise with additional context about the outer array
+                    raise ArrayStructureError(
+                        f"{e}\n\nOuter array has shape {numpy_value.shape} and dtype {numpy_value.dtype}",
+                        include_guidance=False,
+                    ) from e.__cause__
             else:
                 target_numpy_dtype = polars_to_numpy_dtype(dtype)
                 numpy_value = numpy_value.astype(target_numpy_dtype)
 
         return numpy_value
 
-    raise TypeError(f"No converter registered for type {value_type}")
+    if value_type in (int, float, str, bool):
+        raise ArrayStructureError(
+            f"Encountered a scalar value of type '{value_type.__name__}' during array conversion."
+        )
+
+    supported_types = [t.__name__ for t in _to_numpy_converters if hasattr(t, "__name__")]
+    raise TypeError(
+        f"No converter registered for type {value_type.__name__}.\n"
+        f"Supported types for conversion: {', '.join(supported_types)}"
+    )
 
 
 def _apply_numpy_dtype_from_type_annotation(array: np.ndarray, target_type: type) -> np.ndarray:

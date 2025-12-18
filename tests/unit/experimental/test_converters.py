@@ -460,16 +460,13 @@ def test_multiple_converter_chaining():
     assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
     assert type(path.converters["image"][1]) is RedBlueColorConverter
 
-    # FIXME(gdlg): the BBoxCoordinateConverter needs an image
-    # and it does not matter if the image is 8 bits or 32 bits,
-    # so converting the image then the bbox is correct, hence the dependency.
-    # The problem is that this is not desirable as it creates a spurious dependency
-    # on the 32 bits conversion even though it is not needed.
-    # To fix this, we need to adjust the weights to favour applying image conversions
-    # after the bbox ones.
-    assert len(path.converters["bbox"]) == 2
-    assert type(path.converters["bbox"][0]) is UInt8ToFloat32Converter
-    assert type(path.converters["bbox"][1]) is BBoxCoordinateConverter
+    # The BBoxCoordinateConverter needs an image for normalization (to get dimensions),
+    # but it does not matter if the image is 8 bits or 32 bits.
+    # The A* search optimizes the conversion order so that the bbox converter is applied
+    # before the image converters, avoiding a spurious dependency on the Float32 conversion.
+    # This is the desired behavior - the bbox chain only contains the BBoxCoordinateConverter.
+    assert len(path.converters["bbox"]) == 1
+    assert type(path.converters["bbox"][0]) is BBoxCoordinateConverter
 
 
 def test_astar_direct_conversion():
