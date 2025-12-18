@@ -604,7 +604,7 @@ class KeypointsCoordinateConverter(Converter):
 
         def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            xy = x * y if input_normalized else x.cast(pl.Float64) / y
+            xy = x * y if input_normalized else x / y
             return xy.cast(self.output_keypoints.field.dtype)
 
         # Apply coordinate transformation: only x (index 0) and y (index 1) are transformed
