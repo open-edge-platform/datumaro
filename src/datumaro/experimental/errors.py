@@ -21,10 +21,11 @@ class ArrayStructureError(TypeError):
         "  - Each inner array has a numeric dtype (e.g., float32), NOT dtype=object\n\n"
         "Example:\n"
         "  # Correct: inner arrays have float32 dtype\n"
-        "  inner = np.array([[x1, y1], [x2, y2]], dtype=np.float32)\n"
-        "  outer = np.array([inner], dtype=object)\n\n"
+        "  inner = [np.array([[1, 2], [3, 4], [5, 6]], dtype=np.float32)]\n"
+        "  outer = np.empty(len(inner), dtype=object)\n"
+        "  outer[:] = inner\n\n"
         "  # Incorrect: causes deeply nested object arrays\n"
-        "  outer = np.array([[[x1, y1], [x2, y2]]], dtype=object)"
+        "  outer = np.array([[[1, 2], [3, 4]]], dtype=object)"
     )
 
     def __init__(self, message: str, include_guidance: bool = True):

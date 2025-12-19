@@ -718,7 +718,7 @@ class EllipseCoordinateConverter(Converter):
 
         def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            xy = x * y if input_normalized else x.cast(pl.Float64) / y
+            xy = x * y if input_normalized else x / y
             return xy.cast(self.output_ellipse.field.dtype)
 
         # Apply coordinate transformation
@@ -798,7 +798,7 @@ class PolygonCoordinateConverter(Converter):
 
         def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            xy = x * y if input_normalized else x.cast(pl.Float64) / y
+            xy = x * y if input_normalized else x / y
             return xy.cast(self.output_polygon.field.dtype)
 
         # Polygon structure: List[List[Array[dtype, 2]]]
@@ -894,7 +894,7 @@ class RotatedBBoxCoordinateConverter(Converter):
 
         def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            xy = x * y if input_normalized else x.cast(pl.Float64) / y
+            xy = x * y if input_normalized else x / y
             return xy.cast(self.output_rotated_bbox.field.dtype)
 
         # For cxcywhr format: [cx, cy, w, h, r]
