@@ -46,15 +46,43 @@ class EllipseTest:
 
 class RotatedBboxTest:
     @pytest.fixture
-    def fxt_rot_bbox(self):
+    def fxt_rot_bbox(self) -> RotatedBbox:
         coords = np.random.randint(0, 180, size=(5,), dtype=np.uint8)
         return RotatedBbox(coords[0], coords[1], coords[2], coords[3], coords[4])
 
-    def test_create_polygon(self, fxt_rot_bbox):
+    def test_create_polygon(self, fxt_rot_bbox: RotatedBbox) -> None:
         polygon = fxt_rot_bbox.as_polygon()
 
         expected = RotatedBbox.from_rectangle(polygon)
         assert fxt_rot_bbox == expected
+
+    class RotatedBboxWrapTest:
+        @pytest.fixture
+        def fxt_rot_bbox(self) -> RotatedBbox:
+            return RotatedBbox(
+                cx=50.0, cy=60.0, w=40.0, h=20.0, r=30.0, label=1, id=5, group=3, attributes={"score": 0.95}
+            )
+
+        def test_wrap_creates_new_instance(self, fxt_rot_bbox: RotatedBbox) -> None:
+            wrapped = RotatedBbox.wrap(fxt_rot_bbox)
+            assert isinstance(wrapped, RotatedBbox)
+            assert wrapped is not fxt_rot_bbox
+
+        def test_wrap_updates_attributes(self, fxt_rot_bbox: RotatedBbox) -> None:
+            wrapped = RotatedBbox.wrap(fxt_rot_bbox, cx=100.0, label=10, group=20)
+            assert wrapped.cx == 100.0
+            assert (wrapped.cy, wrapped.w, wrapped.h, wrapped.r) == (
+                fxt_rot_bbox.cy,
+                fxt_rot_bbox.w,
+                fxt_rot_bbox.h,
+                fxt_rot_bbox.r,
+            )
+            assert (wrapped.label, wrapped.group) == (10, 20)
+
+        def test_wrap_preserves_other_attributes(self, fxt_rot_bbox: RotatedBbox) -> None:
+            wrapped = RotatedBbox.wrap(fxt_rot_bbox, cx=100.0)
+            assert (wrapped.label, wrapped.id, wrapped.group) == (1, 5, 3)
+            assert wrapped.attributes == {"score": 0.95}
 
 
 @pytest.fixture
