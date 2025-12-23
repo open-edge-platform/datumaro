@@ -164,6 +164,14 @@ class LabelField(Field):
     multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
     is_list: bool = False
 
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not self.dtype.is_unsigned_integer():
+            raise ValueError(
+                "LabelField's dtype has to be an unsigned integer dtype (e.g. UInt8). These integers refer to label "
+                "info provided in label categories that is defined in a dataset's schema."
+            )
+
     @property
     def _pl_type(self) -> pl.DataType:
         pl_type = self.dtype
@@ -191,7 +199,7 @@ class LabelField(Field):
 
 
 def label_field(
-    dtype: Any = pl.Int32(),
+    dtype: Any = pl.UInt8(),
     semantic: str = "default",
     multi_label: bool = False,
     is_list: bool = False,
