@@ -111,6 +111,18 @@ class BaseLabelCategories(Categories):
     This class ensures fields related to labels will have a label categories attached to the attributes spec.
     """
 
+    def __getitem__(self, idx: int) -> Any:
+        """Get label category by index"""
+        raise NotImplementedError
+
+    def __len__(self) -> int:
+        """Get the number of label categories"""
+        raise NotImplementedError
+
+    def __iter__(self):
+        """Iterate over the label categories"""
+        raise NotImplementedError
+
 
 @dataclass(frozen=True)
 class LabelCategories(BaseLabelCategories):
@@ -572,9 +584,6 @@ class MaskCategories(Categories):
     labels: list[str] = field(default_factory=list)
     colormap: Colormap = field(default_factory=Colormap)
 
-    def __hash__(self):
-        return hash((tuple(self.labels), frozenset(self.colormap.items())))
-
     def to_dict(self) -> dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
@@ -629,3 +638,15 @@ class MaskCategories(Categories):
 
         colormap = Colormap(data=colormap_data)
         return cls(colormap=colormap)
+
+    def __getitem__(self, idx: int) -> RgbColor:
+        return self.colormap[idx]
+
+    def __iter__(self):
+        return iter(self.colormap.data.values())
+
+    def __len__(self) -> int:
+        return len(self.colormap)
+
+    def __hash__(self):
+        return hash((tuple(self.labels), frozenset(self.colormap.data.items())))
