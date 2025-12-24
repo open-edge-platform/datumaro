@@ -287,9 +287,13 @@ class Dataset(Generic[DType]):
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
-            series_data.update(attr_info.field.to_polars(key, getattr(sample, key)))
+            value = getattr(sample, key)
+            series_data.update(attr_info.field.to_polars(key, value))
 
         new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
+
+        # Validate fields with categories have meaning
+        self._validate_fields_with_categories(df=new_row)
 
         # Use vstack instead of extend for object columns since extend doesn't support them
         if any(dtype == pl.Object for dtype in self.df.schema.values()):
@@ -320,6 +324,27 @@ class Dataset(Generic[DType]):
         dataset._dtype = self._dtype
 
         return dataset
+
+    def validate_fields_with_categories(self) -> None:
+        """
+        Validates that each value in field columns with categories has meaning.
+        """
+        self._validate_fields_with_categories(df=self.df)
+
+    def _validate_fields_with_categories(self, df: pl.DataFrame) -> None:
+        fields_with_categories = self._schema.get_fields_with_categories()
+
+        for field_name, categories in fields_with_categories.items():
+            if df[field_name].dtype.is_object():
+                continue
+            field_max = df.select(pl.col(field_name).explode().explode().max()).item()
+            # Optional fields can be None, so we can skip the check
+            if field_max is not None and len(categories) <= field_max:
+                raise ValueError(
+                    f"For field '{field_name}' there are '{len(categories)}' categories defined. However, the "
+                    f"dataset or sample has values that exceed this number: the maximum value is {field_max}. "
+                    f"Therefore some samples of this dataset do not have meaning for field '{field_name}'."
+                )
 
     def __getitem__(self, row_idx: int) -> DType:
         """

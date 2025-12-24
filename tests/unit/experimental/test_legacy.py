@@ -11,6 +11,7 @@ import polars as pl
 from PIL import Image as PILImage
 from typing_extensions import Annotated
 
+import datumaro.experimental.categories as exp_categories
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
@@ -945,7 +946,10 @@ class RotatedDetectionSample(Sample):
 def test_convert_to_legacy_simple():
     """Test basic convert_to_legacy functionality."""
     # Create v2 dataset with sample data
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add sample data
     sample1 = DetectionSample(
@@ -1713,7 +1717,10 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
     label_data = np.array([0, 1], dtype=np.int32)
 
     # Create v2 dataset and add sample with rotated bbox data
-    experimental_dataset = Dataset(RotatedDetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=RotatedDetectionSample,
+        categories={"rotated_bbox_labels": exp_categories.LabelCategories(labels=("label_1", "label_2", "label_3"))},
+    )
 
     sample = RotatedDetectionSample(
         image_path="/path/to/test.jpg",
