@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import polars as pl
 
-from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
+from datumaro.experimental.categories import Colormap, LabelCategories, MaskCategories, RgbColor
 from datumaro.experimental.converters.base import Converter
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.annotations import LabelField, PolygonField
@@ -60,7 +60,7 @@ class PolygonToMaskConverter(Converter):
 
             # Create mask categories with the generated colormap
             labels = ("background", *self.input_labels.categories.labels)
-            mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
+            mask_categories = MaskCategories(colormap=Colormap(data=colormap_struct_dict), labels=labels)
 
         # Configure output for mask format
         self.output_mask = AttributeSpec(

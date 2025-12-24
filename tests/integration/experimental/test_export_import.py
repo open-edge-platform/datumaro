@@ -749,7 +749,7 @@ def test_export_large_dataset(tmp_path):
     """Test exporting larger dataset (performance check)."""
 
     class SimpleSample(Sample):
-        value: int = label_field()
+        value: int = label_field(dtype=pl.UInt16())
 
     dataset = Dataset(SimpleSample)
     for i in range(1000):
