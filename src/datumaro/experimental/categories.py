@@ -102,15 +102,6 @@ class Categories:
         # This allows forward compatibility with new category types
         raise ValueError(f"Unknown categories type: {cat_type}")
 
-
-@dataclass(frozen=True)
-class BaseLabelCategories(Categories):
-    """
-    Base label categories class.
-
-    This class ensures fields related to labels will have a label categories attached to the attributes spec.
-    """
-
     def __getitem__(self, idx: int) -> Any:
         """Get label category by index"""
         raise NotImplementedError
@@ -122,6 +113,15 @@ class BaseLabelCategories(Categories):
     def __iter__(self):
         """Iterate over the label categories"""
         raise NotImplementedError
+
+
+@dataclass(frozen=True)
+class BaseLabelCategories(Categories):
+    """
+    Base label categories class.
+
+    This class ensures fields related to labels will have a label categories attached to the attributes spec.
+    """
 
 
 @dataclass(frozen=True)

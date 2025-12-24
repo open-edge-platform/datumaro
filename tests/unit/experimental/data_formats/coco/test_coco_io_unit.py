@@ -81,7 +81,7 @@ def test_load_coco_dataset_errors(tmp_path: Path):
 
 
 def test_save_coco_dataset_writes_expected_structure(tmp_path: Path):
-    dataset = Dataset(CocoSample, categories={"labels": CocoCategories()})
+    dataset = Dataset(CocoSample, categories={"labels": CocoCategories(), "caption_group_ids": CocoCategories()})
     img_path = tmp_path / "src.jpg"
     img_path.write_bytes(b"img")
     dataset.append(_make_sample(img_path))

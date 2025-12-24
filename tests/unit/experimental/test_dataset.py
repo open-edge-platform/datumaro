@@ -714,7 +714,7 @@ def test_dataset_with_optional_field():
     class TestSample(Sample):
         mask: np.ndarray | None = mask_field(dtype=pl.UInt8())
 
-    dataset = Dataset(TestSample)
+    dataset = Dataset(TestSample, categories={"mask": MaskCategories.generate(size=256)})
 
     # Add samples with both None and ndarray values
     samples = [
