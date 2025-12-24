@@ -8,6 +8,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,
@@ -41,7 +42,44 @@ from datumaro.experimental.fields import (
     subset_field,
     tensor_field,
 )
+from datumaro.experimental.fields.annotations import LabelField, label_field
 from datumaro.experimental.schema import AttributeInfo, Schema
+
+
+def test_get_fields_with_valid_categories():
+    lbl_field = label_field()
+    lbl_categories = LabelCategories(labels=("a", "b"))
+    lbl_attribute_info = AttributeInfo(type=LabelField, field=lbl_field, categories=lbl_categories)
+
+    img_field = image_info_field()
+    img_attribute_info = AttributeInfo(type=ImageInfoField, field=img_field)
+
+    schema = Schema(attributes={"label_attribute": lbl_attribute_info, "image_attribute": img_attribute_info})
+
+    result = schema.get_fields_with_categories()
+
+    assert result == {"label_attribute": lbl_categories}
+
+
+def test_get_fields_with_wrong_categories():
+    lbl_field = label_field()
+    lbl_categories = MaskCategories()
+    lbl_attribute_info = AttributeInfo(type=LabelField, field=lbl_field, categories=lbl_categories)
+
+    schema = Schema(attributes={"label_attribute": lbl_attribute_info})
+
+    with pytest.raises(ValueError):
+        schema.get_fields_with_categories()
+
+
+def test_get_fields_with_none_categories():
+    lbl_field = label_field()
+    lbl_attribute_info = AttributeInfo(type=LabelField, field=lbl_field)
+
+    schema = Schema(attributes={"label_attribute": lbl_attribute_info})
+
+    with pytest.raises(ValueError):
+        schema.get_fields_with_categories()
 
 
 def test_tensor_field_creation():
