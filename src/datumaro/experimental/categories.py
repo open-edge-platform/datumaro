@@ -103,15 +103,15 @@ class Categories:
         raise ValueError(f"Unknown categories type: {cat_type}")
 
     def __getitem__(self, idx: int) -> Any:
-        """Get label category by index"""
+        """Get category by index"""
         raise NotImplementedError
 
     def __len__(self) -> int:
-        """Get the number of label categories"""
+        """Get the number of categories"""
         raise NotImplementedError
 
     def __iter__(self):
-        """Iterate over the label categories"""
+        """Iterate over the categories"""
         raise NotImplementedError
 
 

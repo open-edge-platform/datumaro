@@ -131,7 +131,7 @@ class Schema:
                     if categories is None or not isinstance(attribute_info.categories, expected_categories_type):
                         raise ValueError(
                             f"Expected schema attribute '{attribute}' to have categories defined of type "
-                            f"'{expected_categories_type}', found '{categories}' instead."
+                            f"'{expected_categories_type}', found '{categories}' instead. "
                             f"Note that schemas (including ones that are attached to datasets) can be created without "
                             f"categories for fields that require them, but for certain operations like appending data "
                             f"categories have to be defined if fields require them in order to validate the data."
