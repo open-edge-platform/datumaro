@@ -117,7 +117,11 @@ class Schema:
 
     def get_fields_with_categories(self) -> dict[str, Categories]:
         """
-        Return a dict containing only attributes of fields that require categories for meaning
+        Get the attributes that semantically require a category.
+        
+        Returns:
+            dict mapping attribute names to the respective required categories.
+            Attributes that do not strictly require a categories are not returned.
         """
         if self._fields_with_categories is None:
             self._fields_with_categories = {}
