@@ -1280,7 +1280,7 @@ class RotatedBbox(Shape):
         Returns:
             RotatedBbox: A new RotatedBbox instance with updated attributes.
         """
-        d = {"x": item.x, "y": item.y, "w": item.w, "h": item.h, "r": item.r}
+        d = {"cx": item.cx, "cy": item.cy, "w": item.w, "h": item.h, "r": item.r}
         d.update(kwargs)
         return attr.evolve(item, **d)
 
