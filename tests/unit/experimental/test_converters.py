@@ -16,19 +16,29 @@ from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.converters import (
     AttributeRemapperConverter,
     BBoxCoordinateConverter,
+    BBoxFormatConverter,
+    BBoxToPolygonConverter,
+    ChannelsFirstConverter,
     ConversionError,
     Converter,
     ConverterRegistry,
+    EllipseDtypeConverter,
+    EllipseToBBoxConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
     InstanceMaskCallableToInstanceMaskConverter,
+    KeypointsCoordinateConverter,
+    KeypointsDtypeConverter,
+    KeypointsToBBoxConverter,
     LabelIndexConverter,
     MaskCallableToMaskConverter,
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
     RedBlueColorConverter,
+    RotatedBBoxCoordinateConverter,
+    RotatedBBoxToBBoxConverter,
     RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
     converter,
@@ -37,6 +47,7 @@ from datumaro.experimental.converters import (
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     BBoxField,
+    EllipseField,
     Field,
     ImageBytesField,
     ImageCallableField,
@@ -45,6 +56,7 @@ from datumaro.experimental.fields import (
     ImagePathField,
     InstanceMaskCallableField,
     InstanceMaskField,
+    KeypointsField,
     LabelField,
     MaskCallableField,
     MaskField,
@@ -448,16 +460,13 @@ def test_multiple_converter_chaining():
     assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
     assert type(path.converters["image"][1]) is RedBlueColorConverter
 
-    # FIXME(gdlg): the BBoxCoordinateConverter needs an image
-    # and it does not matter if the image is 8 bits or 32 bits,
-    # so converting the image then the bbox is correct, hence the dependency.
-    # The problem is that this is not desirable as it creates a spurious dependency
-    # on the 32 bits conversion even though it is not needed.
-    # To fix this, we need to adjust the weights to favour applying image conversions
-    # after the bbox ones.
-    assert len(path.converters["bbox"]) == 2
-    assert type(path.converters["bbox"][0]) is UInt8ToFloat32Converter
-    assert type(path.converters["bbox"][1]) is BBoxCoordinateConverter
+    # The BBoxCoordinateConverter needs an image for normalization (to get dimensions),
+    # but it does not matter if the image is 8 bits or 32 bits.
+    # The A* search optimizes the conversion order so that the bbox converter is applied
+    # before the image converters, avoiding a spurious dependency on the Float32 conversion.
+    # This is the desired behavior - the bbox chain only contains the BBoxCoordinateConverter.
+    assert len(path.converters["bbox"]) == 1
+    assert type(path.converters["bbox"][0]) is BBoxCoordinateConverter
 
 
 def test_astar_direct_conversion():
@@ -2525,3 +2534,466 @@ def test_bbox_dtype_conversion_numpy_dtype():
     # Verify the values are correct
     expected_values = np.array([[5.0, 5.0, 20.0, 20.0], [25.0, 30.0, 50.0, 60.0]], dtype=np.float32)
     np.testing.assert_array_almost_equal(dataset_float[0].bboxes, expected_values)
+
+
+def test_keypoints_dtype_converter():
+    """Test KeypointsDtypeConverter converting Float32 to Float64."""
+    converter_instance = KeypointsDtypeConverter()
+
+    # Create test data with Float32 keypoints [x, y, visibility]
+    df = pl.DataFrame(
+        {"keypoints": [[[10.0, 20.0, 2.0], [30.0, 40.0, 1.0], [50.0, 60.0, 0.0]]]},
+        schema=pl.Schema({"keypoints": pl.List(pl.Array(pl.Float32, 3))}),
+    )
+
+    # Set up converter attributes
+    input_field = KeypointsField(dtype=pl.Float32(), normalize=False)
+    output_field = KeypointsField(dtype=pl.Float64(), normalize=False)
+
+    setattr(converter_instance, "input_keypoints", AttributeSpec(name="keypoints", field=input_field))
+    setattr(converter_instance, "output_keypoints", AttributeSpec(name="keypoints", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "keypoints" in result_df.columns
+    assert result_df.schema["keypoints"] == pl.List(pl.Array(pl.Float64, 3))
+
+    result_kpts = result_df["keypoints"][0]
+    np.testing.assert_array_almost_equal(result_kpts[0].to_numpy(), [10.0, 20.0, 2.0])
+    np.testing.assert_array_almost_equal(result_kpts[1].to_numpy(), [30.0, 40.0, 1.0])
+    np.testing.assert_array_almost_equal(result_kpts[2].to_numpy(), [50.0, 60.0, 0.0])
+
+
+def test_keypoints_coordinate_converter_normalize():
+    """Test KeypointsCoordinateConverter normalizing absolute coordinates."""
+
+    converter_instance = KeypointsCoordinateConverter()
+
+    # Create test data with absolute coordinates
+    df = pl.DataFrame(
+        {
+            "keypoints": [[[100.0, 150.0, 2.0], [200.0, 300.0, 1.0]]],
+            "image": [[0] * 100],  # dummy image data
+            "image_shape": [[400, 500, 3]],  # height=400, width=500
+        },
+        schema=pl.Schema(
+            {
+                "keypoints": pl.List(pl.Array(pl.Float32, 3)),
+                "image": pl.List(pl.UInt8),
+                "image_shape": pl.List(pl.Int32),
+            }
+        ),
+    )
+
+    # Set up converter attributes
+    input_keypoints_field = KeypointsField(dtype=pl.Float32(), normalize=False)
+    output_keypoints_field = KeypointsField(dtype=pl.Float32(), normalize=True)
+    image_field = ImageField(dtype=pl.UInt8())
+
+    setattr(converter_instance, "input_keypoints", AttributeSpec(name="keypoints", field=input_keypoints_field))
+    setattr(converter_instance, "output_keypoints", AttributeSpec(name="keypoints", field=output_keypoints_field))
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=image_field))
+
+    # Test filter - should return True for normalization change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    result_kpts = result_df["keypoints"][0]
+    # x is normalized by width (500), y by height (400)
+    np.testing.assert_array_almost_equal(result_kpts[0].to_numpy(), [100.0 / 500, 150.0 / 400, 2.0], decimal=5)
+    np.testing.assert_array_almost_equal(result_kpts[1].to_numpy(), [200.0 / 500, 300.0 / 400, 1.0], decimal=5)
+
+
+def test_ellipse_dtype_converter():
+    """Test EllipseDtypeConverter converting Int32 to Float32."""
+
+    converter_instance = EllipseDtypeConverter()
+
+    # Create test data with Int32 ellipses [x1, y1, x2, y2]
+    df = pl.DataFrame(
+        {"ellipse": [[[10, 20, 30, 40], [50, 60, 70, 80]]]},
+        schema=pl.Schema({"ellipse": pl.List(pl.Array(pl.Int32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = EllipseField(dtype=pl.Int32(), format="x1y1x2y2", normalize=False)
+    output_field = EllipseField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_ellipse", AttributeSpec(name="ellipse", field=input_field))
+    setattr(converter_instance, "output_ellipse", AttributeSpec(name="ellipse", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "ellipse" in result_df.columns
+    assert result_df.schema["ellipse"] == pl.List(pl.Array(pl.Float32, 4))
+
+    result_ellipses = result_df["ellipse"][0]
+    np.testing.assert_array_almost_equal(result_ellipses[0].to_numpy(), [10.0, 20.0, 30.0, 40.0])
+    np.testing.assert_array_almost_equal(result_ellipses[1].to_numpy(), [50.0, 60.0, 70.0, 80.0])
+
+
+def test_bbox_format_converter_x1y1x2y2_to_xywh():
+    """Test BBoxFormatConverter converting x1y1x2y2 to xywh."""
+
+    converter_instance = BBoxFormatConverter()
+
+    # Create test data with x1y1x2y2 format
+    df = pl.DataFrame(
+        {"bbox": [[[10.0, 20.0, 30.0, 50.0], [100.0, 150.0, 200.0, 250.0]]]},
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="xywh", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True for format change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    result_bboxes = result_df["bbox"][0]
+    # x1y1x2y2 [10, 20, 30, 50] -> xywh [10, 20, 20, 30] (w=30-10=20, h=50-20=30)
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [10.0, 20.0, 20.0, 30.0])
+    # x1y1x2y2 [100, 150, 200, 250] -> xywh [100, 150, 100, 100]
+    np.testing.assert_array_almost_equal(result_bboxes[1].to_numpy(), [100.0, 150.0, 100.0, 100.0])
+
+
+def test_bbox_format_converter_xywh_to_cxcywh():
+    """Test BBoxFormatConverter converting xywh to cxcywh."""
+
+    converter_instance = BBoxFormatConverter()
+
+    # Create test data with xywh format
+    df = pl.DataFrame(
+        {"bbox": [[[10.0, 20.0, 20.0, 30.0]]]},  # x, y, w, h
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = BBoxField(dtype=pl.Float32(), format="xywh", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="cxcywh", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True for format change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    result_bboxes = result_df["bbox"][0]
+    # xywh [10, 20, 20, 30] -> cxcywh [20, 35, 20, 30] (cx=10+20/2=20, cy=20+30/2=35)
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [20.0, 35.0, 20.0, 30.0])
+
+
+def test_bbox_format_converter_cxcywh_to_x1y1x2y2():
+    """Test BBoxFormatConverter converting cxcywh to x1y1x2y2."""
+
+    converter_instance = BBoxFormatConverter()
+
+    # Create test data with cxcywh format
+    df = pl.DataFrame(
+        {"bbox": [[[20.0, 35.0, 20.0, 30.0]]]},  # cx, cy, w, h
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = BBoxField(dtype=pl.Float32(), format="cxcywh", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True for format change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    result_bboxes = result_df["bbox"][0]
+    # cxcywh [20, 35, 20, 30] -> x1y1x2y2 [10, 20, 30, 50]
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [10.0, 20.0, 30.0, 50.0])
+
+
+def test_bbox_to_polygon_converter():
+    """Test BBoxToPolygonConverter converting bbox to polygon."""
+
+    converter_instance = BBoxToPolygonConverter()
+
+    # Create test data with x1y1x2y2 format
+    df = pl.DataFrame(
+        {"bbox": [[[10.0, 20.0, 30.0, 50.0]]]},  # x1, y1, x2, y2
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+    output_field = PolygonField(dtype=pl.Float32(), format="xy", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_field))
+    setattr(converter_instance, "output_polygon", AttributeSpec(name="polygon", field=output_field))
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "polygon" in result_df.columns
+    result_polygons = result_df["polygon"][0]
+
+    # Check that we have 1 polygon with 4 corners
+    assert len(result_polygons) == 1
+    polygon = result_polygons[0]
+    assert len(polygon) == 4
+
+    # Check corners: top-left, top-right, bottom-right, bottom-left
+    np.testing.assert_array_almost_equal(polygon[0].to_numpy(), [10.0, 20.0])  # top-left
+    np.testing.assert_array_almost_equal(polygon[1].to_numpy(), [30.0, 20.0])  # top-right
+    np.testing.assert_array_almost_equal(polygon[2].to_numpy(), [30.0, 50.0])  # bottom-right
+    np.testing.assert_array_almost_equal(polygon[3].to_numpy(), [10.0, 50.0])  # bottom-left
+
+
+def test_ellipse_to_bbox_converter():
+    """Test EllipseToBBoxConverter converting ellipse to bbox."""
+
+    converter_instance = EllipseToBBoxConverter()
+
+    # Create test data with x1y1x2y2 format ellipse
+    df = pl.DataFrame(
+        {"ellipse": [[[10.0, 20.0, 30.0, 50.0]]]},
+        schema=pl.Schema({"ellipse": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_field = EllipseField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_ellipse", AttributeSpec(name="ellipse", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bbox" in result_df.columns
+    result_bboxes = result_df["bbox"][0]
+
+    # Ellipse and bbox use same format, should be identical
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [10.0, 20.0, 30.0, 50.0])
+
+
+def test_keypoints_to_bbox_converter():
+    """Test KeypointsToBBoxConverter converting keypoints to enclosing bbox."""
+
+    converter_instance = KeypointsToBBoxConverter()
+
+    # Create test data with keypoints [x, y, visibility]
+    # visibility > 0 means visible
+    df = pl.DataFrame(
+        {
+            "keypoints": [
+                [[10.0, 20.0, 2.0], [30.0, 50.0, 1.0], [25.0, 35.0, 2.0], [5.0, 5.0, 0.0]]  # invisible
+            ]
+        },
+        schema=pl.Schema({"keypoints": pl.List(pl.Array(pl.Float32, 3))}),
+    )
+
+    # Set up converter attributes
+    input_field = KeypointsField(dtype=pl.Float32(), normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_keypoints", AttributeSpec(name="keypoints", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bbox" in result_df.columns
+    result_bboxes = result_df["bbox"][0]
+
+    # Bbox should enclose only visible keypoints: (10,20), (30,50), (25,35)
+    # Not (5,5) which has visibility=0
+    # min_x=10, min_y=20, max_x=30, max_y=50
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [10.0, 20.0, 30.0, 50.0])
+
+
+def test_rotated_bbox_to_bbox_converter():
+    """Test RotatedBBoxToBBoxConverter converting rotated bbox to AABB."""
+
+    converter_instance = RotatedBBoxToBBoxConverter()
+
+    # Create test data with rotated bboxes [cx, cy, w, h, r]
+    # No rotation - should give same as regular bbox
+    df = pl.DataFrame(
+        {"rotated_bbox": [[[50.0, 60.0, 20.0, 10.0, 0.0]]]},  # cx=50, cy=60, w=20, h=10, r=0
+        schema=pl.Schema({"rotated_bbox": pl.List(pl.Array(pl.Float32, 5))}),
+    )
+
+    # Set up converter attributes
+    input_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_rotated_bbox", AttributeSpec(name="rotated_bbox", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bbox" in result_df.columns
+    result_bboxes = result_df["bbox"][0]
+
+    # With r=0: cx=50, cy=60, w=20, h=10 -> x1=40, y1=55, x2=60, y2=65
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [40.0, 55.0, 60.0, 65.0])
+
+
+def test_rotated_bbox_coordinate_converter():
+    """Test RotatedBBoxCoordinateConverter normalizing coordinates."""
+
+    converter_instance = RotatedBBoxCoordinateConverter()
+
+    # Create test data with absolute coordinates
+    df = pl.DataFrame(
+        {
+            "rotated_bbox": [[[250.0, 200.0, 100.0, 80.0, 0.5]]],  # cx, cy, w, h, r
+            "image": [[0] * 100],  # dummy image data
+            "image_shape": [[400, 500, 3]],  # height=400, width=500
+        },
+        schema=pl.Schema(
+            {
+                "rotated_bbox": pl.List(pl.Array(pl.Float32, 5)),
+                "image": pl.List(pl.UInt8),
+                "image_shape": pl.List(pl.Int32),
+            }
+        ),
+    )
+
+    # Set up converter attributes
+    input_rbbox_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=False)
+    output_rbbox_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=True)
+    image_field = ImageField(dtype=pl.UInt8())
+
+    setattr(converter_instance, "input_rotated_bbox", AttributeSpec(name="rotated_bbox", field=input_rbbox_field))
+    setattr(converter_instance, "output_rotated_bbox", AttributeSpec(name="rotated_bbox", field=output_rbbox_field))
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=image_field))
+
+    # Test filter - should return True for normalization change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    result_rbbox = result_df["rotated_bbox"][0][0].to_numpy()
+    # cx and w normalized by width (500), cy and h normalized by height (400), r unchanged
+    expected = [250.0 / 500, 200.0 / 400, 100.0 / 500, 80.0 / 400, 0.5]
+    np.testing.assert_array_almost_equal(result_rbbox, expected, decimal=5)
+
+
+def test_channels_first_converter():
+    """Test ChannelsFirstConverter updates metadata without data transposition."""
+
+    converter_instance = ChannelsFirstConverter()
+
+    # Create test data with channels-first image (the data is stored flattened)
+    # Shape would be (3, 2, 2) for channels-first
+    image_data = list(range(12))  # 3 channels * 2 height * 2 width
+    df = pl.DataFrame(
+        {
+            "image": [image_data],
+            "image_shape": [[3, 2, 2]],  # channels-first shape (C, H, W)
+        },
+        schema=pl.Schema({"image": pl.List(pl.UInt8), "image_shape": pl.List(pl.Int32)}),
+    )
+
+    # Set up converter attributes
+    input_field = ImageField(dtype=pl.UInt8(), format="RGB", channels_first=True)
+    output_field = ImageField(dtype=pl.UInt8(), format="RGB", channels_first=False)
+
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=input_field))
+    setattr(converter_instance, "output_image", AttributeSpec(name="image", field=output_field))
+
+    # Test filter - should return True for channels_first change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion - should just copy the data (transposition handled by from_polars)
+    result_df = converter_instance.convert(df)
+
+    assert "image" in result_df.columns
+    assert "image_shape" in result_df.columns
+
+    # Data should be unchanged
+    assert result_df["image"][0].to_list() == image_data
+    # Shape should be unchanged (the field handles transposition on read)
+    assert result_df["image_shape"][0].to_list() == [3, 2, 2]
+
+
+def test_channels_first_converter_same_channels_first():
+    """Test ChannelsFirstConverter returns False when channels_first is the same."""
+
+    converter_instance = ChannelsFirstConverter()
+
+    # Set up converter attributes with same channels_first
+    input_field = ImageField(dtype=pl.UInt8(), format="RGB", channels_first=True)
+    output_field = ImageField(dtype=pl.UInt8(), format="RGB", channels_first=True)
+
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=input_field))
+    setattr(converter_instance, "output_image", AttributeSpec(name="image", field=output_field))
+
+    # Test filter - should return False when channels_first is the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_channels_first_converter_schema_conversion():
+    """Test schema conversion for channels_first change using find_conversion_path."""
+    from datumaro.experimental.converters import find_conversion_path
+
+    # Create source schema with channels_first=True
+    source_schema = Schema(
+        attributes={
+            "image": AttributeInfo(
+                type=np.ndarray,
+                field=ImageField(dtype=pl.UInt8(), format="RGB", channels_first=True),
+            )
+        }
+    )
+
+    # Create target schema with channels_first=False
+    target_schema = Schema(
+        attributes={
+            "image": AttributeInfo(
+                type=np.ndarray,
+                field=ImageField(dtype=pl.UInt8(), format="RGB", channels_first=False),
+            )
+        }
+    )
+
+    # Find conversion path
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one converter
+    assert len(conversion_paths.converters["image"]) == 1
+    assert type(conversion_paths.converters["image"][0]) is ChannelsFirstConverter
