@@ -56,7 +56,7 @@ def test_get_fields_with_valid_categories():
 
     schema = Schema(attributes={"label_attribute": lbl_attribute_info, "image_attribute": img_attribute_info})
 
-    result = schema.get_fields_with_categories()
+    result = schema.get_fields_with_required_categories()
 
     assert result == {"label_attribute": lbl_categories}
 
@@ -69,7 +69,7 @@ def test_get_fields_with_wrong_categories():
     schema = Schema(attributes={"label_attribute": lbl_attribute_info})
 
     with pytest.raises(ValueError):
-        schema.get_fields_with_categories()
+        schema.get_fields_with_required_categories()
 
 
 def test_get_fields_with_none_categories():
@@ -79,7 +79,7 @@ def test_get_fields_with_none_categories():
     schema = Schema(attributes={"label_attribute": lbl_attribute_info})
 
     with pytest.raises(ValueError):
-        schema.get_fields_with_categories()
+        schema.get_fields_with_required_categories()
 
 
 def test_tensor_field_creation():

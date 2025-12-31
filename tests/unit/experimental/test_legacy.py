@@ -934,13 +934,13 @@ def test_builtin_converters_registration():
 class DetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
     bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32(), format="x1y1x2y2")]
-    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.UInt32(), is_list=True)]
+    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.uint32]], label_field(dtype=pl.UInt32(), is_list=True)]
 
 
 class RotatedDetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
     rotated_bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32())]
-    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.UInt32(), is_list=True)]
+    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.uint32]], label_field(dtype=pl.UInt32(), is_list=True)]
 
 
 def test_convert_to_legacy_simple():

@@ -37,8 +37,9 @@ class MaskField(Field):
         super().__post_init__()
         if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
             raise ValueError(
-                "A mask field's dtype has to be a Boolean or an unsigned integer dtype (e.g. UInt8). These integers "
-                "refer to mask color info provided in mask categories that is defined in a dataset's schema."
+                "A mask field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This integer "
+                "normally represents the index of a category, with reference to the mask categories of the dataset to "
+                "which the sample is (or will be) appended."
             )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -128,8 +129,9 @@ class InstanceMaskField(Field):
         super().__post_init__()
         if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
             raise ValueError(
-                "A mask field's dtype has to be a Boolean or an unsigned integer dtype (e.g. UInt8). These integers "
-                "refer to mask color info provided in mask categories that is defined in a dataset's schema."
+                "An instance mask field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This "
+                "integer normally represents the index of a category, with reference to the mask categories of the "
+                "dataset to which the sample is (or will be) appended."
             )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -197,8 +199,9 @@ class InstanceMaskCallableField(Field):
         super().__post_init__()
         if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
             raise ValueError(
-                "A mask field's dtype has to be a Boolean or an unsigned integer dtype (e.g. UInt8). These integers "
-                "refer to mask color info provided in mask categories that is defined in a dataset's schema."
+                "An instance mask callable field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). "
+                "This integer normally represents the index of a category, with reference to the mask categories of the "
+                "dataset to which the sample is (or will be) appended."
             )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -280,8 +283,9 @@ class MaskCallableField(Field):
         super().__post_init__()
         if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
             raise ValueError(
-                "A mask field's dtype has to be a Boolean or an unsigned integer dtype (e.g. UInt8). These integers "
-                "refer to mask color info provided in mask categories that is defined in a dataset's schema."
+                "A mask callable field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This "
+                "integer normally represents the index of a category, with reference to the mask categories of the "
+                "dataset to which the sample is (or will be) appended."
             )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:

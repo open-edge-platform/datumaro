@@ -115,13 +115,13 @@ class Schema:
                 raise ValueError(f"Attribute '{attr_name}' not found in schema")
         return new_schema
 
-    def get_fields_with_categories(self) -> dict[str, Categories]:
+    def get_fields_with_required_categories(self) -> dict[str, Categories]:
         """
         Get the attributes that semantically require a category.
         
         Returns:
             dict mapping attribute names to the respective required categories.
-            Attributes that do not strictly require a categories are not returned.
+            Attributes that do not strictly require categories are not returned.
         """
         if self._fields_with_categories is None:
             self._fields_with_categories = {}
@@ -131,7 +131,7 @@ class Schema:
                     if categories is None or not isinstance(attribute_info.categories, expected_categories_type):
                         raise ValueError(
                             f"Expected schema attribute '{attribute}' to have categories defined of type "
-                            f"'{expected_categories_type}', found '{categories}' instead."
+                            f"'{expected_categories_type}', found '{categories}' instead. "
                             f"Note that schemas (including ones that are attached to datasets) can be created without "
                             f"categories for fields that require them, but for certain operations like appending data "
                             f"categories have to be defined if fields require them in order to validate the data."
