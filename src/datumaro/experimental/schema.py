@@ -115,7 +115,7 @@ class Schema:
                 raise ValueError(f"Attribute '{attr_name}' not found in schema")
         return new_schema
 
-    def get_fields_with_categories(self) -> dict[str, Categories]:
+    def get_fields_with_required_categories(self) -> dict[str, Categories]:
         """
         Get the attributes that semantically require a category.
         

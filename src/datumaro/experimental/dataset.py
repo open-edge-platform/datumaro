@@ -332,7 +332,7 @@ class Dataset(Generic[DType]):
         self._validate_fields_with_categories(df=self.df)
 
     def _validate_fields_with_categories(self, df: pl.DataFrame) -> None:
-        fields_with_categories = self._schema.get_fields_with_categories()
+        fields_with_categories = self._schema.get_fields_with_required_categories()
 
         for field_name, categories in fields_with_categories.items():
             if df[field_name].dtype.is_object():
