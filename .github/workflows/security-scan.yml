@@ -20,7 +20,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
       - name: Checkout code
@@ -28,7 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@66652424b4ec87ff529dce5ae4a03f339e58a84b
+        uses: open-edge-platform/geti-ci/actions/zizmor@d30e32248aa6bd06adeda7129b50a38bdbceca12
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -42,7 +42,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
       - name: Checkout code
@@ -50,7 +50,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@66652424b4ec87ff529dce5ae4a03f339e58a84b
+        uses: open-edge-platform/geti-ci/actions/bandit@d30e32248aa6bd06adeda7129b50a38bdbceca12
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -65,7 +65,7 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
         with:
           egress-policy: audit
       - name: Checkout code
@@ -75,7 +75,7 @@ jobs:
 
       - name: Run Trivy scan
         id: trivy
-        uses: open-edge-platform/geti-ci/actions/trivy@66652424b4ec87ff529dce5ae4a03f339e58a84b
+        uses: open-edge-platform/geti-ci/actions/trivy@d30e32248aa6bd06adeda7129b50a38bdbceca12
         with:
           scan_type: "fs"
           scan-scope: all
@@ -97,7 +97,7 @@ jobs:
           persist-credentials: false
       - name: Run Semgrep scan
         id: semgrep
-        uses: open-edge-platform/geti-ci/actions/semgrep@66652424b4ec87ff529dce5ae4a03f339e58a84b
+        uses: open-edge-platform/geti-ci/actions/semgrep@d30e32248aa6bd06adeda7129b50a38bdbceca12
         with:
           scan-scope: "all"
           severity: "LOW"
