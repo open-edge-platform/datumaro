@@ -1248,7 +1248,10 @@ def test_backward_bbox_annotation_converter_convert_empty_annotations():
 
 def test_backward_bbox_annotation_converter_infer_categories():
     """Test category inference from v2 dataset."""
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add samples with different labels
     sample1 = DetectionSample(
@@ -1281,7 +1284,10 @@ def test_backward_bbox_annotation_converter_infer_categories():
 
 def test_analyze_experimental_dataset():
     """Test analysis of v2 dataset for backward conversion."""
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add sample data
     sample = DetectionSample(
