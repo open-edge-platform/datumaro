@@ -40,7 +40,7 @@ class CocoSample(Sample):
 
     # Caption annotations (from captions_train/val)
     captions: np.ndarray | None = caption_field(is_list=True, semantic="caption")
-    caption_group_ids: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True, semantic="caption")
+    caption_group_ids: np.ndarray | None = numeric_field(dtype=pl.UInt32(), is_list=True, semantic="caption")
 
     # Dataset organization
     subset: Subset = subset_field()
