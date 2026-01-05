@@ -44,6 +44,14 @@
       schedule: ["* * * * 0"], // weekly
     },
 
+    // disable major upgrades for optional-dependencies
+    {
+      enabled: false,
+      matchManagers: ["pep621"],
+      matchUpdateTypes: ["major"],
+      matchDepTypes: ["project.optional-dependencies"],
+    },
+
     {
       enabled: true,
       matchManagers: ["cargo"],
