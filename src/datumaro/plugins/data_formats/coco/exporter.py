@@ -649,6 +649,10 @@ class _PanopticExporter(_TaskExporter):
             segment_info["area"] = float(ann.get_area())
             segment_info["bbox"] = [float(p) for p in ann.get_bbox()]
             segment_info["iscrowd"] = cast(ann.attributes.get("is_crowd"), int, 0)
+            if self._context._allow_attributes:
+                attrs = self._convert_attributes(ann)
+                if attrs:
+                    segment_info["attributes"] = attrs
             segments_info.append(segment_info)
             masks.append(ann)
 
