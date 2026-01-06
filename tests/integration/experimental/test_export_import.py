@@ -20,7 +20,7 @@ import polars as pl
 import pytest
 from PIL import Image as PILImage
 
-from datumaro.experimental.categories import LabelCategories
+from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.export_import import (
     DATAFRAME_FILE,
@@ -50,6 +50,9 @@ from datumaro.experimental.fields import (
     tile_field,
 )
 
+LABEL_CATEGORIES = LabelCategories(labels=("apple", "orange", "pear", "mango", "coconut"))
+MASK_CATEGORIES = MaskCategories.generate(size=256)
+
 
 def test_export_no_image_fields(tmp_path):
     """Test that datasets without image fields return empty dict."""
@@ -57,7 +60,10 @@ def test_export_no_image_fields(tmp_path):
     class SimpleSample(Sample):
         label: int = label_field()
 
-    dataset = Dataset(SimpleSample)
+    dataset = Dataset(
+        dtype_or_schema=SimpleSample,
+        categories={"label": LABEL_CATEGORIES},
+    )
     dataset.append(SimpleSample(label=1))
 
     output_dir = tmp_path / "output"
@@ -172,7 +178,7 @@ def test_export_instance_mask_callable_field(tmp_path):
 
         return load_mask
 
-    dataset = Dataset(MaskSample)
+    dataset = Dataset(dtype_or_schema=MaskSample, categories={"mask": MASK_CATEGORIES})
     for idx in range(3):
         dataset.append(MaskSample(mask=make_mask_callable(idx)))
 
@@ -219,7 +225,7 @@ def test_export_mixed_fields(tmp_path):
     def make_mask():
         return np.ones((15, 15), dtype=np.uint8) * 255
 
-    dataset = Dataset(MixedSample)
+    dataset = Dataset(dtype_or_schema=MixedSample, categories={"mask": MASK_CATEGORIES})
     dataset.append(
         MixedSample(
             image=make_image,
@@ -272,7 +278,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
         label: int = label_field()
         score: float = numeric_field(dtype=pl.Float32())
 
-    dataset = Dataset(SimpleSample)
+    dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(SimpleSample(label=1, score=0.9))
     dataset.append(SimpleSample(label=2, score=0.8))
 
@@ -312,7 +318,7 @@ def test_export_dataset_with_images_to_directory(tmp_path):
 
         return load_image
 
-    dataset = Dataset(ImageSample)
+    dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(ImageSample(image=make_image(0), label=1))
     dataset.append(ImageSample(image=make_image(1), label=2))
 
@@ -336,7 +342,7 @@ def test_export_dataset_as_zip(tmp_path):
     class SimpleSample(Sample):
         label: int = label_field()
 
-    dataset = Dataset(SimpleSample)
+    dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(SimpleSample(label=1))
 
     output_zip = tmp_path / "export.zip"
@@ -364,7 +370,7 @@ def test_export_with_object_columns(tmp_path):
     def make_image():
         return np.zeros((10, 10, 3), dtype=np.uint8)
 
-    dataset = Dataset(CallableSample)
+    dataset = Dataset(CallableSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(CallableSample(image=make_image, label=1))
 
     output_dir = tmp_path / "export"
@@ -428,7 +434,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
         score: float = numeric_field(dtype=pl.Float32())
 
     # Export first
-    original_dataset = Dataset(SimpleSample)
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(SimpleSample(label=1, score=0.9))
     original_dataset.append(SimpleSample(label=2, score=0.8))
 
@@ -453,7 +459,7 @@ def test_import_dataset_from_zip(tmp_path):
         label: int = label_field()
 
     # Export as ZIP
-    original_dataset = Dataset(SimpleSample)
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(SimpleSample(label=1))
     original_dataset.append(SimpleSample(label=2))
 
@@ -485,7 +491,7 @@ def test_import_dataset_with_image_callables(tmp_path):
         return load_image
 
     # Export dataset
-    original_dataset = Dataset(ImageSample)
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(ImageSample(image=make_image(0), label=1))
     original_dataset.append(ImageSample(image=make_image(1), label=2))
 
@@ -527,7 +533,7 @@ def test_import_dataset_with_image_paths(tmp_path):
     PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(img_path)
 
     # Export dataset
-    original_dataset = Dataset(PathSample)
+    original_dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(PathSample(image_path=str(img_path), label=1))
 
     export_dir = tmp_path / "export"
@@ -563,7 +569,7 @@ def test_import_dataset_with_instance_masks(tmp_path):
         return load_mask
 
     # Export dataset
-    original_dataset = Dataset(MaskSample)
+    original_dataset = Dataset(MaskSample, categories={"label": LABEL_CATEGORIES, "mask": MASK_CATEGORIES})
     original_dataset.append(MaskSample(mask=make_mask(0), label=1))
     original_dataset.append(MaskSample(mask=make_mask(1), label=2))
 
@@ -621,7 +627,7 @@ def test_import_without_dtype_uses_sample(tmp_path):
         label: int = label_field()
 
     # Export dataset
-    original_dataset = Dataset(SimpleSample)
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(SimpleSample(label=1))
 
     export_dir = tmp_path / "export"
@@ -668,7 +674,7 @@ def test_import_with_none_image_values(tmp_path):
         return np.zeros((10, 10, 3), dtype=np.uint8)
 
     # Export dataset with mixed None values
-    original_dataset = Dataset(OptionalImageSample)
+    original_dataset = Dataset(OptionalImageSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(OptionalImageSample(image=make_image, label=1))
     original_dataset.append(OptionalImageSample(image=None, label=2))
     original_dataset.append(OptionalImageSample(image=make_image, label=3))
@@ -701,7 +707,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
         return load_image
 
     # Create dataset
-    original_dataset = Dataset(ComplexSample)
+    original_dataset = Dataset(ComplexSample, categories={"label": LABEL_CATEGORIES})
     for i in range(5):
         original_dataset.append(ComplexSample(label=i, score=i * 0.2, image=make_image(i * 50)))
 
@@ -749,7 +755,7 @@ def test_export_large_dataset(tmp_path):
     """Test exporting larger dataset (performance check)."""
 
     class SimpleSample(Sample):
-        value: int = label_field(dtype=pl.UInt16())
+        value: int = numeric_field(dtype=pl.UInt16())
 
     dataset = Dataset(SimpleSample)
     for i in range(1000):
@@ -794,7 +800,7 @@ def test_zip_path_without_zip_extension(tmp_path):
     class SimpleSample(Sample):
         label: int = label_field()
 
-    dataset = Dataset(SimpleSample)
+    dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(SimpleSample(label=1))
 
     output_path = tmp_path / "export_no_ext"
@@ -845,7 +851,14 @@ def test_export_import_different_field_types(tmp_path):
         return np.ones((20, 30), dtype=np.uint8) * 128
 
     # Create dataset with sample containing all field types
-    dataset = Dataset(ComprehensiveSample)
+    dataset = Dataset(
+        ComprehensiveSample,
+        categories={
+            "label": LABEL_CATEGORIES,
+            "mask_callable": MASK_CATEGORIES,
+            "instance_mask_callable": MASK_CATEGORIES,
+        },
+    )
     sample = ComprehensiveSample(
         label=1,
         score=0.95,
