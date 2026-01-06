@@ -392,7 +392,8 @@ class _CocoBase(SubsetBase):
         for segm_info in self._parse_field(ann, "segments_info", list):
             cat_id = self._get_label_id(segm_info)
             segm_id = self._parse_field(segm_info, "id", int)
-            attributes = {"is_crowd": bool(self._parse_field(segm_info, "iscrowd", int))}
+            attributes = segm_info.get("attributes", {})
+            attributes["is_crowd"] = bool(self._parse_field(segm_info, "iscrowd", int))
             parsed_annotations.append(
                 Mask(
                     image=mask.lazy_extract(segm_id),
