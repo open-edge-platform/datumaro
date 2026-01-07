@@ -29,6 +29,17 @@ logger = logging.getLogger(__name__)
 # Sentinel key used for simple layout (single folder) in both loading and saving
 _DEFAULT_SUBSET_KEY = "__default__"
 
+# Mapping from subset name strings to Subset enum values
+_SUBSET_NAME_TO_ENUM: dict[str, Subset] = {
+    "train": Subset.TRAINING,
+    "training": Subset.TRAINING,
+    "val": Subset.VALIDATION,
+    "validation": Subset.VALIDATION,
+    "test": Subset.TESTING,
+    "testing": Subset.TESTING,
+    _DEFAULT_SUBSET_KEY: Subset.UNASSIGNED,
+}
+
 
 def load_coco_dataset(
     images_dir_path: str | dict[str, str],
@@ -320,21 +331,11 @@ def _build_subset_config_from_paths(
     Maps user-provided subset names to Subset enum values and creates
     configuration dictionaries for each subset.
     """
-    subset_name_to_enum = {
-        "train": Subset.TRAINING,
-        "training": Subset.TRAINING,
-        "val": Subset.VALIDATION,
-        "validation": Subset.VALIDATION,
-        "test": Subset.TESTING,
-        "testing": Subset.TESTING,
-        _DEFAULT_SUBSET_KEY: Subset.UNASSIGNED,
-    }
-
     result: dict[Subset, dict[str, Path | list[Path]]] = {}
 
     for subset_name, images_path in images_config.items():
         # Map subset name to enum (case-insensitive)
-        subset_enum = subset_name_to_enum.get(subset_name.lower(), Subset.UNASSIGNED)
+        subset_enum = _SUBSET_NAME_TO_ENUM.get(subset_name.lower(), Subset.UNASSIGNED)
 
         result[subset_enum] = {
             "images_dir": Path(images_path),
@@ -447,16 +448,6 @@ def save_coco_dataset(
     for sample in dataset:
         subset_to_samples[sample.subset].append(sample)  # type: ignore[attr-defined]
 
-    # Build mapping from subset names to Subset enum
-    subset_name_to_enum = {
-        "train": Subset.TRAINING,
-        "training": Subset.TRAINING,
-        "val": Subset.VALIDATION,
-        "validation": Subset.VALIDATION,
-        "test": Subset.TESTING,
-        "testing": Subset.TESTING,
-    }
-
     if is_simple_layout:
         # Simple layout: save all samples to a single location
         all_samples = [sample for samples in subset_to_samples.values() for sample in samples]
@@ -472,7 +463,7 @@ def save_coco_dataset(
     else:
         # Split layout: save each subset to its designated location
         for subset_name, images_dir_str in images_config.items():
-            subset_enum = subset_name_to_enum.get(subset_name.lower(), Subset.UNASSIGNED)
+            subset_enum = _SUBSET_NAME_TO_ENUM.get(subset_name.lower(), Subset.UNASSIGNED)
             samples = subset_to_samples.get(subset_enum, [])
 
             if not samples:
