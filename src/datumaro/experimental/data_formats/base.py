@@ -15,7 +15,7 @@ class DataFormat(Enum):
 def load_dataset(
     data_format: DataFormat,
     images_dir_path: str | dict[str, str] | None = None,
-    annotations_path: str | dict[str, str] | None = None,
+    annotations_path: str | list[str] | dict[str, str | list[str]] | None = None,
 ) -> Dataset:
     """
     Load a dataset in the specified format.

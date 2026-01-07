@@ -26,6 +26,9 @@ from datumaro.experimental.fields import Subset
 
 logger = logging.getLogger(__name__)
 
+# Sentinel key used for simple layout (single folder) in both loading and saving
+_DEFAULT_SUBSET_KEY = "__default__"
+
 
 def load_coco_dataset(
     images_dir_path: str | dict[str, str],
@@ -144,11 +147,11 @@ def _normalize_load_inputs(
     """
     if isinstance(images_dir_path, str) and isinstance(annotations_path, (str, list)):
         # Simple layout: single directory and single/multiple annotation file(s)
-        images_config: dict[str, str] = {"__unassigned__": images_dir_path}
+        images_config: dict[str, str] = {_DEFAULT_SUBSET_KEY: images_dir_path}
         if isinstance(annotations_path, str):
-            annotations_config: dict[str, list[str]] = {"__unassigned__": [annotations_path]}
+            annotations_config: dict[str, list[str]] = {_DEFAULT_SUBSET_KEY: [annotations_path]}
         else:
-            annotations_config = {"__unassigned__": annotations_path}
+            annotations_config = {_DEFAULT_SUBSET_KEY: annotations_path}
     elif isinstance(images_dir_path, dict) and isinstance(annotations_path, dict):
         # Split layout: multiple subsets
         images_config = images_dir_path
@@ -269,6 +272,7 @@ def _merge_annotations_from_files(
 
     This function intelligently classifies annotations based on file type detection
     and annotation structure (presence of keypoints, captions, or bbox/segmentation).
+    It samples multiple annotations (up to 10) to determine the file type more robustly.
 
     Args:
         all_annotations_data: List of parsed COCO JSON dictionaries.
@@ -323,7 +327,7 @@ def _build_subset_config_from_paths(
         "validation": Subset.VALIDATION,
         "test": Subset.TESTING,
         "testing": Subset.TESTING,
-        "__unassigned__": Subset.UNASSIGNED,
+        _DEFAULT_SUBSET_KEY: Subset.UNASSIGNED,
     }
 
     result: dict[Subset, dict[str, Path | list[Path]]] = {}
@@ -413,8 +417,8 @@ def save_coco_dataset(
     # Normalize inputs to dict format for unified processing
     if isinstance(images_dir_path, str) and isinstance(annotations_path, str):
         # Simple layout: single directory and single annotation file
-        images_config: dict[str, str] = {"__all__": images_dir_path}
-        annotations_config: dict[str, str] = {"__all__": annotations_path}
+        images_config: dict[str, str] = {_DEFAULT_SUBSET_KEY: images_dir_path}
+        annotations_config: dict[str, str] = {_DEFAULT_SUBSET_KEY: annotations_path}
         is_simple_layout = True
     elif isinstance(images_dir_path, dict) and isinstance(annotations_path, dict):
         # Split layout: multiple subsets
@@ -458,13 +462,13 @@ def save_coco_dataset(
         all_samples = [sample for samples in subset_to_samples.values() for sample in samples]
         if all_samples:
             _save_subset_flexible(
-                images_dir=Path(images_config["__all__"]),
-                annotations_file=Path(annotations_config["__all__"]),
+                images_dir=Path(images_config[_DEFAULT_SUBSET_KEY]),
+                annotations_file=Path(annotations_config[_DEFAULT_SUBSET_KEY]),
                 samples=all_samples,
                 categories_coco=categories_coco,
                 to_category_id=to_category_id,
             )
-            logger.info("[COCO] Saved %d samples to %s", len(all_samples), annotations_config["__all__"])
+            logger.info("[COCO] Saved %d samples to %s", len(all_samples), annotations_config[_DEFAULT_SUBSET_KEY])
     else:
         # Split layout: save each subset to its designated location
         for subset_name, images_dir_str in images_config.items():
