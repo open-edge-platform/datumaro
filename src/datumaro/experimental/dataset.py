@@ -292,7 +292,7 @@ class Dataset(Generic[DType]):
 
         new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
 
-        # Validate fields with categories have meaning
+        # Validate fields with categories have integers that refer to existing categories
         self._validate_fields_with_categories(df=new_row)
 
         # Use vstack instead of extend for object columns since extend doesn't support them
@@ -327,7 +327,10 @@ class Dataset(Generic[DType]):
 
     def validate_fields_with_categories(self) -> None:
         """
-        Validates that each value in field columns with categories has meaning.
+        Validates that each integer value in field columns with categories refers to existing categories
+
+        Each field that requires categories should have an unsigned integer dtype, therefore checking the maximum value
+        of each column is lower or equal than the number of associated categories is enough.
         """
         self._validate_fields_with_categories(df=self.df)
 
@@ -337,6 +340,8 @@ class Dataset(Generic[DType]):
         for field_name, categories in fields_with_categories.items():
             if df[field_name].dtype.is_object():
                 continue
+
+            # Label fields can be lists or lists of lists (in the case of multi-labels), so explode column twice.
             field_max = df.select(pl.col(field_name).explode().explode().max()).item()
             # Optional fields can be None, so we can skip the check
             if field_max is not None and len(categories) <= field_max:

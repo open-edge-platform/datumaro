@@ -118,7 +118,7 @@ class Schema:
     def get_fields_with_required_categories(self) -> dict[str, Categories]:
         """
         Get the attributes that semantically require a category.
-        
+
         Returns:
             dict mapping attribute names to the respective required categories.
             Attributes that do not strictly require categories are not returned.

@@ -168,8 +168,9 @@ class LabelField(Field):
         super().__post_init__()
         if not self.dtype.is_unsigned_integer():
             raise ValueError(
-                "LabelField's dtype has to be an unsigned integer dtype (e.g. UInt8). These integers refer to label "
-                "info provided in label categories that is defined in a dataset's schema."
+                "A label field's dtype must be a polars unsigned integer type (e.g. UInt8). This integer normally "
+                "represents the index of a category, with reference to the label categories of the dataset to which "
+                "the sample is (or will be) appended."
             )
 
     @property
