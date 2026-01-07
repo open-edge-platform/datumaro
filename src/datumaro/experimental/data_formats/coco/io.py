@@ -1,7 +1,11 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 """
-Coco2017 dataset support
+COCO dataset support with flexible layout handling.
+
+Supports both:
+- COCO 2017 layout: images split by subset folders, separate annotation files per subset
+- Simple COCOAPI layout: single images folder and single annotation file
 """
 
 import logging
@@ -11,13 +15,12 @@ from pathlib import Path
 from datumaro.experimental import Dataset
 from datumaro.experimental.data_formats.coco.helpers import (
     _assemble_sample_from_image_record,
-    _build_subset_config,
     _cat_id_to_idx_from_primary,
-    _detect_coco_label_categories,
+    _detect_coco_label_categories_from_paths,
     _index_annotations_by_image,
     _load_json_or_none,
     _prepare_categories,
-    _save_subset,
+    _save_subset_flexible,
 )
 from datumaro.experimental.data_formats.coco.sample import CocoSample
 from datumaro.experimental.fields import Subset
@@ -25,71 +28,118 @@ from datumaro.experimental.fields import Subset
 logger = logging.getLogger(__name__)
 
 
-def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
+def load_coco_dataset(
+    images_dir_path: str | dict[str, str],
+    annotations_path: str | dict[str, str],
+) -> Dataset:
     """
-    Load a COCO dataset (2017 layout) from its top-level directory.
+    Load a COCO dataset from specified image directories and annotation files.
 
-    The expected directory structure under ``root_dir`` is::
+    This function supports two common COCO dataset layouts:
 
-        annotations/
-            instances_train{version}.json
-            instances_val{version}.json
-            person_keypoints_train{version}.json
-            person_keypoints_val{version}.json
-            (optional) instances_test{version}.json
-            (optional) person_keypoints_test{version}.json
-        train{version}/
-        val{version}/
-        (optional) test{version}/
+    1. **Simple layout** (single folder): Pass strings for both arguments.
+       - ``images_dir_path``: Path to a single directory containing all images
+       - ``annotations_path``: Path to a single COCO JSON annotation file
+       - Samples will have ``Subset.UNASSIGNED`` as their subset
+
+    2. **Split layout** (multiple subsets): Pass dicts mapping subset names to paths.
+       - ``images_dir_path``: Dict mapping subset names to image directories
+       - ``annotations_path``: Dict mapping subset names to annotation JSON files
+       - Subset names can be arbitrary strings (e.g., "training", "validation", "test")
+       - Known subset names ("train", "training", "val", "validation", "test", "testing")
+         are mapped to ``Subset.TRAINING``, ``Subset.VALIDATION``, ``Subset.TESTING``
+       - Unknown subset names are mapped to ``Subset.UNASSIGNED``
 
     Args:
-        root_dir: Path to the top-level COCO dataset directory.
-        version: Dataset year version string (default: "2017").
+        images_dir_path: Either a single directory path (str) containing images,
+            or a dict mapping subset names to their respective image directories.
+        annotations_path: Either a single annotation file path (str),
+            or a dict mapping subset names to their respective annotation JSON files.
 
     Returns:
         Dataset containing CocoSample instances.
+
+    Raises:
+        ValueError: If the types of images_dir_path and annotations_path don't match
+            (both must be str or both must be dict).
+        FileNotFoundError: If any specified directory or file doesn't exist.
+
+    Examples:
+        Load a simple COCO dataset::
+
+            dataset = load_coco_dataset(
+                images_dir_path="/path/to/images",
+                annotations_path="/path/to/annotations.json",
+            )
+
+        Load a COCO 2017-style dataset::
+
+            dataset = load_coco_dataset(
+                images_dir_path={
+                    "training": "/path/to/train2017",
+                    "validation": "/path/to/val2017",
+                },
+                annotations_path={
+                    "training": "/path/to/annotations/instances_train2017.json",
+                    "validation": "/path/to/annotations/instances_val2017.json",
+                },
+            )
     """
-    root_path = Path(root_dir)
-    if not root_path.exists():
-        raise FileNotFoundError(f"COCO root directory does not exist: {root_dir}")
+    # Normalize inputs to dict format for unified processing
+    if isinstance(images_dir_path, str) and isinstance(annotations_path, str):
+        # Simple layout: single directory and single annotation file
+        images_config: dict[str, str] = {"__unassigned__": images_dir_path}
+        annotations_config: dict[str, str] = {"__unassigned__": annotations_path}
+    elif isinstance(images_dir_path, dict) and isinstance(annotations_path, dict):
+        # Split layout: multiple subsets
+        images_config = images_dir_path
+        annotations_config = annotations_path
+    else:
+        raise ValueError(
+            "images_dir_path and annotations_path must both be strings or both be dicts. "
+            f"Got {type(images_dir_path).__name__} and {type(annotations_path).__name__}."
+        )
 
-    annotations_path = root_path / "annotations"
-    if not annotations_path.exists():
-        raise FileNotFoundError(f"Missing 'annotations' directory under COCO root: {annotations_path}")
+    # Validate that dict keys match
+    if set(images_config.keys()) != set(annotations_config.keys()):
+        raise ValueError(
+            f"Subset keys must match between images_dir_path and annotations_path. "
+            f"Got images: {set(images_config.keys())}, annotations: {set(annotations_config.keys())}"
+        )
 
-    subset_config = _build_subset_config(root_path, version)
+    # Build subset configuration
+    subset_config = _build_subset_config_from_paths(images_config, annotations_config)
 
-    logger.info("[COCO] Loading %s dataset from '%s' with %d subsets", version, root_dir, len(subset_config))
+    logger.info("[COCO] Loading dataset with %d subset(s)", len(subset_config))
 
-    # Determine label categories via helper (loads from JSONs or falls back to defaults)
-    loaded_label_categories = _detect_coco_label_categories(subset_config)
+    # Determine label categories via helper
+    loaded_label_categories = _detect_coco_label_categories_from_paths(subset_config)
     categories = {"labels": loaded_label_categories}
     dataset = Dataset(CocoSample, categories=categories)
 
     for subset, config in subset_config.items():
         images_dir = config["images_dir"]
         if not images_dir.exists():
-            logger.warning("[COCO] Skipping subset '%s': images directory '%s' does not exist", subset, images_dir)
-            continue
+            raise FileNotFoundError(f"Images directory does not exist: {images_dir}")
+
+        annotations_file = config["annotations"]
+        if not annotations_file.exists():
+            raise FileNotFoundError(f"Annotations file does not exist: {annotations_file}")
 
         logger.info("[COCO] Loading subset '%s' from '%s'", subset, images_dir)
 
-        instances_data = _load_json_or_none(config["instances"])  # type: ignore[arg-type]
-        keypoints_data = _load_json_or_none(config["keypoints"])  # type: ignore[arg-type]
-        captions_data = _load_json_or_none(config["captions"])  # type: ignore[arg-type]
+        annotations_data = _load_json_or_none(annotations_file)
 
-        if not instances_data and not keypoints_data:
-            logger.warning("[COCO] No instances/keypoints annotations found for subset '%s', skipping", subset)
+        if not annotations_data:
+            logger.warning("[COCO] No annotations found for subset '%s', skipping", subset)
             continue
 
-        primary_data = instances_data or keypoints_data or {"categories": [], "images": []}
-
-        cat_id_to_idx = _cat_id_to_idx_from_primary(primary_data)
+        cat_id_to_idx = _cat_id_to_idx_from_primary(annotations_data)
         instances_by_image, keypoints_by_image, captions_by_image = _index_annotations_by_image(
-            instances_data, keypoints_data, captions_data
+            annotations_data, None, None
         )
 
-        images = primary_data.get("images", [])
+        images = annotations_data.get("images", [])
         num_images = len(images)
         logger.info("[COCO] Building %d samples for subset '%s'", num_images, subset)
 
@@ -109,23 +159,67 @@ def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
 
         logger.info("[COCO] Finished subset '%s' with %d samples", subset, num_images)
 
-    logger.info("[COCO] Finished loading dataset from '%s' with %d samples in total", root_dir, len(dataset))
+    logger.info("[COCO] Finished loading dataset with %d samples in total", len(dataset))
     return dataset
 
 
-def save_coco_dataset(dataset: Dataset[CocoSample], root_dir: str, version: str = "2017") -> dict[str, Path]:
+def _build_subset_config_from_paths(
+    images_config: dict[str, str],
+    annotations_config: dict[str, str],
+) -> dict[Subset, dict[str, Path]]:
     """
-    Save a Dataset of CocoSample back to disk in COCO (2017) JSON format.
+    Build subset configuration from user-provided paths.
 
-    This function writes COCO annotation JSON files under ``{root_dir}/annotations``
-    for each subset present in the dataset. It attempts to preserve COCO structure
-    while being robust to missing fields by inserting placeholder values when
-    expected data is absent.
+    Maps user-provided subset names to Subset enum values and creates
+    configuration dictionaries for each subset.
+    """
+    subset_name_to_enum = {
+        "train": Subset.TRAINING,
+        "training": Subset.TRAINING,
+        "val": Subset.VALIDATION,
+        "validation": Subset.VALIDATION,
+        "test": Subset.TESTING,
+        "testing": Subset.TESTING,
+        "__unassigned__": Subset.UNASSIGNED,
+    }
 
-    Files written per subset (if there is relevant content):
-      - instances_{subset}{version}.json          (bboxes & polygons)
-      - person_keypoints_{subset}{version}.json   (keypoints)
-      - captions_{subset}{version}.json           (captions)
+    result: dict[Subset, dict[str, Path]] = {}
+
+    for subset_name, images_path in images_config.items():
+        # Map subset name to enum (case-insensitive)
+        subset_enum = subset_name_to_enum.get(subset_name.lower(), Subset.UNASSIGNED)
+
+        result[subset_enum] = {
+            "images_dir": Path(images_path),
+            "annotations": Path(annotations_config[subset_name]),
+        }
+
+    return result
+
+
+def save_coco_dataset(
+    dataset: Dataset[CocoSample],
+    images_dir_path: str | dict[str, str],
+    annotations_path: str | dict[str, str],
+) -> None:
+    """
+    Save a Dataset of CocoSample to disk in COCO JSON format.
+
+    This function supports two common COCO dataset layouts:
+
+    1. **Simple layout** (single folder): Pass strings for both path arguments.
+       - ``images_dir_path``: Path to a single directory where images will be saved
+       - ``annotations_path``: Path to a single COCO JSON annotation file to write
+       - All samples will be saved regardless of their subset assignment
+
+    2. **Split layout** (multiple subsets): Pass dicts mapping subset names to paths.
+       - ``images_dir_path``: Dict mapping subset names to image directories
+       - ``annotations_path``: Dict mapping subset names to annotation JSON files
+       - Only samples whose subset matches a key will be saved
+       - Subset names can be arbitrary strings (e.g., "training", "validation", "test")
+
+    The function attempts to preserve COCO structure while being robust to missing
+    fields by inserting placeholder values when expected data is absent.
 
     Placeholder policy:
       - Categories: if label names are not available from schema, a single
@@ -141,45 +235,110 @@ def save_coco_dataset(dataset: Dataset[CocoSample], root_dir: str, version: str 
 
     Args:
         dataset: Dataset containing CocoSample samples.
-        root_dir: Path to the top-level COCO dataset directory where
-            annotation files will be written.
-        version: Dataset year version string (default: "2017").
+        images_dir_path: Either a single directory path (str) for saving images,
+            or a dict mapping subset names to their respective image directories.
+        annotations_path: Either a single annotation file path (str) to write,
+            or a dict mapping subset names to their respective annotation JSON files.
 
-    Returns:
-        Mapping from a logical name (e.g., "instances_train") to the written Path.
+    Raises:
+        ValueError: If the types of images_dir_path and annotations_path don't match
+            (both must be str or both must be dict).
+
+    Examples:
+        Save to a simple COCO layout::
+
+            save_coco_dataset(
+                dataset,
+                images_dir_path="/path/to/output/images",
+                annotations_path="/path/to/output/annotations.json",
+            )
+
+        Save to a COCO 2017-style layout::
+
+            save_coco_dataset(
+                dataset,
+                images_dir_path={
+                    "training": "/path/to/output/train2017",
+                    "validation": "/path/to/output/val2017",
+                },
+                annotations_path={
+                    "training": "/path/to/output/annotations/instances_train2017.json",
+                    "validation": "/path/to/output/annotations/instances_val2017.json",
+                },
+            )
     """
+    # Normalize inputs to dict format for unified processing
+    if isinstance(images_dir_path, str) and isinstance(annotations_path, str):
+        # Simple layout: single directory and single annotation file
+        images_config: dict[str, str] = {"__all__": images_dir_path}
+        annotations_config: dict[str, str] = {"__all__": annotations_path}
+        is_simple_layout = True
+    elif isinstance(images_dir_path, dict) and isinstance(annotations_path, dict):
+        # Split layout: multiple subsets
+        images_config = images_dir_path
+        annotations_config = annotations_path
+        is_simple_layout = False
+    else:
+        raise ValueError(
+            "images_dir_path and annotations_path must both be strings or both be dicts. "
+            f"Got {type(images_dir_path).__name__} and {type(annotations_path).__name__}."
+        )
 
-    root_path = Path(root_dir)
-    annotations_path = root_path / "annotations"
-    annotations_path.mkdir(parents=True, exist_ok=True)
+    # Validate that dict keys match
+    if set(images_config.keys()) != set(annotations_config.keys()):
+        raise ValueError(
+            f"Subset keys must match between images_dir_path and annotations_path. "
+            f"Got images: {set(images_config.keys())}, annotations: {set(annotations_config.keys())}"
+        )
 
-    logger.info("[COCO] Saving %s dataset to '%s' (annotations dir: '%s')", version, root_dir, annotations_path)
+    logger.info("[COCO] Saving dataset with %d subset(s)", len(images_config))
 
     categories_coco, to_category_id = _prepare_categories(dataset)
 
+    # Group samples by subset
     subset_to_samples: dict[Subset, list[CocoSample]] = defaultdict(list)
     for sample in dataset:
         subset_to_samples[sample.subset].append(sample)  # type: ignore[attr-defined]
 
-    written: dict[str, Path] = {}
-    for subset, samples in subset_to_samples.items():
-        if not samples:
-            continue
+    # Build mapping from subset names to Subset enum
+    subset_name_to_enum = {
+        "train": Subset.TRAINING,
+        "training": Subset.TRAINING,
+        "val": Subset.VALIDATION,
+        "validation": Subset.VALIDATION,
+        "test": Subset.TESTING,
+        "testing": Subset.TESTING,
+    }
 
-        logger.info("[COCO] Saving subset '%s' with %d samples", subset, len(samples))
+    if is_simple_layout:
+        # Simple layout: save all samples to a single location
+        all_samples = [sample for samples in subset_to_samples.values() for sample in samples]
+        if all_samples:
+            _save_subset_flexible(
+                images_dir=Path(images_config["__all__"]),
+                annotations_file=Path(annotations_config["__all__"]),
+                samples=all_samples,
+                categories_coco=categories_coco,
+                to_category_id=to_category_id,
+            )
+            logger.info("[COCO] Saved %d samples to %s", len(all_samples), annotations_config["__all__"])
+    else:
+        # Split layout: save each subset to its designated location
+        for subset_name, images_dir_str in images_config.items():
+            subset_enum = subset_name_to_enum.get(subset_name.lower(), Subset.UNASSIGNED)
+            samples = subset_to_samples.get(subset_enum, [])
 
-        result_paths = _save_subset(
-            root_path=root_path,
-            annotations_path=annotations_path,
-            version=version,
-            subset=subset,
-            samples=samples,
-            categories_coco=categories_coco,
-            to_category_id=to_category_id,
-        )
-        for logical_name, path in result_paths.items():
-            logger.info("[COCO] Written %s -> %s", logical_name, path)
-        written.update(result_paths)
+            if not samples:
+                logger.warning("[COCO] No samples found for subset '%s', skipping", subset_name)
+                continue
 
-    logger.info("[COCO] Finished saving dataset to '%s'", root_dir)
-    return written
+            _save_subset_flexible(
+                images_dir=Path(images_dir_str),
+                annotations_file=Path(annotations_config[subset_name]),
+                samples=samples,
+                categories_coco=categories_coco,
+                to_category_id=to_category_id,
+            )
+            logger.info("[COCO] Saved %d samples for subset '%s'", len(samples), subset_name)
+
+    logger.info("[COCO] Finished saving dataset")
