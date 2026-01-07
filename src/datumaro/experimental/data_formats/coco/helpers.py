@@ -117,31 +117,41 @@ def _detect_coco_label_categories(subset_config: dict[Subset, dict[str, Path]]) 
     return CocoCategories()
 
 
-def _detect_coco_label_categories_from_paths(subset_config: dict[Subset, dict[str, Path]]) -> CocoCategories:
+def _detect_coco_label_categories_from_paths(
+    subset_config: dict[Subset, dict[str, Path | list[Path]]],
+) -> CocoCategories:
     """
     Detect COCO label categories by probing available annotation JSON files.
 
     Args:
-        subset_config: Mapping with 'annotations' path for each subset.
+        subset_config: Mapping with 'annotations' path(s) for each subset.
+            The 'annotations' value can be a single Path or a list of Paths.
 
     Returns:
         CocoCategories instance with either discovered labels or defaults.
     """
     for _subset, cfg in subset_config.items():
-        annotations_path = cfg.get("annotations")
-        if annotations_path is None:
+        annotations_paths = cfg.get("annotations")
+        if annotations_paths is None:
             continue
 
-        annotations_data = _load_json_or_none(annotations_path)
-        if annotations_data and isinstance(annotations_data, dict):
-            cats = annotations_data.get("categories") or []
-            if isinstance(cats, list) and len(cats) > 0:
-                try:
-                    cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
-                    label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
-                    return CocoCategories(labels=label_names)
-                except Exception:  # noqa: S110
-                    pass
+        # Normalize to list for uniform handling
+        if isinstance(annotations_paths, Path):
+            paths_to_check = [annotations_paths]
+        else:
+            paths_to_check = annotations_paths
+
+        for annotations_path in paths_to_check:
+            annotations_data = _load_json_or_none(annotations_path)
+            if annotations_data and isinstance(annotations_data, dict):
+                cats = annotations_data.get("categories") or []
+                if isinstance(cats, list) and len(cats) > 0:
+                    try:
+                        cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
+                        label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
+                        return CocoCategories(labels=label_names)
+                    except Exception:  # noqa: S110
+                        pass
 
     logger.warning("Unable to extract labels from COCO annotations, falling back to defaults")
     return CocoCategories()
