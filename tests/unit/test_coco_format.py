@@ -1639,6 +1639,36 @@ class CocoExporterTest:
             stream=stream,
         )
 
+    def test_can_save_and_load_panoptic_with_attributes(self, test_dir, stream: bool):
+        dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    subset="train",
+                    media=Image.from_numpy(data=np.ones((4, 4, 3))),
+                    annotations=[
+                        Mask(
+                            image=np.array([[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 1], [0, 0, 0, 0]]),
+                            attributes={"is_crowd": False, "x": 5, "y": "abc"},
+                            label=4,
+                            group=3,
+                            id=3,
+                        ),
+                    ],
+                    attributes={"id": 1},
+                ),
+            ],
+            categories=[str(i) for i in range(10)],
+        )
+
+        self._test_save_and_load(
+            dataset,
+            partial(CocoPanopticExporter.convert, save_media=True),
+            test_dir,
+            require_media=True,
+            stream=stream,
+        )
+
     def test_can_save_and_load_stuff(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
