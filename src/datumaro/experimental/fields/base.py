@@ -16,6 +16,8 @@ from typing import Any, TypeVar
 import numpy as np
 import polars as pl
 
+from datumaro.experimental.categories import Categories
+
 T = TypeVar("T")
 
 
@@ -87,6 +89,13 @@ class Field:
             The converted value in the target type
         """
         return target_type(df[name][row_index])
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        """
+        Return the expected type of the categories, e.g. LabelCategories for LabelField
+
+        If None, no categories are expected.
+        """
 
     def __set_name__(self, _: Any, name: str):
         object.__setattr__(self, "_name", name)

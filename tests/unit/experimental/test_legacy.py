@@ -11,6 +11,7 @@ import polars as pl
 from PIL import Image as PILImage
 from typing_extensions import Annotated
 
+import datumaro.experimental.categories as exp_categories
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
@@ -933,19 +934,22 @@ def test_builtin_converters_registration():
 class DetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
     bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32(), format="x1y1x2y2")]
-    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32(), is_list=True)]
+    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.uint32]], label_field(dtype=pl.UInt32(), is_list=True)]
 
 
 class RotatedDetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
     rotated_bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32())]
-    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32(), is_list=True)]
+    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.uint32]], label_field(dtype=pl.UInt32(), is_list=True)]
 
 
 def test_convert_to_legacy_simple():
     """Test basic convert_to_legacy functionality."""
     # Create v2 dataset with sample data
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add sample data
     sample1 = DetectionSample(
@@ -1244,7 +1248,10 @@ def test_backward_bbox_annotation_converter_convert_empty_annotations():
 
 def test_backward_bbox_annotation_converter_infer_categories():
     """Test category inference from v2 dataset."""
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add samples with different labels
     sample1 = DetectionSample(
@@ -1277,7 +1284,10 @@ def test_backward_bbox_annotation_converter_infer_categories():
 
 def test_analyze_experimental_dataset():
     """Test analysis of v2 dataset for backward conversion."""
-    experimental_dataset = Dataset(DetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=DetectionSample,
+        categories={"bbox_labels": exp_categories.LabelCategories(labels=("1", "2", "3"))},
+    )
 
     # Add sample data
     sample = DetectionSample(
@@ -1430,7 +1440,7 @@ def test_backward_polygon_annotation_converter_create_from_schema():
     schema = Schema(
         attributes={
             "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float32())),
-            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.Int32(), multi_label=True)),
+            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.UInt32(), multi_label=True)),
         }
     )
 
@@ -1713,7 +1723,10 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
     label_data = np.array([0, 1], dtype=np.int32)
 
     # Create v2 dataset and add sample with rotated bbox data
-    experimental_dataset = Dataset(RotatedDetectionSample)
+    experimental_dataset = Dataset(
+        dtype_or_schema=RotatedDetectionSample,
+        categories={"rotated_bbox_labels": exp_categories.LabelCategories(labels=("label_1", "label_2", "label_3"))},
+    )
 
     sample = RotatedDetectionSample(
         image_path="/path/to/test.jpg",

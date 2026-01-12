@@ -6,6 +6,7 @@ from typing import Any
 
 import polars as pl
 
+from datumaro.experimental.categories import BaseLabelCategories, Categories
 from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
@@ -163,6 +164,15 @@ class LabelField(Field):
     multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
     is_list: bool = False
 
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not self.dtype.is_unsigned_integer():
+            raise ValueError(
+                "A label field's dtype must be a polars unsigned integer type (e.g. UInt8). This integer normally "
+                "represents the index of a category, with reference to the label categories of the dataset to which "
+                "the sample is (or will be) appended."
+            )
+
     @property
     def _pl_type(self) -> pl.DataType:
         pl_type = self.dtype
@@ -185,9 +195,12 @@ class LabelField(Field):
         data = df[name][row_index]
         return from_polars_data(data, target_type)
 
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return BaseLabelCategories
+
 
 def label_field(
-    dtype: Any = pl.Int32(),
+    dtype: Any = pl.UInt8(),
     semantic: str = "default",
     multi_label: bool = False,
     is_list: bool = False,
