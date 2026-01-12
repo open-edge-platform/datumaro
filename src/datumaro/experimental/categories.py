@@ -534,7 +534,7 @@ class Colormap:
     data: dict[int, RgbColor] = field(default_factory=dict)
 
     def __post_init__(self):
-        """Validate that there are no duplicate colors."""
+        """Validate that there are no duplicate colors"""
         object.__setattr__(self, "_inverse_colormap", {v: k for k, v in self.data.items()})
 
     @property
@@ -634,7 +634,7 @@ class MaskCategories(Categories):
         colormap_dict = generate_colormap(size, include_background=include_background)
         colormap_data = {}
         for index, color in colormap_dict.items():
-            colormap_data[index] = RgbColor(*color) if isinstance(color, tuple) else color
+            colormap_data[index] = RgbColor(*(int(x) for x in color)) if isinstance(color, tuple) else color
 
         colormap = Colormap(data=colormap_data)
         return cls(colormap=colormap)

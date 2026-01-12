@@ -21,7 +21,7 @@ import tempfile
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
 import numpy as np
@@ -199,17 +199,6 @@ def _export_images_from_dataset(
     return image_paths
 
 
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, o: Any) -> Any:
-        if isinstance(o, np.integer):
-            return int(o)
-        if isinstance(o, np.floating):
-            return float(o)
-        if isinstance(o, np.ndarray):
-            return o.tolist()
-        return super().default(o)
-
-
 def export_dataset(
     dataset: Dataset[DType],
     output_path: str | Path,
@@ -274,7 +263,7 @@ def export_dataset(
         # Write metadata
         metadata_path = work_dir / METADATA_FILE
         with open(metadata_path, "w") as f:
-            json.dump(metadata, f, indent=2, cls=NumpyEncoder)
+            json.dump(metadata, f, indent=2)
 
         # Create ZIP if requested
         if as_zip:
