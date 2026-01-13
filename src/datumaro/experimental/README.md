@@ -10,8 +10,7 @@ The `datumaro.experimental` module provides a modern, type-safe framework for wo
   - [Available Field Types](#available-field-types)
   - [Semantic Tags](#semantic-tags)
   - [Schema Inference](#schema-inference)
-- [Working with Datasets](#working-with-datasets)        import types
-        from typing import Union, get_args, get_origin
+- [Working with Datasets](#working-with-datasets)
   - [Creating Datasets](#creating-datasets)
   - [Adding Samples](#adding-samples)
   - [Accessing Samples](#accessing-samples)
