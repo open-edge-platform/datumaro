@@ -2,6 +2,7 @@
 
 import io
 import math
+import pickle
 import tempfile
 from pathlib import Path
 from typing import Any, cast
@@ -76,8 +77,8 @@ def test_image_media_converter_get_schema_attributes():
     assert attributes["image_path"].type is str
 
 
-def test_image_media_converter_convert_item_media_with_path_and_size():
-    """Test media conversion with path and size."""
+def test_image_media_converter_convert_item_media_with_path():
+    """Test media conversion with path (with and without size)."""
     # Create a dataset to get the converter
     items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
     dataset = LegacyDataset.from_iterable(items)
@@ -85,29 +86,17 @@ def test_image_media_converter_convert_item_media_with_path_and_size():
     converter = ForwardImageMediaConverter.create(dataset)
     assert converter is not None
 
-    image_media = Image.from_file("/path/to/image.jpg", size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+    # Test with size
+    image_media_with_size = Image.from_file("/path/to/image.jpg", size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+    item_with_size = DatasetItem(id="test", media=image_media_with_size)
+    result_with_size = converter.convert_item_media(item_with_size)
+    assert result_with_size["image_path"] == "/path/to/image.jpg"
 
-    item = DatasetItem(id="test", media=image_media)
-    result = converter.convert_item_media(item)
-
-    assert result["image_path"] == "/path/to/image.jpg"
-
-
-def test_image_media_converter_convert_item_media_with_path_only():
-    """Test media conversion with only path."""
-    # Create a dataset to get the converter
-    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
-    dataset = LegacyDataset.from_iterable(items)
-
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-
-    image_media = Image.from_file("/path/to/image.jpg")  # pyright: ignore[reportUnknownMemberType]
-
-    item = DatasetItem(id="test", media=image_media)
-    result = converter.convert_item_media(item)
-
-    assert result["image_path"] == "/path/to/image.jpg"
+    # Test without size
+    image_media_no_size = Image.from_file("/path/to/image.jpg")  # pyright: ignore[reportUnknownMemberType]
+    item_no_size = DatasetItem(id="test", media=image_media_no_size)
+    result_no_size = converter.convert_item_media(item_no_size)
+    assert result_no_size["image_path"] == "/path/to/image.jpg"
 
 
 def test_image_media_converter_convert_item_media_no_media():
@@ -186,94 +175,47 @@ def test_image_bytes_media_converter_convert_item_media_with_numpy():
     np.testing.assert_array_equal(result["image_bytes"], test_image)
 
 
-def test_unified_image_converter_handles_file_based_images():
-    """Test that the unified ForwardImageMediaConverter handles file-based images."""
-    # Create a dataset with file-based images
-    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
-    dataset = LegacyDataset.from_iterable(items)
-
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-
-    # Should generate image_path attributes for file-based images
-    attributes = converter.get_schema_attributes()
-    assert "image_path" in attributes
-
-
-def test_unified_image_converter_handles_data_based_images():
-    """Test that the unified ForwardImageMediaConverter handles data-based images."""
-    # Create test image data
-    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
-    image_bytes = encode_image(test_image, ".png")
-
-    # Create a dataset with data-based images
-    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
-    dataset = LegacyDataset.from_iterable(items)
-
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-
-    # Should generate image_bytes attributes for data-based images
-    attributes = converter.get_schema_attributes()
-    assert "image_bytes" in attributes
-
-
-def test_image_converter_with_size_info_includes_image_info_field():
-    """Test that ForwardImageMediaConverter includes ImageInfoField when all images have size."""
-    # Create images with size information
-    items = [
+def test_image_converter_image_info_field_inclusion():
+    """Test ForwardImageMediaConverter includes/excludes ImageInfoField based on size availability."""
+    # Test 1: All images have size - should include ImageInfo
+    items_with_size = [
         DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
         DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg", size=(720, 1280))),
     ]
-    dataset = LegacyDataset.from_iterable(items)
+    dataset_with_size = LegacyDataset.from_iterable(items_with_size)
+    converter_with_size = ForwardImageMediaConverter.create(dataset_with_size)
+    assert converter_with_size is not None
+    assert converter_with_size.has_image_info is True
+    attributes_with_size = converter_with_size.get_schema_attributes()
+    assert "image_path" in attributes_with_size
+    assert "image_info" in attributes_with_size
+    assert attributes_with_size["image_info"].type == ImageInfo
 
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-    assert converter.has_image_info is True
-
-    # Should include both image_path and image_info attributes
-    attributes = converter.get_schema_attributes()
-    assert "image_path" in attributes
-    assert "image_info" in attributes
-    assert attributes["image_info"].type == ImageInfo
-
-
-def test_image_converter_without_size_info_excludes_image_info_field():
-    """Test that ForwardImageMediaConverter excludes ImageInfoField when images don't have size."""
-    # Create images without size information
-    items = [
+    # Test 2: No images have size - should exclude ImageInfo
+    items_no_size = [
         DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg")),
         DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),
     ]
-    dataset = LegacyDataset.from_iterable(items)
+    dataset_no_size = LegacyDataset.from_iterable(items_no_size)
+    converter_no_size = ForwardImageMediaConverter.create(dataset_no_size)
+    assert converter_no_size is not None
+    assert converter_no_size.has_image_info is False
+    attributes_no_size = converter_no_size.get_schema_attributes()
+    assert "image_path" in attributes_no_size
+    assert "image_info" not in attributes_no_size
 
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-    assert converter.has_image_info is False
-
-    # Should only include image_path attribute, not image_info
-    attributes = converter.get_schema_attributes()
-    assert "image_path" in attributes
-    assert "image_info" not in attributes
-
-
-def test_image_converter_mixed_size_info_excludes_image_info_field():
-    """Test that ForwardImageMediaConverter excludes ImageInfoField when some images lack size."""
-    # Create mixed dataset - some images with size, some without
-    items = [
+    # Test 3: Mixed - some images with size, some without - should exclude ImageInfo
+    items_mixed = [
         DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
         DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),  # No size
     ]
-    dataset = LegacyDataset.from_iterable(items)
-
-    converter = ForwardImageMediaConverter.create(dataset)
-    assert converter is not None
-    assert converter.has_image_info is False
-
-    # Should only include image_path attribute, not image_info
-    attributes = converter.get_schema_attributes()
-    assert "image_path" in attributes
-    assert "image_info" not in attributes
+    dataset_mixed = LegacyDataset.from_iterable(items_mixed)
+    converter_mixed = ForwardImageMediaConverter.create(dataset_mixed)
+    assert converter_mixed is not None
+    assert converter_mixed.has_image_info is False
+    attributes_mixed = converter_mixed.get_schema_attributes()
+    assert "image_path" in attributes_mixed
+    assert "image_info" not in attributes_mixed
 
 
 def test_image_converter_converts_size_info():
@@ -1149,7 +1091,6 @@ def test_forward_instance_mask_annotation_converter():
     assert np.array_equal(instance_masks[1], index_mask_data == 2)  # Second instance
 
     # Verify labels
-    print("RESULT", result["labels"])
     assert np.array_equal(result["labels"], np.array([0, 1], dtype=np.int32))
 
 
@@ -2057,3 +1998,219 @@ def test_analyze_legacy_dataset_non_hierarchical():
 
     # Should not detect hierarchical structure
     assert analysis_result.is_hierarchical is False
+
+
+class SemanticMaskLoaderTest:
+    """Tests for the SemanticMaskLoader picklable callable class."""
+
+    def test_semantic_mask_loader_functionality(self):
+        """Test SemanticMaskLoader with empty, single, and multiple masks."""
+        from datumaro.experimental.legacy.annotation_converters import SemanticMaskLoader
+
+        # Test empty mask list
+        loader_empty = SemanticMaskLoader([])
+        assert loader_empty() is None
+
+        # Test single mask
+        mask = np.array([[True, False], [False, True]], dtype=bool)
+        loader_single = SemanticMaskLoader([(mask, 1)])
+        result_single = loader_single()
+        assert result_single is not None
+        assert result_single.shape == (2, 2)
+        assert result_single.dtype == np.uint8
+        assert result_single[0, 0] == 1
+        assert result_single[0, 1] == 0
+        assert result_single[1, 0] == 0
+        assert result_single[1, 1] == 1
+
+        # Test multiple masks
+        mask1 = np.array([[True, False], [False, False]], dtype=bool)
+        mask2 = np.array([[False, True], [True, False]], dtype=bool)
+        loader_multi = SemanticMaskLoader([(mask1, 1), (mask2, 2)])
+        result_multi = loader_multi()
+        assert result_multi is not None
+        assert result_multi[0, 0] == 1  # From mask1
+        assert result_multi[0, 1] == 2  # From mask2
+        assert result_multi[1, 0] == 2  # From mask2
+        assert result_multi[1, 1] == 0  # Background
+
+    def test_semantic_mask_loader_is_picklable(self):
+        """Test that SemanticMaskLoader can be pickled and unpickled."""
+        from datumaro.experimental.legacy.annotation_converters import SemanticMaskLoader
+
+        mask = np.array([[True, False], [False, True]], dtype=bool)
+        loader = SemanticMaskLoader([(mask, 1)])
+
+        # Pickle and unpickle
+        pickled = pickle.dumps(loader)
+        restored_loader = pickle.loads(pickled)
+
+        # Verify the restored loader works correctly
+        result = restored_loader()
+        assert result is not None
+        assert result[0, 0] == 1
+        assert result[1, 1] == 1
+
+
+class InstanceMaskLoaderTest:
+    """Tests for the InstanceMaskLoader picklable callable class."""
+
+    def test_instance_mask_loader_functionality(self):
+        """Test InstanceMaskLoader with empty, single, and multiple masks."""
+        from datumaro.experimental.legacy.annotation_converters import InstanceMaskLoader
+
+        # Test empty mask list
+        loader_empty = InstanceMaskLoader([])
+        result_empty = loader_empty()
+        assert result_empty.shape == (0, 0, 0)
+        assert result_empty.dtype == bool
+
+        # Test single mask
+        mask = np.array([[True, False], [False, True]], dtype=bool)
+        loader_single = InstanceMaskLoader([mask])
+        result_single = loader_single()
+        assert result_single.shape == (1, 2, 2)
+        assert result_single.dtype == bool
+        assert result_single[0, 0, 0] == True  # noqa: E712
+        assert result_single[0, 0, 1] == False  # noqa: E712
+
+        # Test multiple masks
+        mask1 = np.array([[True, False], [False, False]], dtype=bool)
+        mask2 = np.array([[False, True], [True, False]], dtype=bool)
+        loader_multi = InstanceMaskLoader([mask1, mask2])
+        result_multi = loader_multi()
+        assert result_multi.shape == (2, 2, 2)
+        assert np.array_equal(result_multi[0], mask1)
+        assert np.array_equal(result_multi[1], mask2)
+
+    def test_instance_mask_loader_is_picklable(self):
+        """Test that InstanceMaskLoader can be pickled and unpickled."""
+        from datumaro.experimental.legacy.annotation_converters import InstanceMaskLoader
+
+        mask1 = np.array([[True, False], [False, False]], dtype=bool)
+        mask2 = np.array([[False, True], [True, False]], dtype=bool)
+        loader = InstanceMaskLoader([mask1, mask2])
+
+        # Pickle and unpickle
+        pickled = pickle.dumps(loader)
+        restored_loader = pickle.loads(pickled)
+
+        # Verify the restored loader works correctly
+        result = restored_loader()
+        assert result.shape == (2, 2, 2)
+        assert np.array_equal(result[0], mask1)
+        assert np.array_equal(result[1], mask2)
+
+
+class ForwardMaskAnnotationConverterPickleTest:
+    """Tests for ForwardMaskAnnotationConverter producing picklable results."""
+
+    def test_semantic_mask_conversion_is_picklable(self):
+        """Test that semantic mask conversion results are picklable."""
+        # Create a legacy dataset with semantic segmentation masks
+        mask_data = np.array([[1, 0], [0, 1]], dtype=np.uint8)
+
+        legacy_categories = LabelCategories()
+        legacy_categories.add("background")
+        legacy_categories.add("foreground")
+
+        mask = ExtractedMask(index_mask=mask_data, index=1, label=1)
+        item = DatasetItem(
+            id="test",
+            media=Image.from_numpy(np.zeros((2, 2, 3), dtype=np.uint8)),
+            annotations=[mask],
+        )
+
+        legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
+
+        # Create the converter
+        converter = ForwardMaskAnnotationConverter.create(legacy_dataset)
+        assert converter is not None
+        assert converter.is_semantic is True
+
+        # Convert the annotations
+        result = converter.convert_annotations(item.annotations, item)
+
+        # The result should contain a picklable callable
+        mask_callable = result["mask_callable"]
+        assert callable(mask_callable)
+
+        # Pickle and unpickle the callable
+        pickled = pickle.dumps(mask_callable)
+        restored_callable = pickle.loads(pickled)
+
+        # Verify the restored callable works
+        output_mask = restored_callable()
+        assert output_mask is not None
+
+    def test_instance_mask_conversion_is_picklable(self):
+        """Test that instance mask conversion results are picklable."""
+        # Create a legacy dataset with instance segmentation masks
+        index_mask_data = np.array([[0, 1], [1, 0]], dtype=np.uint8)
+
+        legacy_categories = LabelCategories()
+        legacy_categories.add("object")
+
+        # Instance segmentation: indices don't match labels
+        mask1 = ExtractedMask(index_mask=index_mask_data, index=0, label=0)
+        mask2 = ExtractedMask(index_mask=index_mask_data, index=1, label=0)
+
+        item = DatasetItem(
+            id="test",
+            media=Image.from_numpy(np.zeros((2, 2, 3), dtype=np.uint8)),
+            annotations=[mask1, mask2],
+        )
+
+        legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
+
+        # Create the converter
+        converter = ForwardMaskAnnotationConverter.create(legacy_dataset)
+        assert converter is not None
+        assert converter.is_semantic is False
+
+        # Convert the annotations
+        result = converter.convert_annotations(item.annotations, item)
+
+        # The result should contain a picklable callable
+        instance_mask_callable = result["instance_mask_callable"]
+        assert callable(instance_mask_callable)
+
+        # Pickle and unpickle the callable
+        pickled = pickle.dumps(instance_mask_callable)
+        restored_callable = pickle.loads(pickled)
+
+        # Verify the restored callable works
+        output_masks = restored_callable()
+        assert output_masks.shape == (2, 2, 2)
+
+
+class ConvertFromLegacyPickleTest:
+    """Tests for convert_from_legacy producing picklable datasets."""
+
+    def test_converted_segmentation_dataset_is_picklable(self):
+        """Test that a converted segmentation dataset can be pickled."""
+        # Create a simple semantic segmentation dataset
+        mask_data = np.array([[1, 0], [0, 1]], dtype=np.uint8)
+
+        legacy_categories = LabelCategories()
+        legacy_categories.add("background")
+        legacy_categories.add("foreground")
+
+        mask = ExtractedMask(index_mask=mask_data, index=1, label=1)
+        item = DatasetItem(
+            id="test",
+            media=Image.from_numpy(np.zeros((2, 2, 3), dtype=np.uint8)),
+            annotations=[mask],
+        )
+
+        legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
+
+        # Convert the dataset
+        new_dataset = convert_from_legacy(legacy_dataset)
+
+        # Pickle and unpickle the dataset
+        pickled = pickle.dumps(new_dataset)
+        restored_dataset = pickle.loads(pickled)
+
+        # Verify the restored dataset works
+        assert len(restored_dataset) == 1

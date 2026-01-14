@@ -20,8 +20,8 @@ class Transform:
 
     Transforms may support lazy evaluation of certain fields. The list of readily
     available fields is available through get_batch_attributes() while the list of lazy
-    fields is available through get_lazy_attributes(). From a behavioural perspective,
-    there is no difference between the two types of attributes but it is recommended
+    fields is available through get_lazy_attributes(). From a behavioral perspective,
+    there is no difference between the two types of attributes, but it is recommended
     to avoid fetching lazy attributes until needed as they often require expensive
     operations (such as image loading)
 
@@ -186,6 +186,45 @@ class IdentityTransform(Transform):
         """
         super().__init__(schema)
         self._df = df
+
+    def __getstate__(self) -> dict:
+        """Prepare the transform for pickling.
+
+        Polars DataFrames with Object columns cannot be serialized using Polars' default
+        serialization. This method extracts Object columns as Python lists before pickling.
+        """
+        state = self.__dict__.copy()
+
+        # Check if DataFrame has Object columns
+        object_columns = [col for col, dtype in self._df.schema.items() if dtype == pl.Object]
+
+        if object_columns:
+            # Extract Object column data as Python lists
+            state["_object_column_data"] = {col: self._df[col].to_list() for col in object_columns}
+            # Create a DataFrame without Object columns for serialization
+            non_object_df = self._df.drop(object_columns)
+            state["_df"] = non_object_df
+            state["_object_columns_schema"] = dict.fromkeys(object_columns, pl.Object)
+        else:
+            state["_object_column_data"] = None
+            state["_object_columns_schema"] = None
+
+        return state
+
+    def __setstate__(self, state: dict) -> None:
+        """Restore the transform after unpickling.
+
+        Reconstructs Object columns from the Python lists stored during pickling.
+        """
+        object_column_data = state.pop("_object_column_data", None)
+        object_columns_schema = state.pop("_object_columns_schema", None)
+
+        self.__dict__.update(state)
+
+        # Restore Object columns if they were extracted
+        if object_column_data is not None and object_columns_schema is not None:
+            for col, values in object_column_data.items():
+                self._df = self._df.with_columns(pl.Series(col, values, dtype=pl.Object()))
 
     def apply(self, _: Sequence[str]) -> pl.DataFrame:
         """Return the wrapped DataFrame unchanged.

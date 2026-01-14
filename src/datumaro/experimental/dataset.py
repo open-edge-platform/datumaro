@@ -232,6 +232,47 @@ class Dataset(Generic[DType]):
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._transforms: Transform | None = None
 
+    def __getstate__(self) -> dict[str, Any]:
+        """
+        Prepare the dataset for pickling.
+
+        Polars DataFrames with Object columns cannot be serialized using Polars' default
+        serialization. This method extracts Object columns as Python lists before pickling.
+        """
+        state = self.__dict__.copy()
+
+        # Check if DataFrame has Object columns
+        object_columns = [col for col, dtype in self.df.schema.items() if dtype == pl.Object]
+
+        if object_columns:
+            # Extract Object column data as Python lists
+            state["_object_column_data"] = {col: self.df[col].to_list() for col in object_columns}
+            # Create a DataFrame without Object columns for serialization
+            non_object_df = self.df.drop(object_columns)
+            state["df"] = non_object_df
+            state["_object_columns_schema"] = dict.fromkeys(object_columns, pl.Object)
+        else:
+            state["_object_column_data"] = None
+            state["_object_columns_schema"] = None
+
+        return state
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """
+        Restore the dataset after unpickling.
+
+        Reconstructs Object columns from the Python lists stored during pickling.
+        """
+        object_column_data = state.pop("_object_column_data", None)
+        object_columns_schema = state.pop("_object_columns_schema", None)
+
+        self.__dict__.update(state)
+
+        # Restore Object columns if they were extracted
+        if object_column_data is not None and object_columns_schema is not None:
+            for col, values in object_column_data.items():
+                self.df = self.df.with_columns(pl.Series(col, values, dtype=pl.Object()))
+
     @classmethod
     def from_dataframe(
         cls,

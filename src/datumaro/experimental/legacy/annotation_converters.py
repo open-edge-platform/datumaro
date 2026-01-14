@@ -30,6 +30,72 @@ from datumaro.experimental.fields import (
 from datumaro.util.mask_tools import generate_colormap
 
 
+class SemanticMaskLoader:
+    """Picklable callable class for loading semantic segmentation masks.
+
+    This class replaces local closures with a picklable object that stores
+    the mask data needed to generate the semantic mask on demand.
+    """
+
+    def __init__(self, mask_data_list: list[tuple[np.ndarray, int | None]]):
+        """Initialize with list of (mask_image, label) tuples.
+
+        Args:
+            mask_data_list: List of tuples containing (mask_image, label) for each mask.
+        """
+        self._mask_data_list = mask_data_list
+
+    def __call__(self) -> np.ndarray | None:
+        """Generate the semantic mask from stored mask data."""
+        if len(self._mask_data_list) == 0:
+            return None
+
+        # Get first mask to determine shape
+        first_mask, _ = self._mask_data_list[0]
+        output_mask = np.zeros(first_mask.shape, dtype=np.uint8)
+
+        # Combine all masks into a single semantic mask
+        for mask_data, label in self._mask_data_list:
+            if label is not None:
+                output_mask[mask_data] = label
+
+        return output_mask
+
+
+class InstanceMaskLoader:
+    """Picklable callable class for loading instance segmentation masks.
+
+    This class replaces local closures with a picklable object that stores
+    the mask data needed to generate instance masks on demand.
+    """
+
+    def __init__(self, mask_images: list[np.ndarray]):
+        """Initialize with list of mask images.
+
+        Args:
+            mask_images: List of mask images for each instance.
+        """
+        self._mask_images = mask_images
+
+    def __call__(self) -> np.ndarray:
+        """Generate the instance masks from stored mask data."""
+        if len(self._mask_images) == 0:
+            return np.zeros((0, 0, 0), dtype=bool)
+
+        # Get first mask to determine shape
+        first_mask = self._mask_images[0]
+        shape = (len(self._mask_images), *first_mask.shape)
+
+        # Create array of binary instance masks
+        instance_masks = np.empty(shape, dtype=bool)
+
+        # Fill instance masks
+        for i, mask in enumerate(self._mask_images):
+            instance_masks[i] = mask
+
+        return instance_masks
+
+
 class ForwardAnnotationConverter(ABC):
     """Base class for forward annotation type converters."""
 
@@ -932,46 +998,16 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         results = {}
 
         if self.is_semantic:
-            # Convert to semantic segmentation mask
-            def get_semantic_mask() -> np.ndarray:
-                if len(extracted_masks) == 0:
-                    return None
-
-                # Initialize empty mask
-                # Get first mask to determine shape
-                first_mask = extracted_masks[0].image
-                output_mask = np.zeros(first_mask.shape, dtype=np.uint8)
-
-                # Combine all masks into a single semantic mask
-                for mask in extracted_masks:
-                    if mask.label is not None:
-                        mask_data = mask.image
-                        output_mask[mask_data] = mask.label
-
-                return output_mask
-
-            results[self.name_prefix + "mask_callable"] = get_semantic_mask
+            # Convert to semantic segmentation mask using picklable callable
+            # Extract mask data upfront to make it picklable
+            mask_data_list = [(mask.image, mask.label) for mask in extracted_masks]
+            results[self.name_prefix + "mask_callable"] = SemanticMaskLoader(mask_data_list)
 
         else:
-            # Convert to instance segmentation masks
-            def get_instance_masks() -> np.ndarray:
-                if len(extracted_masks) == 0:
-                    return np.zeros((0, 0, 0), dtype=bool)
-
-                # Get first mask to determine shape
-                first_mask = extracted_masks[0].image
-                shape = (len(extracted_masks), *first_mask.shape)
-
-                # Create array of binary instance masks
-                instance_masks = np.empty(shape, dtype=bool)
-
-                # Fill instance masks
-                for i, mask in enumerate(extracted_masks):
-                    instance_masks[i] = mask.image
-
-                return instance_masks
-
-            results[self.name_prefix + "instance_mask_callable"] = get_instance_masks
+            # Convert to instance segmentation masks using picklable callable
+            # Extract mask images upfront to make it picklable
+            mask_images = [mask.image for mask in extracted_masks]
+            results[self.name_prefix + "instance_mask_callable"] = InstanceMaskLoader(mask_images)
 
             # Add instance labels
             labels = [mask.label if mask.label is not None else 0 for mask in extracted_masks]
