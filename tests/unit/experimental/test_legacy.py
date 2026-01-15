@@ -89,13 +89,13 @@ class ForwardImageMediaConverterTest:
         assert converter is not None
 
         # Test with size
-        image_media_with_size = Image.from_file("/path/to/image.jpg", size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+        image_media_with_size = Image.from_file("/path/to/image.jpg", size=(480, 640))
         item_with_size = DatasetItem(id="test", media=image_media_with_size)
         result_with_size = converter.convert_item_media(item_with_size)
         assert result_with_size["image_path"] == "/path/to/image.jpg"
 
         # Test without size
-        image_media_no_size = Image.from_file("/path/to/image.jpg")  # pyright: ignore[reportUnknownMemberType]
+        image_media_no_size = Image.from_file("/path/to/image.jpg")
         item_no_size = DatasetItem(id="test", media=image_media_no_size)
         result_no_size = converter.convert_item_media(item_no_size)
         assert result_no_size["image_path"] == "/path/to/image.jpg"
@@ -669,7 +669,7 @@ class AnalyzeLegacyDatasetTest:
             temp_path = Path(temp_dir)
 
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
             bbox = Bbox(10, 20, 30, 40, label=1)
             item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
 
@@ -682,7 +682,7 @@ class AnalyzeLegacyDatasetTest:
                 [item],
                 ann_types={AnnotationType.bbox},
                 categories={AnnotationType.label: label_categories},
-            )  # pyright: ignore[reportUnknownMemberType]
+            )
 
             analysis_result = analyze_legacy_dataset(dataset)
 
@@ -697,10 +697,10 @@ class AnalyzeLegacyDatasetTest:
             temp_path = Path(temp_dir)
 
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
             item = DatasetItem(id="item1", media=image_media, annotations=[])
 
-            dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
+            dataset = LegacyDataset.from_iterable([item])
 
             analysis_result = analyze_legacy_dataset(dataset)
 
@@ -715,7 +715,7 @@ class AnalyzeLegacyDatasetTest:
             temp_path = Path(temp_dir)
 
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
 
             class UnknownAnnotation(Bbox):
                 _type = AnnotationType.unknown
@@ -723,7 +723,7 @@ class AnalyzeLegacyDatasetTest:
             bbox = UnknownAnnotation(10, 20, 30, 40, label=1)
             item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
 
-            dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
+            dataset = LegacyDataset.from_iterable([item])
 
             analysis_result = analyze_legacy_dataset(dataset)
 
@@ -742,7 +742,7 @@ class ConvertDatasetTest:
             temp_path = Path(temp_dir)
 
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
 
             bbox1 = Bbox(10, 20, 30, 40, label=1)
             bbox2 = Bbox(50, 60, 70, 80, label=2)
@@ -759,7 +759,7 @@ class ConvertDatasetTest:
                 [item1],
                 ann_types={AnnotationType.bbox},
                 categories={AnnotationType.label: label_categories},
-            )  # pyright: ignore[reportUnknownMemberType]
+            )
 
             # Convert dataset
             experimental_ds = convert_from_legacy(dataset)
@@ -801,7 +801,7 @@ class ConvertDatasetTest:
 
         # Create dataset item with the mask
         item = DatasetItem(id="item1", annotations=annotations)
-        dataset = LegacyDataset.from_iterable([item], categories=categories)  # pyright: ignore[reportUnknownMemberType]
+        dataset = LegacyDataset.from_iterable([item], categories=categories)
 
         # Convert to v2 dataset
         experimental_ds = convert_from_legacy(dataset)
@@ -822,7 +822,7 @@ class ConvertDatasetTest:
 
     def test_convert_empty_dataset(self):
         """Test conversion of empty dataset."""
-        dataset = LegacyDataset.from_iterable([])  # pyright: ignore[reportUnknownMemberType]
+        dataset = LegacyDataset.from_iterable([])
 
         experimental_ds = convert_from_legacy(dataset)
         assert len(experimental_ds.df) == 0
@@ -833,10 +833,10 @@ class ConvertDatasetTest:
             temp_path = Path(temp_dir)
 
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
             item = DatasetItem(id="item1", media=image_media, annotations=[])
 
-            dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
+            dataset = LegacyDataset.from_iterable([item])
 
             experimental_ds = convert_from_legacy(dataset)
 
@@ -941,7 +941,7 @@ class ConvertToLegacyTest:
 
         # Check second item
         second_item = items[1]
-        second_item_media = cast("Any", second_item.media)  # pyright: ignore[reportUnknownMemberType]
+        second_item_media = cast("Any", second_item.media)
         assert isinstance(second_item_media, ImageFromFile)
         assert second_item_media.path == "/path/to/image2.jpg"
         assert len(second_item.annotations) == 1
@@ -1307,14 +1307,14 @@ class AnalyzeExperimentalDatasetTest:
 
         # Check first item
         first_item = items[0]
-        first_item_media = cast("Any", first_item.media)  # pyright: ignore[reportUnknownMemberType]
+        first_item_media = cast("Any", first_item.media)
         assert isinstance(first_item_media, ImageFromFile)
         assert first_item_media.path == "/path/to/image1.jpg"
         assert len(first_item.annotations) == 0  # No annotations
 
         # Check second item
         second_item = items[1]
-        second_item_media = cast("Any", second_item.media)  # pyright: ignore[reportUnknownMemberType]
+        second_item_media = cast("Any", second_item.media)
         assert isinstance(second_item_media, ImageFromFile)
         assert second_item_media.path == "/path/to/image2.jpg"
         assert len(second_item.annotations) == 0
@@ -1456,7 +1456,7 @@ class PolygonConversionTest:
 
             # Create an image file for the test
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
 
             # Create polygon annotations with different shapes
             triangle = Polygon(points=[10, 20, 30, 25, 20, 40], label=1)  # Triangle
@@ -1476,7 +1476,7 @@ class PolygonConversionTest:
                 [item],
                 ann_types={AnnotationType.polygon},
                 categories={AnnotationType.label: label_categories},
-            )  # pyright: ignore[reportUnknownMemberType]
+            )
 
             # Convert to v2 format
             experimental_dataset = convert_from_legacy(legacy_dataset)
@@ -1529,7 +1529,7 @@ class PolygonConversionTest:
 
             # Create an image file for the test
             image_path = str(temp_path / "image1.jpg")
-            image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
+            image_media = Image.from_file(image_path, size=(480, 640))
 
             # Create polygon annotation without label categories
             triangle = Polygon(points=[10, 20, 30, 25, 20, 40])  # No label
@@ -1537,7 +1537,7 @@ class PolygonConversionTest:
             item = DatasetItem(id="polygon_no_labels", media=image_media, annotations=[triangle])
 
             # Create legacy dataset without label categories
-            legacy_dataset = LegacyDataset.from_iterable([item], ann_types={AnnotationType.polygon})  # pyright: ignore[reportUnknownMemberType]
+            legacy_dataset = LegacyDataset.from_iterable([item], ann_types={AnnotationType.polygon})
 
             # Convert to v2 format
             experimental_dataset = convert_from_legacy(legacy_dataset)
