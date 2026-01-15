@@ -591,10 +591,11 @@ class MaskCategories(Categories):
         Returns:
             Dictionary representation of this MaskCategories instance
         """
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
         return {
             "type": "MaskCategories",
             "labels": list(self.labels),
-            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()},
+            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in colormap_data.items()},
         }
 
     @classmethod
@@ -643,10 +644,12 @@ class MaskCategories(Categories):
         return self.colormap[idx]
 
     def __iter__(self):
-        return iter(self.colormap.data.values())
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
+        return iter(colormap_data.values())
 
     def __len__(self) -> int:
         return len(self.colormap)
 
     def __hash__(self):
-        return hash((tuple(self.labels), frozenset(self.colormap.data.items())))
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
+        return hash((tuple(self.labels), frozenset(colormap_data.items())))

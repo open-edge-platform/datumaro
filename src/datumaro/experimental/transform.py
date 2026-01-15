@@ -6,6 +6,7 @@ from collections.abc import Sequence
 
 import polars as pl
 
+from .polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from .schema import Schema
 
 
@@ -20,8 +21,8 @@ class Transform:
 
     Transforms may support lazy evaluation of certain fields. The list of readily
     available fields is available through get_batch_attributes() while the list of lazy
-    fields is available through get_lazy_attributes(). From a behavioural perspective,
-    there is no difference between the two types of attributes but it is recommended
+    fields is available through get_lazy_attributes(). From a behavioral perspective,
+    there is no difference between the two types of attributes, but it is recommended
     to avoid fetching lazy attributes until needed as they often require expensive
     operations (such as image loading)
 
@@ -186,6 +187,23 @@ class IdentityTransform(Transform):
         """
         super().__init__(schema)
         self._df = df
+
+    def __getstate__(self) -> dict:
+        """Prepare the transform for pickling.
+
+        Polars DataFrames with Object columns cannot be serialized using Polars' default
+        serialization. This method extracts Object columns as Python lists before pickling.
+        """
+        state = self.__dict__.copy()
+        return prepare_dataframe_for_pickle(self._df, "_df", state)
+
+    def __setstate__(self, state: dict) -> None:
+        """Restore the transform after unpickling.
+
+        Reconstructs Object columns from the Python lists stored during pickling.
+        """
+        state["_df"] = restore_dataframe_from_pickle(state, "_df")
+        self.__dict__.update(state)
 
     def apply(self, _: Sequence[str]) -> pl.DataFrame:
         """Return the wrapped DataFrame unchanged.

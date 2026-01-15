@@ -15,6 +15,7 @@ from typing_extensions import TypeVar, dataclass_transform
 
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.datasets import Subset, SubsetField
+from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
 
@@ -231,6 +232,25 @@ class Dataset(Generic[DType]):
 
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._transforms: Transform | None = None
+
+    def __getstate__(self) -> dict[str, Any]:
+        """
+        Prepare the dataset for pickling.
+
+        Polars DataFrames with Object columns cannot be serialized using Polars' default
+        serialization. This method extracts Object columns as Python lists before pickling.
+        """
+        state = self.__dict__.copy()
+        return prepare_dataframe_for_pickle(self.df, "df", state)
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """
+        Restore the dataset after unpickling.
+
+        Reconstructs Object columns from the Python lists stored during pickling.
+        """
+        state["df"] = restore_dataframe_from_pickle(state, "df")
+        self.__dict__.update(state)
 
     @classmethod
     def from_dataframe(

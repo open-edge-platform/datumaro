@@ -15,6 +15,7 @@ import polars as pl
 from datumaro.experimental.categories import Categories
 from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter
 from datumaro.experimental.fields.base import Field
+from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeSpec, Schema
 from datumaro.experimental.transform import Transform
 
@@ -733,6 +734,23 @@ class ConverterTransform(Transform):
         self._applied_converters = set()
 
         self.apply(batch_outputs)
+
+    def __getstate__(self) -> dict:
+        """Prepare the transform for pickling.
+
+        Polars DataFrames with Object columns cannot be serialized using Polars' default
+        serialization. This method extracts Object columns as Python lists before pickling.
+        """
+        state = self.__dict__.copy()
+        return prepare_dataframe_for_pickle(self._df, "_df", state)
+
+    def __setstate__(self, state: dict) -> None:
+        """Restore the transform after unpickling.
+
+        Reconstructs Object columns from the Python lists stored during pickling.
+        """
+        state["_df"] = restore_dataframe_from_pickle(state, "_df")
+        self.__dict__.update(state)
 
     def apply(self, fields: Sequence[str]) -> pl.DataFrame:
         required_inputs = set()
