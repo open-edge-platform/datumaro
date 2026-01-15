@@ -117,6 +117,35 @@ class _SchemaState:
         """Get AttributeSpec for a specific field type."""
         return self.field_to_attr_spec.get(field_type)
 
+    def merge_categories_from(self, other: _SchemaState) -> _SchemaState:
+        """
+        Create a new state where None categories are filled from another state.
+
+        This is used to propagate categories from the source schema to the target
+        schema when the target doesn't have explicit categories defined.
+
+        Args:
+            other: The state to take categories from when this state has None
+
+        Returns:
+            A new _SchemaState with merged categories
+        """
+        merged_field_to_attr_spec = {}
+        for field_type, attr_spec in self.field_to_attr_spec.items():
+            if attr_spec.categories is None and field_type in other.field_to_attr_spec:
+                other_attr_spec = other.field_to_attr_spec[field_type]
+                if other_attr_spec.categories is not None:
+                    # Create a new AttributeSpec with the categories from the source
+                    merged_attr_spec = AttributeSpec(
+                        name=attr_spec.name,
+                        field=attr_spec.field,
+                        categories=other_attr_spec.categories,
+                    )
+                    merged_field_to_attr_spec[field_type] = merged_attr_spec
+                    continue
+            merged_field_to_attr_spec[field_type] = attr_spec
+        return _SchemaState(merged_field_to_attr_spec)
+
 
 @dataclass
 class _SearchNode:
@@ -445,7 +474,9 @@ def _find_conversion_path_for_semantic(
 
     # If we already have all required fields after initial renaming, we might be done
     if effective_start_state == target_state:
-        return initial_converters, target_state
+        # Merge categories from start state into target state where target has None
+        merged_state = target_state.merge_categories_from(effective_start_state)
+        return initial_converters, merged_state
 
     # Initialize A* search from the effective start state
     open_set: list[_SearchNode] = []
@@ -471,7 +502,9 @@ def _find_conversion_path_for_semantic(
         # Check if we've reached the goal - all target fields must match exactly
         if _heuristic_cost(current_node.state, target_state) == 0:
             # We've reached the goal, return the path
-            return current_node.path, current_node.state
+            # Merge categories from start state into the result state where it has None
+            merged_state = current_node.state.merge_categories_from(effective_start_state)
+            return current_node.path, merged_state
 
         # Explore neighbors
         for converter, new_state in _get_applicable_converters(
