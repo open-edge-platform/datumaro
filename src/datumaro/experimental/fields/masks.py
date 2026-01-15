@@ -1,6 +1,7 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -208,7 +209,7 @@ class InstanceMaskCallableField(Field):
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: Callable) -> dict[str, pl.Series]:
         """
         Store instance mask callable as Object in Polars series.
 
@@ -222,7 +223,7 @@ class InstanceMaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """
         Extract instance mask callable from Polars dataframe.
 
@@ -292,7 +293,7 @@ class MaskCallableField(Field):
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: Callable) -> dict[str, pl.Series]:
         """
         Store mask callable as Object in Polars series.
 
@@ -305,7 +306,7 @@ class MaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """
         Extract mask callable from Polars dataframe.
 

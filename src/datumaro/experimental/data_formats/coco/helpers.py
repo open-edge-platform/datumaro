@@ -83,35 +83,41 @@ def _build_subset_config(root_path: Path, version: str) -> dict[Subset, dict[str
     return subset_config
 
 
-def _detect_coco_label_categories(subset_config: dict[Subset, dict[str, Path]]) -> CocoCategories:
+def _detect_coco_label_categories_from_paths(
+    subset_config: dict[Subset, dict[str, Path | list[Path]]],
+) -> CocoCategories:
     """
-    Detect COCO label categories by probing available primary annotation JSONs.
+    Detect COCO label categories by probing available annotation JSON files.
 
     Args:
-        subset_config: Mapping produced by _build_subset_config with paths for
-            each subset.
+        subset_config: Mapping with 'annotations' path(s) for each subset.
+            The 'annotations' value can be a single Path or a list of Paths.
 
     Returns:
         CocoCategories instance with either discovered labels or defaults.
     """
-
-    # Try to find categories from any primary annotations file (instances/keypoints)
     for _subset, cfg in subset_config.items():
-        instances_data_probe = _load_json_or_none(cfg["instances"])  # type: ignore[arg-type]
-        keypoints_data_probe = _load_json_or_none(cfg["keypoints"])  # type: ignore[arg-type]
+        annotations_paths = cfg.get("annotations")
+        if annotations_paths is None:
+            continue
 
-        primary_probe = instances_data_probe or keypoints_data_probe
-        if primary_probe and isinstance(primary_probe, dict):
-            cats = primary_probe.get("categories") or []
-            if isinstance(cats, list) and len(cats) > 0:
-                # Sort categories by id to preserve canonical order
-                try:
-                    cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
-                    label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
-                    return CocoCategories(labels=label_names)
-                except Exception:  # noqa: S110
-                    # If anything goes wrong, continue probing other subsets
-                    pass
+        # Normalize to list for uniform handling
+        if isinstance(annotations_paths, Path):
+            paths_to_check = [annotations_paths]
+        else:
+            paths_to_check = annotations_paths
+
+        for annotations_path in paths_to_check:
+            annotations_data = _load_json_or_none(annotations_path)
+            if annotations_data and isinstance(annotations_data, dict):
+                cats = annotations_data.get("categories") or []
+                if isinstance(cats, list) and len(cats) > 0:
+                    try:
+                        cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
+                        label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
+                        return CocoCategories(labels=label_names)
+                    except Exception:  # noqa: S110
+                        pass
 
     logger.warning("Unable to extract labels from COCO annotations, falling back to defaults")
     return CocoCategories()
@@ -518,6 +524,60 @@ def _save_subset(
         written[f"captions_{subset_key}"] = cap_path
 
     return written
+
+
+def _save_subset_flexible(
+    *,
+    images_dir: Path,
+    annotations_file: Path,
+    samples: list[CocoSample],
+    categories_coco: list[dict],
+    to_category_id: Any,
+) -> None:
+    """
+    Save samples to a single images directory and annotation file.
+
+    Args:
+        images_dir: Directory where images will be copied.
+        annotations_file: Path to the annotation JSON file to write.
+        samples: List of CocoSample objects to save.
+        categories_coco: List of category dicts for the COCO format.
+        to_category_id: Function to map label index to category ID.
+    """
+    images_dir.mkdir(parents=True, exist_ok=True)
+    annotations_file.parent.mkdir(parents=True, exist_ok=True)
+
+    next_image_id = 1
+
+    def get_or_assign_image_id(s: CocoSample) -> int:
+        nonlocal next_image_id
+        img_id = s.image_id
+        if isinstance(img_id, int):
+            return img_id
+        assigned = next_image_id
+        next_image_id += 1
+        return assigned
+
+    # Build images section and copy images
+    images_section: list[dict] = _build_and_copy_images_section(samples, get_or_assign_image_id, images_dir)
+
+    # Serialize annotations
+    instances_annotations, keypoints_annotations, captions_annotations = _serialize_annotations_for_subset(
+        samples, get_or_assign_image_id, to_category_id
+    )
+
+    # Merge all annotations into a single list
+    all_annotations = instances_annotations + keypoints_annotations + captions_annotations
+
+    # Write to a single JSON file
+    _write_json(
+        annotations_file,
+        {
+            "images": images_section,
+            "annotations": all_annotations,
+            "categories": categories_coco,
+        },
+    )
 
 
 @dataclass
