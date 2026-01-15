@@ -15,6 +15,7 @@ from typing_extensions import TypeVar, dataclass_transform
 
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.datasets import Subset, SubsetField
+from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
 
@@ -240,22 +241,7 @@ class Dataset(Generic[DType]):
         serialization. This method extracts Object columns as Python lists before pickling.
         """
         state = self.__dict__.copy()
-
-        # Check if DataFrame has Object columns
-        object_columns = [col for col, dtype in self.df.schema.items() if dtype == pl.Object]
-
-        if object_columns:
-            # Extract Object column data as Python lists
-            state["_object_column_data"] = {col: self.df[col].to_list() for col in object_columns}
-            # Create a DataFrame without Object columns for serialization
-            non_object_df = self.df.drop(object_columns)
-            state["df"] = non_object_df
-            state["_object_columns_schema"] = dict.fromkeys(object_columns, pl.Object)
-        else:
-            state["_object_column_data"] = None
-            state["_object_columns_schema"] = None
-
-        return state
+        return prepare_dataframe_for_pickle(self.df, "df", state)
 
     def __setstate__(self, state: dict[str, Any]) -> None:
         """
@@ -263,15 +249,8 @@ class Dataset(Generic[DType]):
 
         Reconstructs Object columns from the Python lists stored during pickling.
         """
-        object_column_data = state.pop("_object_column_data", None)
-        object_columns_schema = state.pop("_object_columns_schema", None)
-
+        state["df"] = restore_dataframe_from_pickle(state, "df")
         self.__dict__.update(state)
-
-        # Restore Object columns if they were extracted
-        if object_column_data is not None and object_columns_schema is not None:
-            for col, values in object_column_data.items():
-                self.df = self.df.with_columns(pl.Series(col, values, dtype=pl.Object()))
 
     @classmethod
     def from_dataframe(

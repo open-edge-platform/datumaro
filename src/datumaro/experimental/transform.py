@@ -6,6 +6,7 @@ from collections.abc import Sequence
 
 import polars as pl
 
+from .polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from .schema import Schema
 
 
@@ -194,37 +195,15 @@ class IdentityTransform(Transform):
         serialization. This method extracts Object columns as Python lists before pickling.
         """
         state = self.__dict__.copy()
-
-        # Check if DataFrame has Object columns
-        object_columns = [col for col, dtype in self._df.schema.items() if dtype == pl.Object]
-
-        if object_columns:
-            # Extract Object column data as Python lists
-            state["_object_column_data"] = {col: self._df[col].to_list() for col in object_columns}
-            # Create a DataFrame without Object columns for serialization
-            non_object_df = self._df.drop(object_columns)
-            state["_df"] = non_object_df
-            state["_object_columns_schema"] = dict.fromkeys(object_columns, pl.Object)
-        else:
-            state["_object_column_data"] = None
-            state["_object_columns_schema"] = None
-
-        return state
+        return prepare_dataframe_for_pickle(self._df, "_df", state)
 
     def __setstate__(self, state: dict) -> None:
         """Restore the transform after unpickling.
 
         Reconstructs Object columns from the Python lists stored during pickling.
         """
-        object_column_data = state.pop("_object_column_data", None)
-        object_columns_schema = state.pop("_object_columns_schema", None)
-
+        state["_df"] = restore_dataframe_from_pickle(state, "_df")
         self.__dict__.update(state)
-
-        # Restore Object columns if they were extracted
-        if object_column_data is not None and object_columns_schema is not None:
-            for col, values in object_column_data.items():
-                self._df = self._df.with_columns(pl.Series(col, values, dtype=pl.Object()))
 
     def apply(self, _: Sequence[str]) -> pl.DataFrame:
         """Return the wrapped DataFrame unchanged.
