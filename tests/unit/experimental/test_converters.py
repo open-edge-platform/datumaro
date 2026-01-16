@@ -65,6 +65,7 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
+    label_field,
 )
 from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema
 
@@ -1255,6 +1256,35 @@ def test_find_conversion_path_inferred_categories():
     # Check that the mask categories include background + original labels
     expected_labels = ("background", "cat", "dog", "bird")
     assert mask_categories.labels == expected_labels
+
+
+def test_convert_to_schema_propagates_categories():
+    """Test that converting a dataset to a new schema propagates categories when target has None."""
+
+    class SourceSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    class TargetSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    # Create source dataset with categories
+    source_categories = LabelCategories(labels=("car", "truck", "motorbike"))
+    source_dataset = Dataset(
+        SourceSample,
+        categories={"label": source_categories},
+    )
+
+    # Convert to target schema (which has no explicit categories)
+    target_dataset = source_dataset.convert_to_schema(TargetSample)
+
+    # Categories should be propagated from source to target
+    source_label_categories = source_dataset.schema.attributes["label"].categories
+    target_label_categories = target_dataset.schema.attributes["label"].categories
+
+    assert source_label_categories is not None
+    assert target_label_categories is not None
+    assert source_label_categories == target_label_categories
+    assert target_label_categories.labels == ("car", "truck", "motorbike")
 
 
 def test_polygon_to_instance_mask_converter():
