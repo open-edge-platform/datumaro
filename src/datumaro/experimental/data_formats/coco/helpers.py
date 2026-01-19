@@ -1,6 +1,7 @@
 # Copyright (C) 2025 Intel Corporation
 #
-# SPDX-License-Identifier: MITimport json
+# SPDX-License-Identifier: MIT
+
 import json
 import logging
 import shutil

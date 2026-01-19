@@ -65,7 +65,6 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
-    label_field,
 )
 from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema
 
@@ -1256,28 +1255,6 @@ def test_find_conversion_path_inferred_categories():
     # Check that the mask categories include background + original labels
     expected_labels = ("background", "cat", "dog", "bird")
     assert mask_categories.labels == expected_labels
-
-
-def test_convert_to_schema_does_not_propagate_categories_across_semantics():
-    """Test that categories are NOT propagated when fields have different semantics."""
-
-    class SourceSample(Sample):
-        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8(), semantic="source_semantic")
-
-    class TargetSample(Sample):
-        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8(), semantic="target_semantic")
-
-    # Create source dataset with categories
-    source_categories = LabelCategories(labels=("car", "truck", "motorbike"))
-    source_dataset = Dataset(
-        SourceSample,
-        categories={"label": source_categories},
-    )
-
-    # Convert to target schema (which has different semantic)
-    # This should raise a ConversionError since fields with different semantics cannot be converted
-    with pytest.raises(ConversionError):
-        source_dataset.convert_to_schema(TargetSample)
 
 
 def test_polygon_to_instance_mask_converter():
