@@ -1,5 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+#
+# SPDX-License-Identifier: MIT
 
 COCO_LABEL_TO_SUPER: dict[str, str] = {
     "person": "person",

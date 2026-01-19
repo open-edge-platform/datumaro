@@ -1,5 +1,6 @@
-# Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+# Copyright (C) 2025 Intel Corporation
+#
+# SPDX-License-Identifier: MITimport json
 import json
 import logging
 import shutil
