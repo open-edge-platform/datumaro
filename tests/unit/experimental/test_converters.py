@@ -65,6 +65,7 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
+    label_field,
 )
 from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema
 
@@ -1078,7 +1079,7 @@ def test_polygon_to_mask_converter():
 
     # Set up converter attributes
     input_polygon_field = PolygonField(dtype=pl.Float32(), format="xy", normalize=False)
-    input_labels_field = LabelField(dtype=pl.Int32(), multi_label=True)
+    input_labels_field = LabelField(dtype=pl.UInt32(), multi_label=True)
     image_info_field = ImageInfoField()
     output_mask_field = MaskField(dtype=pl.UInt8())
 
@@ -1170,7 +1171,7 @@ def test_polygon_to_mask_converter_normalized():
         format="xy",
         normalize=True,  # Enable normalization
     )
-    input_labels_field = LabelField(dtype=pl.Int32(), multi_label=True)
+    input_labels_field = LabelField(dtype=pl.UInt32(), multi_label=True)
     image_info_field = ImageInfoField()
     output_mask_field = MaskField(dtype=pl.UInt8())
 
@@ -1255,6 +1256,35 @@ def test_find_conversion_path_inferred_categories():
     # Check that the mask categories include background + original labels
     expected_labels = ("background", "cat", "dog", "bird")
     assert mask_categories.labels == expected_labels
+
+
+def test_convert_to_schema_propagates_categories():
+    """Test that converting a dataset to a new schema propagates categories when target has None."""
+
+    class SourceSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    class TargetSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    # Create source dataset with categories
+    source_categories = LabelCategories(labels=("car", "truck", "motorbike"))
+    source_dataset = Dataset(
+        SourceSample,
+        categories={"label": source_categories},
+    )
+
+    # Convert to target schema (which has no explicit categories)
+    target_dataset = source_dataset.convert_to_schema(TargetSample)
+
+    # Categories should be propagated from source to target
+    source_label_categories = source_dataset.schema.attributes["label"].categories
+    target_label_categories = target_dataset.schema.attributes["label"].categories
+
+    assert source_label_categories is not None
+    assert target_label_categories is not None
+    assert source_label_categories == target_label_categories
+    assert target_label_categories.labels == ("car", "truck", "motorbike")
 
 
 def test_polygon_to_instance_mask_converter():
@@ -1919,13 +1949,13 @@ def test_label_index_converter():
 
     input_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=input_categories,
     )
 
     output_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=output_categories,
     )
 
@@ -1957,13 +1987,13 @@ def test_label_index_converter_multi_label():
 
     input_spec = AttributeSpec(
         name="labels",
-        field=LabelField(dtype=pl.Int32(), multi_label=True),
+        field=LabelField(dtype=pl.UInt32(), multi_label=True),
         categories=input_categories,
     )
 
     output_spec = AttributeSpec(
         name="labels",
-        field=LabelField(dtype=pl.Int32(), multi_label=True),
+        field=LabelField(dtype=pl.UInt32(), multi_label=True),
         categories=output_categories,
     )
 
@@ -1994,13 +2024,13 @@ def test_label_index_converter_same_categories():
 
     input_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=categories,
     )
 
     output_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=categories,
     )
 
@@ -2020,13 +2050,13 @@ def test_label_index_converter_different_labels():
 
     input_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=input_categories,
     )
 
     output_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=output_categories,
     )
 
@@ -2045,13 +2075,13 @@ def test_label_index_converter_missing_categories():
 
     input_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=input_categories,
     )
 
     output_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=None,  # Missing categories
     )
 
@@ -2071,13 +2101,13 @@ def test_label_index_converter_unmapped_labels():
 
     input_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=input_categories,
     )
 
     output_spec = AttributeSpec(
         name="label",
-        field=LabelField(dtype=pl.Int32(), multi_label=False),
+        field=LabelField(dtype=pl.UInt32(), multi_label=False),
         categories=output_categories,
     )
 
@@ -2309,7 +2339,7 @@ def test_label_dtype_converter_int32_to_uint8():
     )
 
     # Set up converter attributes
-    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=False)
     output_field = LabelField(dtype=pl.UInt8(), multi_label=False, is_list=False)
 
     setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
@@ -2339,7 +2369,7 @@ def test_label_dtype_converter_list_labels():
     )
 
     # Set up converter attributes
-    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=True)
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
     output_field = LabelField(dtype=pl.UInt8(), multi_label=False, is_list=True)
 
     setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
@@ -2363,8 +2393,8 @@ def test_label_dtype_converter_same_dtype():
     converter_instance = LabelDtypeConverter()
 
     # Set up converter attributes with same dtype
-    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
-    output_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=False)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=False)
 
     setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
     setattr(converter_instance, "output_label", AttributeSpec(name="label", field=output_field))

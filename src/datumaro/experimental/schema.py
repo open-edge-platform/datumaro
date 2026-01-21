@@ -86,6 +86,8 @@ class Schema:
                 )
             seen[key] = name
 
+        self._fields_with_categories: dict[str, Categories] | None = None
+
     def with_categories(self, categories: dict[str, "Categories"]) -> "Schema":
         """
         Create a new schema with categories applied to specific attributes.
@@ -112,6 +114,31 @@ class Schema:
             else:
                 raise ValueError(f"Attribute '{attr_name}' not found in schema")
         return new_schema
+
+    def get_fields_with_required_categories(self) -> dict[str, Categories]:
+        """
+        Get the attributes that semantically require a category.
+
+        Returns:
+            dict mapping attribute names to the respective required categories.
+            Attributes that do not strictly require categories are not returned.
+        """
+        if self._fields_with_categories is None:
+            self._fields_with_categories = {}
+            for attribute, attribute_info in self.attributes.items():
+                if expected_categories_type := attribute_info.field.get_expected_categories_type():
+                    categories = attribute_info.categories
+                    if categories is None or not isinstance(attribute_info.categories, expected_categories_type):
+                        raise ValueError(
+                            f"Expected schema attribute '{attribute}' to have categories defined of type "
+                            f"'{expected_categories_type}', found '{categories}' instead. "
+                            f"Note that schemas (including ones that are attached to datasets) can be created without "
+                            f"categories for fields that require them, but for certain operations like appending data "
+                            f"categories have to be defined if fields require them in order to validate the data."
+                        )
+                    self._fields_with_categories[attribute] = categories
+
+        return self._fields_with_categories
 
     def to_dict(self) -> dict[str, Any]:
         """

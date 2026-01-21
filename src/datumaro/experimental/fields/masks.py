@@ -1,12 +1,14 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
 import numpy as np
 import polars as pl
 
+from datumaro.experimental.categories import Categories, MaskCategories
 from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
@@ -31,6 +33,15 @@ class MaskField(Field):
     dtype: pl.DataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
     has_channels_dim: bool = False
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
+            raise ValueError(
+                "A mask field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This integer "
+                "normally represents the index of a category, with reference to the mask categories of the dataset to "
+                "which the sample is (or will be) appended."
+            )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -69,6 +80,9 @@ class MaskField(Field):
                 numpy_data = numpy_data[..., np.newaxis]
 
         return from_polars_data(numpy_data, target_type)  # type: ignore
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def mask_field(
@@ -112,6 +126,15 @@ class InstanceMaskField(Field):
     semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.Boolean)
 
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
+            raise ValueError(
+                "An instance mask field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This "
+                "integer normally represents the index of a category, with reference to the mask categories of the "
+                "dataset to which the sample is (or will be) appended."
+            )
+
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
         return {name: pl.List(self.dtype), name + "_shape": pl.List(pl.Int32())}
@@ -137,6 +160,9 @@ class InstanceMaskField(Field):
         shape = df[name + "_shape"][row_index]
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None and shape is not None else None
         return from_polars_data(numpy_data, target_type)  # type: ignore
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def instance_mask_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
@@ -170,11 +196,20 @@ class InstanceMaskCallableField(Field):
     semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.Boolean)
 
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
+            raise ValueError(
+                "An instance mask callable field's dtype must be a polars Boolean or unsigned integer type "
+                "(e.g. UInt8). This integer normally represents the index of a category, with reference to the mask "
+                "categories of the dataset to which the sample is (or will be) appended."
+            )
+
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: Callable) -> dict[str, pl.Series]:
         """
         Store instance mask callable as Object in Polars series.
 
@@ -188,7 +223,7 @@ class InstanceMaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """
         Extract instance mask callable from Polars dataframe.
 
@@ -199,6 +234,9 @@ class InstanceMaskCallableField(Field):
         if not callable(value):
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def instance_mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
@@ -242,11 +280,20 @@ class MaskCallableField(Field):
     semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.UInt8)
 
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not (self.dtype.is_(pl.Boolean) or self.dtype.is_unsigned_integer()):
+            raise ValueError(
+                "A mask callable field's dtype must be a polars Boolean or unsigned integer type (e.g. UInt8). This "
+                "integer normally represents the index of a category, with reference to the mask categories of the "
+                "dataset to which the sample is (or will be) appended."
+            )
+
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: Callable) -> dict[str, pl.Series]:
         """
         Store mask callable as Object in Polars series.
 
@@ -259,7 +306,7 @@ class MaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """
         Extract mask callable from Polars dataframe.
 
@@ -270,6 +317,9 @@ class MaskCallableField(Field):
         if not callable(value):
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:

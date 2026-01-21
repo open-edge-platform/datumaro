@@ -33,7 +33,7 @@ class CocoSample(Sample):
     # Instance annotations (from instances_train/val)
     bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="xywh")
     polygons: np.ndarray | None = polygon_field(dtype=pl.Float32())
-    labels: np.ndarray | None = label_field(dtype=pl.Int32(), is_list=True)
+    labels: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True)
     areas: np.ndarray | None = numeric_field(dtype=pl.Float32(), is_list=True)
     iscrowd: np.ndarray | None = bool_field(is_list=True)
 
@@ -42,7 +42,7 @@ class CocoSample(Sample):
 
     # Caption annotations (from captions_train/val)
     captions: np.ndarray | None = caption_field(is_list=True, semantic="caption")
-    caption_group_ids: np.ndarray | None = label_field(dtype=pl.Int32(), is_list=True, semantic="caption")
+    caption_group_ids: np.ndarray | None = numeric_field(dtype=pl.UInt32(), is_list=True, semantic="caption")
 
     # Dataset organization
     subset: Subset = subset_field()

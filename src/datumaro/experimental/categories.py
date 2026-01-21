@@ -102,9 +102,30 @@ class Categories:
         # This allows forward compatibility with new category types
         raise ValueError(f"Unknown categories type: {cat_type}")
 
+    def __getitem__(self, idx: int) -> Any:
+        """Get category by index"""
+        raise NotImplementedError
+
+    def __len__(self) -> int:
+        """Get the number of categories"""
+        raise NotImplementedError
+
+    def __iter__(self):
+        """Iterate over the categories"""
+        raise NotImplementedError
+
 
 @dataclass(frozen=True)
-class LabelCategories(Categories):
+class BaseLabelCategories(Categories):
+    """
+    Base label categories class.
+
+    This class ensures fields related to labels will have a label categories attached to the attributes spec.
+    """
+
+
+@dataclass(frozen=True)
+class LabelCategories(BaseLabelCategories):
     """
     Represents a group of labels with a specific group type and semantics.
     Use this for simple, non-hierarchical tasks.
@@ -254,7 +275,7 @@ class LabelGroup:
 
 
 @dataclass(frozen=True)
-class HierarchicalLabelCategories(Categories):
+class HierarchicalLabelCategories(BaseLabelCategories):
     """
     Represents hierarchical label categories with groups and parent-child relationships.
     Use this for complex hierarchical classification tasks.
@@ -513,7 +534,7 @@ class Colormap:
     data: dict[int, RgbColor] = field(default_factory=dict)
 
     def __post_init__(self):
-        """Validate that there are no duplicate colors."""
+        """Validate that there are no duplicate colors"""
         object.__setattr__(self, "_inverse_colormap", {v: k for k, v in self.data.items()})
 
     @property
@@ -563,9 +584,6 @@ class MaskCategories(Categories):
     labels: list[str] = field(default_factory=list)
     colormap: Colormap = field(default_factory=Colormap)
 
-    def __hash__(self):
-        return hash((tuple(self.labels), frozenset(self.colormap.items())))
-
     def to_dict(self) -> dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
@@ -573,10 +591,11 @@ class MaskCategories(Categories):
         Returns:
             Dictionary representation of this MaskCategories instance
         """
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
         return {
             "type": "MaskCategories",
             "labels": list(self.labels),
-            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()},
+            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in colormap_data.items()},
         }
 
     @classmethod
@@ -616,7 +635,21 @@ class MaskCategories(Categories):
         colormap_dict = generate_colormap(size, include_background=include_background)
         colormap_data = {}
         for index, color in colormap_dict.items():
-            colormap_data[index] = RgbColor(*color) if isinstance(color, tuple) else color
+            colormap_data[index] = RgbColor(*(int(x) for x in color)) if isinstance(color, tuple) else color
 
         colormap = Colormap(data=colormap_data)
         return cls(colormap=colormap)
+
+    def __getitem__(self, idx: int) -> RgbColor:
+        return self.colormap[idx]
+
+    def __iter__(self):
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
+        return iter(colormap_data.values())
+
+    def __len__(self) -> int:
+        return len(self.colormap)
+
+    def __hash__(self):
+        colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
+        return hash((tuple(self.labels), frozenset(colormap_data.items())))

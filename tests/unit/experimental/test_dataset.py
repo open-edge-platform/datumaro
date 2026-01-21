@@ -18,6 +18,7 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
+    label_field,
     mask_field,
     subset_field,
     tile_field,
@@ -40,6 +41,35 @@ def test_sample_validation_pass():
     )
     # Should not raise
     valid_sample.validate()
+
+
+def test_validate_fields_with_categories_on_append():
+    categories = LabelCategories(labels=("cat", "dog"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+
+    # Append valid sample (label=1)
+    ds.append(Sample(label=1))
+
+    # Append invalid sample (label=2, out of range)
+    with pytest.raises(ValueError, match="exceed"):
+        ds.append(Sample(label=2))
+
+
+def test_validate_fields_with_categories_on_validate():
+    categories = LabelCategories(labels=("cat", "dog"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+    ds.append(Sample(label=1))
+
+    # Should not raise
+    ds.validate_fields_with_categories()
+
+    # Manually tamper with df to add an invalid label
+    ds.df = ds.df.with_columns(pl.lit(3).alias("label"))
+    with pytest.raises(ValueError, match="exceed"):
+        ds.validate_fields_with_categories()
 
 
 def test_sample_validation_fail():
@@ -714,7 +744,7 @@ def test_dataset_with_optional_field():
     class TestSample(Sample):
         mask: np.ndarray | None = mask_field(dtype=pl.UInt8())
 
-    dataset = Dataset(TestSample)
+    dataset = Dataset(TestSample, categories={"mask": MaskCategories.generate(size=256)})
 
     # Add samples with both None and ndarray values
     samples = [
