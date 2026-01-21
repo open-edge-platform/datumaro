@@ -167,6 +167,76 @@ class LazyImageClassTest:
             assert data.shape == (50, 80)
             assert data.dtype == np.uint8
 
+    def test_lazy_image_16bit_grayscale(self):
+        """Test loading 16-bit grayscale image preserves bit depth."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_image_path = os.path.join(temp_dir, "gray16_image.png")
+            # Create 16-bit grayscale image with values > 255
+            img_array = np.array([[1000, 2000, 30000], [40000, 50000, 60000]], dtype=np.uint16)
+            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img.save(test_image_path)
+
+            lazy_img = LazyImage(path=test_image_path, format="L")
+            data = lazy_img.data
+            assert data.shape == (2, 3)
+            # Verify 16-bit values are preserved (not truncated to 8-bit)
+            assert data.dtype in (np.uint16, np.int32, np.uint32)
+            assert data[0, 0] == 1000
+            assert data[0, 2] == 30000
+            assert data[1, 2] == 60000
+
+    def test_lazy_image_16bit_to_rgb(self):
+        """Test loading 16-bit grayscale image as RGB preserves bit depth."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_image_path = os.path.join(temp_dir, "gray16_image.png")
+            # Create 16-bit grayscale image with values > 255
+            img_array = np.array([[1000, 2000], [30000, 40000]], dtype=np.uint16)
+            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img.save(test_image_path)
+
+            lazy_img = LazyImage(path=test_image_path, format="RGB")
+            data = lazy_img.data
+            # Should be converted to 3-channel with preserved values
+            assert data.shape == (2, 2, 3)
+            # All channels should have the same value (grayscale expanded to RGB)
+            assert data[0, 0, 0] == 1000
+            assert data[0, 0, 1] == 1000
+            assert data[0, 0, 2] == 1000
+            assert data[1, 1, 0] == 40000
+
+    def test_lazy_image_16bit_to_bgr(self):
+        """Test loading 16-bit grayscale image as BGR preserves bit depth."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_image_path = os.path.join(temp_dir, "gray16_image.png")
+            # Create 16-bit grayscale image
+            img_array = np.array([[5000, 10000]], dtype=np.uint16)
+            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img.save(test_image_path)
+
+            lazy_img = LazyImage(path=test_image_path, format="BGR")
+            data = lazy_img.data
+            assert data.shape == (1, 2, 3)
+            # Values should be preserved
+            assert data[0, 0, 0] == 5000
+            assert data[0, 1, 2] == 10000
+
+    def test_lazy_image_16bit_channels_first(self):
+        """Test loading 16-bit image with channels-first format."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_image_path = os.path.join(temp_dir, "gray16_image.png")
+            img_array = np.array([[1000, 2000], [3000, 4000]], dtype=np.uint16)
+            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img.save(test_image_path)
+
+            lazy_img = LazyImage(path=test_image_path, format="RGB", channels_first=True)
+            data = lazy_img.data
+            # Should be (C, H, W)
+            assert data.shape == (3, 2, 2)
+            # Values should be preserved
+            assert data[0, 0, 0] == 1000
+            assert data[1, 0, 0] == 1000
+            assert data[2, 1, 1] == 4000
+
 
 class ImagePathFieldWithLazyImageTest:
     """Tests for ImagePathField when used with LazyImage type annotation."""
