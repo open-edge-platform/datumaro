@@ -15,37 +15,29 @@ import numpy as np
 
 from datumaro.experimental import Dataset
 from datumaro.experimental.data_formats.yolo.constants import (
-    IMAGE_EXTENSIONS,
     TRADITIONAL_DIR_NAME_TO_SUBSET,
     TRADITIONAL_SUBSET_CONFIG_KEYS,
     TRADITIONAL_SUBSET_DIR_NAMES,
 )
 from datumaro.experimental.data_formats.yolo.sample import YoloCategories, YoloSample
 from datumaro.experimental.fields import ImageInfo, Subset
+from datumaro.util.image import IMAGE_EXTENSIONS, find_images
 
 logger = logging.getLogger(__name__)
 
 
 def _find_image_file(images_dir: Path, stem: str) -> Path | None:
     """Find an image file with any supported extension."""
-    for ext in IMAGE_EXTENSIONS:
-        candidate = images_dir / f"{stem}{ext}"
-        if candidate.exists():
-            return candidate
-        # Also check uppercase
-        candidate = images_dir / f"{stem}{ext.upper()}"
-        if candidate.exists():
+    # Use glob to find all files starting with the stem, then filter by extension
+    for candidate in images_dir.glob(f"{stem}.*"):
+        if candidate.suffix.lower() in IMAGE_EXTENSIONS:
             return candidate
     return None
 
 
 def _find_image_files(directory: Path) -> list[Path]:
     """Find all image files in a directory."""
-    image_files = []
-    for ext in IMAGE_EXTENSIONS:
-        image_files.extend(directory.glob(f"*{ext}"))
-        image_files.extend(directory.glob(f"*{ext.upper()}"))
-    return sorted(image_files)
+    return sorted(Path(p) for p in find_images(str(directory)))
 
 
 def _get_image_size(image_path: Path) -> tuple[int, int]:

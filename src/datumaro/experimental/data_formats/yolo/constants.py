@@ -7,9 +7,6 @@ Constants for YOLO dataset format.
 
 from datumaro.experimental.fields import Subset
 
-# Supported image extensions
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".webp"}
-
 # Mapping from subset enum to YOLO Ultralytics directory names
 SUBSET_TO_DIR_NAME = {
     Subset.TRAINING: "train",
