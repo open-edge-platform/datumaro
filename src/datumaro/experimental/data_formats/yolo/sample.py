@@ -6,7 +6,7 @@
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import Sample
+from datumaro.experimental import LazyImage, Sample
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -29,7 +29,7 @@ class YoloSample(Sample):
     """
 
     # Basic image information
-    image: str = image_path_field()
+    image: LazyImage = image_path_field()
     image_info: ImageInfo = image_info_field()
 
     # Object detection annotations
