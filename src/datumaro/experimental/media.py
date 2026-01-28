@@ -199,6 +199,93 @@ class LazyImage:
         """Generate a cache key for this image configuration."""
         return str(self.path), self.format.upper(), self.channels_first
 
+    def _convert_to_format(self, img: Image.Image, target_format: str) -> np.ndarray:
+        """Convert PIL image to numpy array in the target format.
+
+        Supports 8-bit and 16-bit images. The bit depth is preserved from the
+        original image file - 16-bit images will return uint16 arrays.
+
+        Supported formats:
+            - RGB: Standard RGB format (Red, Green, Blue)
+            - BGR: OpenCV-compatible format (Blue, Green, Red)
+            - RGBA: RGB with alpha channel
+            - BGRA: BGR with alpha channel (OpenCV-compatible)
+            - L: Grayscale
+        """
+        is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
+
+        if target_format == "RGB":
+            return self._convert_to_rgb(img, is_16bit)
+        if target_format == "BGR":
+            return self._convert_to_bgr(img, is_16bit)
+        if target_format == "RGBA":
+            return self._convert_to_rgba(img, is_16bit)
+        if target_format == "BGRA":
+            return self._convert_to_bgra(img, is_16bit)
+        if target_format == "L":
+            return self._convert_to_grayscale(img, is_16bit)
+        return np.array(img)
+
+    @staticmethod
+    def _swap_rb_channels(img_array: np.ndarray) -> np.ndarray:
+        """Swap red and blue channels for RGB <-> BGR conversion.
+
+        Works with both 3-channel (RGB/BGR) and 4-channel (RGBA/BGRA) images.
+        Returns a contiguous copy to avoid negative strides issues.
+        """
+        if img_array.ndim == 3:
+            if img_array.shape[-1] == 3:
+                # RGB <-> BGR: swap channels 0 and 2
+                return img_array[..., ::-1].copy()
+            if img_array.shape[-1] == 4:
+                # RGBA <-> BGRA: swap channels 0 and 2, keep alpha
+                return np.concatenate(
+                    [img_array[..., 2:3], img_array[..., 1:2], img_array[..., 0:1], img_array[..., 3:4]],
+                    axis=-1,
+                )
+        return img_array.copy()
+
+    def _convert_to_rgb(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+        """Convert image to RGB format (Red, Green, Blue)."""
+        if is_16bit:
+            img_array = np.array(img)
+            if img_array.ndim == 2:
+                return np.stack([img_array] * 3, axis=-1)
+            return img_array
+        return np.array(img.convert("RGB"))
+
+    def _convert_to_bgr(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+        """Convert image to BGR format (Blue, Green, Red).
+
+        BGR is the default format used by OpenCV and some other libraries.
+        """
+        rgb_array = self._convert_to_rgb(img, is_16bit)
+        return self._swap_rb_channels(rgb_array)
+
+    def _convert_to_rgba(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+        """Convert image to RGBA format (Red, Green, Blue, Alpha)."""
+        if is_16bit:
+            img_array = np.array(img)
+            if img_array.ndim == 2:
+                img_array = np.stack([img_array] * 3, axis=-1)
+            alpha = np.full(img_array.shape[:2], np.iinfo(img_array.dtype).max, dtype=img_array.dtype)
+            return np.concatenate([img_array, alpha[..., np.newaxis]], axis=-1)
+        return np.array(img.convert("RGBA"))
+
+    def _convert_to_bgra(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+        """Convert image to BGRA format (Blue, Green, Red, Alpha).
+
+        BGRA is used by OpenCV and some other libraries when alpha is needed.
+        """
+        rgba_array = self._convert_to_rgba(img, is_16bit)
+        return self._swap_rb_channels(rgba_array)
+
+    def _convert_to_grayscale(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+        """Convert image to grayscale format (single channel)."""
+        if is_16bit:
+            return np.array(img)
+        return np.array(img.convert("L"))
+
     @cachedmethod(
         cache=lambda _: ImageCache._cache,
         key=lambda self: self._cache_key(),
@@ -207,21 +294,8 @@ class LazyImage:
     def _load_data(self) -> np.ndarray:
         """Load the image from disk (cached via @cachedmethod)."""
         with Image.open(self.path) as img:
-            # Convert to target format
-            if self.format.upper() in ("RGB", "BGR"):
-                converted = img.convert("RGB")
-            elif self.format.upper() == "RGBA":
-                converted = img.convert("RGBA")
-            elif self.format.upper() == "L":
-                converted = img.convert("L")
-            else:
-                converted = img
-
-            img_array = np.array(converted, dtype=np.uint8)
-
-            # Handle BGR format by swapping R and B channels
-            if self.format.upper() == "BGR" and img_array.ndim == 3:
-                img_array = img_array[..., ::-1].copy()
+            target_format = self.format.upper()
+            img_array = self._convert_to_format(img, target_format)
 
             # Handle channels-first format
             if self.channels_first and img_array.ndim == 3:
