@@ -7,7 +7,6 @@ import numpy as np
 import polars as pl
 
 from datumaro.experimental import LazyImage, Sample
-from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
@@ -38,23 +37,3 @@ class YoloSample(Sample):
 
     # Dataset organization
     subset: Subset = subset_field()
-
-
-class YoloCategories(LabelCategories):
-    """
-    Categories class for YOLO format datasets.
-
-    YOLO stores class names in either:
-    - obj.names file (one class per line)
-    - data.yaml file (for Ultralytics format)
-    """
-
-    def __init__(self, labels: tuple[str, ...] | list[str] | None = None):
-        """
-        Initialize YoloCategories with a list of labels.
-
-        Args:
-            labels: Tuple or list of label names. If None, creates empty categories.
-        """
-        provided = tuple(labels) if labels is not None else ()
-        super().__init__(labels=provided)

@@ -12,14 +12,18 @@ from pathlib import Path
 from typing import Any, Literal
 
 import numpy as np
+import yaml
 
 from datumaro.experimental import Dataset
+from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.yolo.constants import (
+    DIR_NAME_TO_SUBSET,
+    SUBSET_TO_DIR_NAME,
     TRADITIONAL_DIR_NAME_TO_SUBSET,
     TRADITIONAL_SUBSET_CONFIG_KEYS,
     TRADITIONAL_SUBSET_DIR_NAMES,
 )
-from datumaro.experimental.data_formats.yolo.sample import YoloCategories, YoloSample
+from datumaro.experimental.data_formats.yolo.sample import YoloSample
 from datumaro.experimental.fields import ImageInfo, Subset
 from datumaro.util.image import IMAGE_EXTENSIONS, find_images
 
@@ -118,9 +122,8 @@ def _detect_yolo_format(root_path: Path) -> Literal["ultralytics", "traditional"
     return "unknown"
 
 
-def _load_categories_from_yaml(yaml_path: Path) -> YoloCategories:
+def _load_categories_from_yaml(yaml_path: Path) -> LabelCategories:
     """Load categories from a data.yaml file (Ultralytics format)."""
-    import yaml
 
     with open(yaml_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
@@ -134,10 +137,10 @@ def _load_categories_from_yaml(yaml_path: Path) -> YoloCategories:
     else:
         raise ValueError(f"Invalid 'names' format in {yaml_path}: expected list or dict")
 
-    return YoloCategories(labels=label_names)
+    return LabelCategories(labels=label_names)
 
 
-def _load_categories_from_names(names_path: Path) -> YoloCategories:
+def _load_categories_from_names(names_path: Path) -> LabelCategories:
     """Load categories from an obj.names file (traditional YOLO format)."""
     labels = []
     with open(names_path, encoding="utf-8") as f:
@@ -145,10 +148,10 @@ def _load_categories_from_names(names_path: Path) -> YoloCategories:
             line = raw_line.strip()
             if line:
                 labels.append(line)
-    return YoloCategories(labels=tuple(labels))
+    return LabelCategories(labels=tuple(labels))
 
 
-def _load_ultralytics_categories(root_path: Path) -> YoloCategories:
+def _load_ultralytics_categories(root_path: Path) -> LabelCategories:
     """Load categories for Ultralytics format, trying yaml first then names files."""
     yaml_path = root_path / "data.yaml"
     if yaml_path.exists():
@@ -160,7 +163,7 @@ def _load_ultralytics_categories(root_path: Path) -> YoloCategories:
         return _load_categories_from_names(names_candidates[0])
 
     logger.warning("[YOLO] No category file found, using empty categories")
-    return YoloCategories(labels=())
+    return LabelCategories(labels=())
 
 
 def _create_sample_from_image(
@@ -394,7 +397,6 @@ def _write_obj_data(
 
 def _load_yolo_ultralytics(root_path: Path) -> Dataset:
     """Load a YOLO Ultralytics format dataset."""
-    from datumaro.experimental.data_formats.yolo.constants import DIR_NAME_TO_SUBSET
 
     categories = _load_ultralytics_categories(root_path)
     dataset = Dataset(YoloSample, categories={"labels": categories})
@@ -438,7 +440,7 @@ def _load_yolo_traditional(root_path: Path) -> Dataset:
     if names_path.exists():
         categories = _load_categories_from_names(names_path)
     else:
-        categories = YoloCategories(labels=())
+        categories = LabelCategories(labels=())
         logger.warning("[YOLO] No obj.names file found, using empty categories")
 
     dataset = Dataset(YoloSample, categories={"labels": categories})
@@ -476,9 +478,6 @@ def _save_yolo_ultralytics(
     save_images: bool,
 ) -> dict[str, Path]:
     """Save dataset in YOLO Ultralytics format."""
-    import yaml
-
-    from datumaro.experimental.data_formats.yolo.constants import SUBSET_TO_DIR_NAME
 
     images_dir = root_path / "images"
     labels_dir = root_path / "labels"
