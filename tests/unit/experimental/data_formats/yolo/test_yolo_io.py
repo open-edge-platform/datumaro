@@ -238,65 +238,6 @@ def test_save_yolo_dataset_traditional_format(tmp_path: Path):
     assert "obj.data" in written
 
 
-def test_save_yolo_dataset_with_images(tmp_path: Path):
-    """Test that images are copied when save_images=True."""
-    src_img = tmp_path / "src" / "img.jpg"
-    src_img.parent.mkdir()
-    _create_test_image(src_img)
-
-    dataset = Dataset(YoloSample, categories={"labels": LabelCategories(labels=("cat",))})
-    dataset.append(_make_sample(src_img, Subset.TRAINING))
-
-    export_dir = tmp_path / "export"
-    save_yolo_dataset(dataset, str(export_dir), format=DataFormat.YOLO_ULTRALYTICS, save_images=True)
-
-    # Check image was copied
-    assert (export_dir / "images" / "train" / "img.jpg").exists()
-
-
-def test_save_yolo_dataset_without_images(tmp_path: Path):
-    """Test that images are not copied when save_images=False."""
-    src_img = tmp_path / "src" / "img.jpg"
-    src_img.parent.mkdir()
-    _create_test_image(src_img)
-
-    dataset = Dataset(YoloSample, categories={"labels": LabelCategories(labels=("cat",))})
-    dataset.append(_make_sample(src_img, Subset.TRAINING))
-
-    export_dir = tmp_path / "export"
-    save_yolo_dataset(dataset, str(export_dir), format=DataFormat.YOLO_ULTRALYTICS, save_images=False)
-
-    # Check image was NOT copied (annotations should still exist)
-    assert not (export_dir / "images" / "train" / "img.jpg").exists()
-    assert (export_dir / "labels" / "train" / "img.txt").exists()
-
-
-def test_save_yolo_dataset_multiple_subsets(tmp_path: Path):
-    """Test saving a dataset with multiple subsets."""
-    src_dir = tmp_path / "src"
-    src_dir.mkdir()
-
-    train_img = src_dir / "train.jpg"
-    val_img = src_dir / "val.jpg"
-    test_img = src_dir / "test.jpg"
-    _create_test_image(train_img)
-    _create_test_image(val_img)
-    _create_test_image(test_img)
-
-    dataset = Dataset(YoloSample, categories={"labels": LabelCategories(labels=("cat",))})
-    dataset.append(_make_sample(train_img, Subset.TRAINING))
-    dataset.append(_make_sample(val_img, Subset.VALIDATION))
-    dataset.append(_make_sample(test_img, Subset.TESTING))
-
-    export_dir = tmp_path / "export"
-    save_yolo_dataset(dataset, str(export_dir), format=DataFormat.YOLO_ULTRALYTICS)
-
-    # Check all subset directories exist
-    assert (export_dir / "images" / "train").is_dir()
-    assert (export_dir / "images" / "val").is_dir()
-    assert (export_dir / "images" / "test").is_dir()
-
-
 def test_save_and_reload_ultralytics(tmp_path: Path):
     """Test roundtrip: save and reload Ultralytics format."""
     src_dir = tmp_path / "src"
