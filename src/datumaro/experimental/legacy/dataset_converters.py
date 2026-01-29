@@ -100,7 +100,15 @@ def analyze_legacy_dataset(
     # To avoid conflicts between the label attribute and the other ones, use semantic to distinguish them.
     is_anomaly = (AnnotationType.label in ann_types and len(ann_types) > 1) or anomaly
 
+    # Skip bbox converter when polygon converter exists, since polygon converter
+    # now generates bboxes from polygon bounds for proper instance segmentation alignment
+    skip_bbox_converter = AnnotationType.polygon in ann_types and AnnotationType.bbox in ann_types
+
     for ann_type in ann_types:
+        # Skip bbox converter if polygon converter will handle bboxes
+        if skip_bbox_converter and ann_type == AnnotationType.bbox:
+            continue
+
         ann_semantic = "anomaly" if is_anomaly and ann_type != AnnotationType.label else semantic
         name_prefix = "anomaly_" if is_anomaly and ann_type != AnnotationType.label else ""
         converter = get_forward_annotation_converter(ann_type, legacy_dataset, ann_semantic, name_prefix)
