@@ -50,7 +50,9 @@ def test_validate_and_normalize_instance_arrays_reshapes_and_checks_lengths():
     bbox = np.array([1, 2, 3, 4], dtype=np.float32)
     poly = np.array([[0, 0], [1, 1]], dtype=np.float32)
     polygons = np.empty((1,), dtype=object)
-    polygons[0] = poly
+    # polygons[i] should be a list of polygon arrays (multi-part polygon support)
+    polygons[0] = [poly]
+    polygons[0] = [poly]
 
     labels = np.array([0], dtype=np.int32)
     areas = np.array([[16.0]], dtype=np.float32)
@@ -73,7 +75,9 @@ def test_serialize_single_instance_uses_polygon_to_fill_bbox_and_area():
     bbox = np.array([0, 0, 0, 0], dtype=np.float32)
     poly = np.array([[1, 1], [4, 1], [4, 3], [1, 3]], dtype=np.float32)
     polygons = np.empty((1,), dtype=object)
-    polygons[0] = poly
+    # polygons[i] should be a list of polygon arrays (multi-part polygon support)
+    polygons[0] = [poly]
+    polygons[0] = [poly]
     labels = np.array([2], dtype=np.int32)
     areas = np.empty((0,), dtype=np.float32)
     iscrowd = np.array([[1]], dtype=np.int32)
@@ -204,7 +208,10 @@ def test_collect_helpers_extract_expected_fields():
     }
     bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {2: 0})
     assert bboxes[0] == [1, 1, 2, 2]
-    assert polys[0].shape == (4, 2)
+    # polys[0] is now a list of polygon arrays (multi-part polygon support)
+    assert isinstance(polys[0], list)
+    assert len(polys[0]) == 1
+    assert polys[0][0].shape == (4, 2)
     assert labels == [0]
     assert areas[0] == pytest.approx(4.0)
     assert iscrowd == [False]
@@ -225,7 +232,8 @@ def test_serialize_instances_requires_labels():
 def test_serialize_instances_and_keypoints(tmp_path: Path):
     poly = np.array([[0, 0], [1, 0], [1, 1]], dtype=np.float32)
     polygons = np.empty((1,), dtype=object)
-    polygons[0] = poly
+    # polygons[i] should be a list of polygon arrays (multi-part polygon support)
+    polygons[0] = [poly]
     sample = _make_sample(polygons=polygons)
     inst, next_id = _serialize_instances_for_sample(sample, 5, lambda idx: (idx or 0) + 1, 10)
     assert inst[0]["bbox"] == pytest.approx([1, 2, 3, 4])
@@ -271,3 +279,64 @@ def test_prepare_categories_and_save_subset(tmp_path: Path):
     assert "instances_train" in written
     content = json.loads(written["instances_train"].read_text())
     assert content["annotations"][0]["bbox"] == pytest.approx([1.0, 2.0, 3.0, 4.0])
+
+
+def test_collect_instances_multipart_polygon():
+    """Test that multi-part polygons are kept together as a single annotation with combined bbox."""
+    instances_by_image = {
+        1: [
+            {
+                "image_id": 1,
+                "category_id": 2,
+                "bbox": [0, 0, 10, 10],
+                # Multi-part polygon: two separate polygon parts
+                "segmentation": [
+                    [0, 0, 2, 0, 2, 2, 0, 2],  # Part 1: square at origin
+                    [5, 5, 7, 5, 7, 7, 5, 7],  # Part 2: square at (5,5)
+                ],
+                "area": 100.0,
+            },
+        ]
+    }
+    bboxes, polys, labels, areas, _ = _collect_instances_for_image(1, instances_by_image, {2: 0})
+
+    # Should be a single annotation, not two
+    assert len(bboxes) == 1
+    assert len(polys) == 1
+    assert len(labels) == 1
+
+    # polys[0] should be a list with two polygon arrays
+    assert isinstance(polys[0], list)
+    assert len(polys[0]) == 2
+    assert polys[0][0].shape == (4, 2)  # First part: 4 points
+    assert polys[0][1].shape == (4, 2)  # Second part: 4 points
+
+    # Bbox should be the original one from the annotation
+    assert bboxes[0] == [0, 0, 10, 10]
+    # Area should be the original one from the annotation
+    assert areas[0] == pytest.approx(100.0)
+
+
+def test_serialize_multipart_polygon():
+    """Test that multi-part polygons are serialized correctly to COCO format."""
+    # Create a multi-part polygon
+    poly1 = np.array([[0, 0], [2, 0], [2, 2], [0, 2]], dtype=np.float32)
+    poly2 = np.array([[5, 5], [7, 5], [7, 7], [5, 7]], dtype=np.float32)
+    polygons = np.empty((1,), dtype=object)
+    polygons[0] = [poly1, poly2]  # List of polygon arrays
+
+    sample = _make_sample(polygons=polygons, bboxes=np.array([[0, 0, 0, 0]], dtype=np.float32))
+
+    inst, _ = _serialize_instances_for_sample(sample, 5, lambda idx: (idx or 0) + 1, 10)
+
+    # Should produce a single annotation
+    assert len(inst) == 1
+
+    # The segmentation should have two parts
+    assert len(inst[0]["segmentation"]) == 2
+    assert inst[0]["segmentation"][0] == pytest.approx([0, 0, 2, 0, 2, 2, 0, 2])
+    assert inst[0]["segmentation"][1] == pytest.approx([5, 5, 7, 5, 7, 7, 5, 7])
+
+    # Bbox should be computed from all polygon parts (combined)
+    # Combined bbox: x in [0,7], y in [0,7] -> [0, 0, 7, 7]
+    assert inst[0]["bbox"] == pytest.approx([0, 0, 7, 7])

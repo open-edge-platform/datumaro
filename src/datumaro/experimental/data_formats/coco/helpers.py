@@ -388,9 +388,9 @@ def _collect_instances_for_image(
     image_id: int,
     instances_by_image: dict[int, list[dict]],
     cat_id_to_idx: dict[int, int],
-) -> tuple[list[list[float] | None], list[np.ndarray], list[int | None], list[float], list[bool]]:
+) -> tuple[list[list[float] | None], list[list[np.ndarray]], list[int | None], list[float], list[bool]]:
     bboxes_list: list[list[float] | None] = []
-    polygons_list: list[np.ndarray] = []
+    polygons_list: list[list[np.ndarray]] = []
     labels_list: list[int | None] = []
     areas_list: list[float] = []
     iscrowd_list: list[bool] = []
@@ -399,8 +399,33 @@ def _collect_instances_for_image(
         category_idx = cat_id_to_idx.get(ann.get("category_id"))
         segmentation = ann.get("segmentation")
 
-        # Handle multi-part polygons by splitting them into separate annotations
+        # Get all polygon parts as a list (keeps multi-part polygons together)
         polygon_parts = _segmentation_to_poly_parts(segmentation)
+
+        # Use original bbox if available, otherwise compute from all polygon parts
+        bbox = ann.get("bbox") if isinstance(ann.get("bbox"), list) else None
+        if bbox is None or len(bbox) != 4:
+            # Compute combined bbox from all polygon parts
+            all_x: list[float] = []
+            all_y: list[float] = []
+            for poly_array in polygon_parts:
+                if poly_array.size > 0:
+                    all_x.extend(poly_array[:, 0].tolist())
+                    all_y.extend(poly_array[:, 1].tolist())
+            if all_x and all_y:
+                x1, y1 = min(all_x), min(all_y)
+                x2, y2 = max(all_x), max(all_y)
+                bbox = [x1, y1, x2 - x1, y2 - y1]  # x, y, w, h
+            else:
+                bbox = [0.0, 0.0, 0.0, 0.0]
+
+        # Use original area if available, otherwise compute from bbox
+        if "area" in ann and isinstance(ann["area"], int | float):
+            area = float(ann["area"])
+        elif bbox is not None and len(bbox) == 4:
+            area = float(bbox[2] * bbox[3])
+        else:
+            area = 0.0
 
         ic = ann.get("iscrowd", 0)
         try:
@@ -408,24 +433,11 @@ def _collect_instances_for_image(
         except Exception:  # pragma: no cover - tolerant casting
             iscrowd_val = False
 
-        for poly_array in polygon_parts:
-            # Compute bbox from polygon points (x, y, w, h format for COCO compatibility)
-            if poly_array.size > 0:
-                x_coords = poly_array[:, 0]
-                y_coords = poly_array[:, 1]
-                x1, y1 = float(x_coords.min()), float(y_coords.min())
-                x2, y2 = float(x_coords.max()), float(y_coords.max())
-                computed_bbox = [x1, y1, x2 - x1, y2 - y1]  # x, y, w, h
-                area = (x2 - x1) * (y2 - y1)
-            else:
-                computed_bbox = [0.0, 0.0, 0.0, 0.0]
-                area = 0.0
-
-            bboxes_list.append(computed_bbox)
-            polygons_list.append(poly_array)
-            labels_list.append(category_idx)
-            areas_list.append(area)
-            iscrowd_list.append(iscrowd_val)
+        bboxes_list.append(bbox)
+        polygons_list.append(polygon_parts)  # Store all parts together as a list
+        labels_list.append(category_idx)
+        areas_list.append(area)
+        iscrowd_list.append(iscrowd_val)
 
     return bboxes_list, polygons_list, labels_list, areas_list, iscrowd_list
 
@@ -662,6 +674,72 @@ def _validate_and_normalize_instance_arrays(
     return n_inst, InstanceArrays(bboxes=bboxes, polygons=polygons, labels=labels, areas=areas_arr, iscrowd=iscrowd_arr)
 
 
+def _extract_label_idx(labels: Any, i: int) -> int | None:
+    """Extract label index from labels array at position i."""
+    if isinstance(labels, np.ndarray) and i < labels.shape[0]:
+        return int(labels[i])
+    return None
+
+
+def _extract_bbox(bboxes: Any, i: int) -> list[float]:
+    """Extract bounding box from bboxes array at position i."""
+    if isinstance(bboxes, np.ndarray) and i < bboxes.shape[0]:
+        bb = bboxes[i].tolist()
+        if len(bb) == 4:
+            return [float(bb[0]), float(bb[1]), float(bb[2]), float(bb[3])]
+    return [0.0, 0.0, 0.0, 0.0]
+
+
+def _extract_segmentation(polygons: Any, i: int) -> list[list[float]]:
+    """Extract segmentation polygons from polygons array at position i."""
+    segmentation: list[list[float]] = []
+    if not isinstance(polygons, np.ndarray) or i >= polygons.shape[0]:
+        return segmentation
+
+    poly_data = polygons[i]
+    if isinstance(poly_data, list):
+        for part in poly_data:
+            flat = _trim_poly_row(part)
+            if len(flat) >= 6:
+                segmentation.append(flat)
+    elif isinstance(poly_data, np.ndarray):
+        flat = _trim_poly_row(poly_data)
+        if len(flat) >= 6:
+            segmentation.append(flat)
+    return segmentation
+
+
+def _compute_bbox_from_segmentation(segmentation: list[list[float]]) -> list[float]:
+    """Compute bounding box from segmentation polygons."""
+    all_x: list[float] = []
+    all_y: list[float] = []
+    for flat in segmentation:
+        all_x.extend(flat[0::2])
+        all_y.extend(flat[1::2])
+    if all_x and all_y:
+        x0, y0 = min(all_x), min(all_y)
+        x1, y1 = max(all_x), max(all_y)
+        return [float(x0), float(y0), float(max(0.0, x1 - x0)), float(max(0.0, y1 - y0))]
+    return [0.0, 0.0, 0.0, 0.0]
+
+
+def _extract_area(areas: Any, i: int, bbox: list[float]) -> float:
+    """Extract area from areas array at position i, or compute from bbox."""
+    if isinstance(areas, np.ndarray) and i < areas.shape[0]:
+        return float(areas[i])
+    return float(bbox[2] * bbox[3]) if len(bbox) == 4 else 0.0
+
+
+def _extract_iscrowd(iscrowd: Any, i: int) -> int:
+    """Extract iscrowd flag from iscrowd array at position i."""
+    if isinstance(iscrowd, np.ndarray) and i < iscrowd.shape[0]:
+        try:
+            return int(bool(iscrowd[i]))
+        except Exception:
+            return 0
+    return 0
+
+
 def _serialize_single_instance(
     i: int,
     arrays: InstanceArrays,
@@ -669,44 +747,18 @@ def _serialize_single_instance(
     image_id: int,
     next_ann_id: int,
 ) -> tuple[dict, int]:
-    label_idx = None
-    labels = arrays.labels
-    if isinstance(labels, np.ndarray) and i < labels.shape[0]:
-        label_idx = int(labels[i])
+    label_idx = _extract_label_idx(arrays.labels, i)
     category_id = to_category_id(label_idx)
 
-    bbox = [0.0, 0.0, 0.0, 0.0]
-    bboxes = arrays.bboxes
-    if isinstance(bboxes, np.ndarray) and i < bboxes.shape[0]:
-        bb = bboxes[i].tolist()
-        if len(bb) == 4:
-            bbox = [float(bb[0]), float(bb[1]), float(bb[2]), float(bb[3])]
+    bbox = _extract_bbox(arrays.bboxes, i)
+    segmentation = _extract_segmentation(arrays.polygons, i)
 
-    flat: list[float] = []
-    polygons = arrays.polygons
-    if isinstance(polygons, np.ndarray) and i < polygons.shape[0]:
-        flat = _trim_poly_row(polygons[i])
+    # Compute bbox from all polygon parts if not provided
+    if bbox[2] == 0.0 or bbox[3] == 0.0:
+        bbox = _compute_bbox_from_segmentation(segmentation)
 
-    if (bbox[2] == 0.0 or bbox[3] == 0.0) and len(flat) >= 6:
-        xs = flat[0::2]
-        ys = flat[1::2]
-        if xs and ys:
-            x0, y0 = min(xs), min(ys)
-            x1, y1 = max(xs), max(ys)
-            bbox = [float(x0), float(y0), float(max(0.0, x1 - x0)), float(max(0.0, y1 - y0))]
-
-    if isinstance(arrays.areas, np.ndarray) and i < arrays.areas.shape[0]:
-        area_val = float(arrays.areas[i])
-    else:
-        area_val = float(bbox[2] * bbox[3]) if len(bbox) == 4 else 0.0
-
-    if isinstance(arrays.iscrowd, np.ndarray) and i < arrays.iscrowd.shape[0]:
-        try:
-            iscrowd_val = int(bool(arrays.iscrowd[i]))
-        except Exception:
-            iscrowd_val = 0
-    else:
-        iscrowd_val = 0
+    area_val = _extract_area(arrays.areas, i, bbox)
+    iscrowd_val = _extract_iscrowd(arrays.iscrowd, i)
 
     inst = {
         "id": next_ann_id,
@@ -715,6 +767,6 @@ def _serialize_single_instance(
         "bbox": bbox,
         "area": area_val,
         "iscrowd": iscrowd_val,
-        "segmentation": [flat] if len(flat) >= 6 else [],
+        "segmentation": segmentation,
     }
     return inst, next_ann_id + 1
