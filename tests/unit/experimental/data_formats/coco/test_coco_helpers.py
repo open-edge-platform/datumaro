@@ -203,7 +203,7 @@ def test_collect_helpers_extract_expected_fields():
         ]
     }
     bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {2: 0})
-    assert bboxes[0] == [1, 1, 2, 2]
+    assert bboxes[0] == [0.0, 0.0, 2.0, 2.0]  # Computed from polygon, not from annotation bbox
     assert polys[0].shape == (4, 2)
     assert labels == [0]
     assert areas[0] == pytest.approx(4.0)
