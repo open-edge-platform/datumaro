@@ -1,5 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+#
+# SPDX-License-Identifier: MIT
+
 """
 COCO dataset support with flexible layout handling.
 

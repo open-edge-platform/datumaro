@@ -1,10 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+#
+# SPDX-License-Identifier: MIT
+
 
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import Sample
+from datumaro.experimental import LazyImage, Sample
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.constants import COCO_LABEL_TO_SUPER
 from datumaro.experimental.fields import (
@@ -25,7 +27,7 @@ from datumaro.experimental.fields import (
 
 class CocoSample(Sample):
     # Basic image information
-    image: str = image_path_field()
+    image: LazyImage = image_path_field()
     image_info: ImageInfo = image_info_field()
 
     # Instance annotations (from instances_train/val)

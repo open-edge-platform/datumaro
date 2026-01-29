@@ -179,7 +179,7 @@ def test_assemble_sample_from_image_record(tmp_path: Path):
         captions,
         Subset.TRAINING,
     )
-    assert sample.image.endswith("im.jpg")
+    assert sample.image.path.endswith("im.jpg")
     assert sample.labels.tolist() == [0]
     assert sample.keypoints.shape == (1, 2, 3)
     assert sample.captions.tolist() == ["hello"]
