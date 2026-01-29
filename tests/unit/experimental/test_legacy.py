@@ -1505,7 +1505,8 @@ class PolygonConversionTest:
             assert len(restored_items) == 1
 
             restored_item = restored_items[0]
-            assert len(restored_item.annotations) == 2
+            # Expect 4 annotations: 2 polygons + 2 bboxes (derived from polygon bounds)
+            assert len(restored_item.annotations) == 4
 
             # Check restored polygons
             polygon_anns = [ann for ann in restored_item.annotations if isinstance(ann, Polygon)]
