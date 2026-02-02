@@ -155,7 +155,7 @@ def test_export_image_path_field(tmp_path):
         rel_path = result["image_path"][idx]
 
         # Verify the file exists and format is preserved
-        img_file = output_dir / rel_path.replace("/", "_")
+        img_file = output_dir / rel_path
         assert img_file.exists()
 
         # Check that the file extension is preserved
@@ -888,7 +888,7 @@ def test_export_import_different_field_types(tmp_path):
     # Verify images were exported
     images_dir = export_dir / IMAGES_DIR
     assert (images_dir / "image_callable_000000.png").exists()
-    assert (images_dir / "image_path_000000.png").exists()
+    assert (images_dir / "image_path/000000.png").exists()
     assert (images_dir / "mask_callable_000000.png").exists()
     assert (images_dir / "instance_mask_callable_000000.png").exists()
 
@@ -990,7 +990,7 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     assert "000000.jpg" in exported_path
 
     # Check if the file exists on disk (handling the replacement of / with _ in filename)
-    exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path.replace("/", "_")
+    exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path
     assert exported_file_on_disk.exists()
 
     # 3. Case: export_images=False

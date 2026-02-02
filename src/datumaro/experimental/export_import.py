@@ -83,8 +83,9 @@ def _export_image_path_field(
 
         extension = source_path.suffix if source_path.suffix else ".png"
         rel_path = f"{field_name}/{idx:06d}{extension}"
-        abs_path = output_dir / rel_path.replace("/", "_")
+        abs_path = output_dir / rel_path
 
+        abs_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source_path, abs_path)
         return str(rel_path)
     except Exception as e:
@@ -245,9 +246,24 @@ def export_dataset(
             images_dir = work_dir / IMAGES_DIR
             images_paths = _export_images_from_dataset(dataset, images_dir)
 
+            df_to_export = df_to_export.with_row_index("__idx")
             for field_name, path_map in images_paths.items():
-                paths_column = [path_map.get(i) for i in range(len(df_to_export))]
-                df_to_export = df_to_export.with_columns(pl.Series(field_name, paths_column, dtype=pl.String))
+                if not path_map:
+                    continue
+
+                # Create a mapping DataFrame from the exported paths (O(ExportedCount) vs O(DatasetCount))
+                mapping_df = pl.DataFrame(
+                    {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
+                    schema={"__idx": pl.UInt32, "__new_path": pl.String},
+                )
+
+                # Left join to apply updates; rows not in path_map will have null paths
+                df_to_export = (
+                    df_to_export.join(mapping_df, on="__idx", how="left")
+                    .with_columns(pl.col("__new_path").alias(field_name))
+                    .drop("__new_path")
+                )
+            df_to_export = df_to_export.drop("__idx")
 
         # Export DataFrame to Parquet
         # Filter out Object columns (like callables) as they can't be serialized to Parquet
@@ -374,7 +390,7 @@ def _reconstruct_field_values(
 
     values: list[object | None] = []
     for idx in range(num_rows):
-        pattern = f"{field_name}_{idx:06d}.*"
+        pattern = f"{field_name}/{idx:06d}.*" if is_path_field else f"{field_name}_{idx:06d}.*"
         matches = sorted(images_base_dir.glob(pattern))
         file_path = matches[0] if matches else None
 
