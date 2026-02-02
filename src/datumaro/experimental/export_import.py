@@ -76,7 +76,7 @@ def _export_image_path_field(
 ) -> str | None:
     """Export an ImagePathField by copying the file from the filesystem."""
     try:
-        source_path = Path(value)
+        source_path = Path(str(value))
         if not source_path.exists():
             print(f"Warning: Image file not found: {value}")
             return None
@@ -239,19 +239,24 @@ def export_dataset(
         work_dir = output_path
 
     try:
-        # Export DataFrame to Parquet
-        # Filter out Object columns (like callables) as they can't be serialized to Parquet
-        columns_to_export = [col for col, dtype in dataset.df.schema.items() if dtype != pl.Object]
-        parquet_path = work_dir / DATAFRAME_FILE
-        dataset.df.select(columns_to_export).write_parquet(parquet_path)
-
+        df_to_export = dataset.df
         # Export images if requested
         if export_images:
             images_dir = work_dir / IMAGES_DIR
-            _export_images_from_dataset(dataset, images_dir)
+            images_paths = _export_images_from_dataset(dataset, images_dir)
+
+            for field_name, path_map in images_paths.items():
+                paths_column = [path_map.get(i) for i in range(len(df_to_export))]
+                df_to_export = df_to_export.with_columns(pl.Series(field_name, paths_column, dtype=pl.String))
+
+        # Export DataFrame to Parquet
+        # Filter out Object columns (like callables) as they can't be serialized to Parquet
+        columns_to_export = [col for col, dtype in df_to_export.schema.items() if dtype != pl.Object]
+        parquet_path = work_dir / DATAFRAME_FILE
+        df_to_export.select(columns_to_export).write_parquet(parquet_path)
 
         # Track which columns are Object types (excluded from parquet)
-        object_columns = [col for col, dtype in dataset.df.schema.items() if dtype == pl.Object]
+        object_columns = [col for col, dtype in df_to_export.schema.items() if dtype == pl.Object]
 
         # Create metadata
         metadata = {

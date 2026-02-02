@@ -951,3 +951,58 @@ def test_export_import_different_field_types(tmp_path):
     assert imported_sample.tile.y == sample.tile.y
     assert imported_sample.tile.width == sample.tile.width
     assert imported_sample.tile.height == sample.tile.height
+
+
+def test_export_dataset_export_images_true_and_false(tmp_path):
+    """
+    Test that export_dataset stores relative paths in Parquet when export_images=True
+    and original absolute paths when export_images=False.
+    """
+    # 1. Setup: Create a temporary source image
+    source_dir = tmp_path / "source_media"
+    source_dir.mkdir()
+    source_img_path = source_dir / "cat1.jpg"
+    PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(source_img_path)
+
+    class SampleWithPath(Sample):
+        img: str = image_path_field()
+
+    dataset = Dataset(SampleWithPath)
+    dataset.append(SampleWithPath(img=str(source_img_path)))
+
+    # 2. Case: export_images=True
+    # The path in Parquet should be relative to the export directory
+    export_dir_true = tmp_path / "exported_with_images"
+    export_dataset(
+        dataset=dataset,
+        output_path=export_dir_true,
+        as_zip=False,
+        export_images=True,
+    )
+
+    df_true = pl.read_parquet(export_dir_true / DATAFRAME_FILE)
+    exported_path = df_true["img"][0]
+
+    assert exported_path is not None
+    assert exported_path != str(source_img_path)
+    # Verify the exported file exists at the path relative to images/
+    # Note: rel_path in _export_image_path_field is 'img/000000.jpg'
+    assert "000000.jpg" in exported_path
+
+    # Check if the file exists on disk (handling the replacement of / with _ in filename)
+    exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path.replace("/", "_")
+    assert exported_file_on_disk.exists()
+
+    # 3. Case: export_images=False
+    # The path in Parquet should remain the original absolute path
+    export_dir_false = tmp_path / "exported_without_images"
+    export_dataset(
+        dataset=dataset,
+        output_path=export_dir_false,
+        as_zip=False,
+        export_images=False,
+    )
+
+    df_false = pl.read_parquet(export_dir_false / DATAFRAME_FILE)
+    assert df_false["img"][0] == str(source_img_path)
+    assert not (export_dir_false / IMAGES_DIR).exists()
