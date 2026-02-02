@@ -888,7 +888,7 @@ def test_export_import_different_field_types(tmp_path):
     # Verify images were exported
     images_dir = export_dir / IMAGES_DIR
     assert (images_dir / "image_callable_000000.png").exists()
-    assert (images_dir / "image_path/000000.png").exists()
+    assert (images_dir / "image_path_000000.png").exists()
     assert (images_dir / "mask_callable_000000.png").exists()
     assert (images_dir / "instance_mask_callable_000000.png").exists()
 

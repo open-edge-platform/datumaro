@@ -82,10 +82,9 @@ def _export_image_path_field(
             return None
 
         extension = source_path.suffix if source_path.suffix else ".png"
-        rel_path = f"{field_name}/{idx:06d}{extension}"
+        rel_path = f"{field_name}_{idx:06d}{extension}"
         abs_path = output_dir / rel_path
 
-        abs_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source_path, abs_path)
         return str(rel_path)
     except Exception as e:
@@ -251,7 +250,7 @@ def export_dataset(
                 if not path_map:
                     continue
 
-                # Create a mapping DataFrame from the exported paths (O(ExportedCount) vs O(DatasetCount))
+                # Create a mapping DataFrame from the exported paths
                 mapping_df = pl.DataFrame(
                     {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
                     schema={"__idx": pl.UInt32, "__new_path": pl.String},
@@ -390,7 +389,7 @@ def _reconstruct_field_values(
 
     values: list[object | None] = []
     for idx in range(num_rows):
-        pattern = f"{field_name}/{idx:06d}.*" if is_path_field else f"{field_name}_{idx:06d}.*"
+        pattern = f"{field_name}_{idx:06d}.*"
         matches = sorted(images_base_dir.glob(pattern))
         file_path = matches[0] if matches else None
 
