@@ -142,6 +142,7 @@ The module provides a rich set of field types for common ML data:
 | `SubsetField` | Dataset subset (train/val/test) | `subset_field()` |
 | `TileField` | Tile metadata for tiling operations | `tile_field()` |
 | `NumericField` | Numeric values | `numeric_field(dtype, is_list)` |
+| `StringField` | String values | `string_field()` |
 
 ### Semantic Tags
 
