@@ -14,11 +14,14 @@ from datumaro.experimental.type_registry import from_polars_data
 @dataclass(frozen=True)
 class NumericField(Field):
     """
-    Represents a neutral numeric value.
+    Represents a numeric value with arbitrary semantics.
 
-    Use this for generic per-sample or per-instance numeric attributes such as
-    area, depth, distance, score, etc. Supports scalar values or lists of values when
-    ``is_list=True``.
+    This field can be used, for instance, to represent attributes like area, depth, distance, score, etc.
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "area")
+        dtype: Polars data type for the numeric value (e.g., pl.Float32, pl.Int64)
+        is_list: If True, the field can hold a list of numeric values instead of a single value.
     """
 
     semantic: str = "default"
@@ -27,10 +30,7 @@ class NumericField(Field):
 
     @property
     def _pl_type(self) -> pl.DataType:
-        pl_type = self.dtype
-        if self.is_list:
-            pl_type = pl.List(pl_type)
-        return pl_type
+        return pl.List(self.dtype) if self.is_list else self.dtype
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: self._pl_type}
@@ -55,9 +55,9 @@ def numeric_field(
     Create a NumericField instance.
 
     Args:
-        dtype: Polars data type for numeric values (defaults to pl.Float32())
-        semantic: String tag describing the value purpose (optional)
+        dtype: Polars data type for the numeric value (e.g., pl.Float32, pl.Int64)
         is_list: Whether this field should be treated as a list type
+        semantic: String tag describing the field purpose (optional)
 
     Returns:
         NumericField configured with the given parameters
@@ -68,11 +68,13 @@ def numeric_field(
 @dataclass(frozen=True)
 class BoolField(Field):
     """
-    Represents a boolean value or a list of boolean values.
+    Represents a boolean value with arbitrary semantics.
 
-    Stored as Polars Boolean type and
-    converts back to Python ``bool``/``list[bool]`` or numpy arrays as needed
-    by the higher-level Dataset APIs.
+    This field can be used, for instance, to represent attributes like "is_occluded", "has_mask", "is_crowd", etc.
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "is_occluded")
+        is_list: If True, the field can hold a list of boolean values instead of a single value.
     """
 
     semantic: str = "default"
@@ -81,7 +83,7 @@ class BoolField(Field):
 
     @property
     def _pl_type(self) -> pl.DataType:
-        return pl.List(pl.Boolean) if self.is_list else pl.Boolean
+        return pl.List(self.dtype) if self.is_list else self.dtype
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: self._pl_type}
@@ -111,3 +113,53 @@ def bool_field(
         BoolField configured with the given parameters
     """
     return BoolField(semantic=semantic, is_list=is_list)
+
+
+@dataclass(frozen=True)
+class StringField(Field):
+    """
+    Represents a string value with arbitrary semantics.
+
+    This field can be used, for instance, to represent attributes like "id", "source", "tags", etc...
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "id")
+        is_list: If True, the field can hold a list of string values instead of a single value.
+    """
+
+    semantic: str = "default"
+    is_list: bool = False
+    dtype: pl.DataType = field(default_factory=pl.String, init=False)
+
+    @property
+    def _pl_type(self) -> pl.DataType:
+        return pl.List(self.dtype) if self.is_list else self.dtype
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        return {name: self._pl_type}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        return {name: pl.Series(name, [value], dtype=self._pl_type)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        data = df[name][row_index]
+        if target_type is list:
+            return list(data) if data is not None else None  # type: ignore[return-value]
+        return from_polars_data(data, target_type)
+
+
+def string_field(
+    semantic: str = "default",
+    is_list: bool = False,
+) -> Any:
+    """
+    Create a StringField instance.
+
+    Args:
+        semantic: String tag describing the field purpose (optional)
+        is_list: Whether this field should be treated as a list type
+
+    Returns:
+        StringField configured with the given parameters
+    """
+    return StringField(semantic=semantic, is_list=is_list)

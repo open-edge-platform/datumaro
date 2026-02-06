@@ -52,7 +52,7 @@ from datumaro.experimental.fields.masks import (
     mask_callable_field,
     mask_field,
 )
-from datumaro.experimental.fields.types import NumericField, bool_field, numeric_field
+from datumaro.experimental.fields.types import NumericField, StringField, bool_field, numeric_field, string_field
 
 __all__ = [
     "BBoxField",
@@ -74,6 +74,7 @@ __all__ = [
     "NumericField",
     "PolygonField",
     "RotatedBBoxField",
+    "StringField",
     "Subset",
     "SubsetField",
     "TensorField",
@@ -98,6 +99,7 @@ __all__ = [
     "numeric_field",
     "polygon_field",
     "rotated_bbox_field",
+    "string_field",
     "subset_field",
     "tensor_field",
     "tile_field",
