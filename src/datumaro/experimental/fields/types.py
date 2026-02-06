@@ -16,9 +16,12 @@ class NumericField(Field):
     """
     Represents a numeric value with arbitrary semantics.
 
-    Use this for generic per-sample or per-instance numeric attributes such as
-    area, depth, distance, score, etc. Supports scalar values or lists of values when
-    ``is_list=True``.
+    This field can be used, for instance, to represent attributes like area, depth, distance, score, etc.
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "area")
+        dtype: Polars data type for the numeric value (e.g., pl.Float32, pl.Int64)
+        is_list: If True, the field can hold a list of numeric values instead of a single value.
     """
 
     semantic: str = "default"
@@ -52,9 +55,9 @@ def numeric_field(
     Create a NumericField instance.
 
     Args:
-        dtype: Polars data type for numeric values (defaults to pl.Float32())
-        semantic: String tag describing the value purpose (optional)
+        dtype: Polars data type for the numeric value (e.g., pl.Float32, pl.Int64)
         is_list: Whether this field should be treated as a list type
+        semantic: String tag describing the field purpose (optional)
 
     Returns:
         NumericField configured with the given parameters
@@ -65,11 +68,13 @@ def numeric_field(
 @dataclass(frozen=True)
 class BoolField(Field):
     """
-    Represents a boolean value or a list of boolean values.
+    Represents a boolean value with arbitrary semantics.
 
-    Stored as Polars Boolean type and
-    converts back to Python ``bool``/``list[bool]`` or numpy arrays as needed
-    by the higher-level Dataset APIs.
+    This field can be used, for instance, to represent attributes like "is_occluded", "has_mask", "is_crowd", etc.
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "is_occluded")
+        is_list: If True, the field can hold a list of boolean values instead of a single value.
     """
 
     semantic: str = "default"
@@ -113,11 +118,13 @@ def bool_field(
 @dataclass(frozen=True)
 class StringField(Field):
     """
-    Represents a string value or a list of string values.
+    Represents a string value with arbitrary semantics.
 
-    Stored as Polars String type and
-    converts back to Python ``str``/``list[str]`` as needed
-    by the higher-level Dataset APIs.
+    This field can be used, for instance, to represent attributes like "id", "source", "tags", etc...
+
+    Attributes:
+        semantic: A string tag describing the purpose of the value (e.g., "id")
+        is_list: If True, the field can hold a list of string values instead of a single value.
     """
 
     semantic: str = "default"
