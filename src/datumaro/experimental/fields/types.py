@@ -27,10 +27,7 @@ class NumericField(Field):
 
     @property
     def _pl_type(self) -> pl.DataType:
-        pl_type = self.dtype
-        if self.is_list:
-            pl_type = pl.List(pl_type)
-        return pl_type
+        return pl.List(self.dtype) if self.is_list else self.dtype
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: self._pl_type}
@@ -81,7 +78,7 @@ class BoolField(Field):
 
     @property
     def _pl_type(self) -> pl.DataType:
-        return pl.List(pl.Boolean) if self.is_list else pl.Boolean
+        return pl.List(self.dtype) if self.is_list else self.dtype
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: self._pl_type}
@@ -129,7 +126,7 @@ class StringField(Field):
 
     @property
     def _pl_type(self) -> pl.DataType:
-        return pl.List(pl.String) if self.is_list else pl.String
+        return pl.List(self.dtype) if self.is_list else self.dtype
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: self._pl_type}
