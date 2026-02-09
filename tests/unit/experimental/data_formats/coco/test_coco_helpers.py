@@ -20,6 +20,7 @@ from datumaro.experimental.data_formats.coco.helpers import (
     _prepare_categories,
     _save_subset,
     _segmentation_to_poly,
+    _segmentation_to_poly_parts,
     _serialize_annotations_for_subset,
     _serialize_captions_for_sample,
     _serialize_instances_for_sample,
@@ -38,6 +39,48 @@ def test_segmentation_to_poly_from_nested_list():
     poly = _segmentation_to_poly(segm)
     assert poly.shape == (4, 2)
     assert np.allclose(poly, np.array([[0, 0], [2, 0], [2, 2], [0, 2]], dtype=np.float32))
+
+
+class SegmentationToPolyPartsTest:
+    """Unit tests for _segmentation_to_poly_parts multi-part polygon splitting."""
+
+    def test_none_returns_empty_array(self):
+        result = _segmentation_to_poly_parts(None)
+        assert len(result) == 1
+        assert result[0].shape == (0, 2)
+
+    def test_single_flat_polygon(self):
+        segm = [10.0, 20.0, 30.0, 20.0, 30.0, 40.0]
+        result = _segmentation_to_poly_parts(segm)
+        assert len(result) == 1
+        expected = np.array([[10, 20], [30, 20], [30, 40]], dtype=np.float32)
+        assert np.allclose(result[0], expected)
+
+    def test_single_nested_polygon(self):
+        segm = [[10.0, 20.0, 30.0, 20.0, 30.0, 40.0]]
+        result = _segmentation_to_poly_parts(segm)
+        assert len(result) == 1
+        expected = np.array([[10, 20], [30, 20], [30, 40]], dtype=np.float32)
+        assert np.allclose(result[0], expected)
+
+    def test_multi_part_polygon_splits_into_separate_arrays(self):
+        part1 = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0, 0.0, 10.0]
+        part2 = [20.0, 20.0, 30.0, 20.0, 30.0, 30.0, 20.0, 30.0]
+        segm = [part1, part2]
+        result = _segmentation_to_poly_parts(segm)
+        assert len(result) == 2
+        assert result[0].shape == (4, 2)
+        assert result[1].shape == (4, 2)
+        assert np.allclose(result[0], np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32))
+        assert np.allclose(result[1], np.array([[20, 20], [30, 20], [30, 30], [20, 30]], dtype=np.float32))
+
+    def test_multi_part_skips_too_short_parts(self):
+        valid = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0]
+        too_short = [1.0, 2.0]  # Only 1 point, needs at least 3
+        segm = [valid, too_short]
+        result = _segmentation_to_poly_parts(segm)
+        assert len(result) == 1
+        assert result[0].shape == (3, 2)
 
 
 def test_trim_poly_row_discard_trailing_zero_rows():
@@ -203,7 +246,7 @@ def test_collect_helpers_extract_expected_fields():
         ]
     }
     bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {2: 0})
-    assert bboxes[0] == [1, 1, 2, 2]
+    assert bboxes[0] == [0.0, 0.0, 2.0, 2.0]  # Computed from polygon, not from annotation bbox
     assert polys[0].shape == (4, 2)
     assert labels == [0]
     assert areas[0] == pytest.approx(4.0)

@@ -317,17 +317,23 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
 
 class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
-    """Forward converter for Polygon annotations."""
+    """Forward converter for Polygon annotations.
+
+    This converter also generates bboxes from polygon bounds to ensure
+    that instance segmentation tasks have aligned bboxes, polygons, and labels.
+    """
 
     def __init__(
         self,
         polygon_attribute: AttributeInfo,
         polygon_labels_attribute: AttributeInfo | None,
+        bbox_attribute: AttributeInfo | None,
         name_prefix: str,
     ):
-        """Initialize with polygon attributes and label attribute."""
+        """Initialize with polygon attributes, bbox attribute and label attribute."""
         self.polygon_attribute = polygon_attribute
         self.polygon_labels_attribute = polygon_labels_attribute
+        self.bbox_attribute = bbox_attribute
         self.name_prefix = name_prefix
 
     @classmethod
@@ -362,28 +368,43 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
                 categories=new_label_categories,
             )
 
+        # Also create bbox attribute to generate bboxes from polygon bounds
+        bbox_attribute = AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32(), semantic=semantic))
+
         return cls(
             polygon_attribute=polygon_attribute,
             polygon_labels_attribute=polygon_labels_attribute,
+            bbox_attribute=bbox_attribute,
             name_prefix=name_prefix,
         )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {self.name_prefix + "polygons": self.polygon_attribute}
+        if self.bbox_attribute is not None:
+            attributes[self.name_prefix + "bboxes"] = self.bbox_attribute
         if self.polygon_labels_attribute is not None:
             attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
     def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
         polygons: list[list[float]] = []
+        bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
         for ann in annotations:
             if isinstance(ann, Polygon):
                 # Points are stored as flat coordinates in Polygon
                 # ann.points in the format [x1,y1,x2,y2,...] format
-                polygons.append(np.array(ann.points).reshape(-1, 2))
+                poly_points = np.array(ann.points).reshape(-1, 2)
+                polygons.append(poly_points)
                 labels.append(ann.label)
+
+                # Compute bounding box from polygon points (x1, y1, x2, y2 format)
+                x_coords = poly_points[:, 0]
+                y_coords = poly_points[:, 1]
+                x1, y1 = float(x_coords.min()), float(y_coords.min())
+                x2, y2 = float(x_coords.max()), float(y_coords.max())
+                bboxes.append([x1, y1, x2, y2])
 
         # Convert to numpy array - polygons is a list of variable-length coordinate lists
         # We'll store it as a ragged array (object dtype to handle different lengths)
@@ -395,6 +416,13 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
         polygons_array = np.empty((len(polygons),), dtype=object)
         polygons_array[:] = polygons
         result = {self.name_prefix + "polygons": polygons_array}
+
+        # Add bboxes computed from polygon bounds
+        if self.bbox_attribute is not None:
+            bboxes_array = np.array(bboxes, dtype=np.float32)
+            if bboxes_array.shape == (0,):
+                bboxes_array = bboxes_array.reshape(0, 4)
+            result[self.name_prefix + "bboxes"] = bboxes_array
 
         # Only add polygon_labels if we have label categories
         if self.polygon_labels_attribute is not None:

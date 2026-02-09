@@ -399,27 +399,70 @@ def _collect_instances_for_image(
 
     for ann in instances_by_image.get(image_id, []):
         category_idx = cat_id_to_idx.get(ann.get("category_id"))
-        bbox = ann.get("bbox") if isinstance(ann.get("bbox"), list) else None
-        poly_array = _segmentation_to_poly(ann.get("segmentation"))
+        segmentation = ann.get("segmentation")
 
-        bboxes_list.append(bbox if bbox is not None else [0.0, 0.0, 0.0, 0.0])
-        polygons_list.append(poly_array)
-        labels_list.append(category_idx)
-
-        if "area" in ann and isinstance(ann["area"], int | float):
-            areas_list.append(float(ann["area"]))
-        elif bbox is not None and len(bbox) == 4:
-            areas_list.append(float(bbox[2] * bbox[3]))
-        else:
-            areas_list.append(0.0)
+        # Handle multi-part polygons by splitting them into separate annotations
+        polygon_parts = _segmentation_to_poly_parts(segmentation)
 
         ic = ann.get("iscrowd", 0)
         try:
-            iscrowd_list.append(bool(int(ic)))
+            iscrowd_val = bool(int(ic))
         except Exception:  # pragma: no cover - tolerant casting
-            iscrowd_list.append(False)
+            iscrowd_val = False
+
+        for poly_array in polygon_parts:
+            # Compute bbox from polygon points (x, y, w, h format for COCO compatibility)
+            if poly_array.size > 0:
+                x_coords = poly_array[:, 0]
+                y_coords = poly_array[:, 1]
+                x1, y1 = float(x_coords.min()), float(y_coords.min())
+                x2, y2 = float(x_coords.max()), float(y_coords.max())
+                computed_bbox = [x1, y1, x2 - x1, y2 - y1]  # x, y, w, h
+                area = (x2 - x1) * (y2 - y1)
+            else:
+                computed_bbox = [0.0, 0.0, 0.0, 0.0]
+                area = 0.0
+
+            bboxes_list.append(computed_bbox)
+            polygons_list.append(poly_array)
+            labels_list.append(category_idx)
+            areas_list.append(area)
+            iscrowd_list.append(iscrowd_val)
 
     return bboxes_list, polygons_list, labels_list, areas_list, iscrowd_list
+
+
+def _segmentation_to_poly_parts(segm: Any) -> list[np.ndarray]:
+    """Convert COCO segmentation to a list of polygon arrays, one per part.
+
+    This handles multi-part polygons by returning each part as a separate array,
+    ensuring each polygon part gets its own annotation.
+    """
+    if isinstance(segm, dict) or segm is None or (isinstance(segm, list) and len(segm) == 0):
+        return [np.zeros((0, 2), dtype=np.float32)]
+
+    if isinstance(segm, list):
+        # Check if it's a list of polygon parts (list[list[float]]) or a single polygon (list[float])
+        if len(segm) > 0 and isinstance(segm[0], (list, tuple, np.ndarray)):
+            # Multi-part polygon: each element is a separate polygon part
+            result = []
+            for part in segm:
+                try:
+                    arr = np.array(part, dtype=np.float32)
+                    if arr.size >= 6 and arr.size % 2 == 0:  # At least 3 points
+                        result.append(arr.reshape(-1, 2))
+                except Exception:  # noqa: S110
+                    pass
+            return result if result else [np.zeros((0, 2), dtype=np.float32)]
+        # Single polygon (flat list of coordinates)
+        try:
+            arr = np.array(segm, dtype=np.float32)
+            if arr.size >= 6 and arr.size % 2 == 0:
+                return [arr.reshape(-1, 2)]
+        except Exception:  # noqa: S110
+            pass
+
+    return [np.zeros((0, 2), dtype=np.float32)]
 
 
 def _collect_keypoints_for_image(image_id: int, keypoints_by_image: dict[int, list[dict]]) -> list[np.ndarray]:
