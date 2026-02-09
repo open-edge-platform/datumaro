@@ -1,6 +1,7 @@
 """Unit tests for legacy dataset conversion functionality."""
 
 import io
+import json
 import math
 import pickle
 import tempfile
@@ -1571,6 +1572,59 @@ class PolygonConversionTest:
         restored_polygon = polygon_anns[0]
         assert restored_polygon.points == [10, 20, 30, 25, 20, 40]
         assert restored_polygon.label is None
+
+    def test_two_polygons_inside_single_bounding_box(self):
+        """Test legacy COCO dataset with two polygons in the same annotation (multi-part segmentation)."""
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            # Build a COCO instances dataset on disk
+            (temp_path / "annotations").mkdir()
+            (temp_path / "images").mkdir()
+            coco_json = {
+                "images": [{"id": 1, "width": 640, "height": 480, "file_name": "img.jpg"}],
+                "annotations": [
+                    {
+                        "id": 1,
+                        "image_id": 1,
+                        "category_id": 1,
+                        "segmentation": [
+                            [10, 10, 20, 10, 15, 30],
+                            [25, 10, 35, 10, 30, 30],
+                        ],
+                        "area": 200.0,
+                        "bbox": [10, 10, 25, 20],
+                        "iscrowd": 0,
+                    },
+                ],
+                "categories": [{"id": 1, "name": "object"}],
+            }
+            (temp_path / "annotations" / "instances_train.json").write_text(json.dumps(coco_json))
+
+            # Import as a legacy COCO dataset
+            legacy_dataset = LegacyDataset.import_from(str(temp_path), "coco_instances")
+
+            # Verify the legacy dataset loaded both polygons
+            legacy_items = list(legacy_dataset)
+            assert len(legacy_items) == 1
+            polygon_anns = [a for a in legacy_items[0].annotations if isinstance(a, Polygon)]
+            assert len(polygon_anns) == 2
+
+            # Convert to v2 format
+            experimental_dataset = convert_from_legacy(legacy_dataset)
+
+            assert len(experimental_dataset) == 1
+            exp_sample = experimental_dataset[0]
+
+            # Both polygons should be preserved as separate entries
+            assert hasattr(exp_sample, "polygons")
+            assert len(exp_sample.polygons) == 2
+
+            # Verify polygon coordinates are preserved
+            poly_points = [exp_sample.polygons[i].tolist() for i in range(2)]
+            assert [[10, 10], [20, 10], [15, 30]] in poly_points
+            assert [[25, 10], [35, 10], [30, 30]] in poly_points
 
 
 class ForwardRotatedBboxAnnotationConverterTest:
