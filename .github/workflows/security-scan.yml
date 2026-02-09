@@ -5,6 +5,14 @@ on:
     # Run security checks every day at 2 AM UTC
     - cron: "0 2 * * *"
   workflow_dispatch:
+  pull_request:
+    branches:
+      - develop
+      - release**
+  merge_group:
+    branches:
+      - develop
+      - release**
   push:
     branches:
       - develop
