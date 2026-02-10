@@ -395,11 +395,13 @@ class Dataset(Generic[DType]):
         # Separate attributes into those available directly and those requiring lazy conversion
         direct_attributes = {}
 
+        # Compute available columns once before the loop
+        available_columns = set(row_df.columns)
+
         for key, attr_info in self._schema.attributes.items():
             if key not in lazy_attributes:
-                # Check if the required columns exist in the DataFrame
-                required_columns = set(attr_info.field.to_polars_schema(key).keys())
-                available_columns = set(row_df.columns)
+                # Get required columns from cache (avoids repeated to_polars_schema calls)
+                required_columns = self._schema.get_required_columns(key)
 
                 if not required_columns.issubset(available_columns):
                     # Columns are missing - check if the field is optional

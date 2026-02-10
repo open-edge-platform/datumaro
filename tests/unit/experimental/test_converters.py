@@ -3100,7 +3100,7 @@ def test_get_optional_field_types_empty_schema():
 def test_filter_unreachable_optional_fields():
     """Test _filter_unreachable_optional_fields removes unreachable optional fields."""
     from datumaro.experimental.converters.registry import _filter_unreachable_optional_fields, _SchemaState
-    from datumaro.experimental.fields import numeric_field
+    from datumaro.experimental.fields import numeric_field, string_field
     from datumaro.experimental.fields.types import NumericField, StringField
     from datumaro.experimental.schema import AttributeSpec
 
@@ -3108,7 +3108,7 @@ def test_filter_unreachable_optional_fields():
     target_state = _SchemaState(
         {
             NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
-            StringField: AttributeSpec(name="str", field=numeric_field(dtype=pl.Int32(), semantic="str")),
+            StringField: AttributeSpec(name="str", field=string_field(semantic="str")),
         }
     )
 
@@ -3128,7 +3128,7 @@ def test_filter_unreachable_optional_fields():
 def test_filter_unreachable_optional_fields_keeps_required():
     """Test _filter_unreachable_optional_fields keeps unreachable required fields."""
     from datumaro.experimental.converters.registry import _filter_unreachable_optional_fields, _SchemaState
-    from datumaro.experimental.fields import numeric_field
+    from datumaro.experimental.fields import numeric_field, string_field
     from datumaro.experimental.fields.types import NumericField, StringField
     from datumaro.experimental.schema import AttributeSpec
 
@@ -3136,7 +3136,7 @@ def test_filter_unreachable_optional_fields_keeps_required():
     target_state = _SchemaState(
         {
             NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
-            StringField: AttributeSpec(name="str", field=numeric_field(dtype=pl.Int32(), semantic="str")),
+            StringField: AttributeSpec(name="str", field=string_field(semantic="str")),
         }
     )
 

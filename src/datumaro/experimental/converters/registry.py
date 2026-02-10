@@ -727,20 +727,26 @@ def converter(
     return decorator(cls)
 
 
-def _get_reachable_field_types(start_state: _SchemaState) -> set[type[Field]]:
+def _get_reachable_field_types(start_state: _SchemaState, semantic: str) -> set[type[Field]]:
     """
     Get all field types that can be reached from the start state through converters.
 
     This performs a breadth-first search to find all field types that can be
-    produced by applying converters starting from the available field types.
+    produced by applying converters starting from the available field types,
+    respecting semantic boundaries.
 
     Args:
         start_state: Starting state with available field types
+        semantic: The semantic tag to filter by (only fields with matching semantic are considered)
 
     Returns:
         Set of all reachable field types (including those already in start_state)
     """
-    reachable: set[type[Field]] = set(start_state.field_to_attr_spec.keys())
+    reachable: set[type[Field]] = {
+        field_type
+        for field_type, attr_spec in start_state.field_to_attr_spec.items()
+        if attr_spec.field.semantic == semantic
+    }
     frontier: set[type[Field]] = set(reachable)
 
     while frontier:
@@ -829,7 +835,7 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
         start_state = start_groups.get(semantic, _SchemaState({}))
 
         # Determine which field types are reachable from the start state
-        reachable_types = _get_reachable_field_types(start_state)
+        reachable_types = _get_reachable_field_types(start_state, semantic)
 
         # Get optional field types for this specific semantic
         optional_field_types = optional_field_types_by_semantic.get(semantic, set())
