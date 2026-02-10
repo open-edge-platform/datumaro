@@ -776,3 +776,127 @@ def test_dataset_with_optional_field():
     sample_3 = dataset[3]
     assert sample_3.mask is not None
     np.testing.assert_array_equal(sample_3.mask, np.array([[255, 128, 64]], dtype=np.uint8))
+
+
+def test_is_type_optional_with_union_none():
+    """Test _is_type_optional correctly identifies Union types with None."""
+    from typing import Union
+
+    # Test modern syntax (Python 3.10+)
+    assert Dataset._is_type_optional(int | None) is True
+    assert Dataset._is_type_optional(str | None) is True
+    assert Dataset._is_type_optional(np.ndarray | None) is True
+
+    # Test typing.Union syntax
+    assert Dataset._is_type_optional(Union[int, None]) is True
+    assert Dataset._is_type_optional(Union[str, None]) is True
+    assert Dataset._is_type_optional(Union[np.ndarray, None]) is True
+
+    # Test complex unions with None
+    assert Dataset._is_type_optional(int | str | None) is True
+    assert Dataset._is_type_optional(Union[int, str, None]) is True
+
+
+def test_is_type_optional_with_non_optional_types():
+    """Test _is_type_optional correctly identifies non-optional types."""
+    from typing import Union
+
+    # Non-optional simple types
+    assert Dataset._is_type_optional(int) is False
+    assert Dataset._is_type_optional(str) is False
+    assert Dataset._is_type_optional(np.ndarray) is False
+
+    # Non-optional unions (without None)
+    assert Dataset._is_type_optional(int | str) is False
+    assert Dataset._is_type_optional(Union[int, str]) is False
+    assert Dataset._is_type_optional(Union[int, str, float]) is False
+
+
+def test_getitem_missing_column_for_optional_field():
+    """Test __getitem__ returns None for optional fields when columns are missing."""
+    from datumaro.experimental.fields import numeric_field
+
+    class SourceSample(Sample):
+        value: int = numeric_field(dtype=pl.Int32())
+
+    class TargetSample(Sample):
+        value: int = numeric_field(dtype=pl.Int32())
+        optional_value: int | None = numeric_field(dtype=pl.Int32(), semantic="optional")
+
+    # Create source dataset
+    source_dataset = Dataset(SourceSample)
+    source_dataset.append(SourceSample(value=42))
+
+    # Create target dataset by manually setting up the schema mismatch
+    # This simulates a conversion where the optional field's column is not present
+    target_schema = TargetSample.infer_schema()
+    target_dataset = Dataset.from_dataframe(
+        df=source_dataset.df,  # DataFrame without 'optional_value' column
+        dtype_or_schema=TargetSample,
+        schema=target_schema,
+    )
+
+    # Accessing the sample should return None for the missing optional field
+    sample = target_dataset[0]
+    assert sample.value == 42
+    assert sample.optional_value is None
+
+
+def test_getitem_missing_column_for_required_field_raises():
+    """Test __getitem__ raises KeyError for required fields when columns are missing."""
+    from datumaro.experimental.fields import numeric_field
+
+    class SourceSample(Sample):
+        value: int = numeric_field(dtype=pl.Int32())
+
+    class TargetSample(Sample):
+        value: int = numeric_field(dtype=pl.Int32())
+        required_value: int = numeric_field(dtype=pl.Int32(), semantic="required")  # Required, not optional
+
+    # Create source dataset
+    source_dataset = Dataset(SourceSample)
+    source_dataset.append(SourceSample(value=42))
+
+    # Create target dataset with schema that expects a column that doesn't exist
+    target_schema = TargetSample.infer_schema()
+    target_dataset = Dataset.from_dataframe(
+        df=source_dataset.df,  # DataFrame without 'required_value' column
+        dtype_or_schema=TargetSample,
+        schema=target_schema,
+    )
+
+    # Accessing the sample should raise KeyError for the missing required field
+    with pytest.raises(KeyError, match=r"Required columns.*'required_value'.*not found"):
+        target_dataset[0]
+
+
+def test_getitem_with_multiple_optional_missing_columns():
+    """Test __getitem__ handles multiple missing optional columns correctly."""
+    from datumaro.experimental.fields import numeric_field, string_field
+
+    class SourceSample(Sample):
+        name: str = string_field(semantic="name")
+
+    class TargetSample(Sample):
+        name: str = string_field(semantic="name")
+        optional_a: int | None = numeric_field(dtype=pl.Int32(), semantic="a")
+        optional_b: str | None = string_field(semantic="b")
+        optional_c: float | None = numeric_field(dtype=pl.Float32(), semantic="c")
+
+    # Create source dataset with only 'name'
+    source_df = pl.DataFrame({"name": ["test"]})
+
+    # Create target dataset
+    target_schema = TargetSample.infer_schema()
+    target_dataset = Dataset.from_dataframe(
+        df=source_df,
+        dtype_or_schema=TargetSample,
+        schema=target_schema,
+    )
+
+    # Access sample - all optional fields should be None
+    sample = target_dataset[0]
+    assert sample.name == "test"
+    assert sample.optional_a is None
+    assert sample.optional_b is None
+    assert sample.optional_c is None

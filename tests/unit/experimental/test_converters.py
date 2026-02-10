@@ -3027,3 +3027,231 @@ def test_channels_first_converter_schema_conversion():
     # Should have exactly one converter
     assert len(conversion_paths.converters["image"]) == 1
     assert type(conversion_paths.converters["image"][0]) is ChannelsFirstConverter
+
+
+def test_is_type_optional_registry():
+    """Test _is_type_optional correctly identifies optional types in registry."""
+    from typing import Union
+
+    from datumaro.experimental.converters.registry import _is_type_optional
+
+    # Test modern syntax (Python 3.10+)
+    assert _is_type_optional(int | None) is True
+    assert _is_type_optional(str | None) is True
+    assert _is_type_optional(np.ndarray | None) is True
+
+    # Test typing.Union syntax
+    assert _is_type_optional(Union[int, None]) is True
+    assert _is_type_optional(Union[str, None]) is True
+
+    # Test complex unions with None
+    assert _is_type_optional(int | str | None) is True
+
+    # Non-optional types
+    assert _is_type_optional(int) is False
+    assert _is_type_optional(str) is False
+    assert _is_type_optional(int | str) is False
+    assert _is_type_optional(Union[int, str]) is False
+
+
+def test_get_optional_field_types():
+    """Test _get_optional_field_types returns correct optional field types."""
+    from datumaro.experimental.converters.registry import _get_optional_field_types
+    from datumaro.experimental.fields import numeric_field, string_field
+
+    # Schema with mix of optional and required fields
+    schema = Schema(
+        attributes={
+            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "optional_int": AttributeInfo(type=int | None, field=numeric_field(dtype=pl.Int32(), semantic="opt_int")),
+            "required_str": AttributeInfo(type=str, field=string_field()),
+            "optional_str": AttributeInfo(type=str | None, field=string_field(semantic="opt_str")),
+        }
+    )
+
+    optional_types = _get_optional_field_types(schema)
+
+    # Should contain the field types for optional_int and optional_str
+    from datumaro.experimental.fields.types import NumericField, StringField
+
+    assert NumericField in optional_types
+    assert StringField in optional_types
+
+
+def test_get_optional_field_types_empty_schema():
+    """Test _get_optional_field_types returns empty set for schema with no optional fields."""
+    from datumaro.experimental.converters.registry import _get_optional_field_types
+    from datumaro.experimental.fields import numeric_field
+
+    schema = Schema(
+        attributes={
+            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+        }
+    )
+
+    optional_types = _get_optional_field_types(schema)
+    assert len(optional_types) == 0
+
+
+def test_filter_unreachable_optional_fields():
+    """Test _filter_unreachable_optional_fields removes unreachable optional fields."""
+    from datumaro.experimental.converters.registry import _filter_unreachable_optional_fields, _SchemaState
+    from datumaro.experimental.fields import numeric_field
+    from datumaro.experimental.fields.types import NumericField, StringField
+    from datumaro.experimental.schema import AttributeSpec
+
+    # Create a target state with two fields
+    target_state = _SchemaState(
+        {
+            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
+            StringField: AttributeSpec(name="str", field=numeric_field(dtype=pl.Int32(), semantic="str")),
+        }
+    )
+
+    # Only NumericField is reachable
+    reachable_types = {NumericField}
+
+    # StringField is optional
+    optional_field_types = {StringField}
+
+    # Filter should remove StringField (unreachable + optional)
+    filtered = _filter_unreachable_optional_fields(target_state, reachable_types, optional_field_types)
+
+    assert NumericField in filtered.field_to_attr_spec
+    assert StringField not in filtered.field_to_attr_spec
+
+
+def test_filter_unreachable_optional_fields_keeps_required():
+    """Test _filter_unreachable_optional_fields keeps unreachable required fields."""
+    from datumaro.experimental.converters.registry import _filter_unreachable_optional_fields, _SchemaState
+    from datumaro.experimental.fields import numeric_field
+    from datumaro.experimental.fields.types import NumericField, StringField
+    from datumaro.experimental.schema import AttributeSpec
+
+    # Create a target state with two fields
+    target_state = _SchemaState(
+        {
+            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
+            StringField: AttributeSpec(name="str", field=numeric_field(dtype=pl.Int32(), semantic="str")),
+        }
+    )
+
+    # Only NumericField is reachable
+    reachable_types = {NumericField}
+
+    # No optional fields - StringField is required
+    optional_field_types: set = set()
+
+    # Filter should keep both since StringField is required (not optional)
+    filtered = _filter_unreachable_optional_fields(target_state, reachable_types, optional_field_types)
+
+    assert NumericField in filtered.field_to_attr_spec
+    assert StringField in filtered.field_to_attr_spec  # kept because it's required
+
+
+def test_find_conversion_path_skips_unreachable_optional_fields():
+    """Test find_conversion_path skips optional fields that can't be reached from source."""
+    from datumaro.experimental.fields import numeric_field, string_field
+
+    # Source schema has only an int field
+    source_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+        }
+    )
+
+    # Target schema has int field + optional string field (unreachable from int)
+    target_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "optional_name": AttributeInfo(type=str | None, field=string_field(semantic="name")),
+        }
+    )
+
+    # Should not raise - optional_name is skipped because it's unreachable
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # No converters needed for identical int field, and optional_name is skipped
+    assert "value" not in conversion_paths.converters or len(conversion_paths.converters.get("value", [])) == 0
+
+
+def test_find_conversion_path_raises_for_unreachable_required_fields():
+    """Test find_conversion_path raises ConversionError for unreachable required fields."""
+    from datumaro.experimental.fields import numeric_field, string_field
+
+    # Source schema has only an int field
+    source_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+        }
+    )
+
+    # Target schema has int field + required string field (unreachable from int)
+    target_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "required_name": AttributeInfo(type=str, field=string_field(semantic="name")),  # Required, not optional
+        }
+    )
+
+    # Should raise ConversionError because required_name is unreachable
+    with pytest.raises(ConversionError):
+        find_conversion_path(source_schema, target_schema)
+
+
+def test_find_conversion_path_with_multiple_optional_fields():
+    """Test find_conversion_path handles multiple optional fields correctly."""
+    from datumaro.experimental.fields import numeric_field
+
+    # Source schema with one field
+    source_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+        }
+    )
+
+    # Target schema with same field + multiple optional fields that are unreachable
+    target_schema = Schema(
+        attributes={
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "opt_a": AttributeInfo(type=float | None, field=numeric_field(dtype=pl.Float32(), semantic="a")),
+            "opt_b": AttributeInfo(type=float | None, field=numeric_field(dtype=pl.Float64(), semantic="b")),
+        }
+    )
+
+    # Should not raise - both optional fields are skipped
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # Conversion should succeed with optional fields skipped
+    assert conversion_paths is not None
+
+
+def test_find_conversion_path_converts_reachable_optional_fields():
+    """Test find_conversion_path includes converters for reachable optional fields."""
+
+    # Source schema with bbox field
+    source_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=bbox_field(dtype=pl.Float32(), format="xywh"),
+            ),
+        }
+    )
+
+    # Target schema with optional bbox field in different format (reachable via converter)
+    target_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray | None,  # Optional
+                field=bbox_field(dtype=pl.Float32(), format="x1y1x2y2"),  # Different format
+            ),
+        }
+    )
+
+    # Should find conversion path since bbox -> bbox conversion exists
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # Should have a converter for the format change
+    assert "bbox" in conversion_paths.converters
+    assert len(conversion_paths.converters["bbox"]) >= 1
