@@ -3055,8 +3055,8 @@ def test_is_type_optional_registry():
 
 
 def test_get_optional_field_types():
-    """Test _get_optional_field_types returns correct optional field types."""
-    from datumaro.experimental.converters.registry import _get_optional_field_types
+    """Test _get_optional_field_types_by_semantic returns correct optional field types grouped by semantic."""
+    from datumaro.experimental.converters.registry import _get_optional_field_types_by_semantic
     from datumaro.experimental.fields import numeric_field, string_field
 
     # Schema with mix of optional and required fields
@@ -3069,18 +3069,20 @@ def test_get_optional_field_types():
         }
     )
 
-    optional_types = _get_optional_field_types(schema)
+    optional_types_by_semantic = _get_optional_field_types_by_semantic(schema)
 
-    # Should contain the field types for optional_int and optional_str
+    # Should contain the field types for optional_int and optional_str, grouped by semantic
     from datumaro.experimental.fields.types import NumericField, StringField
 
-    assert NumericField in optional_types
-    assert StringField in optional_types
+    assert "opt_int" in optional_types_by_semantic
+    assert NumericField in optional_types_by_semantic["opt_int"]
+    assert "opt_str" in optional_types_by_semantic
+    assert StringField in optional_types_by_semantic["opt_str"]
 
 
 def test_get_optional_field_types_empty_schema():
-    """Test _get_optional_field_types returns empty set for schema with no optional fields."""
-    from datumaro.experimental.converters.registry import _get_optional_field_types
+    """Test _get_optional_field_types_by_semantic returns empty dict for schema with no optional fields."""
+    from datumaro.experimental.converters.registry import _get_optional_field_types_by_semantic
     from datumaro.experimental.fields import numeric_field
 
     schema = Schema(
@@ -3089,8 +3091,10 @@ def test_get_optional_field_types_empty_schema():
         }
     )
 
-    optional_types = _get_optional_field_types(schema)
-    assert len(optional_types) == 0
+    optional_types_by_semantic = _get_optional_field_types_by_semantic(schema)
+    # The default semantic should have no optional fields (empty set or not present)
+    default_semantic_optional = optional_types_by_semantic.get("default", set())
+    assert len(default_semantic_optional) == 0
 
 
 def test_filter_unreachable_optional_fields():
