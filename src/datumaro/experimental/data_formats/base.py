@@ -82,6 +82,9 @@ def save_dataset(
     Raises:
         ValueError: If the data format is not supported.
     """
+    if data_format not in DataFormat:
+        raise ValueError(f"Unsupported data format: {data_format}")
+
     output_dir = os.path.dirname(output_path) if as_zip else output_path
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
@@ -107,11 +110,10 @@ def _save_dataset_as_zip(
 ) -> None:
     """Save dataset as a zip archive."""
     # Strip .zip extension if present since shutil.make_archive adds it automatically
-    if output_path.endswith(".zip"):
+    if output_path.lower().endswith(".zip"):
         output_path = output_path[:-4]
 
-    temp_dir = tempfile.mkdtemp()
-    try:
+    with tempfile.TemporaryDirectory() as temp_dir:
         _save_dataset_to_dir(
             dataset=dataset,
             data_format=data_format,
@@ -123,8 +125,6 @@ def _save_dataset_as_zip(
             format="zip",
             root_dir=temp_dir,
         )
-    finally:
-        shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 def _save_dataset_to_dir(
