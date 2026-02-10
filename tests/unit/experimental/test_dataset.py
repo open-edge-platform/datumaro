@@ -779,37 +779,41 @@ def test_dataset_with_optional_field():
 
 
 def test_is_type_optional_with_union_none():
-    """Test _is_type_optional correctly identifies Union types with None."""
+    """Test is_type_optional correctly identifies Union types with None."""
     from typing import Union
 
+    from datumaro.experimental.type_registry import is_type_optional
+
     # Test modern syntax (Python 3.10+)
-    assert Dataset._is_type_optional(int | None) is True
-    assert Dataset._is_type_optional(str | None) is True
-    assert Dataset._is_type_optional(np.ndarray | None) is True
+    assert is_type_optional(int | None) is True
+    assert is_type_optional(str | None) is True
+    assert is_type_optional(np.ndarray | None) is True
 
     # Test typing.Union syntax
-    assert Dataset._is_type_optional(Union[int, None]) is True
-    assert Dataset._is_type_optional(Union[str, None]) is True
-    assert Dataset._is_type_optional(Union[np.ndarray, None]) is True
+    assert is_type_optional(Union[int, None]) is True
+    assert is_type_optional(Union[str, None]) is True
+    assert is_type_optional(Union[np.ndarray, None]) is True
 
     # Test complex unions with None
-    assert Dataset._is_type_optional(int | str | None) is True
-    assert Dataset._is_type_optional(Union[int, str, None]) is True
+    assert is_type_optional(int | str | None) is True
+    assert is_type_optional(Union[int, str, None]) is True
 
 
 def test_is_type_optional_with_non_optional_types():
-    """Test _is_type_optional correctly identifies non-optional types."""
+    """Test is_type_optional correctly identifies non-optional types."""
     from typing import Union
 
+    from datumaro.experimental.type_registry import is_type_optional
+
     # Non-optional simple types
-    assert Dataset._is_type_optional(int) is False
-    assert Dataset._is_type_optional(str) is False
-    assert Dataset._is_type_optional(np.ndarray) is False
+    assert is_type_optional(int) is False
+    assert is_type_optional(str) is False
+    assert is_type_optional(np.ndarray) is False
 
     # Non-optional unions (without None)
-    assert Dataset._is_type_optional(int | str) is False
-    assert Dataset._is_type_optional(Union[int, str]) is False
-    assert Dataset._is_type_optional(Union[int, str, float]) is False
+    assert is_type_optional(int | str) is False
+    assert is_type_optional(Union[int, str]) is False
+    assert is_type_optional(Union[int, str, float]) is False
 
 
 def test_getitem_missing_column_for_optional_field():

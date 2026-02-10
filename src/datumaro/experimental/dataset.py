@@ -18,6 +18,7 @@ from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
+from datumaro.experimental.type_registry import is_type_optional
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -371,23 +372,6 @@ class Dataset(Generic[DType]):
                     f"Therefore some samples of this dataset do not have meaning for field '{field_name}'."
                 )
 
-    @staticmethod
-    def _is_type_optional(type_annotation: type) -> bool:
-        """
-        Check if a type annotation is optional (Union with None).
-
-        Args:
-            type_annotation: The type annotation to check
-
-        Returns:
-            True if the type is optional (i.e., allows None), False otherwise
-        """
-        origin = get_origin(type_annotation)
-        if origin in {Union, types.UnionType}:
-            args = get_args(type_annotation)
-            return type(None) in args
-        return False
-
     def __getitem__(self, row_idx: int) -> DType:
         """
         Retrieve a sample from the dataset by index.
@@ -419,7 +403,7 @@ class Dataset(Generic[DType]):
 
                 if not required_columns.issubset(available_columns):
                     # Columns are missing - check if the field is optional
-                    if self._is_type_optional(attr_info.type):
+                    if is_type_optional(attr_info.type):
                         # Optional field with missing columns - set to None
                         direct_attributes[key] = None
                         continue

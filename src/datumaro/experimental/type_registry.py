@@ -61,6 +61,23 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
     raise TypeError(f"No NumPy dtype mapping exists for Polars dtype: {polars_dtype}")
 
 
+def is_type_optional(type_annotation: type) -> bool:
+    """
+    Check if a type annotation is optional (Union with None).
+
+    Args:
+        type_annotation: The type annotation to check
+
+    Returns:
+        True if the type is optional (i.e., allows None), False otherwise
+    """
+    origin = get_origin(type_annotation)
+    if origin in {Union, types.UnionType}:
+        args = get_args(type_annotation)
+        return type(None) in args
+    return False
+
+
 def points_to_numpy(x: Points) -> np.ndarray:
     """
     Convert a Points object to a numpy array with shape (N, 3),

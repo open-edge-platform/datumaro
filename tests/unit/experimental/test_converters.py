@@ -3030,28 +3030,28 @@ def test_channels_first_converter_schema_conversion():
 
 
 def test_is_type_optional_registry():
-    """Test _is_type_optional correctly identifies optional types in registry."""
+    """Test is_type_optional correctly identifies optional types."""
     from typing import Union
 
-    from datumaro.experimental.converters.registry import _is_type_optional
+    from datumaro.experimental.type_registry import is_type_optional
 
     # Test modern syntax (Python 3.10+)
-    assert _is_type_optional(int | None) is True
-    assert _is_type_optional(str | None) is True
-    assert _is_type_optional(np.ndarray | None) is True
+    assert is_type_optional(int | None) is True
+    assert is_type_optional(str | None) is True
+    assert is_type_optional(np.ndarray | None) is True
 
     # Test typing.Union syntax
-    assert _is_type_optional(Union[int, None]) is True
-    assert _is_type_optional(Union[str, None]) is True
+    assert is_type_optional(Union[int, None]) is True
+    assert is_type_optional(Union[str, None]) is True
 
     # Test complex unions with None
-    assert _is_type_optional(int | str | None) is True
+    assert is_type_optional(int | str | None) is True
 
     # Non-optional types
-    assert _is_type_optional(int) is False
-    assert _is_type_optional(str) is False
-    assert _is_type_optional(int | str) is False
-    assert _is_type_optional(Union[int, str]) is False
+    assert is_type_optional(int) is False
+    assert is_type_optional(str) is False
+    assert is_type_optional(int | str) is False
+    assert is_type_optional(Union[int, str]) is False
 
 
 def test_get_optional_field_types():

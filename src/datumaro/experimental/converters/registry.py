@@ -6,10 +6,9 @@ from __future__ import annotations
 import copy
 import heapq
 import itertools
-import types
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, NamedTuple, Union, get_args, get_origin, get_type_hints, overload
+from typing import TYPE_CHECKING, NamedTuple, get_type_hints, overload
 
 import polars as pl
 
@@ -19,6 +18,7 @@ from datumaro.experimental.fields.base import Field
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeSpec, Schema
 from datumaro.experimental.transform import Transform
+from datumaro.experimental.type_registry import is_type_optional
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -281,23 +281,6 @@ def _get_applicable_converters(
     return applicable
 
 
-def _is_type_optional(type_annotation: type) -> bool:
-    """
-    Check if a type annotation is optional (Union with None).
-
-    Args:
-        type_annotation: The type annotation to check
-
-    Returns:
-        True if the type is optional (i.e., allows None), False otherwise
-    """
-    origin = get_origin(type_annotation)
-    if origin in {Union, types.UnionType}:
-        args = get_args(type_annotation)
-        return type(None) in args
-    return False
-
-
 def _get_optional_field_types_by_semantic(schema: Schema) -> dict[str, set[type[Field]]]:
     """
     Get the field types that are optional in the schema, grouped by semantic.
@@ -313,7 +296,7 @@ def _get_optional_field_types_by_semantic(schema: Schema) -> dict[str, set[type[
     result: dict[str, set[type[Field]]] = defaultdict(set)
 
     for attr_info in schema.attributes.values():
-        if _is_type_optional(attr_info.type):
+        if is_type_optional(attr_info.type):
             semantic = attr_info.field.semantic
             field_type = type(attr_info.field)
             result[semantic].add(field_type)
