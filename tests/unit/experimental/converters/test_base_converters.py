@@ -108,8 +108,8 @@ def test_convert_dataframe():
     for conv in conversion_paths.converters["image"]:
         result_df = conv.convert(result_df)
 
-    # For this test with identical schemas, there should be no converters needed
-    # or the result should be equivalent to the input
+    # For this test we convert from UInt8 + RGB to Float32 + BGR; we just
+    # verify the conversion runs and the result matches the expected values.
     assert result_df is not None
 
     image = result_df["image"][0].to_numpy()
