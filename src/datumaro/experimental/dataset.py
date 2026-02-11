@@ -18,6 +18,7 @@ from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
+from datumaro.experimental.type_registry import is_type_optional
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -394,8 +395,24 @@ class Dataset(Generic[DType]):
         # Separate attributes into those available directly and those requiring lazy conversion
         direct_attributes = {}
 
+        # Compute available columns once before the loop
+        available_columns = set(row_df.columns)
+
         for key, attr_info in self._schema.attributes.items():
             if key not in lazy_attributes:
+                # Get required columns from cache (avoids repeated to_polars_schema calls)
+                required_columns = self._schema.get_required_columns(key)
+
+                if not required_columns.issubset(available_columns):
+                    # Columns are missing - check if the field is optional
+                    if is_type_optional(attr_info.type):
+                        # Optional field with missing columns - set to None
+                        direct_attributes[key] = None
+                        continue
+                    # Required field with missing columns - this is an error
+                    missing = required_columns - available_columns
+                    raise KeyError(f"Required columns {missing} for field '{key}' not found in DataFrame")
+
                 # This attribute is directly available
                 direct_attributes[key] = attr_info.field.from_polars(key, 0, row_df, attr_info.type)
 

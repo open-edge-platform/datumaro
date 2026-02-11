@@ -18,6 +18,7 @@ from datumaro.experimental.fields.base import Field
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeSpec, Schema
 from datumaro.experimental.transform import Transform
+from datumaro.experimental.type_registry import is_type_optional
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -280,6 +281,29 @@ def _get_applicable_converters(
     return applicable
 
 
+def _get_optional_field_types_by_semantic(schema: Schema) -> dict[str, set[type[Field]]]:
+    """
+    Get the field types that are optional in the schema, grouped by semantic.
+
+    There can be multiple optional fields with different field types in the same semantic.
+
+    Args:
+        schema: The schema to check
+
+    Returns:
+        Dictionary mapping semantic to set of optional field types for that semantic
+    """
+    result: dict[str, set[type[Field]]] = defaultdict(set)
+
+    for attr_info in schema.attributes.values():
+        if is_type_optional(attr_info.type):
+            semantic = attr_info.field.semantic
+            field_type = type(attr_info.field)
+            result[semantic].add(field_type)
+
+    return result
+
+
 def _group_fields_by_semantic(schema: Schema) -> dict[str, _SchemaState]:
     """
     Group schema attributes by their semantic tags and return as SchemaState objects.
@@ -378,6 +402,7 @@ def _can_lazy_converter_handle_conversion(from_field_type: type[Field], to_field
 def _create_conversion_error_message(
     effective_start_state: _SchemaState,
     target_state: _SchemaState,
+    optional_field_types: set[type[Field]] | None = None,
 ) -> str:
     """
     Create a detailed error message when no conversion path is found.
@@ -385,16 +410,21 @@ def _create_conversion_error_message(
     Args:
         effective_start_state: The effective source state after initial renaming
         target_state: Target state for this semantic
-        semantic: The semantic tag being processed
+        optional_field_types: Set of optional field types (should not be reported as missing)
 
     Returns:
         Formatted error message string
     """
+    if optional_field_types is None:
+        optional_field_types = set()
+
     available_source_fields = {
         field_type: attr_spec.field for field_type, attr_spec in effective_start_state.field_to_attr_spec.items()
     }
     required_target_fields = {
-        field_type: attr_spec.field for field_type, attr_spec in target_state.field_to_attr_spec.items()
+        field_type: attr_spec.field
+        for field_type, attr_spec in target_state.field_to_attr_spec.items()
+        if field_type not in optional_field_types
     }
 
     if available_source_fields:
@@ -404,28 +434,31 @@ def _create_conversion_error_message(
 
     required_msg = f"Required target fields: {list(required_target_fields.values())}"
 
-    # Check if fields exist by name but need type/dtype conversion
-    source_field_names = {attr_spec.name for attr_spec in effective_start_state.field_to_attr_spec.values()}
+    # Check if field types exist but need property conversion (dtype, format, etc.)
+    source_field_types = set(effective_start_state.field_to_attr_spec.keys())
 
     type_conversion_issues = []
     truly_missing_fields = []
 
-    for _, target_attr_spec in target_state.field_to_attr_spec.items():
-        if target_attr_spec.name in source_field_names:
-            # Find the source field with same name
-            for _, src_attr_spec in effective_start_state.field_to_attr_spec.items():
-                if src_attr_spec.name == target_attr_spec.name:
-                    if src_attr_spec.field != target_attr_spec.field and not _can_lazy_converter_handle_conversion(
-                        type(src_attr_spec.field),
-                        type(target_attr_spec.field),
-                    ):
-                        # Check if a lazy converter can handle this field property conversion
-                        type_conversion_issues.append(
-                            f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
-                        )
-                    break
+    for target_field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+        # Skip optional fields - they don't need to be reported as issues
+        if target_field_type in optional_field_types:
+            continue
+
+        if target_field_type in source_field_types:
+            # Field type exists in source - check if properties differ
+            src_attr_spec = effective_start_state.field_to_attr_spec[target_field_type]
+            if src_attr_spec.field != target_attr_spec.field and not _can_lazy_converter_handle_conversion(
+                type(src_attr_spec.field),
+                type(target_attr_spec.field),
+            ):
+                # Check if a lazy converter can handle this field property conversion
+                type_conversion_issues.append(
+                    f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
+                )
         else:
-            truly_missing_fields.append(target_attr_spec.name)
+            # Field type does not exist in source - truly missing
+            truly_missing_fields.append(f"'{target_attr_spec.name}' ({target_field_type.__name__})")
 
     # Create appropriate error message based on the type of issue
     if type_conversion_issues and not truly_missing_fields:
@@ -452,7 +485,10 @@ def _create_conversion_error_message(
 
 
 def _find_conversion_path_for_semantic(
-    start_state: _SchemaState, target_state: _SchemaState, semantic: str
+    start_state: _SchemaState,
+    target_state: _SchemaState,
+    semantic: str,
+    optional_field_types: set[type[Field]] | None = None,
 ) -> tuple[list[Converter], _SchemaState]:
     """
     Find conversion path for fields with a specific semantic tag.
@@ -461,6 +497,7 @@ def _find_conversion_path_for_semantic(
         start_state: Source state for this semantic
         target_state: Target state for this semantic
         semantic: The semantic tag being processed
+        optional_field_types: Set of optional field types for this semantic
 
     Returns:
         Tuple of (list of converters needed for this semantic group, updated target state)
@@ -525,7 +562,7 @@ def _find_conversion_path_for_semantic(
             heapq.heappush(open_set, new_node)
 
     # No path found - create a more informative error message
-    error_msg = _create_conversion_error_message(effective_start_state, target_state)
+    error_msg = _create_conversion_error_message(effective_start_state, target_state, optional_field_types)
     raise ConversionError(error_msg)
 
 
@@ -690,12 +727,86 @@ def converter(
     return decorator(cls)
 
 
+def _get_reachable_field_types(start_state: _SchemaState, semantic: str) -> set[type[Field]]:
+    """
+    Get all field types that can be reached from the start state through converters.
+
+    This performs a breadth-first search to find all field types that can be
+    produced by applying converters starting from the available field types,
+    respecting semantic boundaries.
+
+    Args:
+        start_state: Starting state with available field types
+        semantic: The semantic tag to filter by (only fields with matching semantic are considered)
+
+    Returns:
+        Set of all reachable field types (including those already in start_state)
+    """
+    reachable: set[type[Field]] = {
+        field_type
+        for field_type, attr_spec in start_state.field_to_attr_spec.items()
+        if attr_spec.field.semantic == semantic
+    }
+    frontier: set[type[Field]] = set(reachable)
+
+    while frontier:
+        new_frontier: set[type[Field]] = set()
+
+        for converter_class in ConverterRegistry.list_converters():
+            from_types = converter_class.get_from_types()
+            to_types = converter_class.get_to_types()
+
+            # Check if all required input types are available
+            if reachable.issuperset(from_types.values()):
+                # Add all output types that we haven't seen yet
+                for field_type in to_types.values():
+                    if field_type not in reachable:
+                        new_frontier.add(field_type)
+                        reachable.add(field_type)
+
+        frontier = new_frontier
+
+    return reachable
+
+
+def _filter_unreachable_optional_fields(
+    target_state: _SchemaState,
+    reachable_types: set[type[Field]],
+    optional_field_types: set[type[Field]],
+) -> _SchemaState:
+    """
+    Filter out optional fields from target state if they cannot be reached.
+
+    Args:
+        target_state: The target state to filter
+        reachable_types: Set of field types that can be reached from source
+        optional_field_types: Set of optional field types for this semantic
+
+    Returns:
+        A new _SchemaState with unreachable optional fields removed
+    """
+    if not optional_field_types:
+        return target_state
+
+    filtered_field_to_attr_spec = {}
+
+    for field_type, attr_spec in target_state.field_to_attr_spec.items():
+        # Keep the field if it's reachable OR if it's not optional (required fields must be kept)
+        if field_type in reachable_types or field_type not in optional_field_types:
+            filtered_field_to_attr_spec[field_type] = attr_spec
+
+    return _SchemaState(filtered_field_to_attr_spec)
+
+
 def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[ConversionPaths, dict[str, Categories]]:
     """
     Find an optimal sequence of converters using A* search, grouped by semantic.
 
     Fields with the same semantic can be converted between each other, but
     conversion across semantic boundaries is not allowed.
+
+    Optional fields (those with Union[..., None] type) that cannot be reached
+    from the source schema are automatically skipped.
 
     Args:
         from_schema: Source schema
@@ -706,11 +817,14 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
                  dictionary of attribute names to inferred categories)
 
     Raises:
-        ConversionError: If no conversion path is found
+        ConversionError: If no conversion path is found for required fields
     """
     # Group fields by semantic in both schemas
     start_groups = _group_fields_by_semantic(from_schema)
     target_groups = _group_fields_by_semantic(to_schema)
+
+    # Get optional field types from target schema, grouped by semantic
+    optional_field_types_by_semantic = _get_optional_field_types_by_semantic(to_schema)
 
     # Collect all converters needed across all semantic groups
     all_converters: list[Converter] = []
@@ -720,9 +834,18 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
         # Get corresponding source state for this semantic (if any)
         start_state = start_groups.get(semantic, _SchemaState({}))
 
-        # Find conversion path for this semantic group
+        # Determine which field types are reachable from the start state
+        reachable_types = _get_reachable_field_types(start_state, semantic)
+
+        # Get optional field types for this specific semantic
+        optional_field_types = optional_field_types_by_semantic.get(semantic, set())
+
+        # Filter out optional fields that cannot be reached
+        filtered_target_state = _filter_unreachable_optional_fields(target_state, reachable_types, optional_field_types)
+
+        # Find conversion path for this semantic group (with filtered target)
         semantic_converters, updated_target_state = _find_conversion_path_for_semantic(
-            start_state, target_state, semantic
+            start_state, filtered_target_state, semantic, optional_field_types
         )
 
         # Update the target state with any inferred categories
@@ -737,9 +860,12 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
     inferred_categories: dict[str, Categories] = {}
     for attr_name, attr_info in to_schema.attributes.items():
         semantic = attr_info.field.semantic
-        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.field)]
-        if attr_spec.categories is not None:
-            inferred_categories[attr_name] = attr_spec.categories
+        field_type = type(attr_info.field)
+        # Only add categories for fields that were actually converted (not filtered out)
+        if field_type in target_groups[semantic].field_to_attr_spec:
+            attr_spec = target_groups[semantic].field_to_attr_spec[field_type]
+            if attr_spec.categories is not None:
+                inferred_categories[attr_name] = attr_spec.categories
 
     # Separate batch and lazy converters
     conversion_paths = _separate_batch_and_lazy_converters(all_converters)

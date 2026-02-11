@@ -87,6 +87,29 @@ class Schema:
             seen[key] = name
 
         self._fields_with_categories: dict[str, Categories] | None = None
+        self._required_columns_cache: dict[str, set[str]] | None = None
+
+    def get_required_columns(self, attr_name: str) -> set[str]:
+        """
+        Get the required Polars column names for a given attribute.
+
+        This method caches the results to avoid repeated computation of
+        to_polars_schema() on hot paths like __getitem__.
+
+        Args:
+            attr_name: The attribute name to get required columns for
+
+        Returns:
+            Set of column names required for this attribute
+        """
+        if self._required_columns_cache is None:
+            self._required_columns_cache = {}
+
+        if attr_name not in self._required_columns_cache:
+            attr_info = self.attributes[attr_name]
+            self._required_columns_cache[attr_name] = set(attr_info.field.to_polars_schema(attr_name).keys())
+
+        return self._required_columns_cache[attr_name]
 
     def with_categories(self, categories: dict[str, "Categories"]) -> "Schema":
         """
@@ -103,6 +126,10 @@ class Schema:
         """
         # Make a shallow copy of this schema
         new_schema = copy.copy(self)
+
+        # Reset caches to avoid sharing references with the original schema
+        new_schema._fields_with_categories = None
+        new_schema._required_columns_cache = None
 
         # Also copy the attributes dict to avoid modifying the original AttributeInfo objects
         new_schema.attributes = {name: copy.copy(attr_info) for name, attr_info in self.attributes.items()}
