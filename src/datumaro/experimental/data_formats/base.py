@@ -110,8 +110,7 @@ def _save_dataset_as_zip(
 ) -> None:
     """Save dataset as a zip archive."""
     # Strip .zip extension if present since shutil.make_archive adds it automatically
-    if output_path.lower().endswith(".zip"):
-        output_path = output_path[:-4]
+    output_path, _ = os.path.splitext(output_path)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         _save_dataset_to_dir(
