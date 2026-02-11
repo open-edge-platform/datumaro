@@ -1,0 +1,869 @@
+"""
+Unit tests for converter registry and converter implementations.
+"""
+
+from dataclasses import field
+
+import numpy as np
+import numpy.typing as npt
+import polars as pl
+import pytest
+
+from datumaro.experimental.categories import LabelCategories, MaskCategories
+from datumaro.experimental.converters import (
+    AttributeRemapperConverter,
+    BBoxCoordinateConverter,
+    ConversionError,
+    Converter,
+    ConverterRegistry,
+    ImagePathToImageConverter,
+    RedBlueColorConverter,
+    UInt8ToFloat32Converter,
+    converter,
+    find_conversion_path,
+)
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields import (
+    BBoxField,
+    Field,
+    ImageField,
+    ImageInfoField,
+    LabelField,
+    MaskField,
+    PolygonField,
+    bbox_field,
+    image_field,
+    image_info_field,
+    label_field,
+)
+from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema
+
+
+def test_converter_decorator(request: pytest.FixtureRequest):
+    """Test the @converter decorator functionality."""
+
+    # Create a simple converter for testing
+    @converter
+    class TestConverter(Converter):  # type: ignore[reportUnusedClass]
+        input_field: AttributeSpec[ImageField]
+        output_field: AttributeSpec[ImageField]
+
+        def filter_output_spec(self) -> bool:
+            return False
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df
+
+    registry = ConverterRegistry()
+    request.addfinalizer(lambda: registry.remove_converter(TestConverter))
+
+    # Check that it was registered
+    converters = registry.list_converters()
+
+    # Should find our test converter in the registry
+    test_converters = [c for c in converters if c == TestConverter]
+    assert len(test_converters) > 0
+
+
+def test_find_conversion_path():
+    """Test the find_conversion_path function."""
+
+    # Create simple source and target schemas
+    source_schema = Schema(
+        attributes={"image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB"))}
+    )
+
+    target_schema = Schema(
+        attributes={"image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.Float32(), format="RGB"))}
+    )
+
+    # This should find a conversion path (UInt8 -> Float32)
+    path, _ = find_conversion_path(source_schema, target_schema)
+    assert len(path.converters["image"]) == 1
+    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
+
+
+def test_convert_dataframe():
+    """Test getting conversion path and applying it manually."""
+
+    # Create test DataFrame
+    df = pl.DataFrame(
+        {"image": [[255, 0, 0, 0, 255, 0]], "image_shape": [[2, 3]]},
+        schema=pl.Schema({"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int64)}),
+    )
+
+    source_schema = Schema(
+        attributes={"image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB"))}
+    )
+
+    target_schema = Schema(
+        attributes={"image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.Float32(), format="BGR"))}
+    )
+
+    # Get conversion path and apply it manually
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # Apply batch converters first
+    result_df = df
+    for conv in conversion_paths.converters["image"]:
+        result_df = conv.convert(result_df)
+
+    # For this test we convert from UInt8 + RGB to Float32 + BGR; we just
+    # verify the conversion runs and the result matches the expected values.
+    assert result_df is not None
+
+    image = result_df["image"][0].to_numpy()
+    assert np.all(image == [0.0, 0.0, 1.0, 0.0, 1.0, 0.0])
+
+
+def test_lazy_converter():
+    """Test lazy converter functionality."""
+    registry = ConverterRegistry()
+    lazy_converters = [c for c in registry.list_converters() if c.lazy]
+
+    # Should have at least one lazy converter (ImagePathToImageConverter)
+    assert len(lazy_converters) > 0
+
+    # Check that ImagePathToImageConverter is marked as lazy
+    image_path_converters = [c for c in lazy_converters if issubclass(c, ImagePathToImageConverter) and c.lazy]
+    assert len(image_path_converters) > 0
+
+
+def test_converter_with_auxiliary_fields():
+    """Test converters that require auxiliary fields."""
+    # This would test converters like bbox normalization that need image size
+    # The exact implementation depends on how auxiliary fields are handled
+
+    converter_instance = BBoxCoordinateConverter()  # type: ignore[call-arg]
+
+    # BBox converter needs image data as auxiliary
+    input_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+    output_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=True)
+    input_image_field = ImageField(dtype=pl.UInt8(), format="RGB")
+
+    setattr(
+        converter_instance,
+        "input_bbox",
+        AttributeSpec(name="bbox", field=input_bbox_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bbox", field=output_bbox_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image",
+        AttributeSpec(name="image", field=input_image_field),
+    )
+
+    # Should require auxiliary image data for bbox normalization
+    assert hasattr(converter_instance, "input_image")
+
+
+def test_multiple_converter_chaining():
+    """Test that multiple converters can be chained together."""
+    # This tests the A* search functionality for finding conversion paths
+
+    # Create a complex conversion scenario
+    source_schema = Schema(
+        attributes={
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=bbox_field(dtype=pl.Float32(), normalize=False),
+            ),
+        }
+    )
+
+    target_schema = Schema(
+        attributes={
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.Float32(), format="BGR")),
+            "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32(), normalize=True)),
+        }
+    )
+
+    # This would require multiple conversions:
+    # 1. RGB -> BGR (format)
+    # 2. UInt8 -> Float32 (dtype)
+    # 3. absolute -> normalized bbox (with image as auxiliary)
+
+    path, _ = find_conversion_path(source_schema, target_schema)
+    # If successful, should have multiple steps
+    assert len(path.converters["image"]) == 2
+    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["image"][1]) is RedBlueColorConverter
+
+    # The BBoxCoordinateConverter needs an image for normalization (to get dimensions),
+    # but it does not matter if the image is 8 bits or 32 bits.
+    # The A* search optimizes the conversion order so that the bbox converter is applied
+    # before the image converters, avoiding a spurious dependency on the Float32 conversion.
+    # This is the desired behavior - the bbox chain only contains the BBoxCoordinateConverter.
+    assert len(path.converters["bbox"]) == 1
+    assert type(path.converters["bbox"][0]) is BBoxCoordinateConverter
+
+
+def test_astar_direct_conversion():
+    """Test direct conversion without chaining using A* search."""
+    from dataclasses import dataclass
+
+    # Mock field types for testing
+    @dataclass(frozen=True)
+    class TestImageField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Binary, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Binary()}
+
+    @dataclass(frozen=True)
+    class TestImageSizeField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {f"{name}_width": pl.Int32(), f"{name}_height": pl.Int32()}
+
+    # Register test converter as a class
+    @converter
+    class ExtractImageSizeConverter(Converter):
+        input_image: AttributeSpec[TestImageField]
+        output_image_size: AttributeSpec[TestImageSizeField]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            """Extract image size from image data."""
+            return df.with_columns(
+                [
+                    pl.lit(640).alias("image_size_width"),
+                    pl.lit(480).alias("image_size_height"),
+                ]
+            )
+
+    # Create schemas
+    from_schema = Schema(
+        {
+            "image": AttributeInfo(type=bytes, field=TestImageField()),
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "image_size": AttributeInfo(type=tuple, field=TestImageSizeField()),
+        }
+    )
+
+    # Test finding conversion path
+    path, _ = find_conversion_path(from_schema, to_schema)
+    assert len(path.converters["image_size"]) == 1
+    assert type(path.converters["image_size"][0]) is ExtractImageSizeConverter
+
+
+def test_astar_chained_conversion():
+    """Test chained conversion using A* search."""
+    from dataclasses import dataclass
+
+    # Mock field types for testing
+    @dataclass(frozen=True)
+    class TestImageField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Binary, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Binary()}
+
+    @dataclass(frozen=True)
+    class TestImageSizeField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {f"{name}_width": pl.Int32(), f"{name}_height": pl.Int32()}
+
+    @dataclass(frozen=True)
+    class TestNormalizedBboxField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Float32, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.List(pl.Float32())}
+
+    @dataclass(frozen=True)
+    class TestAbsoluteBboxField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.List(pl.Int32())}
+
+    # Register test converters as classes
+    @converter
+    class ExtractImageSizeChainConverter(Converter):
+        input_image: AttributeSpec[TestImageField]
+        output_image_size: AttributeSpec[TestImageSizeField]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(
+                [
+                    pl.lit(640).alias("image_size_width"),
+                    pl.lit(480).alias("image_size_height"),
+                ]
+            )
+
+    @converter
+    class NormalizeToAbsoluteBboxConverter(Converter):
+        input_bbox: AttributeSpec[TestNormalizedBboxField]
+        input_image_size: AttributeSpec[TestImageSizeField]
+        output_absolute_bbox: AttributeSpec[TestAbsoluteBboxField]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            """Convert normalized bbox to absolute coordinates."""
+            width = df.select("image_size_width").item()
+            height = df.select("image_size_height").item()
+
+            return df.with_columns(
+                [
+                    pl.col("bbox")
+                    .list.eval(
+                        pl.when(pl.int_range(pl.len()) % 2 == 0)
+                        .then(pl.element() * width)
+                        .otherwise(pl.element() * height)
+                    )
+                    .alias("absolute_bbox")
+                ]
+            ).drop("bbox")
+
+    # Create schemas that require chaining
+    from_schema = Schema(
+        {
+            "image": AttributeInfo(type=bytes, field=TestImageField()),
+            "bbox": AttributeInfo(type=list, field=TestNormalizedBboxField()),
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "absolute_bbox": AttributeInfo(type=list, field=TestAbsoluteBboxField()),
+        }
+    )
+
+    # Test finding conversion path
+    path, _ = find_conversion_path(from_schema, to_schema)
+    # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
+    assert len(path.converters["absolute_bbox"]) == 2
+    assert type(path.converters["absolute_bbox"][0]) is ExtractImageSizeChainConverter
+    assert type(path.converters["absolute_bbox"][1]) is NormalizeToAbsoluteBboxConverter
+
+
+def test_astar_no_conversion_needed():
+    """Test when no conversion is needed using A* search."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class TestField(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    # Identical schemas - no conversion needed
+    schema = Schema(
+        {
+            "data": AttributeInfo(type=str, field=TestField()),
+        }
+    )
+
+    path, _ = find_conversion_path(schema, schema)
+    assert len(path.converters) == 0, f"Expected 0 converters for identical schemas, got {len(path.converters)}"
+
+
+def test_astar_impossible_conversion():
+    """Test conversion that should fail using A* search."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class FieldA(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class FieldB(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    # No converters registered between these types - should fail
+    from_schema = Schema(
+        {
+            "field_a": AttributeInfo(type=str, field=FieldA()),
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "field_b": AttributeInfo(type=str, field=FieldB()),
+        }
+    )
+
+    # Should raise ConversionError
+    with pytest.raises(ConversionError):
+        find_conversion_path(from_schema, to_schema)
+
+
+def test_optimal_path_selection():
+    """Test that A* chooses the shortest path when multiple paths exist."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class FieldA(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class FieldB(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class FieldC(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    # Register converters: A->B, B->C, and A->C (direct path)
+    @converter
+    class AToBConverter(Converter):  # pyright: ignore [reportUnusedClass]
+        input_field_a: AttributeSpec[FieldA]
+        output_field_b: AttributeSpec[FieldB]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(pl.col("field_a").alias("field_b")).drop("field_a")
+
+    @converter
+    class BToCConverter(Converter):  # pyright: ignore [reportUnusedClass]
+        input_field_b: AttributeSpec[FieldB]
+        output_field_c: AttributeSpec[FieldC]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(pl.col("field_b").alias("field_c")).drop("field_b")
+
+    @converter  # Direct path (should be preferred)
+    class AToCDirectConverter(Converter):
+        input_field_a: AttributeSpec[FieldA]
+        output_field_c: AttributeSpec[FieldC]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(pl.col("field_a").alias("field_c")).drop("field_a")
+
+    from_schema = Schema(
+        {
+            "field_a": AttributeInfo(type=str, field=FieldA()),
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "field_c": AttributeInfo(type=str, field=FieldC()),
+        }
+    )
+
+    path, _ = find_conversion_path(from_schema, to_schema)
+    assert len(path.converters["field_c"]) == 1
+    assert type(path.converters["field_c"][0]) is AToCDirectConverter
+
+
+def test_generator_converter():
+    """Test converter that generates fields from nothing."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class FieldB(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @converter  # Generator converter (no inputs)
+    class GenerateBConverter(Converter):
+        output_field_b: AttributeSpec[FieldB]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(pl.lit("generated_b").alias("field_b"))
+
+    from_schema = Schema({})  # Empty schema
+
+    to_schema = Schema(
+        {
+            "field_b": AttributeInfo(type=str, field=FieldB()),
+        }
+    )
+
+    path, _ = find_conversion_path(from_schema, to_schema)
+    assert len(path.converters["field_b"]) == 1
+    assert type(path.converters["field_b"][0]) is GenerateBConverter
+
+
+def test_multiple_output_converter():
+    """Test converters that produce multiple outputs."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class FieldA(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class MultiField1(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class MultiField2(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @converter
+    class AToMultiConverter(Converter):
+        input_field_a: AttributeSpec[FieldA]
+        output_multi1: AttributeSpec[MultiField1]
+        output_multi2: AttributeSpec[MultiField2]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns([pl.col("field_a").alias("multi1"), pl.col("field_a").alias("multi2")]).drop(
+                "field_a"
+            )
+
+    from_schema = Schema(
+        {
+            "field_a": AttributeInfo(type=str, field=FieldA()),
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "multi1": AttributeInfo(type=str, field=MultiField1()),
+            "multi2": AttributeInfo(type=str, field=MultiField2()),
+        }
+    )
+
+    path, _ = find_conversion_path(from_schema, to_schema)
+    assert len(path.converters["multi1"]) == 1
+    assert type(path.converters["multi1"][0]) is AToMultiConverter
+    assert len(path.converters["multi2"]) == 1
+    assert type(path.converters["multi2"][0]) is AToMultiConverter
+
+
+def test_partial_schema_matching():
+    """Test when target schema is a subset of what converters can produce."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class FieldA(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @dataclass(frozen=True)
+    class FieldC(Field):
+        semantic: str = "default"
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+        def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+            return {name: pl.Utf8()}
+
+    @converter
+    class AToCPartialConverter(Converter):
+        input_field_a: AttributeSpec[FieldA]
+        output_field_c: AttributeSpec[FieldC]
+
+        def filter_output_spec(self) -> bool:
+            return True
+
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+            return df.with_columns(pl.col("field_a").alias("field_c")).drop("field_a")
+
+    from_schema = Schema(
+        {
+            "field_a": AttributeInfo(type=str, field=FieldA()),
+            "other_field": AttributeInfo(
+                type=str, field=FieldA(semantic="bbox")
+            ),  # Extra field with different semantic
+        }
+    )
+
+    to_schema = Schema(
+        {
+            "field_c": AttributeInfo(type=str, field=FieldC()),
+            # Only requesting field_c, not other_field
+        }
+    )
+
+    path, _ = find_conversion_path(from_schema, to_schema)
+    assert len(path.converters["field_c"]) == 1
+    assert type(path.converters["field_c"][0]) is AToCPartialConverter
+
+
+def test_attribute_renaming():
+    """Test attribute renaming functionality using special converters."""
+
+    # Create source schema with an image field named "input_image"
+    source_schema = Schema(
+        {
+            "input_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        }
+    )
+
+    # Create target schema with the same field type but different name "output_image"
+    target_schema = Schema(
+        {
+            "output_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        }
+    )
+
+    # Find conversion path - should include a remapper converter
+    path, _ = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one batch converter for renaming
+    assert len(path.converters["output_image"]) == 1
+    assert isinstance(path.converters["output_image"][0], AttributeRemapperConverter)
+
+    # Test the remapper converter functionality
+    remapper_converter = path.converters["output_image"][0]
+
+    # Create test DataFrame with the source column
+    test_data = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
+    df = pl.DataFrame({"input_image": [test_data.flatten()], "input_image_shape": [test_data.shape]})
+
+    # Apply the remapper converter
+    result_df = remapper_converter.convert(df)
+
+    # Check that columns were renamed correctly
+    assert "output_image" in result_df.columns
+    assert "output_image_shape" in result_df.columns
+    assert "input_image" not in result_df.columns
+    assert "input_image_shape" not in result_df.columns
+
+    # Check that data was preserved
+    assert result_df["output_image"][0].to_list() == test_data.flatten().tolist()
+    assert result_df["output_image_shape"][0].to_list() == list(test_data.shape)
+
+
+def test_combined_rename_and_delete():
+    """Test scenario with both renaming and deletion operations."""
+
+    # Create source schema with three fields
+    source_schema = Schema(
+        {
+            "old_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
+            "bbox": AttributeInfo(type=str, field=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")),
+            "extra_field": AttributeInfo(type=str, field=image_info_field()),
+        }
+    )
+
+    # Create target schema with renamed image and no bbox or extra_field
+    target_schema = Schema(
+        {
+            "new_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        }
+    )
+
+    # Find conversion path - should include a single remapper converter that handles both operations
+    path, _ = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one batch converter that handles both renaming and deletion
+    assert len(path.converters["new_image"]) == 1
+    assert isinstance(path.converters["new_image"][0], AttributeRemapperConverter)
+
+    # Check that the remapper handles the conversion correctly by testing on sample data
+    remapper_converter = path.converters["new_image"][0]
+
+    # Create test DataFrame
+    test_df = pl.DataFrame(
+        {
+            "old_image": [[1, 2, 3, 4, 5, 6]],  # Sample image data
+            "old_image_shape": [[2, 3]],  # Sample shape data
+            "other_field": ["should_not_change"],  # Should not be changed
+        }
+    )
+
+    # Apply the converter
+    result_df = remapper_converter.convert(test_df)
+
+    # Check that only the renamed fields and the unmodified ones are present
+    expected_columns = {"new_image", "new_image_shape", "other_field"}
+    assert set(result_df.columns) == expected_columns
+
+    # Check that data is preserved correctly
+    assert result_df["new_image"].to_list() == [[1, 2, 3, 4, 5, 6]]
+    assert result_df["new_image_shape"].to_list() == [[2, 3]]
+
+
+def test_attribute_remapping_converter():
+    """Test AttributeRemapperConverter with multiple attributes."""
+    import polars as pl
+
+    # Create test DataFrame with multiple columns including auxiliary columns
+    df = pl.DataFrame(
+        {
+            "old_image": [[1, 2, 3]],
+            "old_image_shape": [[3]],
+            "old_bbox": [[[1, 2, 3, 4]]],
+            "other_field": ["test"],
+        }
+    )
+
+    # Create attribute mappings using AttributeSpec
+    from_image_attr = AttributeSpec(name="old_image", field=image_field(dtype=pl.Int32()))
+    to_image_attr = AttributeSpec(name="new_image", field=image_field(dtype=pl.Int32()))
+
+    from_bbox_attr = AttributeSpec(name="old_bbox", field=bbox_field(dtype=pl.Int32()))
+    to_bbox_attr = AttributeSpec(name="new_bbox", field=bbox_field(dtype=pl.Int32()))
+
+    attr_mappings = [(from_image_attr, to_image_attr), (from_bbox_attr, to_bbox_attr)]
+
+    # Create and apply converter
+    converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
+    result_df = converter.convert(df)
+
+    # Check that columns were remapped correctly
+    expected_columns = {"new_image", "new_image_shape", "new_bbox", "other_field"}
+    assert set(result_df.columns) == expected_columns
+
+    # Check that data is preserved
+    assert result_df["new_image"].to_list() == [[1, 2, 3]]
+    assert result_df["new_image_shape"].to_list() == [[3]]
+    assert result_df["new_bbox"].to_list() == [[[1, 2, 3, 4]]]
+
+
+def test_find_conversion_path_inferred_categories():
+    """Test that find_conversion_path returns inferred categories."""
+
+    # Create test data for polygon to mask conversion
+    pl.DataFrame(
+        {
+            "polygons": [[[10, 20, 30, 25, 20, 40]]],  # Triangle coordinates
+            "labels": [[2]],  # Label 2
+            "image_info": [{"width": 100, "height": 100}],
+        },
+        schema=pl.Schema(
+            {
+                "polygons": pl.List(pl.List(pl.Float32())),
+                "labels": pl.List(pl.Int32()),
+                "image_info": pl.Struct({"width": pl.Int32, "height": pl.Int32}),
+            }
+        ),
+    )
+
+    # Create source schema with label categories
+    label_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    source_schema = Schema(
+        attributes={
+            "polygons": AttributeInfo(
+                type=list,
+                field=PolygonField(dtype=pl.Float32()),
+                categories=None,
+            ),
+            "labels": AttributeInfo(
+                type=list,
+                field=LabelField(),
+                categories=label_categories,
+            ),
+            "image_info": AttributeInfo(type=dict, field=ImageInfoField()),
+        }
+    )
+
+    # Create target schema (polygon to mask conversion)
+    target_schema = Schema(attributes={"mask": AttributeInfo(type=np.ndarray, field=MaskField(dtype=pl.UInt8()))})
+
+    # Get conversion path and check inferred categories
+    conversion_paths, inferred_categories = find_conversion_path(source_schema, target_schema)
+
+    # Should have converters for polygon to mask conversion
+    assert len(conversion_paths.converters) > 0
+
+    # Check that mask categories were inferred
+    assert "mask" in inferred_categories
+    mask_categories = inferred_categories["mask"]
+    assert isinstance(mask_categories, MaskCategories)
+
+    # Check that the mask categories include background + original labels
+    expected_labels = ("background", "cat", "dog", "bird")
+    assert mask_categories.labels == expected_labels
+
+
+def test_convert_to_schema_propagates_categories():
+    """Test that converting a dataset to a new schema propagates categories when target has None."""
+
+    class SourceSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    class TargetSample(Sample):
+        label: npt.NDArray[np.int_] = label_field(dtype=pl.UInt8())
+
+    # Create source dataset with categories
+    source_categories = LabelCategories(labels=("car", "truck", "motorbike"))
+    source_dataset = Dataset(
+        SourceSample,
+        categories={"label": source_categories},
+    )
+
+    # Convert to target schema (which has no explicit categories)
+    target_dataset = source_dataset.convert_to_schema(TargetSample)
+
+    # Categories should be propagated from source to target
+    source_label_categories = source_dataset.schema.attributes["label"].categories
+    target_label_categories = target_dataset.schema.attributes["label"].categories
+
+    assert source_label_categories is not None
+    assert target_label_categories is not None
+    assert source_label_categories == target_label_categories
+    assert target_label_categories.labels == ("car", "truck", "motorbike")
