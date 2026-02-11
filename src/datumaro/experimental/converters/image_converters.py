@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 from typing import Any
 
+import cv2
 import numpy as np
 import polars as pl
 from PIL import Image
@@ -55,19 +56,34 @@ class RedBlueColorConverter(Converter):
 
         expected_dtype = polars_to_numpy_dtype(self.input_image.field.dtype)
 
-        def red_blue_swap(row: dict[str, Any]) -> Any:
-            """Swaps the first and third channels in the image. Images are stored as a flattened list in polars"""
-            flat_data = np.array(row[input_column_name], dtype=expected_dtype, copy=True)
-            shape = tuple(row[input_shape_column_name])
+        def red_blue_swap(flat_data: np.ndarray, shape: tuple) -> np.ndarray:
+            """Fast channel swap using numpy views and advanced indexing."""
+            if len(shape) == 3:
+                h, w, c = shape
+                if c == 3:
+                    # RGB/BGR swap: swap channels 0 and 2
+                    reshaped = flat_data.reshape(h, w, c)
+                    swapped = np.empty_like(reshaped)
+                    swapped[..., 0] = reshaped[..., 2]
+                    swapped[..., 1] = reshaped[..., 1]
+                    swapped[..., 2] = reshaped[..., 0]
+                    return swapped.reshape(-1)
+            # Fallback for non-standard shapes - reverse all channels
             reshaped = flat_data.reshape(shape)
-            swapped = reshaped[..., ::-1]
-            return np.asarray(swapped.reshape(-1), dtype=expected_dtype)
+            swapped = reshaped[..., ::-1].copy()
+            return swapped.reshape(-1)
 
-        # Apply the conversion using map_elements for efficient processing
+        result_data = []
+        for i in range(len(df)):
+            flat_list = df[input_column_name][i]
+            shape_list = df[input_shape_column_name][i]
+            flat_data = np.array(flat_list, dtype=expected_dtype)
+            shape = tuple(shape_list)
+            swapped = red_blue_swap(flat_data, shape)
+            result_data.append(swapped.tolist())
+
         return df.with_columns(
-            pl.struct([pl.col(input_column_name), pl.col(input_shape_column_name)])
-            .map_elements(red_blue_swap, return_dtype=pl.List(self.input_image.field.dtype))
-            .alias(output_column_name),
+            pl.Series(output_column_name, result_data, dtype=pl.List(self.input_image.field.dtype)),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
@@ -134,11 +150,13 @@ class UInt8ToFloat32Converter(Converter):
 @converter(lazy=True)
 class ImagePathToImageConverter(Converter):
     """
-    Lazy converter that loads images from file paths using Pillow.
+    Lazy converter that loads images from file paths.
 
     This converter reads image files from disk and converts them to tensor format.
     It's marked as lazy to defer the expensive I/O operation until the data
     is actually accessed.
+
+    Uses OpenCV for faster image loading when available, with PIL as fallback.
     """
 
     input_path: AttributeSpec[ImagePathField]
@@ -146,13 +164,14 @@ class ImagePathToImageConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
-        # Configure output specification with default RGB format
+        # Configure output specification - preserve the requested format
+        output_format = self.output_image.field.format if self.output_image.field.format else "RGB"
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_path.field.semantic,
                 dtype=pl.UInt8(),  # Default to UInt8 for loaded images
-                format="RGB",  # Default to RGB format
+                format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
         )
@@ -170,21 +189,27 @@ class ImagePathToImageConverter(Converter):
         """
         input_col = self.input_path.name
         output_col = self.output_image.name
+        output_format = self.output_image.field.format
 
         # Load images from paths
         image_data: list[Any] = []
         image_shapes: list[list[int]] = []
 
         for path in df[input_col]:
-            # Load image using PIL
-            with Image.open(path) as img:
-                # Convert to RGB if needed
-                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
+            img_array = cv2.imread(str(path), cv2.IMREAD_COLOR)
+            if img_array is None:
+                # Fallback to PIL for unsupported formats
+                with Image.open(path) as img:
+                    rgb_img = img if img.mode == "RGB" else img.convert("RGB")
+                    img_array = np.array(rgb_img, dtype=np.uint8)
+                    if output_format == "BGR":
+                        img_array = img_array[..., ::-1].copy()
+            elif output_format == "RGB":
+                # cv2 loads as BGR, convert to RGB if needed
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
 
-                # Convert to numpy array
-                img_array = np.array(rgb_img, dtype=np.uint8)
-                image_data.append(img_array.flatten())
-                image_shapes.append(list(img_array.shape))
+            image_data.append(img_array.flatten())
+            image_shapes.append(list(img_array.shape))
 
         # Create output DataFrame
         image_schema = self.output_image.field.to_polars_schema("image")
