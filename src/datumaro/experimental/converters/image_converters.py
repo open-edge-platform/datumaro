@@ -156,7 +156,7 @@ class ImagePathToImageConverter(Converter):
     It's marked as lazy to defer the expensive I/O operation until the data
     is actually accessed.
 
-    Uses OpenCV for faster image loading when available, with PIL as fallback.
+    Uses OpenCV for faster image loading, with PIL as fallback.
     """
 
     input_path: AttributeSpec[ImagePathField]
