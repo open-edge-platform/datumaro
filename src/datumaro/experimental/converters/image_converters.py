@@ -74,9 +74,7 @@ class RedBlueColorConverter(Converter):
             return swapped.reshape(-1)
 
         result_data = []
-        for i in range(len(df)):
-            flat_list = df[input_column_name][i]
-            shape_list = df[input_shape_column_name][i]
+        for flat_list, shape_list in zip(df[input_column_name].to_list(), df[input_shape_column_name].to_list()):
             flat_data = np.array(flat_list, dtype=expected_dtype)
             shape = tuple(shape_list)
             swapped = red_blue_swap(flat_data, shape)
