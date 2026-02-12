@@ -215,9 +215,7 @@ class CvatBase(SubsetBase):
         frame_size = None
         original_size = [item for item in meta_root.iter("original_size")]
 
-        if len(original_size) > 1:
-            raise DatasetImportError("CVAT XML file should have only one <original_size> tag.")
-        if len(original_size) == 1:
+        if original_size:
             frame_size = (
                 int(original_size[0].find("height").text),
                 int(original_size[0].find("width").text),
