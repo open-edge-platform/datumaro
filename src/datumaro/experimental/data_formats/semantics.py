@@ -1,5 +1,5 @@
 # Copyright (C) 2022-2026 Intel Corporation
-# LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
+# SPDX-License-Identifier: MIT
 
 """
 This module defines semantic tags for fields used in Datumaro's supported data formats. The semantics can be used to
