@@ -3,7 +3,7 @@
 
 """
 This module defines semantic tags for fields used in Datumaro's supported data formats. The semantics can be used to
-ensure generic fields such as NumericField, BoolField, and StringField are kept when converting to specific dataformat
+ensure generic fields such as NumericField, BoolField, and StringField are kept when converting to specific data format
 Sample schemas.
 """
 
