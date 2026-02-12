@@ -7,6 +7,7 @@ from __future__ import annotations
 import collections.abc
 import types
 import typing
+from collections.abc import Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -586,7 +587,7 @@ class Dataset(Generic[DType]):
         else:
             raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
 
-        if isinstance(subset, (list, tuple)):
+        if isinstance(subset, Sequence):
             subset_names = [s.name for s in subset]
             filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
         else:
