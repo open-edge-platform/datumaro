@@ -162,6 +162,30 @@ def test_filter_by_subset_filters_correctly():
         assert sample.subset == Subset.TRAINING
 
 
+def test_filter_by_multiple_subsets():
+    class SubsetSample(Sample):
+        image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")
+        subset: Subset = subset_field()
+
+    dataset = Dataset(SubsetSample)
+    dataset.append(SubsetSample(image=np.array([1]), subset=Subset.TRAINING))
+    dataset.append(SubsetSample(image=np.array([2]), subset=Subset.VALIDATION))
+    dataset.append(SubsetSample(image=np.array([3]), subset=Subset.TESTING))
+    dataset.append(SubsetSample(image=np.array([4]), subset=Subset.TRAINING))
+
+    # Test with list of subsets
+    filtered = dataset.filter_by_subset([Subset.TRAINING, Subset.VALIDATION])
+    assert len(filtered) == 3
+    for sample in filtered:
+        assert sample.subset in (Subset.TRAINING, Subset.VALIDATION)
+
+    # Test with tuple of subsets
+    filtered = dataset.filter_by_subset((Subset.VALIDATION, Subset.TESTING))
+    assert len(filtered) == 2
+    for sample in filtered:
+        assert sample.subset in (Subset.VALIDATION, Subset.TESTING)
+
+
 def test_dataset_creation_from_sample_class():
     """Test Dataset creation from Sample class."""
 

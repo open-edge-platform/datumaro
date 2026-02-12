@@ -570,15 +570,15 @@ class Dataset(Generic[DType]):
             categories=inferred_categories,
         )
 
-    def filter_by_subset(self, subset: Subset) -> Dataset[DType]:
+    def filter_by_subset(self, subset: Subset | list[Subset] | tuple[Subset, ...]) -> Dataset[DType]:
         """
-        Return new dataset with items from given subset.
+        Return new dataset with items from given subset(s).
 
         Args:
-            subset: the subset to filter on
+            subset: a single subset or a list/tuple of subsets to filter on
 
         Returns:
-            A new Dataset with items of the given subset.
+            A new Dataset with items of the given subset(s).
         """
         for subset_column_name, attribute_info in self.schema.attributes.items():
             if isinstance(attribute_info.field, SubsetField):
@@ -586,7 +586,11 @@ class Dataset(Generic[DType]):
         else:
             raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
 
-        filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+        if isinstance(subset, (list, tuple)):
+            subset_names = [s.name for s in subset]
+            filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
+        else:
+            filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
 
         return Dataset.from_dataframe(
             df=filtered_df,
