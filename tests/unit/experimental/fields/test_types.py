@@ -19,7 +19,7 @@ def test_numeric_field_roundtrip(value):
     """Test NumericField roundtrip through Dataset."""
 
     class NumericSample(Sample):
-        value: Annotated[float, numeric_field(dtype=pl.Float64())]
+        value: Annotated[float, numeric_field(dtype=pl.Float64(), semantic="value")]
 
     ds = Dataset(NumericSample)
     s = NumericSample(value=value)
@@ -36,7 +36,7 @@ def test_numeric_field_list_roundtrip():
     """Test NumericField with is_list=True roundtrip."""
 
     class VectorSample(Sample):
-        values: Annotated[list[float], numeric_field(dtype=pl.Float32(), is_list=True)]
+        values: Annotated[list[float], numeric_field(dtype=pl.Float32(), is_list=True, semantic="values")]
 
     ds = Dataset(VectorSample)
     values = [1.0, 2.0, 3.0]
@@ -49,7 +49,7 @@ def test_numeric_field_list_roundtrip():
 
 def test_numeric_field_polars_conversion():
     """Test NumericField to/from polars conversion."""
-    field = NumericField(dtype=pl.Float32())
+    field = NumericField(dtype=pl.Float32(), semantic="value")
     result = field.to_polars("value", 3.14)
     assert result["value"].dtype == pl.Float32()
 
@@ -65,7 +65,7 @@ def test_bool_field_roundtrip(value):
     """Test BoolField roundtrip through Dataset."""
 
     class BoolSample(Sample):
-        flag: Annotated[bool, bool_field()]
+        flag: Annotated[bool, bool_field(semantic="flag")]
 
     ds = Dataset(BoolSample)
     s = BoolSample(flag=value)
@@ -78,7 +78,7 @@ def test_bool_field_list_roundtrip():
     """Test BoolField with is_list=True roundtrip."""
 
     class MultiBoolSample(Sample):
-        flags: Annotated[list[bool], bool_field(is_list=True)]
+        flags: Annotated[list[bool], bool_field(is_list=True, semantic="flags")]
 
     ds = Dataset(MultiBoolSample)
     flags = [True, False, True]
@@ -90,7 +90,7 @@ def test_bool_field_list_roundtrip():
 
 def test_bool_field_polars_conversion():
     """Test BoolField to/from polars conversion."""
-    field = BoolField()
+    field = BoolField(semantic="flag")
     result = field.to_polars("flag", True)
     assert result["flag"].dtype == pl.Boolean()
     assert result["flag"][0] is True
@@ -104,7 +104,7 @@ def test_bool_field_polars_conversion():
 
 def test_string_field_polars_conversion():
     """Test StringField to/from polars conversion."""
-    field = StringField()
+    field = StringField(semantic="text")
     result = field.to_polars("text", "hello")
     assert result["text"].dtype == pl.String()
     assert result["text"][0] == "hello"

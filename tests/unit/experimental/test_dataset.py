@@ -821,10 +821,10 @@ def test_getitem_missing_column_for_optional_field():
     from datumaro.experimental.fields import numeric_field
 
     class SourceSample(Sample):
-        value: int = numeric_field(dtype=pl.Int32())
+        value: int = numeric_field(dtype=pl.Int32(), semantic="main")
 
     class TargetSample(Sample):
-        value: int = numeric_field(dtype=pl.Int32())
+        value: int = numeric_field(dtype=pl.Int32(), semantic="main")
         optional_value: int | None = numeric_field(dtype=pl.Int32(), semantic="optional")
 
     # Create source dataset
@@ -851,10 +851,10 @@ def test_getitem_missing_column_for_required_field_raises():
     from datumaro.experimental.fields import numeric_field
 
     class SourceSample(Sample):
-        value: int = numeric_field(dtype=pl.Int32())
+        value: int = numeric_field(dtype=pl.Int32(), semantic="value")
 
     class TargetSample(Sample):
-        value: int = numeric_field(dtype=pl.Int32())
+        value: int = numeric_field(dtype=pl.Int32(), semantic="value")
         required_value: int = numeric_field(dtype=pl.Int32(), semantic="required")  # Required, not optional
 
     # Create source dataset

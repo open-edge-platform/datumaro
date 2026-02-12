@@ -902,9 +902,9 @@ def test_get_optional_field_types():
     # Schema with mix of optional and required fields
     schema = Schema(
         attributes={
-            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="required_int")),
             "optional_int": AttributeInfo(type=int | None, field=numeric_field(dtype=pl.Int32(), semantic="opt_int")),
-            "required_str": AttributeInfo(type=str, field=string_field()),
+            "required_str": AttributeInfo(type=str, field=string_field(semantic="required_str")),
             "optional_str": AttributeInfo(type=str | None, field=string_field(semantic="opt_str")),
         }
     )
@@ -927,7 +927,7 @@ def test_get_optional_field_types_empty_schema():
 
     schema = Schema(
         attributes={
-            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "required_int": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="required_int")),
         }
     )
 
@@ -947,7 +947,7 @@ def test_filter_unreachable_optional_fields():
     # Create a target state with two fields
     target_state = _SchemaState(
         {
-            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
+            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32(), semantic="opt_num")),
             StringField: AttributeSpec(name="str", field=string_field(semantic="str")),
         }
     )
@@ -975,7 +975,7 @@ def test_filter_unreachable_optional_fields_keeps_required():
     # Create a target state with two fields
     target_state = _SchemaState(
         {
-            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32())),
+            NumericField: AttributeSpec(name="num", field=numeric_field(dtype=pl.Int32(), semantic="opt_num")),
             StringField: AttributeSpec(name="str", field=string_field(semantic="str")),
         }
     )
@@ -1000,14 +1000,14 @@ def test_find_conversion_path_skips_unreachable_optional_fields():
     # Source schema has only an int field
     source_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="opt_num")),
         }
     )
 
     # Target schema has int field + optional string field (unreachable from int)
     target_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="opt_num")),
             "optional_name": AttributeInfo(type=str | None, field=string_field(semantic="name")),
         }
     )
@@ -1026,14 +1026,14 @@ def test_find_conversion_path_raises_for_unreachable_required_fields():
     # Source schema has only an int field
     source_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="value")),
         }
     )
 
     # Target schema has int field + required string field (unreachable from int)
     target_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="value")),
             "required_name": AttributeInfo(type=str, field=string_field(semantic="name")),  # Required, not optional
         }
     )
@@ -1050,14 +1050,14 @@ def test_find_conversion_path_with_multiple_optional_fields():
     # Source schema with one field
     source_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="value")),
         }
     )
 
     # Target schema with same field + multiple optional fields that are unreachable
     target_schema = Schema(
         attributes={
-            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32())),
+            "value": AttributeInfo(type=int, field=numeric_field(dtype=pl.Int32(), semantic="value")),
             "opt_a": AttributeInfo(type=float | None, field=numeric_field(dtype=pl.Float32(), semantic="a")),
             "opt_b": AttributeInfo(type=float | None, field=numeric_field(dtype=pl.Float64(), semantic="b")),
         }
