@@ -570,7 +570,7 @@ class Dataset(Generic[DType]):
             categories=inferred_categories,
         )
 
-    def filter_by_subset(self, subset: Subset | list[Subset] | tuple[Subset, ...]) -> Dataset[DType]:
+    def filter_by_subset(self, subset: Subset | Sequence[Subset]) -> Dataset[DType]:
         """
         Return new dataset with items from given subset(s).
 
