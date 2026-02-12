@@ -19,7 +19,7 @@ from datumaro.experimental.fields import string_field
 )
 def test_string_field_roundtrip(text):
     class StringSample(Sample):
-        text: Annotated[str, string_field()]
+        text: Annotated[str, string_field(semantic="text")]
 
     ds = Dataset(StringSample)
 
@@ -34,7 +34,7 @@ def test_string_field_roundtrip(text):
 
 def test_string_field_list_roundtrip():
     class MultiStringSample(Sample):
-        texts: Annotated[list[str], string_field(is_list=True)]
+        texts: Annotated[list[str], string_field(is_list=True, semantic="texts")]
 
     ds = Dataset(MultiStringSample)
 

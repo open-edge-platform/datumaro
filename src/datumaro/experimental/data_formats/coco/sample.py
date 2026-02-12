@@ -9,6 +9,7 @@ import polars as pl
 from datumaro.experimental import LazyImage, Sample
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.constants import COCO_LABEL_TO_SUPER
+from datumaro.experimental.data_formats.semantics import AREAS, CAPTION_GROUP_IDS, IMAGE_ID, ISCROWD
 from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
@@ -34,19 +35,19 @@ class CocoSample(Sample):
     bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="xywh")
     polygons: np.ndarray | None = polygon_field(dtype=pl.Float32())
     labels: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True)
-    areas: np.ndarray | None = numeric_field(dtype=pl.Float32(), is_list=True)
-    iscrowd: np.ndarray | None = bool_field(is_list=True)
+    areas: np.ndarray | None = numeric_field(dtype=pl.Float32(), is_list=True, semantic=AREAS)
+    iscrowd: np.ndarray | None = bool_field(is_list=True, semantic=ISCROWD)
 
     # Keypoint annotations (from person_keypoints_train/val)
     keypoints: np.ndarray | None = keypoints_field(dtype=pl.Float32())
 
     # Caption annotations (from captions_train/val)
-    captions: np.ndarray | None = caption_field(is_list=True, semantic="caption")
-    caption_group_ids: np.ndarray | None = numeric_field(dtype=pl.UInt32(), is_list=True, semantic="caption")
+    captions: np.ndarray | None = caption_field(is_list=True)
+    caption_group_ids: np.ndarray | None = numeric_field(dtype=pl.UInt32(), is_list=True, semantic=CAPTION_GROUP_IDS)
 
     # Dataset organization
     subset: Subset = subset_field()
-    image_id: int | None = numeric_field(dtype=pl.Int32(), semantic="image_id")
+    image_id: int | None = numeric_field(dtype=pl.Int32(), semantic=IMAGE_ID)
 
 
 class CocoCategories(LabelCategories):

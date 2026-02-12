@@ -191,7 +191,9 @@ def test_sample_inheritance():
 
 def test_sample_with_is_list():
     class MySample(Sample):
-        confidence: npt.NDArray[np.float32] | None = numeric_field(dtype=pl.Float32(), is_list=True)
+        confidence: npt.NDArray[np.float32] | None = numeric_field(
+            dtype=pl.Float32(), is_list=True, semantic="confidence"
+        )
 
     # Assert that sample can be created without validation errors
     MySample(confidence=np.array([0.8]))

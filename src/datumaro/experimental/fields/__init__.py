@@ -52,10 +52,18 @@ from datumaro.experimental.fields.masks import (
     mask_callable_field,
     mask_field,
 )
-from datumaro.experimental.fields.types import NumericField, StringField, bool_field, numeric_field, string_field
+from datumaro.experimental.fields.types import (
+    BoolField,
+    NumericField,
+    StringField,
+    bool_field,
+    numeric_field,
+    string_field,
+)
 
 __all__ = [
     "BBoxField",
+    "BoolField",
     "CaptionField",
     "EllipseField",
     "Field",

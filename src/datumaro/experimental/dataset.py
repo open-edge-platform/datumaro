@@ -7,6 +7,7 @@ from __future__ import annotations
 import collections.abc
 import types
 import typing
+from collections.abc import Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -570,15 +571,15 @@ class Dataset(Generic[DType]):
             categories=inferred_categories,
         )
 
-    def filter_by_subset(self, subset: Subset) -> Dataset[DType]:
+    def filter_by_subset(self, subset: Subset | Sequence[Subset]) -> Dataset[DType]:
         """
-        Return new dataset with items from given subset.
+        Return new dataset with items from given subset(s).
 
         Args:
-            subset: the subset to filter on
+            subset: a single subset or a list/tuple of subsets to filter on
 
         Returns:
-            A new Dataset with items of the given subset.
+            A new Dataset with items of the given subset(s).
         """
         for subset_column_name, attribute_info in self.schema.attributes.items():
             if isinstance(attribute_info.field, SubsetField):
@@ -586,7 +587,11 @@ class Dataset(Generic[DType]):
         else:
             raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
 
-        filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+        if isinstance(subset, Sequence):
+            subset_names = [s.name for s in subset]
+            filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
+        else:
+            filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
 
         return Dataset.from_dataframe(
             df=filtered_df,
