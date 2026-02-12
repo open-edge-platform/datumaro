@@ -110,6 +110,7 @@ _from_polars_converters: dict[type, Callable[[Any], Any]] = {
     float: lambda x: float(x),
     str: lambda x: str(x),
     bytes: lambda x: bytes(x),
+    bool: lambda x: bool(x),
 }
 
 
