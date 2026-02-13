@@ -24,7 +24,7 @@ class NumericField(Field):
         is_list: If True, the field can hold a list of numeric values instead of a single value.
     """
 
-    semantic: str = "default"
+    semantic: str
     dtype: pl.DataType = field(default_factory=pl.Float32)
     is_list: bool = False
 
@@ -47,17 +47,17 @@ class NumericField(Field):
 
 
 def numeric_field(
+    semantic: str,
     dtype: Any = pl.Float32(),
     is_list: bool = False,
-    semantic: str = "default",
 ) -> Any:
     """
     Create a NumericField instance.
 
     Args:
+        semantic: String tag describing the field purpose
         dtype: Polars data type for the numeric value (e.g., pl.Float32, pl.Int64)
         is_list: Whether this field should be treated as a list type
-        semantic: String tag describing the field purpose (optional)
 
     Returns:
         NumericField configured with the given parameters
@@ -77,7 +77,7 @@ class BoolField(Field):
         is_list: If True, the field can hold a list of boolean values instead of a single value.
     """
 
-    semantic: str = "default"
+    semantic: str
     is_list: bool = False
     dtype: pl.DataType = field(default_factory=pl.Boolean, init=False)
 
@@ -99,14 +99,14 @@ class BoolField(Field):
 
 
 def bool_field(
-    semantic: str = "default",
+    semantic: str,
     is_list: bool = False,
 ) -> Any:
     """
     Create a BoolField instance.
 
     Args:
-        semantic: String tag describing the field purpose (optional)
+        semantic: String tag describing the field purpose
         is_list: Whether this field should be treated as a list type
 
     Returns:
@@ -127,7 +127,7 @@ class StringField(Field):
         is_list: If True, the field can hold a list of string values instead of a single value.
     """
 
-    semantic: str = "default"
+    semantic: str
     is_list: bool = False
     dtype: pl.DataType = field(default_factory=pl.String, init=False)
 
@@ -149,14 +149,14 @@ class StringField(Field):
 
 
 def string_field(
-    semantic: str = "default",
+    semantic: str,
     is_list: bool = False,
 ) -> Any:
     """
     Create a StringField instance.
 
     Args:
-        semantic: String tag describing the field purpose (optional)
+        semantic: String tag describing the field purpose
         is_list: Whether this field should be treated as a list type
 
     Returns:

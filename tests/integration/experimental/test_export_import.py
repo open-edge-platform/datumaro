@@ -276,7 +276,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = numeric_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
 
     dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
     dataset.append(SimpleSample(label=1, score=0.9))
@@ -431,7 +431,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = numeric_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
 
     # Export first
     original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
@@ -697,7 +697,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
 
     class ComplexSample(Sample):
         label: int = label_field()
-        score: float = numeric_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
         image: Callable[[], np.ndarray] = image_callable_field()
 
     def make_image(value):
@@ -755,7 +755,7 @@ def test_export_large_dataset(tmp_path):
     """Test exporting larger dataset (performance check)."""
 
     class SimpleSample(Sample):
-        value: int = numeric_field(dtype=pl.UInt16())
+        value: int = numeric_field(dtype=pl.UInt16(), semantic="value")
 
     dataset = Dataset(SimpleSample)
     for i in range(1000):
@@ -823,7 +823,7 @@ def test_export_import_different_field_types(tmp_path):
 
     class ComprehensiveSample(Sample):
         label: int = label_field()
-        score: float = numeric_field()
+        score: float = numeric_field(semantic="score")
         subset: Subset = subset_field()
 
         tensor: np.ndarray = tensor_field(dtype=pl.Float32())

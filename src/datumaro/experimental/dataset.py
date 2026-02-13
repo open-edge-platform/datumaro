@@ -7,6 +7,7 @@ from __future__ import annotations
 import collections.abc
 import types
 import typing
+from collections.abc import Sequence
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -18,6 +19,7 @@ from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
+from datumaro.experimental.type_registry import is_type_optional
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -394,8 +396,24 @@ class Dataset(Generic[DType]):
         # Separate attributes into those available directly and those requiring lazy conversion
         direct_attributes = {}
 
+        # Compute available columns once before the loop
+        available_columns = set(row_df.columns)
+
         for key, attr_info in self._schema.attributes.items():
             if key not in lazy_attributes:
+                # Get required columns from cache (avoids repeated to_polars_schema calls)
+                required_columns = self._schema.get_required_columns(key)
+
+                if not required_columns.issubset(available_columns):
+                    # Columns are missing - check if the field is optional
+                    if is_type_optional(attr_info.type):
+                        # Optional field with missing columns - set to None
+                        direct_attributes[key] = None
+                        continue
+                    # Required field with missing columns - this is an error
+                    missing = required_columns - available_columns
+                    raise KeyError(f"Required columns {missing} for field '{key}' not found in DataFrame")
+
                 # This attribute is directly available
                 direct_attributes[key] = attr_info.field.from_polars(key, 0, row_df, attr_info.type)
 
@@ -553,15 +571,15 @@ class Dataset(Generic[DType]):
             categories=inferred_categories,
         )
 
-    def filter_by_subset(self, subset: Subset) -> Dataset[DType]:
+    def filter_by_subset(self, subset: Subset | Sequence[Subset]) -> Dataset[DType]:
         """
-        Return new dataset with items from given subset.
+        Return new dataset with items from given subset(s).
 
         Args:
-            subset: the subset to filter on
+            subset: a single subset or a list/tuple of subsets to filter on
 
         Returns:
-            A new Dataset with items of the given subset.
+            A new Dataset with items of the given subset(s).
         """
         for subset_column_name, attribute_info in self.schema.attributes.items():
             if isinstance(attribute_info.field, SubsetField):
@@ -569,7 +587,11 @@ class Dataset(Generic[DType]):
         else:
             raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
 
-        filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+        if isinstance(subset, Sequence):
+            subset_names = [s.name for s in subset]
+            filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
+        else:
+            filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
 
         return Dataset.from_dataframe(
             df=filtered_df,
