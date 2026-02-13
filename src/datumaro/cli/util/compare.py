@@ -7,6 +7,7 @@ import os
 import os.path as osp
 from collections import Counter
 from enum import Enum, auto
+from importlib.util import find_spec
 from typing import TYPE_CHECKING, Union
 
 import cv2
@@ -19,14 +20,17 @@ from datumaro.util import parse_str_enum_value
 from datumaro.util.image import save_image
 from datumaro.util.import_util import lazy_import
 
-if TYPE_CHECKING:
-    import warnings
+TENSORBOARDX_AVAILABLE = find_spec("tensorboardX") is not None
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        import tensorboardX as tb
-else:
-    tb = lazy_import("tensorboardX")
+if TENSORBOARDX_AVAILABLE:
+    if TYPE_CHECKING:
+        import warnings
+    
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            import tensorboardX as tb
+    else:
+        tb = lazy_import("tensorboardX")
 
 
 class DistanceCompareVisualizer:
