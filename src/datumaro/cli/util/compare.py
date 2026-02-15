@@ -25,7 +25,7 @@ TENSORBOARDX_AVAILABLE = find_spec("tensorboardX") is not None
 if TENSORBOARDX_AVAILABLE:
     if TYPE_CHECKING:
         import warnings
-    
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             import tensorboardX as tb
