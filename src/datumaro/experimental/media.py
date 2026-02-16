@@ -236,13 +236,19 @@ class LazyImage:
         if img_array.ndim == 3:
             if img_array.shape[-1] == 3:
                 # RGB <-> BGR: swap channels 0 and 2
-                return img_array[..., ::-1].copy()
+                swapped = np.empty_like(img_array)
+                swapped[..., 0] = img_array[..., 2]
+                swapped[..., 1] = img_array[..., 1]
+                swapped[..., 2] = img_array[..., 0]
+                return swapped
             if img_array.shape[-1] == 4:
                 # RGBA <-> BGRA: swap channels 0 and 2, keep alpha
-                return np.concatenate(
-                    [img_array[..., 2:3], img_array[..., 1:2], img_array[..., 0:1], img_array[..., 3:4]],
-                    axis=-1,
-                )
+                swapped = np.empty_like(img_array)
+                swapped[..., 0] = img_array[..., 2]
+                swapped[..., 1] = img_array[..., 1]
+                swapped[..., 2] = img_array[..., 0]
+                swapped[..., 3] = img_array[..., 3]
+                return swapped
         return img_array.copy()
 
     def _convert_to_rgb(self, img: Image.Image, is_16bit: bool) -> np.ndarray:

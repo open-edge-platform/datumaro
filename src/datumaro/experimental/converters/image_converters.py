@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 from typing import Any
 
+import cv2
 import numpy as np
 import polars as pl
 from PIL import Image
@@ -55,19 +56,32 @@ class RedBlueColorConverter(Converter):
 
         expected_dtype = polars_to_numpy_dtype(self.input_image.field.dtype)
 
-        def red_blue_swap(row: dict[str, Any]) -> Any:
-            """Swaps the first and third channels in the image. Images are stored as a flattened list in polars"""
-            flat_data = np.array(row[input_column_name], dtype=expected_dtype, copy=True)
-            shape = tuple(row[input_shape_column_name])
+        def red_blue_swap(flat_data: np.ndarray, shape: tuple) -> np.ndarray:
+            """Fast channel swap using numpy views and advanced indexing."""
+            if len(shape) == 3:
+                h, w, c = shape
+                if c == 3:
+                    # RGB/BGR swap: swap channels 0 and 2
+                    reshaped = flat_data.reshape(h, w, c)
+                    swapped = np.empty_like(reshaped)
+                    swapped[..., 0] = reshaped[..., 2]
+                    swapped[..., 1] = reshaped[..., 1]
+                    swapped[..., 2] = reshaped[..., 0]
+                    return swapped.reshape(-1)
+            # Fallback for non-standard shapes - reverse all channels
             reshaped = flat_data.reshape(shape)
-            swapped = reshaped[..., ::-1]
-            return np.asarray(swapped.reshape(-1), dtype=expected_dtype)
+            swapped = reshaped[..., ::-1].copy()
+            return swapped.reshape(-1)
 
-        # Apply the conversion using map_elements for efficient processing
+        result_data = []
+        for flat_list, shape_list in zip(df[input_column_name].to_list(), df[input_shape_column_name].to_list()):
+            flat_data = np.array(flat_list, dtype=expected_dtype)
+            shape = tuple(shape_list)
+            swapped = red_blue_swap(flat_data, shape)
+            result_data.append(swapped.tolist())
+
         return df.with_columns(
-            pl.struct([pl.col(input_column_name), pl.col(input_shape_column_name)])
-            .map_elements(red_blue_swap, return_dtype=pl.List(self.input_image.field.dtype))
-            .alias(output_column_name),
+            pl.Series(output_column_name, result_data, dtype=pl.List(self.input_image.field.dtype)),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
@@ -134,29 +148,134 @@ class UInt8ToFloat32Converter(Converter):
 @converter(lazy=True)
 class ImagePathToImageConverter(Converter):
     """
-    Lazy converter that loads images from file paths using Pillow.
+    Lazy converter that loads images from file paths.
 
     This converter reads image files from disk and converts them to tensor format.
     It's marked as lazy to defer the expensive I/O operation until the data
     is actually accessed.
+
+    Uses OpenCV for faster image loading, with PIL as fallback.
+
+    Supported output formats:
+        - RGB: 3-channel color image in Red-Green-Blue order
+        - BGR: 3-channel color image in Blue-Green-Red order (OpenCV default)
+        - RGBA: 4-channel color image with alpha channel
+        - GRAY: Single-channel grayscale image
     """
 
     input_path: AttributeSpec[ImagePathField]
     output_image: AttributeSpec[ImageField]
 
+    # Supported output formats for this converter
+    SUPPORTED_FORMATS = {"RGB", "BGR", "RGBA", "GRAY"}
+
+    # OpenCV read flags for each format
+    _CV2_READ_FLAGS = {
+        "RGB": cv2.IMREAD_COLOR,
+        "BGR": cv2.IMREAD_COLOR,
+        "RGBA": cv2.IMREAD_UNCHANGED,
+        "GRAY": cv2.IMREAD_GRAYSCALE,
+    }
+
+    # PIL target modes for each format
+    _PIL_MODES = {
+        "RGB": "RGB",
+        "BGR": "RGB",  # Load as RGB, then swap channels
+        "RGBA": "RGBA",
+        "GRAY": "L",
+    }
+
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
-        # Configure output specification with default RGB format
+        # Configure output specification - preserve the requested format
+        output_format = self.output_image.field.format if self.output_image.field.format else "RGB"
+
+        # Validate that the requested format is supported
+        if output_format not in self.SUPPORTED_FORMATS:
+            raise ValueError(
+                f"Unsupported output format '{output_format}' for ImagePathToImageConverter. "
+                f"Supported formats are: {', '.join(sorted(self.SUPPORTED_FORMATS))}."
+            )
+
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_path.field.semantic,
                 dtype=pl.UInt8(),  # Default to UInt8 for loaded images
-                format="RGB",  # Default to RGB format
+                format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
+
+    def _load_image_opencv(self, path: str, output_format: str) -> np.ndarray | None:
+        """
+        Load an image using OpenCV and convert to the requested format.
+
+        Args:
+            path: Path to the image file
+            output_format: Desired output format (RGB, BGR, RGBA, GRAY)
+
+        Returns:
+            Image as numpy array in the requested format, or None if loading failed
+        """
+        read_flag = self._CV2_READ_FLAGS[output_format]
+        img_array = cv2.imread(path, read_flag)
+
+        if img_array is None:
+            return None
+
+        # Handle format conversions
+        if output_format == "RGB":
+            # OpenCV loads as BGR, convert to RGB
+            img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+        elif output_format == "BGR":
+            # Already in BGR format, no conversion needed
+            pass
+        elif output_format == "RGBA":
+            # Handle various source formats for RGBA output
+            if len(img_array.shape) == 2:
+                # Grayscale to RGBA
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGBA)
+            elif img_array.shape[2] == 3:
+                # BGR to RGBA (OpenCV loads as BGR)
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGBA)
+            elif img_array.shape[2] == 4:
+                # BGRA to RGBA
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_BGRA2RGBA)
+        elif output_format == "GRAY" and len(img_array.shape) == 2:
+            img_array = img_array[:, :, np.newaxis]
+
+        return img_array
+
+    def _load_image_pil(self, path: str, output_format: str) -> np.ndarray:
+        """
+        Load an image using PIL and convert to the requested format.
+
+        Args:
+            path: Path to the image file
+            output_format: Desired output format (RGB, BGR, RGBA, GRAY)
+
+        Returns:
+            Image as numpy array in the requested format
+        """
+        target_mode = self._PIL_MODES[output_format]
+
+        with Image.open(path) as img:
+            # Convert to target mode if needed
+            source_img = img if img.mode == target_mode else img.convert(target_mode)
+
+            img_array = np.array(source_img, dtype=np.uint8)
+
+            # Handle BGR format (swap R and B channels)
+            if output_format == "BGR":
+                img_array = img_array[..., ::-1].copy()
+
+            # Handle grayscale - ensure 3D shape (H, W, 1)
+            if output_format == "GRAY" and len(img_array.shape) == 2:
+                img_array = img_array[:, :, np.newaxis]
+
+        return img_array
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
@@ -170,21 +289,24 @@ class ImagePathToImageConverter(Converter):
         """
         input_col = self.input_path.name
         output_col = self.output_image.name
+        output_format = self.output_image.field.format
 
         # Load images from paths
         image_data: list[Any] = []
         image_shapes: list[list[int]] = []
 
         for path in df[input_col]:
-            # Load image using PIL
-            with Image.open(path) as img:
-                # Convert to RGB if needed
-                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
+            path_str = str(path)
 
-                # Convert to numpy array
-                img_array = np.array(rgb_img, dtype=np.uint8)
-                image_data.append(img_array.flatten())
-                image_shapes.append(list(img_array.shape))
+            # Try OpenCV first (faster)
+            img_array = self._load_image_opencv(path_str, output_format)
+
+            if img_array is None:
+                # Fallback to PIL for unsupported formats
+                img_array = self._load_image_pil(path_str, output_format)
+
+            image_data.append(img_array.flatten())
+            image_shapes.append(list(img_array.shape))
 
         # Create output DataFrame
         image_schema = self.output_image.field.to_polars_schema("image")
