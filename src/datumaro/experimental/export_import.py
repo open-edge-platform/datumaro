@@ -335,9 +335,8 @@ def import_dataset(
     """
     Import a dataset from an exported format.
 
-    When dtype is None the function tries to automatically determine
-    the correct Sample subclass by matching the stored schema against all known subclasses (discovered via
-    ``__subclasses__()`` and the :func:`register_sample` registry).  If no
+    When dtype is None the function tries to automatically determine the correct Sample subclass by matching the stored
+    schema against all registered subclasses (discovered via the :func:`register_sample` registry).  If no
     match is found, it falls back to the base ``Sample`` class.
 
     Args:
