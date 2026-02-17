@@ -507,8 +507,10 @@ def _get_registered_samples() -> list[type[Sample]]:
 def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
     """Try to match a schema against registered Sample subclasses.
 
-    Compares attribute names and field types between the loaded schema and each
-    registered Sample subclass's inferred schema.
+    Compares the serialized schema attributes (including field configurations like
+    dtype, semantic, is_list, format, etc.) between the loaded schema and each
+    registered Sample subclass's inferred schema. Categories are not compared
+    since they may differ between loaded and inferred schemas.
 
     Args:
         schema: The schema loaded from the dataset metadata
@@ -516,12 +518,14 @@ def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
     Returns:
         The matching Sample subclass, or base Sample if no match is found
     """
-    schema_signature = {(name, type(attr_info.field)) for name, attr_info in schema.attributes.items()}
+    schema_dict = schema.to_dict()
+    schema_attributes = schema_dict.get("attributes", {})
 
     for subclass in _get_registered_samples():
         candidate_schema = subclass.infer_schema()
-        candidate_signature = {(name, type(attr_info.field)) for name, attr_info in candidate_schema.attributes.items()}
-        if schema_signature == candidate_signature:
+        candidate_dict = candidate_schema.to_dict()
+        candidate_attributes = candidate_dict.get("attributes", {})
+        if schema_attributes == candidate_attributes:
             return subclass
 
     return Sample

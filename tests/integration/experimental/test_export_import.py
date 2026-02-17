@@ -1153,3 +1153,33 @@ def test_import_auto_detects_dtype_roundtrip(tmp_path):
         assert len(imported_dataset) == 1
     finally:
         _sample_registry.discard(AutoDetectSample)
+
+
+def test_match_dtype_distinguishes_similar_samples_with_different_field_configs():
+    """
+    _match_dtype_from_schema should correctly distinguish between Sample subclasses
+    that have the same field names but different field configurations.
+    """
+
+    @register_sample
+    class ClassificationSample(Sample):
+        label: int | None = label_field(dtype=pl.UInt8(), is_list=False)
+        confidence: float | None = numeric_field(dtype=pl.Float32(), semantic="confidence")
+
+    @register_sample
+    class MultilabelClassificationSample(Sample):
+        label: list[int] = label_field(dtype=pl.UInt8(), multi_label=True)
+        confidence: list[float] | None = numeric_field(dtype=pl.Float32(), is_list=True, semantic="confidence")
+
+    try:
+        classification_schema = ClassificationSample.infer_schema()
+        result = _match_dtype_from_schema(classification_schema)
+        assert result is ClassificationSample
+
+        multilabel_schema = MultilabelClassificationSample.infer_schema()
+        result = _match_dtype_from_schema(multilabel_schema)
+        assert result is MultilabelClassificationSample
+
+    finally:
+        _sample_registry.discard(ClassificationSample)
+        _sample_registry.discard(MultilabelClassificationSample)
