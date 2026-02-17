@@ -28,8 +28,12 @@ from datumaro.experimental.export_import import (
     METADATA_FILE,
     VERSION,
     _export_images_from_dataset,
+    _get_registered_samples,
+    _match_dtype_from_schema,
+    _sample_registry,
     export_dataset,
     import_dataset,
+    register_sample,
 )
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -620,27 +624,6 @@ def test_import_missing_dataframe_raises_error(tmp_path):
         import_dataset(export_dir)
 
 
-def test_import_without_dtype_uses_sample(tmp_path):
-    """Test that import without dtype uses generic Sample."""
-
-    class SimpleSample(Sample):
-        label: int = label_field()
-
-    # Export dataset
-    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
-    original_dataset.append(SimpleSample(label=1))
-
-    export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
-
-    # Import without dtype
-    imported_dataset = import_dataset(export_dir, dtype=None)
-
-    # Verify dataset uses Sample
-    assert len(imported_dataset) == 1
-    assert imported_dataset.dtype == Sample
-
-
 def test_import_preserves_categories(tmp_path):
     """Test that import preserves category information."""
 
@@ -1006,3 +989,167 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     df_false = pl.read_parquet(export_dir_false / DATAFRAME_FILE)
     assert df_false["img"][0] == str(source_img_path)
     assert not (export_dir_false / IMAGES_DIR).exists()
+
+
+# ---------------------------------------------------------------------------
+# Tests for automatic dtype detection (_get_registered_samples,
+# _match_dtype_from_schema, register_sample)
+# ---------------------------------------------------------------------------
+
+
+def test_get_registered_samples_returns_empty_without_registration():
+    """_get_registered_samples should return empty list when no classes are registered."""
+    # Clear any existing registrations for this test
+    original_registry = _sample_registry.copy()
+    _sample_registry.clear()
+    try:
+        result = _get_registered_samples()
+        assert result == []
+    finally:
+        _sample_registry.update(original_registry)
+
+
+def test_get_registered_samples_returns_registered_classes():
+    """_get_registered_samples should return classes that were explicitly registered."""
+
+    class RegisteredChild(Sample):
+        label: int = label_field()
+
+    _sample_registry.discard(RegisteredChild)
+    try:
+        # Before registration, should not be in results
+        assert RegisteredChild not in _get_registered_samples()
+
+        # After registration, should be in results
+        register_sample(RegisteredChild)
+        assert RegisteredChild in _get_registered_samples()
+    finally:
+        _sample_registry.discard(RegisteredChild)
+
+
+def test_get_registered_samples_does_not_include_base_sample():
+    """The base Sample class itself should not appear in the result."""
+    result = _get_registered_samples()
+    assert Sample not in result
+
+
+def test_match_dtype_from_schema_returns_matching_subclass():
+    """_match_dtype_from_schema should return the subclass whose schema matches."""
+
+    @register_sample
+    class MatchMe(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+        subset: Subset = subset_field()
+
+    try:
+        schema = MatchMe.infer_schema()
+        result = _match_dtype_from_schema(schema)
+        assert result is MatchMe
+    finally:
+        _sample_registry.discard(MatchMe)
+
+
+def test_match_dtype_from_schema_falls_back_to_sample():
+    """When no subclass matches, _match_dtype_from_schema should return Sample."""
+    from datumaro.experimental.fields.types import NumericField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Build a schema that no existing subclass will match
+    schema = Schema(
+        attributes={
+            "unique_xyz_field": AttributeInfo(
+                type=int,
+                field=NumericField(dtype=pl.Int64(), semantic="unique_xyz"),
+            ),
+            "another_unique_abc": AttributeInfo(
+                type=float,
+                field=NumericField(dtype=pl.Float64(), semantic="unique_abc"),
+            ),
+        }
+    )
+    result = _match_dtype_from_schema(schema)
+    assert result is Sample
+
+
+def test_register_sample_makes_class_discoverable():
+    """register_sample should add a class to the registry so it is discoverable."""
+
+    class ExternalSample(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+
+    # Remove from registry in case a previous test registered it
+    _sample_registry.discard(ExternalSample)
+
+    register_sample(ExternalSample)
+    try:
+        assert ExternalSample in _sample_registry
+        assert ExternalSample in _get_registered_samples()
+    finally:
+        _sample_registry.discard(ExternalSample)
+
+
+def test_register_sample_works_as_decorator():
+    """register_sample should work as a class decorator and return the class."""
+
+    @register_sample
+    class DecoratedSample(Sample):
+        label: int = label_field()
+
+    try:
+        assert DecoratedSample in _sample_registry
+        # The decorator should return the class unchanged
+        assert issubclass(DecoratedSample, Sample)
+    finally:
+        _sample_registry.discard(DecoratedSample)
+
+
+def test_import_without_dtype_falls_back_to_sample_for_unknown_schema(tmp_path):
+    """When the exported schema doesn't match any subclass, dtype should fall back to Sample."""
+    from datumaro.experimental.fields.types import NumericField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create a dataset with a unique schema that won't match any subclass
+    unique_schema = Schema(
+        attributes={
+            "weird_field_xyz": AttributeInfo(
+                type=int,
+                field=NumericField(dtype=pl.Int64(), semantic="weird_xyz"),
+            ),
+        }
+    )
+    dataset = Dataset(unique_schema)
+    dataset.append(Sample(weird_field_xyz=42))
+
+    export_dir = tmp_path / "export"
+    export_dataset(dataset, export_dir, export_images=False, as_zip=False)
+
+    imported_dataset = import_dataset(export_dir, dtype=None)
+    assert len(imported_dataset) == 1
+    assert imported_dataset.dtype == Sample
+
+
+def test_import_auto_detects_dtype_roundtrip(tmp_path):
+    """Full roundtrip: export with a known Sample subclass, import without dtype, verify auto-detection."""
+
+    @register_sample
+    class AutoDetectSample(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+        subset: Subset = subset_field()
+
+    try:
+        original_dataset = Dataset(AutoDetectSample, categories={"label": LABEL_CATEGORIES})
+        original_dataset.append(AutoDetectSample(label=2, score=0.75, subset=Subset.TRAINING))
+
+        export_dir = tmp_path / "export"
+        export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+
+        imported_dataset = import_dataset(export_dir)  # no dtype
+        # Should auto-detect a matching subclass (not fall back to base Sample)
+        assert imported_dataset.dtype is not Sample
+        assert issubclass(imported_dataset.dtype, Sample)
+        assert len(imported_dataset) == 1
+    finally:
+        _sample_registry.discard(AutoDetectSample)

@@ -1104,6 +1104,88 @@ def test_subset_field_roundtrip():
     assert reconstructed is None
 
 
+def test_schema_serialization_union_types():
+    """Test Schema to_dict/from_dict correctly handles Union types (e.g., np.ndarray | None)."""
+    schema = Schema(
+        attributes={
+            "bboxes": AttributeInfo(type=np.ndarray | None, field=bbox_field(dtype=pl.Float32())),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8())),
+        }
+    )
+
+    schema_dict = schema.to_dict()
+
+    # Union type should be serialized with __union__ marker and list of component types
+    bbox_attr = schema_dict["attributes"]["bboxes"]
+    assert bbox_attr["type_module"] == "__union__"
+    assert isinstance(bbox_attr["type"], list)
+    assert len(bbox_attr["type"]) == 2
+    type_names = {comp["name"] for comp in bbox_attr["type"]}
+    assert "ndarray" in type_names
+    assert "NoneType" in type_names
+
+    # Non-union type should be serialized normally
+    image_attr = schema_dict["attributes"]["image"]
+    assert image_attr["type"] == "ndarray"
+    assert image_attr["type_module"] == "numpy"
+
+    # Deserialize and verify round-trip
+    reconstructed = Schema.from_dict(schema_dict)
+    assert set(reconstructed.attributes.keys()) == {"bboxes", "image"}
+
+    # The reconstructed union type should work with isinstance-style checks
+    import types as _types
+
+    bbox_type = reconstructed.attributes["bboxes"].type
+    assert isinstance(bbox_type, _types.UnionType)
+    assert type(None) in bbox_type.__args__
+    assert np.ndarray in bbox_type.__args__
+
+    # Non-union type should be reconstructed correctly
+    assert reconstructed.attributes["image"].type is np.ndarray
+
+
+def test_schema_serialization_union_builtin_types():
+    """Test Schema serialization of Union types with builtin components (e.g., int | None)."""
+    schema = Schema(
+        attributes={
+            "score": AttributeInfo(type=int | None, field=tensor_field(dtype=pl.Int32())),
+        }
+    )
+
+    schema_dict = schema.to_dict()
+    reconstructed = Schema.from_dict(schema_dict)
+
+    import types as _types
+
+    score_type = reconstructed.attributes["score"].type
+    assert isinstance(score_type, _types.UnionType)
+    assert int in score_type.__args__
+    assert type(None) in score_type.__args__
+
+
+def test_resolve_type_helper():
+    """Test _resolve_type helper function."""
+    from datumaro.experimental.schema import _resolve_type
+
+    assert _resolve_type("int", "builtins") is int
+    assert _resolve_type("NoneType", None) is type(None)
+    assert _resolve_type("ndarray", "numpy") is np.ndarray
+    assert _resolve_type("nonexistent", "numpy") is object
+    assert _resolve_type("ndarray", "nonexistent_module") is object
+
+
+def test_resolve_type_from_qualified_name_helper():
+    """Test _resolve_type_from_qualified_name helper function."""
+    from datumaro.experimental.schema import _resolve_type_from_qualified_name
+
+    assert _resolve_type_from_qualified_name("numpy.ndarray") is np.ndarray
+    assert _resolve_type_from_qualified_name("None") is type(None)
+    assert _resolve_type_from_qualified_name("int") is int
+    assert _resolve_type_from_qualified_name("  numpy.ndarray  ") is np.ndarray
+    assert _resolve_type_from_qualified_name("nonexistent.module.Type") is object
+
+
 def test_subset_field_in_sample_with_union_type():
     """Test SubsetField usage in a Sample class with union type annotation."""
 
