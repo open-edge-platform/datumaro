@@ -493,7 +493,6 @@ def _get_registered_samples() -> list[type[Sample]]:
     """Get all Sample subclasses that have been explicitly registered.
 
     Only returns classes that were registered via :func:`register_sample`.
-    Does not perform automatic discovery via ``__subclasses__()``.
 
     Returns:
         List of explicitly registered Sample subclasses
