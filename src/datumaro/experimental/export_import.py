@@ -61,6 +61,11 @@ def register_sample(cls: type[Sample]) -> type[Sample]:
             image: Annotated[np.ndarray, ImageField()]
             label: Annotated[int, ScalarField()]
     """
+    # Validate that only proper Sample subclasses (excluding Sample itself)
+    # can be registered. This prevents invalid entries that could later cause
+    # failures during schema inference.
+    if not isinstance(cls, type) or not issubclass(cls, Sample) or cls is Sample:
+        raise TypeError(f"register_sample expects a subclass of Sample (excluding Sample itself), got {cls!r}")
     _sample_registry.add(cls)
     return cls
 
