@@ -6,7 +6,7 @@
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import LazyImage, Sample
+from datumaro.experimental import LazyImage, Sample, register_sample
 from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
@@ -18,6 +18,7 @@ from datumaro.experimental.fields import (
 )
 
 
+@register_sample
 class YoloSample(Sample):
     """
     Sample class for YOLO format datasets.

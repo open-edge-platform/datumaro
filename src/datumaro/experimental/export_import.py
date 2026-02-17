@@ -11,6 +11,7 @@ including support for:
 - JSON metadata for schema and categories
 - Image export for callable and path-based image fields
 - ZIP archive format for complete dataset packages
+- Automatic dtype detection when importing without an explicit ``dtype``
 """
 
 from __future__ import annotations
@@ -35,6 +36,39 @@ from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
     from .dataset import DType
+
+# Registry sample classes that can automatically be detected when importing datasets
+_sample_registry: set[type[Sample]] = set()
+
+
+def register_sample(cls: type[Sample]) -> type[Sample]:
+    """Register a Sample subclass for automatic dtype detection during import.
+
+    Use this to ensure that custom Sample subclasses defined outside of Datumaro
+    are discoverable by :func:`import_dataset` when ``dtype`` is not provided.
+    Can be used as a decorator or called directly.
+
+    Args:
+        cls: A Sample subclass to register
+
+    Returns:
+        The same class, unmodified (allows use as a decorator)
+
+    Example::
+
+        @register_sample
+        class MySample(Sample):
+            image: Annotated[np.ndarray, ImageField()]
+            label: Annotated[int, ScalarField()]
+    """
+    # Validate that only proper Sample subclasses (excluding Sample itself)
+    # can be registered. This prevents invalid entries that could later cause
+    # failures during schema inference.
+    if not isinstance(cls, type) or not issubclass(cls, Sample) or cls is Sample:
+        raise TypeError(f"register_sample expects a subclass of Sample (excluding Sample itself), got {cls!r}")
+    _sample_registry.add(cls)
+    return cls
+
 
 # Constants for export structure
 METADATA_FILE = "metadata.json"
@@ -306,10 +340,15 @@ def import_dataset(
     """
     Import a dataset from an exported format.
 
+    When dtype is None the function tries to automatically determine the correct Sample subclass by matching the stored
+    schema against all registered subclasses (discovered via the :func:`register_sample` registry).  If no
+    match is found, it falls back to the base ``Sample`` class.
+
     Args:
         input_path: Path to the exported dataset (directory or .zip file)
-        dtype: Optional Sample class to use for the dataset. If None, uses generic Sample. Only necessary for typing and
-        auto-completion; schema is loaded from metadata.
+        dtype: Optional Sample class to use for the dataset.  When provided,
+            the dataset is typed with this class directly.  When ``None``,
+            automatic dtype detection is attempted (see above).
 
     Returns:
         The imported Dataset instance
@@ -454,6 +493,40 @@ def _add_missing_object_columns(
     return df
 
 
+def _get_registered_samples() -> list[type[Sample]]:
+    """Get all Sample subclasses that have been explicitly registered.
+
+    Only returns classes that were registered via :func:`register_sample`.
+
+    Returns:
+        List of explicitly registered Sample subclasses
+    """
+    return list(_sample_registry)
+
+
+def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
+    """Try to match a schema against registered Sample subclasses.
+
+    Compares attribute names and field types between the loaded schema and each
+    registered Sample subclass's inferred schema.
+
+    Args:
+        schema: The schema loaded from the dataset metadata
+
+    Returns:
+        The matching Sample subclass, or base Sample if no match is found
+    """
+    schema_signature = {(name, type(attr_info.field)) for name, attr_info in schema.attributes.items()}
+
+    for subclass in _get_registered_samples():
+        candidate_schema = subclass.infer_schema()
+        candidate_signature = {(name, type(attr_info.field)) for name, attr_info in candidate_schema.attributes.items()}
+        if schema_signature == candidate_signature:
+            return subclass
+
+    return Sample
+
+
 def _import_dataset_from_dir(
     input_dir: Path,
     dtype: type[DType] | None = None,
@@ -479,6 +552,6 @@ def _import_dataset_from_dir(
     df = _add_missing_object_columns(df, object_columns)
 
     if dtype is None:
-        dtype = Sample  # type: ignore
+        dtype = _match_dtype_from_schema(schema)
 
     return Dataset.from_dataframe(df, dtype, schema=schema)

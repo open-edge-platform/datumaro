@@ -6,7 +6,7 @@
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import LazyImage, Sample
+from datumaro.experimental import LazyImage, Sample, register_sample
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.constants import COCO_LABEL_TO_SUPER
 from datumaro.experimental.data_formats.semantics import AREAS, CAPTION_GROUP_IDS, IMAGE_ID, ISCROWD
@@ -26,6 +26,7 @@ from datumaro.experimental.fields import (
 )
 
 
+@register_sample
 class CocoSample(Sample):
     # Basic image information
     image: LazyImage = image_path_field()

@@ -4,7 +4,7 @@
 
 from .converters import Converter, ConverterRegistry, converter
 from .dataset import Dataset, Sample
-from .export_import import export_dataset, import_dataset
+from .export_import import export_dataset, import_dataset, register_sample
 from .media import ImageCache, LazyImage
 from .schema import AttributeInfo, Schema
 from .tiling import tilers
