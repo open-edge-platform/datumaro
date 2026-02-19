@@ -336,6 +336,7 @@ def export_dataset(
 def import_dataset(
     input_path: str | Path,
     dtype: type[DType] | None = None,
+    extract_dir: str | Path | None = None,
 ) -> Dataset[DType]:
     """
     Import a dataset from an exported format.
@@ -349,6 +350,10 @@ def import_dataset(
         dtype: Optional Sample class to use for the dataset.  When provided,
             the dataset is typed with this class directly.  When ``None``,
             automatic dtype detection is attempted (see above).
+        extract_dir: Optional directory to extract zip contents to. If not provided,
+            the zip will be extracted to a directory next to the zip file with the
+            same name (excluding the .zip extension). This parameter is ignored
+            when input_path is a directory.
 
     Returns:
         The imported Dataset instance
@@ -360,16 +365,17 @@ def import_dataset(
     input_path = Path(input_path)
 
     if is_zipfile(input_path):
-        temp_dir = Path(tempfile.mkdtemp())
-        try:
-            with ZipFile(input_path) as zipf:
-                zipf.extractall(temp_dir)
-            return _import_dataset_from_dir(temp_dir, dtype)
-        finally:
-            if temp_dir.exists():
-                shutil.rmtree(temp_dir)
-    else:
-        return _import_dataset_from_dir(input_path, dtype)
+        if extract_dir is not None:
+            extract_dir = Path(extract_dir)
+        else:
+            # Default: extract to a directory next to the zip with the same name (minus .zip)
+            extract_dir = input_path.with_suffix("")
+
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        with ZipFile(input_path) as zipf:
+            zipf.extractall(extract_dir)
+        return _import_dataset_from_dir(extract_dir, dtype)
+    return _import_dataset_from_dir(input_path, dtype)
 
 
 def _load_metadata(input_dir: Path) -> dict:

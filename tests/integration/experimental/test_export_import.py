@@ -1183,3 +1183,140 @@ def test_match_dtype_distinguishes_similar_samples_with_different_field_configs(
     finally:
         _sample_registry.discard(ClassificationSample)
         _sample_registry.discard(MultilabelClassificationSample)
+
+
+def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
+    """Test that importing a zip file extracts to a directory next to the zip with the same name."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((20, 30, 3), dtype=np.uint8)
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image, label=1))
+
+    export_zip = tmp_path / "my_dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import from zip (no extract_dir provided)
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample)
+
+    # Verify the dataset was extracted to a directory next to the zip
+    expected_extract_dir = tmp_path / "my_dataset"
+    assert expected_extract_dir.exists()
+    assert expected_extract_dir.is_dir()
+    assert (expected_extract_dir / METADATA_FILE).exists()
+    assert (expected_extract_dir / DATAFRAME_FILE).exists()
+    assert (expected_extract_dir / IMAGES_DIR).exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    sample = imported_dataset[0]
+    assert sample.label == 1
+    assert callable(sample.image)
+    img = sample.image()
+    assert img.shape == (20, 30, 3)
+
+
+def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_path):
+    """Test that importing a zip file extracts to a custom directory when extract_dir is provided."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((25, 35, 3), dtype=np.uint8)
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image, label=2))
+
+    export_zip = tmp_path / "dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import with custom extract_dir
+    custom_extract_dir = tmp_path / "custom" / "location"
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample, extract_dir=custom_extract_dir)
+
+    # Verify the dataset was extracted to the custom directory
+    assert custom_extract_dir.exists()
+    assert custom_extract_dir.is_dir()
+    assert (custom_extract_dir / METADATA_FILE).exists()
+    assert (custom_extract_dir / DATAFRAME_FILE).exists()
+    assert (custom_extract_dir / IMAGES_DIR).exists()
+
+    # Verify the default location was NOT created
+    default_extract_dir = tmp_path / "dataset"
+    assert not default_extract_dir.exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    sample = imported_dataset[0]
+    assert sample.label == 2
+    assert callable(sample.image)
+    img = sample.image()
+    assert img.shape == (25, 35, 3)
+
+
+def test_import_zip_images_accessible_after_import(tmp_path):
+    """Test that images from a zip import are accessible after import."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image(value):
+        def load():
+            img = np.zeros((10, 10, 3), dtype=np.uint8)
+            img[:, :, 0] = value
+            return img
+
+        return load
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image(100), label=1))
+    original_dataset.append(ImageSample(image=make_image(200), label=2))
+
+    export_zip = tmp_path / "test_dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import from zip
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample)
+
+    # Access images multiple times to verify they persist
+    for _ in range(2):
+        img0 = imported_dataset[0].image()
+        img1 = imported_dataset[1].image()
+        assert img0[0, 0, 0] == 100
+        assert img1[0, 0, 0] == 200
+
+
+def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
+    """Test that extract_dir parameter is ignored when input is a directory (not a zip)."""
+
+    class SimpleSample(Sample):
+        label: int = label_field()
+
+    # Export to directory (not zip)
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(SimpleSample(label=3))
+
+    export_dir = tmp_path / "exported"
+    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+
+    # Import from directory with extract_dir (should be ignored)
+    custom_dir = tmp_path / "should_not_be_created"
+    imported_dataset = import_dataset(export_dir, dtype=SimpleSample, extract_dir=custom_dir)
+
+    # Verify the custom directory was NOT created (since input was a directory, not zip)
+    assert not custom_dir.exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    assert imported_dataset[0].label == 3
