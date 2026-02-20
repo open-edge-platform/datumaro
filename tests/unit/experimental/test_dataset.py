@@ -928,3 +928,311 @@ def test_getitem_with_multiple_optional_missing_columns():
     assert sample.optional_a is None
     assert sample.optional_b is None
     assert sample.optional_c is None
+
+
+# ── filter_by_labels tests ──────────────────────────────────────────────────
+
+
+def test_filter_by_labels_basic_filtering():
+    """Test basic filtering with single-value LabelField: strings, integers, single/multiple, matches."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # cat
+    ds.append(Sample(label=1))  # dog
+    ds.append(Sample(label=2))  # bird
+    ds.append(Sample(label=0))  # cat
+
+    # Filter by single label name (list)
+    filtered = ds.filter_by_labels(["cat"])
+    assert len(filtered) == 2
+    assert all(s.label == 0 for s in filtered)
+
+    # Filter by single label name (string - not list)
+    filtered = ds.filter_by_labels("dog")
+    assert len(filtered) == 1
+    assert filtered[0].label == 1
+
+    # Filter by multiple label names
+    filtered = ds.filter_by_labels(["dog", "bird"])
+    assert len(filtered) == 2
+    assert {filtered[0].label, filtered[1].label} == {1, 2}
+
+    # Filter by single integer index
+    filtered = ds.filter_by_labels(0)
+    assert len(filtered) == 2
+
+    # Filter by multiple integer indices
+    filtered = ds.filter_by_labels([1, 2])
+    assert len(filtered) == 2
+
+    # Mix strings and integers
+    filtered = ds.filter_by_labels(["cat", 2])
+    assert len(filtered) == 3
+
+    # All match
+    filtered = ds.filter_by_labels(["cat", "dog", "bird"])
+    assert len(filtered) == 4
+
+    # No match
+    ds2 = Dataset(schema)
+    ds2.append(Sample(label=0))
+    filtered = ds2.filter_by_labels(["bird"])
+    assert len(filtered) == 0
+
+
+def test_filter_by_labels_list_field():
+    """Filter a dataset with is_list=True LabelField using strings and integers."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(labels=[0, 1]))  # cat, dog
+    ds.append(Sample(labels=[2]))  # bird
+    ds.append(Sample(labels=[1, 2]))  # dog, bird
+    ds.append(Sample(labels=[0]))  # cat
+
+    # Filter by label name
+    filtered = ds.filter_by_labels(["dog"])
+    assert len(filtered) == 2  # rows 0, 2
+
+    # Filter by integer index
+    filtered = ds.filter_by_labels([1])
+    assert len(filtered) == 2
+
+    # Filter by multiple labels
+    filtered = ds.filter_by_labels(["cat", "bird"])
+    assert len(filtered) == 4  # every row has at least one
+
+    # Filter by mixed string and integer
+    filtered = ds.filter_by_labels(["bird", 0])
+    assert len(filtered) == 3
+
+
+def test_filter_by_labels_multi_label_field():
+    """Filter a dataset with multi_label=True LabelField using strings and integers."""
+    categories = LabelCategories(labels=("sunny", "rainy", "cloudy"))
+    schema = Schema(
+        attributes={
+            "weather": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(weather=[0, 2]))  # sunny + cloudy
+    ds.append(Sample(weather=[1]))  # rainy
+    ds.append(Sample(weather=[0, 1]))  # sunny + rainy
+
+    # Filter by label name
+    filtered = ds.filter_by_labels(["sunny"], label_field_name="weather")
+    assert len(filtered) == 2  # rows 0, 2
+
+    # Filter by integer index
+    filtered = ds.filter_by_labels([0], label_field_name="weather")
+    assert len(filtered) == 2
+
+    # Filter by multiple labels
+    filtered = ds.filter_by_labels(["rainy", "cloudy"], label_field_name="weather")
+    assert len(filtered) == 3
+
+    # Filter by mixed
+    filtered = ds.filter_by_labels(["rainy", 2], label_field_name="weather")
+    assert len(filtered) == 3
+
+
+def test_filter_by_labels_list_and_multi_label():
+    """Filter a dataset whose LabelField has both is_list=True and multi_label=True (List(List(UInt)))."""
+    categories = LabelCategories(labels=("a", "b", "c"))
+    schema = Schema(
+        attributes={
+            "tags": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(tags=[[0, 1], [2]]))  # [a,b], [c]
+    ds.append(Sample(tags=[[1]]))  # [b]
+    ds.append(Sample(tags=[[2], [0, 2]]))  # [c], [a,c]
+
+    filtered = ds.filter_by_labels(["a"], label_field_name="tags")
+    assert len(filtered) == 2  # rows 0, 2
+
+    filtered = ds.filter_by_labels(["b"], label_field_name="tags")
+    assert len(filtered) == 2  # rows 0, 1
+
+    filtered = ds.filter_by_labels(["c"], label_field_name="tags")
+    assert len(filtered) == 2  # rows 0, 2
+
+
+# ── auto-detection tests ────────────────────────────────────────────────────
+
+
+def test_filter_by_labels_auto_detect_single_label_field():
+    """When schema has exactly one LabelField, label_field_name can be omitted."""
+    categories = LabelCategories(labels=("x", "y"))
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(type=int, field=label_field(), categories=categories),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(label=0, image=np.array([[[1, 2, 3]]], dtype=np.uint8)))
+    ds.append(Sample(label=1, image=np.array([[[4, 5, 6]]], dtype=np.uint8)))
+
+    # Should auto-detect "label" as the LabelField
+    filtered = ds.filter_by_labels(["x"])
+    assert len(filtered) == 1
+    assert filtered[0].label == 0
+
+
+def test_filter_by_labels_auto_detect_no_label_field():
+    """RuntimeError when schema has no LabelField and label_field_name is not given."""
+    schema = Schema(
+        attributes={
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(image=np.array([[[1, 2, 3]]], dtype=np.uint8)))
+
+    with pytest.raises(RuntimeError, match="does not contain any LabelField"):
+        ds.filter_by_labels(["anything"])
+
+
+def test_filter_by_labels_auto_detect_multiple_label_fields():
+    """RuntimeError when schema has multiple LabelFields and label_field_name is not given."""
+    categories = LabelCategories(labels=("a", "b"))
+    schema = Schema(
+        attributes={
+            "primary": AttributeInfo(type=int, field=label_field(semantic="primary"), categories=categories),
+            "secondary": AttributeInfo(type=int, field=label_field(semantic="secondary"), categories=categories),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(primary=0, secondary=1))
+
+    with pytest.raises(RuntimeError, match="multiple LabelField"):
+        ds.filter_by_labels(["a"])
+
+    # But specifying explicitly should work
+    filtered = ds.filter_by_labels(["a"], label_field_name="primary")
+    assert len(filtered) == 1
+
+
+# ── HierarchicalLabelCategories tests ───────────────────────────────────────
+
+
+def test_filter_by_labels_with_hierarchical_categories():
+    """filter_by_labels works with HierarchicalLabelCategories."""
+    from datumaro.experimental.categories import HierarchicalLabelCategories, HierarchicalLabelCategory
+
+    items = (
+        HierarchicalLabelCategory(name="animal"),
+        HierarchicalLabelCategory(name="cat", parent="animal"),
+        HierarchicalLabelCategory(name="dog", parent="animal"),
+    )
+    categories = HierarchicalLabelCategories(items=items)
+
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # animal
+    ds.append(Sample(label=1))  # cat
+    ds.append(Sample(label=2))  # dog
+
+    filtered = ds.filter_by_labels(["cat", "dog"], label_field_name="label")
+    assert len(filtered) == 2
+    assert {filtered[0].label, filtered[1].label} == {1, 2}
+
+
+# ── immutability / original-unmodified tests ────────────────────────────────
+
+
+def test_filter_by_labels_does_not_mutate_original():
+    """The original dataset must not be modified by filtering."""
+    categories = LabelCategories(labels=("cat", "dog"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+    ds.append(Sample(label=1))
+    ds.append(Sample(label=0))
+
+    original_len = len(ds)
+    _ = ds.filter_by_labels(["cat"])
+    assert len(ds) == original_len
+
+
+# ── validation/error tests ──────────────────────────────────────────────────
+
+
+def test_filter_by_labels_validation_errors():
+    """Test various validation errors: out of range index, negative index, invalid type."""
+    categories = LabelCategories(labels=("cat", "dog"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+
+    # Index out of range
+    with pytest.raises(ValueError, match="out of range"):
+        ds.filter_by_labels([5])
+
+    # Negative index
+    with pytest.raises(ValueError, match="out of range"):
+        ds.filter_by_labels([-1])
+
+    # Invalid type (not string or int)
+    with pytest.raises(TypeError, match="must be a string or int"):
+        ds.filter_by_labels([1.5])
+
+    # Unknown label name
+    with pytest.raises(ValueError, match="not found in categories"):
+        ds.filter_by_labels(["elephant"], label_field_name="label")
+
+
+def test_filter_by_labels_schema_errors():
+    """Test errors related to schema: field not found, wrong field type, missing/wrong categories."""
+    categories = LabelCategories(labels=("cat", "dog"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+
+    # Field not found
+    with pytest.raises(KeyError, match="not_a_field"):
+        ds.filter_by_labels(["cat"], label_field_name="not_a_field")
+
+    # Field is not a LabelField
+    schema2 = Schema(
+        attributes={"image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB"))}
+    )
+    ds2 = Dataset(schema2)
+    ds2.append(Sample(image=np.array([[[1, 2, 3]]], dtype=np.uint8)))
+    with pytest.raises(TypeError, match="not a LabelField"):
+        ds2.filter_by_labels(["cat"], label_field_name="image")
+
+    # No categories attached
+    schema3 = Schema(attributes={"label": AttributeInfo(type=int, field=label_field())})
+    df = pl.DataFrame({"label": pl.Series([0, 1], dtype=pl.UInt8)})
+    ds3 = Dataset.from_dataframe(df, dtype_or_schema=schema3)
+    with pytest.raises(ValueError, match="does not have LabelCategories"):
+        ds3.filter_by_labels(["cat"], label_field_name="label")
+
+    # Wrong categories type
+    mask_cats = MaskCategories(labels=["bg", "fg"])
+    schema4 = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=mask_cats)})
+    df = pl.DataFrame({"label": pl.Series([0, 1], dtype=pl.UInt8)})
+    ds4 = Dataset.from_dataframe(df, dtype_or_schema=schema4)
+    with pytest.raises(ValueError, match="does not have LabelCategories"):
+        ds4.filter_by_labels(["bg"], label_field_name="label")

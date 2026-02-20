@@ -14,7 +14,9 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
+from datumaro.experimental.categories import BaseLabelCategories, HierarchicalLabelCategories, LabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
+from datumaro.experimental.fields.annotations import LabelField
 from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
@@ -592,6 +594,211 @@ class Dataset(Generic[DType]):
             filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
         else:
             filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+
+        return Dataset.from_dataframe(
+            df=filtered_df,
+            dtype_or_schema=self.dtype,
+            schema=self.schema,
+        )
+
+    def _resolve_label_field_name(self, label_field_name: str | None) -> str:
+        """Resolve and validate the label field name.
+
+        When *label_field_name* is ``None`` the schema is scanned for a unique
+        ``LabelField``.  If a name is given it is validated against the schema.
+
+        Returns:
+            The validated label field name.
+
+        Raises:
+            RuntimeError: If auto-detection finds zero or more than one LabelField.
+            KeyError: If the given name is not present in the schema.
+            TypeError: If the resolved attribute is not a LabelField.
+        """
+        if label_field_name is None:
+            label_field_names = [
+                name for name, attr_info in self.schema.attributes.items() if isinstance(attr_info.field, LabelField)
+            ]
+            if len(label_field_names) == 0:
+                raise RuntimeError("Dataset schema does not contain any LabelField attributes.")
+            if len(label_field_names) > 1:
+                raise RuntimeError(
+                    f"Dataset schema contains multiple LabelField attributes: "
+                    f"{label_field_names}. Please specify 'label_field_name' explicitly."
+                )
+            label_field_name = label_field_names[0]
+
+        if label_field_name not in self.schema.attributes:
+            raise KeyError(
+                f"Attribute '{label_field_name}' not found in the dataset schema. "
+                f"Available attributes: {list(self.schema.attributes.keys())}"
+            )
+
+        attr_info = self.schema.attributes[label_field_name]
+        if not isinstance(attr_info.field, LabelField):
+            raise TypeError(f"Attribute '{label_field_name}' is a {type(attr_info.field).__name__}, not a LabelField.")
+
+        return label_field_name
+
+    @staticmethod
+    def _resolve_label_indices(
+        labels: Sequence[str | int],
+        categories: Any,
+        label_field_name: str,
+    ) -> list[int]:
+        """Map label names or indices to integer indices via *categories*.
+
+        Args:
+            labels: Label names (str) or indices (int) to resolve.
+            categories: A ``LabelCategories`` or ``HierarchicalLabelCategories`` instance.
+            label_field_name: Used only for error messages.
+
+        Returns:
+            List of integer indices corresponding to the given label names or indices.
+
+        Raises:
+            ValueError: If any label name is not found in *categories* or if any index is out of range.
+            TypeError: If a label is neither a string nor an integer.
+        """
+        label_indices: list[int] = []
+        for label in labels:
+            if isinstance(label, int):
+                if label < 0 or label >= len(categories.labels):
+                    raise ValueError(
+                        f"Label index {label} is out of range for field '{label_field_name}'. "
+                        f"Valid range is 0 to {len(categories.labels) - 1}. "
+                        f"Available labels: {list(categories.labels)}"
+                    )
+                label_indices.append(label)
+            elif isinstance(label, str):
+                idx, _ = categories.find(label)
+                if idx is None:
+                    raise ValueError(
+                        f"Label '{label}' not found in categories for field '{label_field_name}'. "
+                        f"Available labels: {list(categories.labels)}"
+                    )
+                label_indices.append(idx)
+            else:
+                raise TypeError(
+                    f"Label must be a string (label name) or int (label index), got {type(label).__name__}: {label}"
+                )
+        return label_indices
+
+    def _filter_df_by_label_indices(
+        self,
+        label_field_name: str,
+        label_field_instance: LabelField,
+        label_indices: list[int],
+    ) -> pl.DataFrame:
+        """Return a filtered DataFrame keeping rows that match any of *label_indices*.
+
+        The filtering strategy is chosen based on the ``is_list`` and
+        ``multi_label`` flags of *label_field_instance*.
+        """
+        col = pl.col(label_field_name)
+
+        if label_field_instance.is_list and label_field_instance.multi_label:
+            # List(List(UInt)) - explode outer list, check inner lists, re-aggregate.
+            mask = (
+                self.df.with_row_index("__row_idx__")
+                .explode(label_field_name)
+                .with_columns(
+                    pl.col(label_field_name).list.eval(pl.element().is_in(label_indices)).list.any().alias("__match__")
+                )
+                .group_by("__row_idx__")
+                .agg(pl.col("__match__").any())
+                .sort("__row_idx__")["__match__"]
+                .to_list()
+            )
+            return self.df.filter(pl.Series(mask))
+
+        if label_field_instance.is_list or label_field_instance.multi_label:
+            # List(UInt) - keep row if any element matches.
+            return self.df.filter(col.list.eval(pl.element().is_in(label_indices)).list.any())
+
+        # Scalar UInt - keep row if the value matches.
+        return self.df.filter(col.is_in(label_indices))
+
+    def filter_by_labels(
+        self,
+        labels: str | int | Sequence[str | int],
+        label_field_name: str | None = None,
+    ) -> Dataset[DType]:
+        """
+        Return a new dataset containing only items that have at least one of the given labels.
+
+        This method accepts either label names (as strings) or label indices (as integers)
+        and resolves them to their integer indices using the LabelCategories associated with
+        the specified label field. It supports all LabelField configurations: single labels,
+        multi-label fields, list fields, and combinations thereof.
+
+        When ``label_field_name`` is not provided, the method automatically
+        detects the LabelField in the schema. If the schema contains multiple
+        LabelFields, ``label_field_name`` must be specified explicitly.
+
+        Args:
+            labels: A single label name (str), label index (int), or a sequence of label names
+                and/or indices to filter by. Label indices must be within the valid range
+                [0, num_categories).
+            label_field_name: The name of the attribute on the Sample that uses a
+                LabelField. If ``None``, it is inferred automatically when the
+                schema contains exactly one LabelField.
+
+        Returns:
+            A new Dataset containing only the items whose label field contains
+            at least one of the specified labels.
+
+        Raises:
+            KeyError: If ``label_field_name`` is not found in the schema.
+            TypeError: If the specified field is not a LabelField, or if a label is
+                neither a string nor an integer.
+            RuntimeError: If ``label_field_name`` is ``None`` and the schema
+                contains zero or more than one LabelField.
+            ValueError: If the field does not have LabelCategories attached, if any
+                of the provided label names are not found in the categories, or if
+                any label index is out of range.
+
+        Example:
+            ```python
+            # Auto-detect (schema has exactly one LabelField)
+            filtered = dataset.filter_by_labels(["cat", "dog"])
+
+            # Using label indices
+            filtered = dataset.filter_by_labels([0, 1])
+
+            # Mixing label names and indices
+            filtered = dataset.filter_by_labels(["cat", 1])
+
+            # Explicit field name (required when multiple LabelFields exist)
+            filtered = dataset.filter_by_labels(["cat", "dog"], label_field_name="labels")
+            ```
+        """
+
+        label_field_name = self._resolve_label_field_name(label_field_name)
+        attr_info = self.schema.attributes[label_field_name]
+        label_field_instance: LabelField = attr_info.field  # type: ignore[assignment]
+
+        # Validate LabelCategories
+        categories = attr_info.categories
+        if categories is None or not isinstance(categories, BaseLabelCategories):
+            raise ValueError(
+                f"Attribute '{label_field_name}' does not have LabelCategories attached to the schema. "
+                f"LabelCategories are required to resolve label names to indices. "
+                f"Found categories: {categories}"
+            )
+
+        if not isinstance(categories, (LabelCategories, HierarchicalLabelCategories)):
+            raise TypeError(
+                f"Attribute '{label_field_name}' has unsupported categories type "
+                f"'{type(categories).__name__}'. Expected LabelCategories or "
+                f"HierarchicalLabelCategories."
+            )
+
+        if isinstance(labels, (str, int)):
+            labels = [labels]
+
+        label_indices = self._resolve_label_indices(labels, categories, label_field_name)
+        filtered_df = self._filter_df_by_label_indices(label_field_name, label_field_instance, label_indices)
 
         return Dataset.from_dataframe(
             df=filtered_df,
