@@ -1194,7 +1194,7 @@ def test_filter_by_labels_validation_errors():
         ds.filter_by_labels([-1])
 
     # Invalid type (not string or int)
-    with pytest.raises(TypeError, match="must be a string or int"):
+    with pytest.raises(TypeError, match=r"must be a string.*or int"):
         ds.filter_by_labels([1.5])
 
     # Unknown label name
