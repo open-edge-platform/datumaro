@@ -27,8 +27,10 @@ from datumaro.experimental.export_import import (
     IMAGES_DIR,
     METADATA_FILE,
     VERSION,
+    VIDEOS_DIR,
     _export_images_from_dataset,
     _get_registered_samples,
+    _get_video_fields,
     _match_dtype_from_schema,
     _sample_registry,
     export_dataset,
@@ -53,6 +55,8 @@ from datumaro.experimental.fields import (
     tensor_field,
     tile_field,
 )
+from datumaro.experimental.fields.videos import media_path_field, video_frame_path_field
+from datumaro.experimental.media import LazyImage, LazyVideoFrame, VideoInfo
 
 LABEL_CATEGORIES = LabelCategories(labels=("apple", "orange", "pear", "mango", "coconut"))
 MASK_CATEGORIES = MaskCategories.generate(size=256)
@@ -1320,3 +1324,454 @@ def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
     # Verify the dataset works correctly
     assert len(imported_dataset) == 1
     assert imported_dataset[0].label == 3
+
+
+# ============================================================================
+# Video Export/Import Tests
+# ============================================================================
+
+# Path to test video in assets
+TEST_VIDEO_PATH = Path(__file__).parent.parent.parent / "assets" / "cvat_dataset" / "test.mp4"
+
+
+def test_export_video_frame_path_field_reference_mode(tmp_path):
+    """Test exporting VideoFramePathField in reference mode (keeps original paths)."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+
+    # Check metadata
+    with open(output_dir / METADATA_FILE) as f:
+        metadata = json.load(f)
+
+    assert "videos" in metadata
+    assert metadata["videos"]["export_mode"] == "reference"
+    assert "frame" in metadata["videos"]["fields"]
+
+    # Video directory should not exist in reference mode
+    assert not (output_dir / VIDEOS_DIR).exists()
+
+
+def test_export_video_frame_path_field_copy_mode(tmp_path):
+    """Test exporting VideoFramePathField in copy mode (copies video files)."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+
+    # Check that video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+
+def test_export_import_video_metadata_preserved(tmp_path):
+    """Test that video metadata is preserved through export/import."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+
+    dataset = Dataset(VideoSample)
+    dataset.append(VideoSample(frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)))
+
+    # Pre-populate video metadata
+    video_info = VideoInfo(
+        path=str(TEST_VIDEO_PATH),
+        total_frames=100,
+        fps=15.0,
+        width=240,
+        height=180,
+        duration=6.67,
+        codec="h264",
+    )
+    dataset.add_video_metadata(str(TEST_VIDEO_PATH), video_info)
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+
+    # Check metadata file has video metadata
+    with open(output_dir / METADATA_FILE) as f:
+        metadata = json.load(f)
+
+    assert "videos" in metadata
+    assert "metadata" in metadata["videos"]
+    assert str(TEST_VIDEO_PATH) in metadata["videos"]["metadata"]
+
+    # Import and verify video metadata
+    imported = import_dataset(output_dir, dtype=VideoSample)
+
+    assert str(TEST_VIDEO_PATH) in imported.video_metadata
+    imported_info = imported.get_video_info(str(TEST_VIDEO_PATH))
+    assert imported_info is not None
+    assert imported_info.total_frames == 100
+    assert imported_info.fps == 15.0
+    assert imported_info.width == 240
+    assert imported_info.height == 180
+
+
+def test_export_import_video_frames_roundtrip(tmp_path):
+    """Test complete export/import roundtrip for video frames."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    original_dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(5):
+        original_dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i * 2),
+                label=i,
+            )
+        )
+
+    # Add video metadata
+    video_info = VideoInfo(
+        path=str(TEST_VIDEO_PATH),
+        total_frames=100,
+        fps=15.0,
+        width=240,
+        height=180,
+        duration=6.67,
+        codec="h264",
+    )
+    original_dataset.add_video_metadata(str(TEST_VIDEO_PATH), video_info)
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(original_dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=VideoSample)
+
+    # Verify
+    assert len(imported) == 5
+    for i in range(5):
+        sample = imported[i]
+        assert sample.label == i
+        assert isinstance(sample.frame, LazyVideoFrame)
+        assert sample.frame.frame_index == i * 2
+
+    # Verify video metadata
+    assert str(TEST_VIDEO_PATH) in imported.video_metadata
+
+
+def test_export_import_video_to_zip(tmp_path):
+    """Test exporting and importing video dataset as ZIP."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    video_info = VideoInfo(
+        path=str(TEST_VIDEO_PATH),
+        total_frames=100,
+        fps=15.0,
+        width=240,
+        height=180,
+        duration=6.67,
+        codec="h264",
+    )
+    dataset.add_video_metadata(str(TEST_VIDEO_PATH), video_info)
+
+    # Export as ZIP with copy mode
+    zip_path = tmp_path / "dataset.zip"
+    export_dataset(dataset, zip_path, export_images=False, export_videos="copy", as_zip=True)
+
+    assert zip_path.exists()
+
+    # Verify ZIP contents
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        names = zf.namelist()
+        assert METADATA_FILE in names
+        assert DATAFRAME_FILE in names
+        # Check video file was included
+        video_files = [n for n in names if n.startswith(VIDEOS_DIR)]
+        assert len(video_files) >= 1
+
+    # Import from ZIP
+    imported = import_dataset(zip_path, dtype=VideoSample)
+
+    assert len(imported) == 3
+    # Video metadata should be preserved
+    assert len(imported.video_metadata) >= 1
+
+
+def test_export_empty_video_fields(tmp_path):
+    """Test exporting dataset with video fields but no video samples."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    # Add sample with None frame
+    dataset.df = pl.DataFrame(
+        {
+            "frame": [None],
+            "frame_frame_index": [None],
+            "label": [0],
+        }
+    )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+
+    # Should succeed without creating videos directory
+    assert (output_dir / METADATA_FILE).exists()
+    assert (output_dir / DATAFRAME_FILE).exists()
+
+
+def test_get_video_fields_identifies_video_fields(tmp_path):
+    """Test that _get_video_fields correctly identifies video-related fields."""
+
+    class MixedSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        image: str = image_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(MixedSample)
+
+    video_fields = _get_video_fields(dataset)
+    field_names = [name for name, _ in video_fields]
+
+    assert "frame" in field_names
+    assert "image" not in field_names
+    assert "label" not in field_names
+
+
+def test_export_import_media_path_field_with_videos(tmp_path):
+    """Test export/import of MediaPathField with video frames."""
+
+    class MediaSample(Sample):
+        media: LazyVideoFrame | LazyImage = media_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(MediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add video frame
+    dataset.append(
+        MediaSample(
+            media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=5),
+            label=0,
+        )
+    )
+
+    # Add video metadata
+    video_info = VideoInfo(
+        path=str(TEST_VIDEO_PATH),
+        total_frames=100,
+        fps=15.0,
+        width=240,
+        height=180,
+        duration=6.67,
+        codec="h264",
+    )
+    dataset.add_video_metadata(str(TEST_VIDEO_PATH), video_info)
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=True, export_videos="reference", as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=MediaSample)
+
+    assert len(imported) == 1
+    sample = imported[0]
+    assert isinstance(sample.media, LazyVideoFrame)
+    assert sample.media.frame_index == 5
+    assert str(TEST_VIDEO_PATH) in imported.video_metadata
+
+
+def test_export_import_media_path_field_mixed_content(tmp_path):
+    """Test export/import of MediaPathField with both images and video frames."""
+
+    class MediaSample(Sample):
+        media: LazyVideoFrame | LazyImage = media_path_field()
+        label: int = label_field()
+
+    # Create a test image
+    test_image_path = tmp_path / "test_image.png"
+    img = np.zeros((50, 50, 3), dtype=np.uint8)
+    img[:, :, 0] = 128  # Red channel
+    PILImage.fromarray(img).save(test_image_path)
+
+    dataset = Dataset(MediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add image sample
+    dataset.append(
+        MediaSample(
+            media=LazyImage(path=str(test_image_path)),
+            label=0,
+        )
+    )
+
+    # Add video frame sample
+    dataset.append(
+        MediaSample(
+            media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=10),
+            label=1,
+        )
+    )
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=True, export_videos="reference", as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=MediaSample)
+
+    assert len(imported) == 2
+
+    # First sample should be image
+    sample0 = imported[0]
+    assert sample0.label == 0
+    # After import, image paths become strings pointing to exported images
+
+    # Second sample should be video frame
+    sample1 = imported[1]
+    assert sample1.label == 1
+    assert isinstance(sample1.media, LazyVideoFrame)
+    assert sample1.media.frame_index == 10
+
+
+def test_video_metadata_multiple_videos(tmp_path):
+    """Test export/import with metadata for multiple videos."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+
+    dataset = Dataset(VideoSample)
+    dataset.append(VideoSample(frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)))
+
+    # Add metadata for multiple videos (even if not all are in dataset)
+    for i in range(3):
+        video_info = VideoInfo(
+            path=f"/path/to/video{i}.mp4",
+            total_frames=100 * (i + 1),
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        dataset.add_video_metadata(f"/path/to/video{i}.mp4", video_info)
+
+    # Also add metadata for the real test video
+    real_video_info = VideoInfo(
+        path=str(TEST_VIDEO_PATH),
+        total_frames=100,
+        fps=15.0,
+        width=240,
+        height=180,
+        duration=6.67,
+        codec="h264",
+    )
+    dataset.add_video_metadata(str(TEST_VIDEO_PATH), real_video_info)
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=VideoSample)
+
+    # All video metadata should be preserved
+    assert len(imported.video_metadata) == 4
+    for i in range(3):
+        info = imported.get_video_info(f"/path/to/video{i}.mp4")
+        assert info is not None
+        assert info.total_frames == 100 * (i + 1)
+
+
+def test_export_videos_copy_mode_creates_correct_paths(tmp_path):
+    """Test that copy mode creates correct relative paths in the DataFrame."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+
+    dataset = Dataset(VideoSample)
+    dataset.append(VideoSample(frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)))
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+
+    # Load the parquet and check the path is relative
+    df = pl.read_parquet(output_dir / DATAFRAME_FILE)
+    frame_path = df["frame"][0]
+
+    # Path should be relative to export dir and start with videos/
+    assert frame_path.startswith(VIDEOS_DIR) or "/" not in frame_path[:5]
+
+
+def test_video_metadata_serialization_with_null_codec(tmp_path):
+    """Test that video metadata with null codec serializes correctly."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+
+    dataset = Dataset(VideoSample)
+    # Add video metadata without codec
+    video_info = VideoInfo(
+        path="/path/to/video.mp4",
+        total_frames=100,
+        fps=30.0,
+        width=1920,
+        height=1080,
+        duration=3.33,
+        codec=None,  # No codec info
+    )
+    dataset.add_video_metadata("/path/to/video.mp4", video_info)
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+
+    # Check metadata
+    with open(output_dir / METADATA_FILE) as f:
+        metadata = json.load(f)
+
+    video_metadata = metadata["videos"]["metadata"]["/path/to/video.mp4"]
+    assert video_metadata["codec"] is None
+
+    # Import and verify
+    imported = import_dataset(output_dir, dtype=VideoSample)
+    imported_info = imported.get_video_info("/path/to/video.mp4")
+    assert imported_info is not None
+    assert imported_info.codec is None

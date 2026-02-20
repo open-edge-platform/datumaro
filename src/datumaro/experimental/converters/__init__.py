@@ -62,6 +62,12 @@ from datumaro.experimental.converters.registry import (
     converter,
     find_conversion_path,
 )
+from datumaro.experimental.converters.video_converters import (
+    MediaPathToImageCallableConverter,
+    MediaPathToImageConverter,
+    VideoFramePathToImageConverter,
+    VideoFrameToImageCallableConverter,
+)
 
 __all__ = [
     "AttributeRemapperConverter",
@@ -72,9 +78,7 @@ __all__ = [
     "ChannelsFirstConverter",
     "ConversionError",
     "ConversionPaths",
-    # Base
     "Converter",
-    # Registry
     "ConverterRegistry",
     "ConverterTransform",
     "EllipseCoordinateConverter",
@@ -89,23 +93,24 @@ __all__ = [
     "KeypointsDtypeConverter",
     "KeypointsToBBoxConverter",
     "LabelDtypeConverter",
-    # Annotation converters
     "LabelIndexConverter",
     "MaskCallableToMaskConverter",
     "MaskChannelsFirstConverter",
+    "MediaPathToImageCallableConverter",
+    "MediaPathToImageConverter",
     "PolygonCoordinateConverter",
     "PolygonDtypeConverter",
     "PolygonToBBoxConverter",
     "PolygonToInstanceMaskConverter",
-    # Mask converters
     "PolygonToMaskConverter",
-    # Image converters
     "RedBlueColorConverter",
     "RotatedBBoxCoordinateConverter",
     "RotatedBBoxDtypeConverter",
     "RotatedBBoxToBBoxConverter",
     "RotatedBBoxToPolygonConverter",
     "UInt8ToFloat32Converter",
+    "VideoFramePathToImageConverter",
+    "VideoFrameToImageCallableConverter",
     "_can_lazy_converter_handle_conversion",
     "_create_conversion_error_message",
     "_create_initial_renaming_converter",

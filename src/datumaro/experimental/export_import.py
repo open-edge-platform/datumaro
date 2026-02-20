@@ -10,6 +10,7 @@ including support for:
 - Parquet format for efficient DataFrame storage
 - JSON metadata for schema and categories
 - Image export for callable and path-based image fields
+- Video support with video metadata serialization
 - ZIP archive format for complete dataset packages
 - Automatic dtype detection when importing without an explicit ``dtype``
 """
@@ -22,7 +23,7 @@ import tempfile
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
 import numpy as np
@@ -32,6 +33,8 @@ from PIL import Image
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
 from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
+from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
+from datumaro.experimental.media import VideoInfo
 from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
@@ -74,6 +77,7 @@ def register_sample(cls: type[Sample]) -> type[Sample]:
 METADATA_FILE = "metadata.json"
 DATAFRAME_FILE = "data.parquet"
 IMAGES_DIR = "images"
+VIDEOS_DIR = "videos"
 try:
     VERSION = _pkg_version("datumaro")
 except PackageNotFoundError:
@@ -81,15 +85,29 @@ except PackageNotFoundError:
 
 
 def _get_image_fields(dataset: Dataset[DType]) -> list[tuple[str, object]]:
-    """Extract all image-related fields from the dataset schema."""
+    """Extract all image-related fields from the dataset schema.
+
+    Note: MediaPathField is included because it can contain both images and video frames.
+    The export logic handles MediaPathField specially by only exporting rows where
+    frame_index is None (indicating an image rather than a video frame).
+    """
     image_fields = []
     for name, attr_info in dataset.schema.attributes.items():
         if isinstance(
             attr_info.field,
-            ImageCallableField | ImagePathField | InstanceMaskCallableField | MaskCallableField,
+            ImageCallableField | ImagePathField | InstanceMaskCallableField | MaskCallableField | MediaPathField,
         ):
             image_fields.append((name, attr_info.field))
     return image_fields
+
+
+def _get_video_fields(dataset: Dataset[DType]) -> list[tuple[str, object]]:
+    """Extract all video-related fields from the dataset schema."""
+    video_fields = []
+    for name, attr_info in dataset.schema.attributes.items():
+        if isinstance(attr_info.field, (VideoFramePathField, MediaPathField)):
+            video_fields.append((name, attr_info.field))
+    return video_fields
 
 
 def _get_field_value(dataset: Dataset[DType], idx: int, field_name: str) -> object:
@@ -180,16 +198,34 @@ def _export_single_field(
     field: object,
     output_dir: Path,
 ) -> dict[int, str]:
-    """Export images for a single field across all rows."""
+    """Export images for a single field across all rows.
+
+    For MediaPathField, only rows where frame_index is None (indicating an image
+    not a video frame) are exported.
+    """
     field_paths: dict[int, str] = {}
+
+    # For MediaPathField, we need to check frame_index to determine if it's an image
+    frame_idx_col = f"{field_name}_frame_index"
+    is_media_path_field = isinstance(field, MediaPathField)
 
     for idx in range(len(dataset)):
         value = _get_field_value(dataset, idx, field_name)
         if value is None:
             continue
 
+        # For MediaPathField, skip rows that are video frames (frame_index is not None)
+        if is_media_path_field and frame_idx_col in dataset.df.columns:
+            frame_index = dataset.df[frame_idx_col][idx]
+            if frame_index is not None:
+                # This is a video frame, not an image - skip for image export
+                continue
+
         rel_path = None
         if isinstance(field, ImagePathField):
+            rel_path = _export_image_path_field(value, field_name, idx, output_dir)
+        elif isinstance(field, MediaPathField):
+            # MediaPathField with frame_index=None is treated like ImagePathField
             rel_path = _export_image_path_field(value, field_name, idx, output_dir)
         elif isinstance(field, ImageCallableField):
             rel_path = _export_callable_field(value, field_name, idx, output_dir, is_mask=False)
@@ -233,10 +269,213 @@ def _export_images_from_dataset(
     return image_paths
 
 
+def _collect_video_paths_from_fields(
+    dataset: Dataset[DType],
+    video_fields: list[tuple[str, Any]],
+) -> set[str]:
+    """Collect all unique video paths from video fields."""
+    video_paths: set[str] = set()
+
+    for field_name, field in video_fields:
+        if isinstance(field, VideoFramePathField):
+            if field_name in dataset.df.columns:
+                paths = dataset.df[field_name].drop_nulls().unique().to_list()
+                video_paths.update(str(p) for p in paths)
+        elif isinstance(field, MediaPathField):
+            # For MediaPathField, check if frame_index is set to identify video frames
+            frame_idx_col = f"{field_name}_frame_index"
+            if field_name in dataset.df.columns and frame_idx_col in dataset.df.columns:
+                video_df = dataset.df.filter(pl.col(frame_idx_col).is_not_null())
+                if len(video_df) > 0:
+                    paths = video_df[field_name].drop_nulls().unique().to_list()
+                    video_paths.update(str(p) for p in paths)
+
+    return video_paths
+
+
+def _copy_video_files(
+    video_paths: set[str],
+    output_dir: Path,
+) -> dict[str, str]:
+    """Copy video files to output directory and return path mapping."""
+    video_path_mapping: dict[str, str] = {}
+
+    for video_path in video_paths:
+        source_path = Path(video_path)
+        if not source_path.exists():
+            print(f"Warning: Video file not found: {video_path}")
+            continue
+
+        dest_path = output_dir / source_path.name
+        # Handle name collisions
+        counter = 1
+        while dest_path.exists():
+            stem = source_path.stem
+            suffix = source_path.suffix
+            dest_path = output_dir / f"{stem}_{counter}{suffix}"
+            counter += 1
+        shutil.copy2(source_path, dest_path)
+        video_path_mapping[video_path] = str(dest_path.relative_to(output_dir.parent))
+
+    return video_path_mapping
+
+
+def _export_videos_from_dataset(
+    dataset: Dataset[DType],
+    output_dir: Path,
+    export_mode: str = "copy",
+) -> dict[str, dict[str, str]]:
+    """
+    Export video data from the dataset.
+
+    Modes:
+        - "reference": Store original video paths (default)
+        - "copy": Copy video files to output directory
+        - "frames": Export individual frames as images (for frame-only export)
+
+    Args:
+        dataset: The dataset to export
+        output_dir: Output directory
+        export_mode: How to handle video files
+
+    Returns:
+        Mapping of original paths to exported paths
+    """
+    if export_mode == "reference":
+        # Keep original paths, no copying needed
+        return {}
+
+    # Collect all unique video paths
+    video_fields = _get_video_fields(dataset)
+    video_paths = _collect_video_paths_from_fields(dataset, video_fields)
+
+    if not video_paths:
+        return {}
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if export_mode == "copy":
+        return _copy_video_files(video_paths, output_dir)
+
+    return {}
+
+
+def _setup_work_directory(output_path: Path, as_zip: bool) -> tuple[Path, Path | None, Path]:
+    """Setup the working directory for export.
+
+    Returns:
+        Tuple of (final_output_path, temp_dir, work_dir)
+    """
+    if as_zip:
+        if output_path.suffix != ".zip":
+            output_path.mkdir(parents=True, exist_ok=True)
+            output_path = output_path / "dataset.zip"
+        temp_dir = Path(tempfile.mkdtemp())
+        return output_path, temp_dir, temp_dir
+    output_path.mkdir(parents=True, exist_ok=True)
+    return output_path, None, output_path
+
+
+def _update_df_with_image_paths(
+    df: pl.DataFrame,
+    images_paths: dict[str, dict[int, str]],
+    media_path_fields: set[str],
+) -> pl.DataFrame:
+    """Update DataFrame with exported image paths."""
+    df_to_export = df.with_row_index("__idx")
+
+    for field_name, path_map in images_paths.items():
+        if not path_map:
+            continue
+
+        # Create a mapping DataFrame from the exported paths
+        mapping_df = pl.DataFrame(
+            {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
+            schema={"__idx": pl.UInt32, "__new_path": pl.String},
+        )
+
+        df_to_export = df_to_export.join(mapping_df, on="__idx", how="left")
+
+        if field_name in media_path_fields:
+            # For MediaPathField, only update image rows (non-null in
+            # path_map); preserve video-frame paths in other rows.
+            df_to_export = df_to_export.with_columns(
+                pl.coalesce(pl.col("__new_path"), pl.col(field_name)).alias(field_name)
+            )
+            df_to_export = df_to_export.drop("__new_path")
+        else:
+            # For all other image fields, drop the old column (may be
+            # Object type) and rename the new String column in its place.
+            df_to_export = df_to_export.drop(field_name).rename({"__new_path": field_name})
+
+    return df_to_export.drop("__idx")
+
+
+def _update_df_with_video_paths(
+    df: pl.DataFrame,
+    video_path_mapping: dict[str, str],
+    video_fields: list[tuple[str, Any]],
+) -> pl.DataFrame:
+    """Update DataFrame with exported video paths."""
+    df_to_export = df
+    for field_name, _ in video_fields:
+        if field_name in df_to_export.columns:
+            df_to_export = df_to_export.with_columns(pl.col(field_name).replace(video_path_mapping).alias(field_name))
+    return df_to_export
+
+
+def _write_parquet_and_metadata(
+    df_to_export: pl.DataFrame,
+    work_dir: Path,
+    dataset: Dataset[DType],
+    export_videos: str,
+    video_path_mapping: dict[str, str],
+) -> None:
+    """Write parquet file and metadata to the work directory."""
+    # Filter out Object columns (like callables) as they can't be serialized to Parquet
+    columns_to_export = [col for col, dtype in df_to_export.schema.items() if dtype != pl.Object]
+    parquet_path = work_dir / DATAFRAME_FILE
+    df_to_export.select(columns_to_export).write_parquet(parquet_path)
+
+    # Track which columns are Object types (excluded from parquet)
+    object_columns = [col for col, dtype in df_to_export.schema.items() if dtype == pl.Object]
+
+    # Serialize video metadata
+    video_metadata_dict = {path: info.to_dict() for path, info in dataset._video_metadata.items()}
+
+    # Create metadata
+    metadata = {
+        "version": VERSION,
+        "schema": dataset.schema.to_dict(),
+        "object_columns": object_columns,
+        "videos": {
+            "fields": [name for name, _ in _get_video_fields(dataset)],
+            "export_mode": export_videos,
+            "original_paths": {v: k for k, v in video_path_mapping.items()},
+            "metadata": video_metadata_dict,
+        },
+    }
+
+    # Write metadata
+    metadata_path = work_dir / METADATA_FILE
+    with open(metadata_path, "w") as f:
+        json.dump(metadata, f, indent=2)
+
+
+def _create_zip_archive(output_path: Path, work_dir: Path) -> None:
+    """Create a ZIP archive from the work directory."""
+    with ZipFile(output_path, "w", ZIP_DEFLATED) as zipf:
+        for file_path in work_dir.rglob("*"):
+            if file_path.is_file():
+                arcname = file_path.relative_to(work_dir)
+                zipf.write(file_path, arcname)
+
+
 def export_dataset(
     dataset: Dataset[DType],
     output_path: str | Path,
     export_images: bool = True,
+    export_videos: str = "copy",
     as_zip: bool = False,
 ) -> None:
     """
@@ -244,88 +483,53 @@ def export_dataset(
 
     The dataset is exported with the following structure:
     - data.parquet: The DataFrame in Parquet format
-    - metadata.json: Schema, categories, and image paths
+    - metadata.json: Schema, categories, image paths, and video metadata
     - images/: Directory containing exported images (if export_images=True)
+    - videos/: Directory containing exported videos (if export_videos="copy")
 
     Image format is automatically determined:
     - ImagePathField: Preserves original format (copied directly)
     - ImageCallableField: Saved as PNG (lossless)
     - InstanceMaskCallableField/MaskCallableField: Saved as PNG (best for masks)
 
+    Video handling modes:
+    - "reference": Keep original video paths
+    - "copy": Copy video files to output directory
+
     Args:
         dataset: The dataset to export
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
+        export_videos: How to handle videos ("reference" or "copy")
         as_zip: Whether to package everything as a ZIP file
     """
-    output_path = Path(output_path)
-
-    # Create temporary directory if using zip, otherwise use output_path directly
-    temp_dir = None
-    if as_zip:
-        if output_path.suffix != ".zip":
-            output_path.mkdir(parents=True, exist_ok=True)
-            output_path /= "dataset.zip"
-        temp_dir = Path(tempfile.mkdtemp())
-        work_dir = temp_dir
-    else:
-        output_path.mkdir(parents=True, exist_ok=True)
-        work_dir = output_path
+    output_path, temp_dir, work_dir = _setup_work_directory(Path(output_path), as_zip)
 
     try:
         df_to_export = dataset.df
+        video_path_mapping: dict[str, str] = {}
+
         # Export images if requested
         if export_images:
             images_dir = work_dir / IMAGES_DIR
             images_paths = _export_images_from_dataset(dataset, images_dir)
+            media_path_fields = {name for name, f in _get_image_fields(dataset) if isinstance(f, MediaPathField)}
+            df_to_export = _update_df_with_image_paths(df_to_export, images_paths, media_path_fields)
 
-            df_to_export = df_to_export.with_row_index("__idx")
-            for field_name, path_map in images_paths.items():
-                if not path_map:
-                    continue
+        # Export videos
+        if export_videos != "reference":
+            videos_dir = work_dir / VIDEOS_DIR
+            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos)
+            if video_path_mapping:
+                video_fields = _get_video_fields(dataset)
+                df_to_export = _update_df_with_video_paths(df_to_export, video_path_mapping, video_fields)
 
-                # Create a mapping DataFrame from the exported paths
-                mapping_df = pl.DataFrame(
-                    {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
-                    schema={"__idx": pl.UInt32, "__new_path": pl.String},
-                )
-
-                # Left join to apply updates; rows not in path_map will have null paths
-                df_to_export = (
-                    df_to_export.join(mapping_df, on="__idx", how="left")
-                    .with_columns(pl.col("__new_path").alias(field_name))
-                    .drop("__new_path")
-                )
-            df_to_export = df_to_export.drop("__idx")
-
-        # Export DataFrame to Parquet
-        # Filter out Object columns (like callables) as they can't be serialized to Parquet
-        columns_to_export = [col for col, dtype in df_to_export.schema.items() if dtype != pl.Object]
-        parquet_path = work_dir / DATAFRAME_FILE
-        df_to_export.select(columns_to_export).write_parquet(parquet_path)
-
-        # Track which columns are Object types (excluded from parquet)
-        object_columns = [col for col, dtype in df_to_export.schema.items() if dtype == pl.Object]
-
-        # Create metadata
-        metadata = {
-            "version": VERSION,
-            "schema": dataset.schema.to_dict(),
-            "object_columns": object_columns,
-        }
-
-        # Write metadata
-        metadata_path = work_dir / METADATA_FILE
-        with open(metadata_path, "w") as f:
-            json.dump(metadata, f, indent=2)
+        # Write parquet and metadata
+        _write_parquet_and_metadata(df_to_export, work_dir, dataset, export_videos, video_path_mapping)
 
         # Create ZIP if requested
         if as_zip:
-            with ZipFile(output_path, "w", ZIP_DEFLATED) as zipf:
-                for file_path in work_dir.rglob("*"):
-                    if file_path.is_file():
-                        arcname = file_path.relative_to(work_dir)
-                        zipf.write(file_path, arcname)
+            _create_zip_archive(output_path, work_dir)
 
     finally:
         # Clean up temporary directory if used
@@ -341,8 +545,13 @@ def import_dataset(
     """
     Import a dataset from an exported format.
 
-    When dtype is None the function tries to automatically determine the correct Sample subclass by matching the stored
-    schema against all registered subclasses (discovered via the :func:`register_sample` registry).  If no
+    All media paths (images and videos) are resolved relative to the export
+    directory.  Images are stored under ``images/`` and videos under ``videos/``,
+    so no external root parameter is needed.
+
+    When dtype is None the function tries to automatically determine the correct
+    Sample subclass by matching the stored schema against all registered
+    subclasses (discovered via the :func:`register_sample` registry).  If no
     match is found, it falls back to the base ``Sample`` class.
 
     Args:
@@ -423,10 +632,14 @@ def _reconstruct_field_values(
     """
     Reconstruct values for a single image-related field.
 
+    For MediaPathField, only image rows (those exported to images/) are
+    reconstructed here.  Video-frame rows are handled by
+    ``_reconstruct_video_fields``.
+
     Returns:
         Tuple of (values list, is_path_field, is_callable_field)
     """
-    is_path_field = isinstance(field, ImagePathField)
+    is_path_field = isinstance(field, ImagePathField | MediaPathField)
     is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
 
     if not (is_path_field or is_callable_field):
@@ -453,9 +666,21 @@ def _update_dataframe_with_field(
     field_name: str,
     values: list[object | None],
     is_path_field: bool,
+    is_media_path_field: bool = False,
 ) -> pl.DataFrame:
-    """Update DataFrame with reconstructed field values."""
+    """Update DataFrame with reconstructed field values.
+
+    For MediaPathField, only non-None values are applied so that video-frame
+    rows (which were not exported to images/) keep their existing paths.
+    """
     if is_path_field:
+        if is_media_path_field and field_name in df.columns:
+            # Only overwrite rows where we found an exported image;
+            # leave video-frame rows (None in values) untouched.
+            new_series = pl.Series(field_name, values, dtype=pl.String())
+            return df.with_columns(
+                pl.when(new_series.is_not_null()).then(new_series).otherwise(pl.col(field_name)).alias(field_name)
+            )
         if field_name in df.columns:
             df = df.drop(field_name)
         return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
@@ -483,7 +708,13 @@ def _reconstruct_image_fields(
         )
 
         if is_path_field or is_callable_field:
-            df = _update_dataframe_with_field(df, field_name, values, is_path_field)
+            df = _update_dataframe_with_field(
+                df,
+                field_name,
+                values,
+                is_path_field,
+                is_media_path_field=isinstance(field, MediaPathField),
+            )
 
     return df
 
@@ -537,12 +768,81 @@ def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
     return Sample
 
 
+def _reconstruct_video_fields(
+    df: pl.DataFrame,
+    metadata: dict,
+    input_dir: Path,
+) -> pl.DataFrame:
+    """
+    Reconstruct video frame fields from exported data.
+
+    For ``copy`` mode, relative paths stored in the parquet are resolved to
+    absolute paths under *input_dir*.  For ``reference`` mode the original
+    absolute paths are preserved as-is.
+
+    Args:
+        df: DataFrame to update
+        metadata: Loaded metadata dictionary
+        input_dir: Directory containing the exported dataset
+
+    Returns:
+        Updated DataFrame with corrected video paths
+    """
+    videos_info = metadata.get("videos", {})
+    if not videos_info:
+        return df
+
+    video_fields = videos_info.get("fields", [])
+    export_mode = videos_info.get("export_mode", "reference")
+
+    if not video_fields:
+        return df
+
+    for field_name in video_fields:
+        if field_name not in df.columns:
+            continue
+
+        if export_mode == "copy":
+            # Paths are relative to input_dir, make them absolute
+            def make_absolute(path: str | None) -> str | None:
+                if path is None:
+                    return None
+                abs_path = input_dir / path
+                if abs_path.exists():
+                    return str(abs_path)
+                return path
+
+            paths = df[field_name].to_list()
+            updated_paths = [make_absolute(p) for p in paths]
+            df = df.with_columns(pl.Series(field_name, updated_paths, dtype=pl.String()))
+
+    return df
+
+
+def _load_video_metadata(metadata: dict) -> dict[str, VideoInfo]:
+    """
+    Load video metadata from the metadata dictionary.
+
+    Args:
+        metadata: Loaded metadata dictionary
+
+    Returns:
+        Dictionary mapping video paths to VideoInfo objects
+    """
+    videos_info = metadata.get("videos", {})
+    video_metadata_dict = videos_info.get("metadata", {})
+
+    return {path: VideoInfo.from_dict(info_dict) for path, info_dict in video_metadata_dict.items()}
+
+
 def _import_dataset_from_dir(
     input_dir: Path,
     dtype: type[DType] | None = None,
 ) -> Dataset[DType]:
     """
     Import dataset from a directory.
+
+    All media paths (images and videos) are resolved relative to *input_dir*.
 
     Args:
         input_dir: Directory containing the exported dataset
@@ -561,7 +861,13 @@ def _import_dataset_from_dir(
     df = _reconstruct_image_fields(df, schema, images_base_dir)
     df = _add_missing_object_columns(df, object_columns)
 
+    # Reconstruct video fields
+    df = _reconstruct_video_fields(df, metadata, input_dir)
+
+    # Load video metadata
+    video_metadata = _load_video_metadata(metadata)
+
     if dtype is None:
         dtype = _match_dtype_from_schema(schema)
 
-    return Dataset.from_dataframe(df, dtype, schema=schema)
+    return Dataset.from_dataframe(df, dtype, schema=schema, video_metadata=video_metadata)
