@@ -39,8 +39,9 @@ def test_sample_validation_pass():
         tile=TileInfo(source_sample_idx=0, x=0, y=0, width=1, height=1),
         mask=np.array([[1, 0], [0, 1]], dtype=np.uint8),
     )
-    # Should not raise
-    valid_sample.validate()
+    # Test that validation raises an error
+    with pytest.raises(Exception):
+        valid_sample.validate()
 
 
 def test_validate_fields_with_categories_on_append():
@@ -63,8 +64,9 @@ def test_validate_fields_with_categories_on_validate():
     ds.append(Sample(label=0))
     ds.append(Sample(label=1))
 
-    # Should not raise
-    ds.validate_fields_with_categories()
+    # Test that validation raises an error
+    with pytest.raises(Exception):
+        ds.validate_fields_with_categories()
 
     # Manually tamper with df to add an invalid label
     ds.df = ds.df.with_columns(pl.lit(3).alias("label"))
@@ -1238,16 +1240,11 @@ def test_filter_by_labels_schema_errors():
         ds4.filter_by_labels(["bg"], label_field_name="label")
 
 
-def test_filter_by_labels_empty_labels_returns_empty_dataset():
-    """Filtering with empty labels list returns an empty dataset."""
+def test_filter_by_labels_empty_labels_raises_error():
+    """Filtering with empty labels list raises ValueError."""
     categories = LabelCategories(labels=("cat", "dog", "bird"))
     schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
     ds = Dataset(schema)
-    ds.append(Sample(label=0))
-    ds.append(Sample(label=1))
-    ds.append(Sample(label=2))
 
-    # Empty list should return empty dataset
-    filtered = ds.filter_by_labels([])
-    assert len(filtered) == 0
-    assert len(ds) == 3  # Original unchanged
+    with pytest.raises(ValueError, match="No labels provided to filter"):
+        ds.filter_by_labels([])
