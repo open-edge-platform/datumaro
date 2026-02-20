@@ -1077,6 +1077,252 @@ def test_filter_by_labels_list_and_multi_label():
     assert len(filtered) == 2  # rows 0, 2
 
 
+def test_filter_by_labels_removes_unwanted_labels_list_field():
+    """Verify that filter_by_labels removes unwanted labels from within samples for is_list=True."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(labels=[0, 1]))  # cat, dog
+    ds.append(Sample(labels=[2]))  # bird
+    ds.append(Sample(labels=[1, 2]))  # dog, bird
+    ds.append(Sample(labels=[0]))  # cat
+
+    # Filter by "dog" - should keep rows 0 and 2, with only "dog" label remaining
+    filtered = ds.filter_by_labels(["dog"])
+    assert len(filtered) == 2
+    # Verify values directly from DataFrame since sample accessor has type issues with test schema
+    labels_list = filtered.df["labels"].to_list()
+    assert labels_list[0] == [1]  # was [0, 1], now [1] (dog only)
+    assert labels_list[1] == [1]  # was [1, 2], now [1] (dog only)
+
+    # Filter by "cat" and "bird" - should keep all rows, removing "dog" where applicable
+    filtered = ds.filter_by_labels(["cat", "bird"])
+    assert len(filtered) == 4
+    labels_list = filtered.df["labels"].to_list()
+    assert labels_list[0] == [0]  # was [0, 1], now [0] (cat only)
+    assert labels_list[1] == [2]  # [bird] unchanged
+    assert labels_list[2] == [2]  # was [1, 2], now [2] (bird only)
+    assert labels_list[3] == [0]  # [cat] unchanged
+
+
+def test_filter_by_labels_removes_unwanted_labels_multi_label():
+    """Verify that filter_by_labels removes unwanted labels from within samples for multi_label=True."""
+    categories = LabelCategories(labels=("sunny", "rainy", "cloudy"))
+    schema = Schema(
+        attributes={
+            "weather": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(weather=[0, 2]))  # sunny + cloudy
+    ds.append(Sample(weather=[1]))  # rainy
+    ds.append(Sample(weather=[0, 1]))  # sunny + rainy
+
+    # Filter by "sunny" - should keep rows 0 and 2, with only "sunny" remaining
+    filtered = ds.filter_by_labels(["sunny"], label_field_name="weather")
+    assert len(filtered) == 2
+    weather_list = filtered.df["weather"].to_list()
+    assert weather_list[0] == [0]  # was [0, 2], now [0] (sunny only)
+    assert weather_list[1] == [0]  # was [0, 1], now [0] (sunny only)
+
+    # Filter by "rainy" and "cloudy" - should keep all rows, removing "sunny" where applicable
+    filtered = ds.filter_by_labels(["rainy", "cloudy"], label_field_name="weather")
+    assert len(filtered) == 3
+    weather_list = filtered.df["weather"].to_list()
+    assert weather_list[0] == [2]  # was [0, 2], now [2] (cloudy only)
+    assert weather_list[1] == [1]  # [rainy] unchanged
+    assert weather_list[2] == [1]  # was [0, 1], now [1] (rainy only)
+
+
+def test_filter_by_labels_removes_unwanted_labels_list_and_multi_label():
+    """Verify that filter_by_labels removes unwanted labels for is_list=True and multi_label=True."""
+    categories = LabelCategories(labels=("a", "b", "c"))
+    schema = Schema(
+        attributes={
+            "tags": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(tags=[[0, 1], [2]]))  # [a,b], [c]
+    ds.append(Sample(tags=[[1]]))  # [b]
+    ds.append(Sample(tags=[[2], [0, 2]]))  # [c], [a,c]
+
+    # Filter by "a" - should keep rows 0 and 2, removing "b" and "c" labels
+    filtered = ds.filter_by_labels(["a"], label_field_name="tags")
+    assert len(filtered) == 2
+    tags_list = filtered.df["tags"].to_list()
+    assert tags_list[0] == [[0]]  # was [[0,1], [2]], now [[0]] (only "a" in first inner list)
+    assert tags_list[1] == [[0]]  # was [[2], [0,2]], now [[0]] (only "a" from second inner list)
+
+    # Filter by "b" and "c" - should keep all rows, removing "a" where applicable
+    filtered = ds.filter_by_labels(["b", "c"], label_field_name="tags")
+    assert len(filtered) == 3
+    tags_list = filtered.df["tags"].to_list()
+    assert tags_list[0] == [[1], [2]]  # was [[0,1], [2]], now [[1], [2]]
+    assert tags_list[1] == [[1]]  # [[b]] unchanged
+    assert tags_list[2] == [[2], [2]]  # was [[2], [0,2]], now [[2], [2]]
+
+
+# ── update_categories tests ─────────────────────────────────────────────────
+
+
+def test_filter_by_labels_update_categories_scalar():
+    """Test update_categories=True with scalar LabelField."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(type=int, field=label_field(), categories=categories),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # cat
+    ds.append(Sample(label=1))  # dog
+    ds.append(Sample(label=2))  # bird
+
+    # Filter for cat and bird with update_categories=True
+    filtered = ds.filter_by_labels(["cat", "bird"], update_categories=True)
+
+    # Check that categories were updated
+    new_cats = filtered.schema.attributes["label"].categories
+    assert new_cats.labels == ("cat", "bird")
+
+    # Check that indices were remapped: cat=0, bird=1 (was cat=0, bird=2)
+    assert filtered.df["label"].to_list() == [0, 1]  # cat=0, bird=1 (remapped)
+
+
+def test_filter_by_labels_update_categories_list_field():
+    """Test update_categories=True with is_list=True LabelField."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(labels=[0, 1]))  # cat, dog
+    ds.append(Sample(labels=[2]))  # bird
+    ds.append(Sample(labels=[1, 2]))  # dog, bird
+    ds.append(Sample(labels=[0]))  # cat
+
+    # Filter for cat and bird with update_categories=True
+    filtered = ds.filter_by_labels(["cat", "bird"], update_categories=True)
+
+    # Check that categories were updated
+    new_cats = filtered.schema.attributes["labels"].categories
+    assert new_cats.labels == ("cat", "bird")
+
+    # Check that indices were remapped: cat=0, bird=1 (was cat=0, bird=2)
+    labels_list = filtered.df["labels"].to_list()
+    assert labels_list[0] == [0]  # cat (was [0,1], dog removed, cat stays 0)
+    assert labels_list[1] == [1]  # bird (was [2], remapped to 1)
+    assert labels_list[2] == [1]  # bird (was [1,2], dog removed, bird remapped to 1)
+    assert labels_list[3] == [0]  # cat (was [0], stays 0)
+
+
+def test_filter_by_labels_update_categories_multi_label():
+    """Test update_categories=True with multi_label=True LabelField."""
+    categories = LabelCategories(labels=("sunny", "rainy", "cloudy"))
+    schema = Schema(
+        attributes={
+            "weather": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(weather=[0, 2]))  # sunny + cloudy
+    ds.append(Sample(weather=[1]))  # rainy
+    ds.append(Sample(weather=[0, 1]))  # sunny + rainy
+
+    # Filter for sunny and cloudy with update_categories=True
+    filtered = ds.filter_by_labels(["sunny", "cloudy"], label_field_name="weather", update_categories=True)
+
+    # Check that categories were updated
+    new_cats = filtered.schema.attributes["weather"].categories
+    assert new_cats.labels == ("sunny", "cloudy")
+
+    # Check that indices were remapped: sunny=0, cloudy=1 (was sunny=0, cloudy=2)
+    weather_list = filtered.df["weather"].to_list()
+    assert weather_list[0] == [0, 1]  # sunny, cloudy (cloudy remapped from 2 to 1)
+
+
+def test_filter_by_labels_update_categories_preserves_semantics():
+    """Test that update_categories=True preserves label_semantics for kept labels."""
+    from datumaro.experimental.categories import LabelSemantic
+
+    categories = LabelCategories(
+        labels=("normal_class", "anomaly_class", "other_class"),
+        label_semantics={LabelSemantic.NORMAL: "normal_class", LabelSemantic.ANOMALOUS: "anomaly_class"},
+    )
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(type=int, field=label_field(), categories=categories),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # normal_class
+    ds.append(Sample(label=1))  # anomaly_class
+    ds.append(Sample(label=2))  # other_class
+
+    # Filter for normal_class and other_class (drop anomaly_class)
+    filtered = ds.filter_by_labels(["normal_class", "other_class"], update_categories=True)
+
+    # Check that categories were updated
+    new_cats = filtered.schema.attributes["label"].categories
+    assert new_cats.labels == ("normal_class", "other_class")
+
+    # Check that label_semantics was preserved for normal_class but removed for anomaly_class
+    assert LabelSemantic.NORMAL in new_cats.label_semantics
+    assert new_cats.label_semantics[LabelSemantic.NORMAL] == "normal_class"
+    assert LabelSemantic.ANOMALOUS not in new_cats.label_semantics
+
+
+def test_filter_by_labels_update_categories_false_preserves_original():
+    """Test that update_categories=False (default) preserves original categories."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(type=int, field=label_field(), categories=categories),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # cat
+    ds.append(Sample(label=1))  # dog
+    ds.append(Sample(label=2))  # bird
+
+    # Filter for cat and bird WITHOUT update_categories
+    filtered = ds.filter_by_labels(["cat", "bird"], update_categories=False)
+
+    # Check that categories remain unchanged
+    new_cats = filtered.schema.attributes["label"].categories
+    assert new_cats.labels == ("cat", "dog", "bird")  # All original labels
+
+    # Check that indices remain unchanged
+    assert filtered.df["label"].to_list() == [0, 2]  # cat=0, bird=2 (original indices)
+
+
 # ── auto-detection tests ────────────────────────────────────────────────────
 
 

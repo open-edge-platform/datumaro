@@ -692,37 +692,74 @@ class Dataset(Generic[DType]):
     ) -> pl.DataFrame:
         """Return a filtered DataFrame keeping rows that match any of *label_indices*.
 
+        This method both filters rows (keeping only those with at least one matching label)
+        AND removes non-matching labels from within each sample's label field.
+
         The filtering strategy is chosen based on the ``is_list`` and
         ``multi_label`` flags of *label_field_instance*.
         """
         col = pl.col(label_field_name)
 
         if label_field_instance.is_list and label_field_instance.multi_label:
-            # List(List(UInt)) - explode outer list, check inner lists, re-aggregate.
-            mask = (
-                self.df.with_row_index("__row_idx__")
-                .explode(label_field_name)
-                .with_columns(
-                    pl.col(label_field_name).list.eval(pl.element().is_in(label_indices)).list.any().alias("__match__")
+            # List(List(UInt)) - for each inner list, keep only matching elements,
+            # then filter out empty inner lists, then filter out rows with no remaining labels.
+            return self.df.with_columns(
+                col.list.eval(
+                    pl.element()
+                    .list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element()))
+                    .list.drop_nulls()
                 )
-                .group_by("__row_idx__")
-                .agg(pl.col("__match__").any())
-                .sort("__row_idx__")["__match__"]
-                .to_list()
-            )
-            return self.df.filter(pl.Series(mask))
+                .list.eval(pl.when(pl.element().list.len() > 0).then(pl.element()))
+                .list.drop_nulls()
+            ).filter(col.list.len() > 0)
 
         if label_field_instance.is_list or label_field_instance.multi_label:
-            # List(UInt) - keep row if any element matches.
-            return self.df.filter(col.list.eval(pl.element().is_in(label_indices)).list.any())
+            # List(UInt) - keep only matching elements and filter out rows with empty lists.
+            return self.df.with_columns(
+                col.list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element())).list.drop_nulls()
+            ).filter(col.list.len() > 0)
 
         # Scalar UInt - keep row if the value matches.
         return self.df.filter(col.is_in(label_indices))
+
+    def _remap_label_indices(
+        self,
+        df: pl.DataFrame,
+        label_field_name: str,
+        label_field_instance: LabelField,
+        old_to_new_index_map: dict[int, int],
+    ) -> pl.DataFrame:
+        """Remap label indices in the DataFrame according to the provided mapping.
+
+        Args:
+            df: The DataFrame to modify
+            label_field_name: Name of the label column
+            label_field_instance: The LabelField instance
+            old_to_new_index_map: Mapping from old indices to new indices
+
+        Returns:
+            DataFrame with remapped label indices
+        """
+        col = pl.col(label_field_name)
+
+        if label_field_instance.is_list and label_field_instance.multi_label:
+            # List(List(UInt)) - remap each element in the inner lists
+            return df.with_columns(
+                col.list.eval(pl.element().list.eval(pl.element().replace_strict(old_to_new_index_map, default=None)))
+            )
+
+        if label_field_instance.is_list or label_field_instance.multi_label:
+            # List(UInt) - remap each element in the list
+            return df.with_columns(col.list.eval(pl.element().replace_strict(old_to_new_index_map, default=None)))
+
+        # Scalar UInt - remap the single value
+        return df.with_columns(col.replace_strict(old_to_new_index_map, default=None))
 
     def filter_by_labels(
         self,
         labels: str | int | Sequence[str | int],
         label_field_name: str | None = None,
+        update_categories: bool = False,
     ) -> Dataset[DType]:
         """
         Return a new dataset containing only items that have at least one of the given labels.
@@ -743,6 +780,10 @@ class Dataset(Generic[DType]):
             label_field_name: The name of the attribute on the Sample that uses a
                 LabelField. If ``None``, it is inferred automatically when the
                 schema contains exactly one LabelField.
+            update_categories: If ``True``, the returned dataset's LabelCategories will
+                contain only the filtered labels (with indices remapped to 0, 1, 2, ...).
+                If ``False`` (default), the original LabelCategories are preserved and
+                label indices remain unchanged.
 
         Returns:
             A new Dataset containing only the items whose label field contains
@@ -771,6 +812,9 @@ class Dataset(Generic[DType]):
 
             # Explicit field name (required when multiple LabelFields exist)
             filtered = dataset.filter_by_labels(["cat", "dog"], label_field_name="labels")
+
+            # Update categories to only contain filtered labels (indices remapped)
+            filtered = dataset.filter_by_labels(["cat", "dog"], update_categories=True)
             ```
         """
 
@@ -807,6 +851,43 @@ class Dataset(Generic[DType]):
 
         label_indices = self._resolve_label_indices(labels, categories, label_field_name)
         filtered_df = self._filter_df_by_label_indices(label_field_name, label_field_instance, label_indices)
+
+        if update_categories:
+            # Sort indices to maintain a consistent order in the new categories
+            sorted_indices = sorted(label_indices)
+
+            # Create mapping from old indices to new indices (0, 1, 2, ...)
+            old_to_new_index_map = {old_idx: new_idx for new_idx, old_idx in enumerate(sorted_indices)}
+
+            # Remap label indices in the DataFrame
+            filtered_df = self._remap_label_indices(
+                filtered_df, label_field_name, label_field_instance, old_to_new_index_map
+            )
+
+            # Create new LabelCategories with only the filtered labels
+            filtered_labels = tuple(categories.labels[idx] for idx in sorted_indices)
+
+            # Preserve label_semantics for labels that are kept
+            filtered_semantics = {}
+            if hasattr(categories, "label_semantics"):
+                for semantic, label_name in categories.label_semantics.items():
+                    if label_name in filtered_labels:
+                        filtered_semantics[semantic] = label_name
+
+            new_categories = LabelCategories(
+                labels=filtered_labels,
+                group_type=categories.group_type,
+                label_semantics=filtered_semantics,
+            )
+
+            # Create a new schema with the updated categories
+            new_schema = self.schema.with_categories({label_field_name: new_categories})
+
+            return Dataset.from_dataframe(
+                df=filtered_df,
+                dtype_or_schema=self.dtype,
+                schema=new_schema,
+            )
 
         return Dataset.from_dataframe(
             df=filtered_df,
