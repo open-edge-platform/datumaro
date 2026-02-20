@@ -780,22 +780,30 @@ class Dataset(Generic[DType]):
 
         # Validate LabelCategories
         categories = attr_info.categories
-        if categories is None or not isinstance(categories, BaseLabelCategories):
+
+        if isinstance(categories, (LabelCategories, HierarchicalLabelCategories)):
+            # Supported label category types
+            pass
+        elif isinstance(categories, BaseLabelCategories):
+            # A BaseLabelCategories subclass that is not supported by this method
+            raise TypeError(
+                f"Attribute '{label_field_name}' has unsupported categories type "
+                f"'{type(categories).__name__}'. Expected LabelCategories or "
+                f"HierarchicalLabelCategories."
+            )
+        else:
+            # Either no categories or non-label categories attached
             raise ValueError(
                 f"Attribute '{label_field_name}' does not have LabelCategories attached to the schema. "
                 f"LabelCategories are required to resolve label names to indices. "
                 f"Found categories: {categories}"
             )
 
-        if not isinstance(categories, (LabelCategories, HierarchicalLabelCategories)):
-            raise TypeError(
-                f"Attribute '{label_field_name}' has unsupported categories type "
-                f"'{type(categories).__name__}'. Expected LabelCategories or "
-                f"HierarchicalLabelCategories."
-            )
-
         if isinstance(labels, (str, int)):
             labels = [labels]
+
+        if len(labels) == 0:
+            raise ValueError("No labels provided to filter by. Please provide at least one label name or index.")
 
         label_indices = self._resolve_label_indices(labels, categories, label_field_name)
         filtered_df = self._filter_df_by_label_indices(label_field_name, label_field_instance, label_indices)

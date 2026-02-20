@@ -1012,7 +1012,7 @@ def test_filter_by_labels_list_field():
     assert len(filtered) == 4  # every row has at least one
 
     # Filter by mixed string and integer
-    filtered = ds.filter_by_labels(["bird", 0])
+    filtered = ds.filter_by_labels(["bird", 1])
     assert len(filtered) == 3
 
 
@@ -1236,3 +1236,18 @@ def test_filter_by_labels_schema_errors():
     ds4 = Dataset.from_dataframe(df, dtype_or_schema=schema4)
     with pytest.raises(ValueError, match="does not have LabelCategories"):
         ds4.filter_by_labels(["bg"], label_field_name="label")
+
+
+def test_filter_by_labels_empty_labels_returns_empty_dataset():
+    """Filtering with empty labels list returns an empty dataset."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+    ds.append(Sample(label=1))
+    ds.append(Sample(label=2))
+
+    # Empty list should return empty dataset
+    filtered = ds.filter_by_labels([])
+    assert len(filtered) == 0
+    assert len(ds) == 3  # Original unchanged
