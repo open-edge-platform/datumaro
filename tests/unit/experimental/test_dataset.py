@@ -39,9 +39,8 @@ def test_sample_validation_pass():
         tile=TileInfo(source_sample_idx=0, x=0, y=0, width=1, height=1),
         mask=np.array([[1, 0], [0, 1]], dtype=np.uint8),
     )
-    # Test that validation raises an error
-    with pytest.raises(Exception):
-        valid_sample.validate()
+    # Should not raise
+    valid_sample.validate()
 
 
 def test_validate_fields_with_categories_on_append():
@@ -64,9 +63,8 @@ def test_validate_fields_with_categories_on_validate():
     ds.append(Sample(label=0))
     ds.append(Sample(label=1))
 
-    # Test that validation raises an error
-    with pytest.raises(Exception):
-        ds.validate_fields_with_categories()
+    # Should not raise
+    ds.validate_fields_with_categories()
 
     # Manually tamper with df to add an invalid label
     ds.df = ds.df.with_columns(pl.lit(3).alias("label"))
