@@ -69,7 +69,7 @@ def test_export_no_image_fields(tmp_path):
     output_dir = tmp_path / "output"
     result = _export_images_from_dataset(dataset, output_dir)
 
-    assert result == {}
+    assert result.equals(dataset.df)
 
 
 def test_export_image_callable_field(tmp_path):
@@ -100,9 +100,8 @@ def test_export_image_callable_field(tmp_path):
     assert "image" in result
     assert len(result["image"]) == 3
     for idx in range(3):
-        assert idx in result["image"]
-        rel_path = result["image"][idx]
-        assert rel_path == f"image_{idx:06d}.png"
+        rel_path = f"image_{idx:06d}.png"
+        assert rel_path in result["image"]
 
         # Verify file exists and is valid
         img_file = output_dir / rel_path
@@ -151,7 +150,6 @@ def test_export_image_path_field(tmp_path):
     assert len(result["image_path"]) == 3
 
     for idx in range(3):
-        assert idx in result["image_path"]
         rel_path = result["image_path"][idx]
 
         # Verify the file exists and format is preserved
@@ -190,7 +188,6 @@ def test_export_instance_mask_callable_field(tmp_path):
     assert len(result["mask"]) == 3
 
     for idx in range(3):
-        assert idx in result["mask"]
         rel_path = result["mask"][idx]
         assert rel_path == f"mask_{idx:06d}.png"
 
@@ -261,14 +258,14 @@ def test_export_with_none_values(tmp_path):
     dataset.append(OptionalImageSample(image=make_image))
 
     output_dir = tmp_path / "output"
-    result = _export_images_from_dataset(dataset, output_dir)
+    result = _export_images_from_dataset(dataset, output_dir, skip_missing_images=True)
 
     # Only indices 0 and 2 should be in result
     assert "image" in result
     assert len(result["image"]) == 2
-    assert 0 in result["image"]
-    assert 1 not in result["image"]
-    assert 2 in result["image"]
+    assert "image_000000.png" in result["image"]
+    assert "image_000001.png" not in result["image"]
+    assert "image_000002.png" in result["image"]
 
 
 def test_export_basic_dataset_to_directory(tmp_path):
@@ -680,7 +677,7 @@ def test_import_with_none_image_values(tmp_path):
     original_dataset.append(OptionalImageSample(image=make_image, label=3))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False, skip_missing_images=True)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)

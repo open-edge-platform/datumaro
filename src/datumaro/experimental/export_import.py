@@ -145,6 +145,7 @@ def _export_single_field(
     field_name: str,
     field: object,
     output_dir: Path,
+    skip_missing_images: bool = False,
 ) -> dict[int, str]:
     """Export images for a single field across all rows."""
     field_paths: dict[int, str] = {}
@@ -152,6 +153,8 @@ def _export_single_field(
     for idx in range(len(dataset)):
         value = _get_field_value(dataset, idx, field_name)
         if value is None:
+            if not skip_missing_images:
+                print(f"Warning: No value set for field {field_name}, idx {idx}.")
             continue
 
         rel_path = None
@@ -164,6 +167,11 @@ def _export_single_field(
 
         if rel_path is not None:
             field_paths[idx] = rel_path
+        elif not skip_missing_images:
+            raise ValueError(
+                f"Value was set for field {field_name}, index {idx}, value {value}, but no image could be obtained "
+                f"(ImagePathField) or no image could be generated and saved (Image/MaskCallableField)."
+            )
 
     return field_paths
 
@@ -171,7 +179,8 @@ def _export_single_field(
 def _export_images_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
-) -> dict[str, dict[int, str]]:
+    skip_missing_images: bool = False,
+) -> pl.DataFrame:
     """
     Export images from callable or path fields in the dataset.
 
@@ -182,21 +191,57 @@ def _export_images_from_dataset(
     Args:
         dataset: The dataset to export images from
         output_dir: Directory to save images to
+        skip_missing_images: Boolean indicating if to raise errors or skip when images are missing
 
     Returns:
         Dictionary mapping field names to dictionaries of row_idx -> relative path
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    image_paths: dict[str, dict[int, str]] = {}
+    images_paths: dict[str, dict[int, str]] = {}
 
     image_fields = _get_image_fields(dataset)
     if not image_fields:
-        return image_paths
+        return dataset.df
 
     for field_name, field in image_fields:
-        image_paths[field_name] = _export_single_field(dataset, field_name, field, output_dir)
+        images_paths[field_name] = _export_single_field(
+            dataset=dataset,
+            field_name=field_name,
+            field=field,
+            output_dir=output_dir,
+            skip_missing_images=skip_missing_images,
+        )
 
-    return image_paths
+    df_to_export = dataset.df.with_row_index("__idx")
+    for field_name, path_map in images_paths.items():
+        if not path_map:
+            continue
+
+        # Create a mapping DataFrame from the exported paths
+        mapping_df = pl.DataFrame(
+            {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
+            schema={"__idx": pl.UInt32, "__new_path": pl.String},
+        )
+
+        # Left join to apply updates; rows not in path_map will have null paths
+        df_to_export = (
+            df_to_export.join(mapping_df, on="__idx", how="left")
+            .with_columns(pl.col("__new_path").alias(field_name))
+            .drop("__new_path")
+        )
+
+    # Check for missing images
+    image_fields = list(images_paths.keys())
+    missing_images_mask = pl.all_horizontal(pl.col(image_fields).is_null())
+
+    if skip_missing_images:
+        df_to_export = df_to_export.filter(~missing_images_mask)
+    else:
+        bad_rows = df_to_export.filter(missing_images_mask).select("__idx")
+        if not bad_rows.is_empty():
+            raise ValueError(f"Missing images for indices {bad_rows.to_series().to_list()}")
+
+    return df_to_export.drop("__idx")
 
 
 def export_dataset(
@@ -204,6 +249,7 @@ def export_dataset(
     output_path: str | Path,
     export_images: bool = True,
     as_zip: bool = False,
+    skip_missing_images: bool = False,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
@@ -223,6 +269,7 @@ def export_dataset(
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
         as_zip: Whether to package everything as a ZIP file
+        skip_missing_images: Boolean indicating if to raise errors or skip when images are missing
     """
     output_path = Path(output_path)
 
@@ -239,30 +286,14 @@ def export_dataset(
         work_dir = output_path
 
     try:
-        df_to_export = dataset.df
         # Export images if requested
         if export_images:
             images_dir = work_dir / IMAGES_DIR
-            images_paths = _export_images_from_dataset(dataset, images_dir)
-
-            df_to_export = df_to_export.with_row_index("__idx")
-            for field_name, path_map in images_paths.items():
-                if not path_map:
-                    continue
-
-                # Create a mapping DataFrame from the exported paths
-                mapping_df = pl.DataFrame(
-                    {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
-                    schema={"__idx": pl.UInt32, "__new_path": pl.String},
-                )
-
-                # Left join to apply updates; rows not in path_map will have null paths
-                df_to_export = (
-                    df_to_export.join(mapping_df, on="__idx", how="left")
-                    .with_columns(pl.col("__new_path").alias(field_name))
-                    .drop("__new_path")
-                )
-            df_to_export = df_to_export.drop("__idx")
+            df_to_export = _export_images_from_dataset(
+                dataset=dataset, output_dir=images_dir, skip_missing_images=skip_missing_images
+            )
+        else:
+            df_to_export = dataset.df
 
         # Export DataFrame to Parquet
         # Filter out Object columns (like callables) as they can't be serialized to Parquet
