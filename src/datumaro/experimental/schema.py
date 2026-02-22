@@ -7,9 +7,11 @@ Schema definitions for the dataset system.
 
 import copy
 import importlib
+import types
 from dataclasses import dataclass
 from dataclasses import field as dataclass_field
-from typing import Any, Generic, Optional, TypeVar
+from functools import reduce
+from typing import Any, Generic, Optional, TypeVar, Union, get_args, get_origin
 
 from datumaro.experimental.categories import Categories
 from datumaro.experimental.fields.base import Field
@@ -62,7 +64,40 @@ BUILTIN_TYPES = {
     "list": list,
     "dict": dict,
     "tuple": tuple,
+    "NoneType": type(None),
 }
+
+
+def _resolve_type(type_name: str, type_module: str | None) -> type:
+    """Resolve a type from its name and module."""
+    if type_module and type_module != "builtins":
+        try:
+            module = importlib.import_module(type_module)
+            return getattr(module, type_name, object)
+        except (ImportError, AttributeError):
+            return object
+    if type_name in BUILTIN_TYPES:
+        return BUILTIN_TYPES.get(type_name, object)
+    return object
+
+
+def _resolve_type_from_qualified_name(qualified_name: str) -> type:
+    """Resolve a type from a qualified name like 'numpy.ndarray' or 'None'."""
+    qualified_name = qualified_name.strip()
+    if qualified_name == "None":
+        return type(None)
+    if qualified_name in BUILTIN_TYPES:
+        return BUILTIN_TYPES[qualified_name]
+    # Try to split into module and attribute (e.g., "numpy.ndarray")
+    parts = qualified_name.rsplit(".", 1)
+    if len(parts) == 2:
+        module_name, attr_name = parts
+        try:
+            module = importlib.import_module(module_name)
+            return getattr(module, attr_name, object)
+        except (ImportError, AttributeError):
+            return object
+    return object
 
 
 @dataclass
@@ -179,15 +214,32 @@ class Schema:
         categories = {}
 
         for name, attr_info in self.attributes.items():
-            # Store both module and name for better type reconstruction
-            type_info = attr_info.type.__name__ if hasattr(attr_info.type, "__name__") else str(attr_info.type)
-            type_module = attr_info.type.__module__ if hasattr(attr_info.type, "__module__") else None
+            attr_type = attr_info.type
 
-            attributes[name] = {
-                "type": type_info,
-                "type_module": type_module,
-                "field": attr_info.field.to_dict(),
-            }
+            # Check if this is a Union type (e.g., np.ndarray | None)
+            if isinstance(attr_type, types.UnionType) or get_origin(attr_type) is Union:
+                union_args = get_args(attr_type)
+                type_info = [
+                    {
+                        "name": arg.__name__ if hasattr(arg, "__name__") else str(arg),
+                        "module": arg.__module__ if hasattr(arg, "__module__") else None,
+                    }
+                    for arg in union_args
+                ]
+                attributes[name] = {
+                    "type": type_info,
+                    "type_module": "__union__",
+                    "field": attr_info.field.to_dict(),
+                }
+            else:
+                type_info = attr_type.__name__ if hasattr(attr_type, "__name__") else str(attr_type)
+                type_module = attr_type.__module__ if hasattr(attr_type, "__module__") else None
+
+                attributes[name] = {
+                    "type": type_info,
+                    "type_module": type_module,
+                    "field": attr_info.field.to_dict(),
+                }
             if attr_info.categories is not None:
                 categories[name] = attr_info.categories.to_dict()
 
@@ -222,19 +274,17 @@ class Schema:
             type_name = attr_dict.get("type", "object")
             type_module = attr_dict.get("type_module")
 
-            # Attempt to reconstruct the actual type
-            if type_module and type_module != "builtins":
-                try:
-                    module = importlib.import_module(type_module)
-                    attr_type = getattr(module, type_name, object)
-                except (ImportError, AttributeError):
-                    attr_type = object
-            elif type_name in BUILTIN_TYPES:
-                # Handle built-in types
-                attr_type = BUILTIN_TYPES.get(type_name, object)
+            if type_module == "__union__":
+                # Reconstruct Union type from list of component types (new format)
+                union_types = []
+                for component in type_name:
+                    comp_name = component["name"]
+                    comp_module = component.get("module")
+                    resolved = _resolve_type(comp_name, comp_module)
+                    union_types.append(resolved)
+                attr_type = reduce(lambda a, b: a | b, union_types)
             else:
-                # Default to object as placeholder
-                attr_type = object
+                attr_type = _resolve_type(type_name, type_module)
 
             attributes[name] = AttributeInfo(
                 type=attr_type,

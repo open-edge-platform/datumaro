@@ -11,6 +11,7 @@ including support for:
 - JSON metadata for schema and categories
 - Image export for callable and path-based image fields
 - ZIP archive format for complete dataset packages
+- Automatic dtype detection when importing without an explicit ``dtype``
 """
 
 from __future__ import annotations
@@ -35,6 +36,39 @@ from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
     from .dataset import DType
+
+# Registry sample classes that can automatically be detected when importing datasets
+_sample_registry: set[type[Sample]] = set()
+
+
+def register_sample(cls: type[Sample]) -> type[Sample]:
+    """Register a Sample subclass for automatic dtype detection during import.
+
+    Use this to ensure that custom Sample subclasses defined outside of Datumaro
+    are discoverable by :func:`import_dataset` when ``dtype`` is not provided.
+    Can be used as a decorator or called directly.
+
+    Args:
+        cls: A Sample subclass to register
+
+    Returns:
+        The same class, unmodified (allows use as a decorator)
+
+    Example::
+
+        @register_sample
+        class MySample(Sample):
+            image: Annotated[np.ndarray, ImageField()]
+            label: Annotated[int, ScalarField()]
+    """
+    # Validate that only proper Sample subclasses (excluding Sample itself)
+    # can be registered. This prevents invalid entries that could later cause
+    # failures during schema inference.
+    if not isinstance(cls, type) or not issubclass(cls, Sample) or cls is Sample:
+        raise TypeError(f"register_sample expects a subclass of Sample (excluding Sample itself), got {cls!r}")
+    _sample_registry.add(cls)
+    return cls
+
 
 # Constants for export structure
 METADATA_FILE = "metadata.json"
@@ -333,14 +367,24 @@ def export_dataset(
 def import_dataset(
     input_path: str | Path,
     dtype: type[DType] | None = None,
+    extract_dir: str | Path | None = None,
 ) -> Dataset[DType]:
     """
     Import a dataset from an exported format.
 
+    When dtype is None the function tries to automatically determine the correct Sample subclass by matching the stored
+    schema against all registered subclasses (discovered via the :func:`register_sample` registry).  If no
+    match is found, it falls back to the base ``Sample`` class.
+
     Args:
         input_path: Path to the exported dataset (directory or .zip file)
-        dtype: Optional Sample class to use for the dataset. If None, uses generic Sample. Only necessary for typing and
-        auto-completion; schema is loaded from metadata.
+        dtype: Optional Sample class to use for the dataset.  When provided,
+            the dataset is typed with this class directly.  When ``None``,
+            automatic dtype detection is attempted (see above).
+        extract_dir: Optional directory to extract zip contents to. If not provided,
+            the zip will be extracted to a directory next to the zip file with the
+            same name (excluding the .zip extension). This parameter is ignored
+            when input_path is a directory.
 
     Returns:
         The imported Dataset instance
@@ -352,16 +396,17 @@ def import_dataset(
     input_path = Path(input_path)
 
     if is_zipfile(input_path):
-        temp_dir = Path(tempfile.mkdtemp())
-        try:
-            with ZipFile(input_path) as zipf:
-                zipf.extractall(temp_dir)
-            return _import_dataset_from_dir(temp_dir, dtype)
-        finally:
-            if temp_dir.exists():
-                shutil.rmtree(temp_dir)
-    else:
-        return _import_dataset_from_dir(input_path, dtype)
+        if extract_dir is not None:
+            extract_dir = Path(extract_dir)
+        else:
+            # Default: extract to a directory next to the zip with the same name (minus .zip)
+            extract_dir = input_path.with_suffix("")
+
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        with ZipFile(input_path) as zipf:
+            zipf.extractall(extract_dir)
+        return _import_dataset_from_dir(extract_dir, dtype)
+    return _import_dataset_from_dir(input_path, dtype)
 
 
 def _load_metadata(input_dir: Path) -> dict:
@@ -485,6 +530,44 @@ def _add_missing_object_columns(
     return df
 
 
+def _get_registered_samples() -> list[type[Sample]]:
+    """Get all Sample subclasses that have been explicitly registered.
+
+    Only returns classes that were registered via :func:`register_sample`.
+
+    Returns:
+        List of explicitly registered Sample subclasses
+    """
+    return list(_sample_registry)
+
+
+def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
+    """Try to match a schema against registered Sample subclasses.
+
+    Compares the serialized schema attributes (including field configurations like
+    dtype, semantic, is_list, format, etc.) between the loaded schema and each
+    registered Sample subclass's inferred schema. Categories are not compared
+    since they may differ between loaded and inferred schemas.
+
+    Args:
+        schema: The schema loaded from the dataset metadata
+
+    Returns:
+        The matching Sample subclass, or base Sample if no match is found
+    """
+    schema_dict = schema.to_dict()
+    schema_attributes = schema_dict.get("attributes", {})
+
+    for subclass in _get_registered_samples():
+        candidate_schema = subclass.infer_schema()
+        candidate_dict = candidate_schema.to_dict()
+        candidate_attributes = candidate_dict.get("attributes", {})
+        if schema_attributes == candidate_attributes:
+            return subclass
+
+    return Sample
+
+
 def _import_dataset_from_dir(
     input_dir: Path,
     dtype: type[DType] | None = None,
@@ -510,6 +593,6 @@ def _import_dataset_from_dir(
     df = _add_missing_object_columns(df, object_columns)
 
     if dtype is None:
-        dtype = Sample  # type: ignore
+        dtype = _match_dtype_from_schema(schema)
 
     return Dataset.from_dataframe(df, dtype, schema=schema)

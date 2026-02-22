@@ -28,8 +28,12 @@ from datumaro.experimental.export_import import (
     METADATA_FILE,
     VERSION,
     _export_images_from_dataset,
+    _get_registered_samples,
+    _match_dtype_from_schema,
+    _sample_registry,
     export_dataset,
     import_dataset,
+    register_sample,
 )
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -617,27 +621,6 @@ def test_import_missing_dataframe_raises_error(tmp_path):
         import_dataset(export_dir)
 
 
-def test_import_without_dtype_uses_sample(tmp_path):
-    """Test that import without dtype uses generic Sample."""
-
-    class SimpleSample(Sample):
-        label: int = label_field()
-
-    # Export dataset
-    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
-    original_dataset.append(SimpleSample(label=1))
-
-    export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
-
-    # Import without dtype
-    imported_dataset = import_dataset(export_dir, dtype=None)
-
-    # Verify dataset uses Sample
-    assert len(imported_dataset) == 1
-    assert imported_dataset.dtype == Sample
-
-
 def test_import_preserves_categories(tmp_path):
     """Test that import preserves category information."""
 
@@ -1003,3 +986,334 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     df_false = pl.read_parquet(export_dir_false / DATAFRAME_FILE)
     assert df_false["img"][0] == str(source_img_path)
     assert not (export_dir_false / IMAGES_DIR).exists()
+
+
+# ---------------------------------------------------------------------------
+# Tests for automatic dtype detection (_get_registered_samples,
+# _match_dtype_from_schema, register_sample)
+# ---------------------------------------------------------------------------
+
+
+def test_get_registered_samples_returns_empty_without_registration():
+    """_get_registered_samples should return empty list when no classes are registered."""
+    # Clear any existing registrations for this test
+    original_registry = _sample_registry.copy()
+    _sample_registry.clear()
+    try:
+        result = _get_registered_samples()
+        assert result == []
+    finally:
+        _sample_registry.update(original_registry)
+
+
+def test_get_registered_samples_returns_registered_classes():
+    """_get_registered_samples should return classes that were explicitly registered."""
+
+    class RegisteredChild(Sample):
+        label: int = label_field()
+
+    _sample_registry.discard(RegisteredChild)
+    try:
+        # Before registration, should not be in results
+        assert RegisteredChild not in _get_registered_samples()
+
+        # After registration, should be in results
+        register_sample(RegisteredChild)
+        assert RegisteredChild in _get_registered_samples()
+    finally:
+        _sample_registry.discard(RegisteredChild)
+
+
+def test_get_registered_samples_does_not_include_base_sample():
+    """The base Sample class itself should not appear in the result."""
+    result = _get_registered_samples()
+    assert Sample not in result
+
+
+def test_match_dtype_from_schema_returns_matching_subclass():
+    """_match_dtype_from_schema should return the subclass whose schema matches."""
+
+    @register_sample
+    class MatchMe(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+        subset: Subset = subset_field()
+
+    try:
+        schema = MatchMe.infer_schema()
+        result = _match_dtype_from_schema(schema)
+        assert result is MatchMe
+    finally:
+        _sample_registry.discard(MatchMe)
+
+
+def test_match_dtype_from_schema_falls_back_to_sample():
+    """When no subclass matches, _match_dtype_from_schema should return Sample."""
+    from datumaro.experimental.fields.types import NumericField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Build a schema that no existing subclass will match
+    schema = Schema(
+        attributes={
+            "unique_xyz_field": AttributeInfo(
+                type=int,
+                field=NumericField(dtype=pl.Int64(), semantic="unique_xyz"),
+            ),
+            "another_unique_abc": AttributeInfo(
+                type=float,
+                field=NumericField(dtype=pl.Float64(), semantic="unique_abc"),
+            ),
+        }
+    )
+    result = _match_dtype_from_schema(schema)
+    assert result is Sample
+
+
+def test_register_sample_makes_class_discoverable():
+    """register_sample should add a class to the registry so it is discoverable."""
+
+    class ExternalSample(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+
+    # Remove from registry in case a previous test registered it
+    _sample_registry.discard(ExternalSample)
+
+    register_sample(ExternalSample)
+    try:
+        assert ExternalSample in _sample_registry
+        assert ExternalSample in _get_registered_samples()
+    finally:
+        _sample_registry.discard(ExternalSample)
+
+
+def test_register_sample_works_as_decorator():
+    """register_sample should work as a class decorator and return the class."""
+
+    @register_sample
+    class DecoratedSample(Sample):
+        label: int = label_field()
+
+    try:
+        assert DecoratedSample in _sample_registry
+        # The decorator should return the class unchanged
+        assert issubclass(DecoratedSample, Sample)
+    finally:
+        _sample_registry.discard(DecoratedSample)
+
+
+def test_import_without_dtype_falls_back_to_sample_for_unknown_schema(tmp_path):
+    """When the exported schema doesn't match any subclass, dtype should fall back to Sample."""
+    from datumaro.experimental.fields.types import NumericField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create a dataset with a unique schema that won't match any subclass
+    unique_schema = Schema(
+        attributes={
+            "weird_field_xyz": AttributeInfo(
+                type=int,
+                field=NumericField(dtype=pl.Int64(), semantic="weird_xyz"),
+            ),
+        }
+    )
+    dataset = Dataset(unique_schema)
+    dataset.append(Sample(weird_field_xyz=42))
+
+    export_dir = tmp_path / "export"
+    export_dataset(dataset, export_dir, export_images=False, as_zip=False)
+
+    imported_dataset = import_dataset(export_dir, dtype=None)
+    assert len(imported_dataset) == 1
+    assert imported_dataset.dtype == Sample
+
+
+def test_import_auto_detects_dtype_roundtrip(tmp_path):
+    """Full roundtrip: export with a known Sample subclass, import without dtype, verify auto-detection."""
+
+    @register_sample
+    class AutoDetectSample(Sample):
+        label: int = label_field()
+        score: float = numeric_field(dtype=pl.Float32(), semantic="score")
+        subset: Subset = subset_field()
+
+    try:
+        original_dataset = Dataset(AutoDetectSample, categories={"label": LABEL_CATEGORIES})
+        original_dataset.append(AutoDetectSample(label=2, score=0.75, subset=Subset.TRAINING))
+
+        export_dir = tmp_path / "export"
+        export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+
+        imported_dataset = import_dataset(export_dir)  # no dtype
+        # Should auto-detect a matching subclass (not fall back to base Sample)
+        assert imported_dataset.dtype is not Sample
+        assert issubclass(imported_dataset.dtype, Sample)
+        assert len(imported_dataset) == 1
+    finally:
+        _sample_registry.discard(AutoDetectSample)
+
+
+def test_match_dtype_distinguishes_similar_samples_with_different_field_configs():
+    """
+    _match_dtype_from_schema should correctly distinguish between Sample subclasses
+    that have the same field names but different field configurations.
+    """
+
+    @register_sample
+    class ClassificationSample(Sample):
+        label: int | None = label_field(dtype=pl.UInt8(), is_list=False)
+        confidence: float | None = numeric_field(dtype=pl.Float32(), semantic="confidence")
+
+    @register_sample
+    class MultilabelClassificationSample(Sample):
+        label: list[int] = label_field(dtype=pl.UInt8(), multi_label=True)
+        confidence: list[float] | None = numeric_field(dtype=pl.Float32(), is_list=True, semantic="confidence")
+
+    try:
+        classification_schema = ClassificationSample.infer_schema()
+        result = _match_dtype_from_schema(classification_schema)
+        assert result is ClassificationSample
+
+        multilabel_schema = MultilabelClassificationSample.infer_schema()
+        result = _match_dtype_from_schema(multilabel_schema)
+        assert result is MultilabelClassificationSample
+
+    finally:
+        _sample_registry.discard(ClassificationSample)
+        _sample_registry.discard(MultilabelClassificationSample)
+
+
+def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
+    """Test that importing a zip file extracts to a directory next to the zip with the same name."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((20, 30, 3), dtype=np.uint8)
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image, label=1))
+
+    export_zip = tmp_path / "my_dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import from zip (no extract_dir provided)
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample)
+
+    # Verify the dataset was extracted to a directory next to the zip
+    expected_extract_dir = tmp_path / "my_dataset"
+    assert expected_extract_dir.exists()
+    assert expected_extract_dir.is_dir()
+    assert (expected_extract_dir / METADATA_FILE).exists()
+    assert (expected_extract_dir / DATAFRAME_FILE).exists()
+    assert (expected_extract_dir / IMAGES_DIR).exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    sample = imported_dataset[0]
+    assert sample.label == 1
+    assert callable(sample.image)
+    img = sample.image()
+    assert img.shape == (20, 30, 3)
+
+
+def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_path):
+    """Test that importing a zip file extracts to a custom directory when extract_dir is provided."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((25, 35, 3), dtype=np.uint8)
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image, label=2))
+
+    export_zip = tmp_path / "dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import with custom extract_dir
+    custom_extract_dir = tmp_path / "custom" / "location"
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample, extract_dir=custom_extract_dir)
+
+    # Verify the dataset was extracted to the custom directory
+    assert custom_extract_dir.exists()
+    assert custom_extract_dir.is_dir()
+    assert (custom_extract_dir / METADATA_FILE).exists()
+    assert (custom_extract_dir / DATAFRAME_FILE).exists()
+    assert (custom_extract_dir / IMAGES_DIR).exists()
+
+    # Verify the default location was NOT created
+    default_extract_dir = tmp_path / "dataset"
+    assert not default_extract_dir.exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    sample = imported_dataset[0]
+    assert sample.label == 2
+    assert callable(sample.image)
+    img = sample.image()
+    assert img.shape == (25, 35, 3)
+
+
+def test_import_zip_images_accessible_after_import(tmp_path):
+    """Test that images from a zip import are accessible after import."""
+
+    class ImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        label: int = label_field()
+
+    def make_image(value):
+        def load():
+            img = np.zeros((10, 10, 3), dtype=np.uint8)
+            img[:, :, 0] = value
+            return img
+
+        return load
+
+    # Create and export dataset as zip
+    original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(ImageSample(image=make_image(100), label=1))
+    original_dataset.append(ImageSample(image=make_image(200), label=2))
+
+    export_zip = tmp_path / "test_dataset.zip"
+    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+
+    # Import from zip
+    imported_dataset = import_dataset(export_zip, dtype=ImageSample)
+
+    # Access images multiple times to verify they persist
+    for _ in range(2):
+        img0 = imported_dataset[0].image()
+        img1 = imported_dataset[1].image()
+        assert img0[0, 0, 0] == 100
+        assert img1[0, 0, 0] == 200
+
+
+def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
+    """Test that extract_dir parameter is ignored when input is a directory (not a zip)."""
+
+    class SimpleSample(Sample):
+        label: int = label_field()
+
+    # Export to directory (not zip)
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(SimpleSample(label=3))
+
+    export_dir = tmp_path / "exported"
+    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+
+    # Import from directory with extract_dir (should be ignored)
+    custom_dir = tmp_path / "should_not_be_created"
+    imported_dataset = import_dataset(export_dir, dtype=SimpleSample, extract_dir=custom_dir)
+
+    # Verify the custom directory was NOT created (since input was a directory, not zip)
+    assert not custom_dir.exists()
+
+    # Verify the dataset works correctly
+    assert len(imported_dataset) == 1
+    assert imported_dataset[0].label == 3
