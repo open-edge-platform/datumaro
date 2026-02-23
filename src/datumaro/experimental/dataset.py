@@ -692,7 +692,7 @@ class Dataset(Generic[DType]):
                 label_indices = expand_indices_with_ancestors(categories, label_indices)
 
             # Sort indices to maintain a consistent order in the new categories
-            sorted_indices = sorted(label_indices)
+            sorted_indices = sorted(set(label_indices))
 
             # Create mapping from old indices to new indices (0, 1, 2, ...)
             old_to_new_index_map = {old_idx: new_idx for new_idx, old_idx in enumerate(sorted_indices)}
