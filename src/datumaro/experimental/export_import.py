@@ -547,6 +547,9 @@ def _import_dataset_from_dir(
     Returns:
         The imported Dataset instance
     """
+    if not input_dir.is_absolute():
+        input_dir = input_dir.resolve()
+
     metadata = _load_metadata(input_dir)
     df = _load_dataframe(input_dir)  # Check DataFrame exists before processing schema
     schema = Schema.from_dict(metadata["schema"])
