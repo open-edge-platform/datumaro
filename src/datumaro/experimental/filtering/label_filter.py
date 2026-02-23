@@ -141,27 +141,27 @@ def filter_df_by_label_indices(
     Returns:
         Filtered DataFrame.
     """
-    col = pl.col(label_field_name)
+    label_col = pl.col(label_field_name)
 
     if label_field_instance.is_list and label_field_instance.multi_label:
         # List(List(UInt)) - for each inner list, keep only matching elements,
         # then filter out empty inner lists, then filter out rows with no remaining labels.
         return df.with_columns(
-            col.list.eval(
+            label_col.list.eval(
                 pl.element().list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element())).list.drop_nulls()
             )
             .list.eval(pl.when(pl.element().list.len() > 0).then(pl.element()))
             .list.drop_nulls()
-        ).filter(col.list.len() > 0)
+        ).filter(label_col.list.len() > 0)
 
     if label_field_instance.is_list or label_field_instance.multi_label:
         # List(UInt) - keep only matching elements and filter out rows with empty lists.
         return df.with_columns(
-            col.list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element())).list.drop_nulls()
-        ).filter(col.list.len() > 0)
+            label_col.list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element())).list.drop_nulls()
+        ).filter(label_col.list.len() > 0)
 
     # Scalar UInt - keep row if the value matches.
-    return df.filter(col.is_in(label_indices))
+    return df.filter(label_col.is_in(label_indices))
 
 
 def remap_label_indices(
