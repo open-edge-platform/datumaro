@@ -445,56 +445,6 @@ def _make_image_loader(path: Path):
     return load_image
 
 
-def _reconstruct_field_values(
-    field_name: str,
-    field: object,
-    images_base_dir: Path,
-    num_rows: int,
-) -> tuple[list[object | None], bool, bool]:
-    """
-    Reconstruct values for a single image-related field.
-
-    Returns:
-        Tuple of (values list, is_path_field, is_callable_field)
-    """
-    is_path_field = isinstance(field, ImagePathField)
-    is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
-
-    if not (is_path_field or is_callable_field):
-        return [], False, False
-
-    values: list[object | None] = []
-    for idx in range(num_rows):
-        pattern = f"{field_name}_{idx:06d}.*"
-        matches = sorted(images_base_dir.glob(pattern))
-        file_path = matches[0] if matches else None
-
-        if is_path_field:
-            values.append(str(file_path) if file_path is not None else None)
-        elif file_path is None:
-            values.append(None)
-        else:
-            values.append(_make_image_loader(file_path))
-
-    return values, is_path_field, is_callable_field
-
-
-def _update_dataframe_with_field(
-    df: pl.DataFrame,
-    field_name: str,
-    values: list[object | None],
-    is_path_field: bool,
-) -> pl.DataFrame:
-    """Update DataFrame with reconstructed field values."""
-    if is_path_field:
-        if field_name in df.columns:
-            df = df.drop(field_name)
-        return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
-    if field_name in df.columns:
-        return df.with_columns(pl.Series(field_name, values))
-    return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
-
-
 def _reconstruct_image_fields(
     df: pl.DataFrame,
     schema: Schema,
@@ -504,18 +454,33 @@ def _reconstruct_image_fields(
     if not images_base_dir.exists():
         return df
 
+    updates: dict[str, pl.Series] = {}
     for field_name, attr_info in schema.attributes.items():
         field = getattr(attr_info, "field", None)
-        if field is None:
+        if field is None or field_name not in df.columns:
             continue
 
-        values, is_path_field, is_callable_field = _reconstruct_field_values(
-            field_name, field, images_base_dir, len(df)
-        )
+        is_path_field = isinstance(field, ImagePathField)
+        is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
 
-        if is_path_field or is_callable_field:
-            df = _update_dataframe_with_field(df, field_name, values, is_path_field)
+        if not (is_path_field or is_callable_field):
+            continue
 
+        file_names = df.get_column(field_name)
+        values: list[object | None] = []
+        if is_path_field:
+            values = [str(images_base_dir / file_name) if file_name is not None else None for file_name in file_names]
+        else:
+            values = [
+                _make_image_loader(images_base_dir / file_name) if file_name is not None else None
+                for file_name in file_names
+            ]
+
+        field_dtype = pl.String() if is_path_field else pl.Object()
+        updates[field_name] = pl.Series(field_name, values, dtype=field_dtype)
+
+    if updates:
+        df = df.with_columns(list(updates.values()))
     return df
 
 

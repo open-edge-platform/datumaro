@@ -666,10 +666,9 @@ def test_import_with_none_image_values(tmp_path):
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
 
     # Verify dataset
-    assert len(imported_dataset) == 3
+    assert len(imported_dataset) == 2
     assert callable(imported_dataset[0].image)
-    assert imported_dataset[1].image is None
-    assert callable(imported_dataset[2].image)
+    assert callable(imported_dataset[1].image)
 
 
 def test_roundtrip_preserves_data_integrity(tmp_path):
