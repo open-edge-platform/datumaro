@@ -14,10 +14,19 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
-from datumaro.experimental.categories import BaseLabelCategories, HierarchicalLabelCategories, LabelCategories
+from datumaro.experimental.categories import HierarchicalLabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.annotations import LabelField
 from datumaro.experimental.fields.datasets import Subset, SubsetField
+from datumaro.experimental.filtering.label_filter import (
+    create_filtered_categories,
+    expand_indices_with_ancestors,
+    filter_df_by_label_indices,
+    remap_label_indices,
+    resolve_label_field_name,
+    resolve_label_indices,
+    validate_label_categories,
+)
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
@@ -601,160 +610,6 @@ class Dataset(Generic[DType]):
             schema=self.schema,
         )
 
-    def _resolve_label_field_name(self, label_field_name: str | None) -> str:
-        """Resolve and validate the label field name.
-
-        When *label_field_name* is ``None`` the schema is scanned for a unique
-        ``LabelField``.  If a name is given it is validated against the schema.
-
-        Returns:
-            The validated label field name.
-
-        Raises:
-            RuntimeError: If auto-detection finds zero or more than one LabelField.
-            KeyError: If the given name is not present in the schema.
-            TypeError: If the resolved attribute is not a LabelField.
-        """
-        if label_field_name is None:
-            label_field_names = [
-                name for name, attr_info in self.schema.attributes.items() if isinstance(attr_info.field, LabelField)
-            ]
-            if len(label_field_names) == 0:
-                raise RuntimeError("Dataset schema does not contain any LabelField attributes.")
-            if len(label_field_names) > 1:
-                raise RuntimeError(
-                    f"Dataset schema contains multiple LabelField attributes: "
-                    f"{label_field_names}. Please specify 'label_field_name' explicitly."
-                )
-            label_field_name = label_field_names[0]
-
-        if label_field_name not in self.schema.attributes:
-            raise KeyError(
-                f"Attribute '{label_field_name}' not found in the dataset schema. "
-                f"Available attributes: {list(self.schema.attributes.keys())}"
-            )
-
-        attr_info = self.schema.attributes[label_field_name]
-        if not isinstance(attr_info.field, LabelField):
-            raise TypeError(f"Attribute '{label_field_name}' is a {type(attr_info.field).__name__}, not a LabelField.")
-
-        return label_field_name
-
-    @staticmethod
-    def _resolve_label_indices(
-        labels: Sequence[str | int],
-        categories: Any,
-        label_field_name: str,
-    ) -> list[int]:
-        """Map label names or indices to integer indices via *categories*.
-
-        Args:
-            labels: Label names (str) or indices (int) to resolve.
-            categories: A ``LabelCategories`` or ``HierarchicalLabelCategories`` instance.
-            label_field_name: Used only for error messages.
-
-        Returns:
-            List of integer indices corresponding to the given label names or indices.
-
-        Raises:
-            ValueError: If any label name is not found in *categories* or if any index is out of range.
-            TypeError: If a label is neither a string nor an integer.
-        """
-        label_indices: list[int] = []
-        for label in labels:
-            if isinstance(label, int):
-                if label < 0 or label >= len(categories.labels):
-                    raise ValueError(
-                        f"Label index {label} is out of range for field '{label_field_name}'. "
-                        f"Valid range is 0 to {len(categories.labels) - 1}. "
-                        f"Available labels: {list(categories.labels)}"
-                    )
-                label_indices.append(label)
-            elif isinstance(label, str):
-                idx, _ = categories.find(label)
-                if idx is None:
-                    raise ValueError(
-                        f"Label '{label}' not found in categories for field '{label_field_name}'. "
-                        f"Available labels: {list(categories.labels)}"
-                    )
-                label_indices.append(idx)
-            else:
-                raise TypeError(
-                    f"Label must be a string (label name) or int (label index), got {type(label).__name__}: {label}"
-                )
-        return label_indices
-
-    def _filter_df_by_label_indices(
-        self,
-        label_field_name: str,
-        label_field_instance: LabelField,
-        label_indices: list[int],
-    ) -> pl.DataFrame:
-        """Return a filtered DataFrame keeping rows that match any of *label_indices*.
-
-        This method both filters rows (keeping only those with at least one matching label)
-        AND removes non-matching labels from within each sample's label field.
-
-        The filtering strategy is chosen based on the ``is_list`` and
-        ``multi_label`` flags of *label_field_instance*.
-        """
-        col = pl.col(label_field_name)
-
-        if label_field_instance.is_list and label_field_instance.multi_label:
-            # List(List(UInt)) - for each inner list, keep only matching elements,
-            # then filter out empty inner lists, then filter out rows with no remaining labels.
-            return self.df.with_columns(
-                col.list.eval(
-                    pl.element()
-                    .list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element()))
-                    .list.drop_nulls()
-                )
-                .list.eval(pl.when(pl.element().list.len() > 0).then(pl.element()))
-                .list.drop_nulls()
-            ).filter(col.list.len() > 0)
-
-        if label_field_instance.is_list or label_field_instance.multi_label:
-            # List(UInt) - keep only matching elements and filter out rows with empty lists.
-            return self.df.with_columns(
-                col.list.eval(pl.when(pl.element().is_in(label_indices)).then(pl.element())).list.drop_nulls()
-            ).filter(col.list.len() > 0)
-
-        # Scalar UInt - keep row if the value matches.
-        return self.df.filter(col.is_in(label_indices))
-
-    def _remap_label_indices(
-        self,
-        df: pl.DataFrame,
-        label_field_name: str,
-        label_field_instance: LabelField,
-        old_to_new_index_map: dict[int, int],
-    ) -> pl.DataFrame:
-        """Remap label indices in the DataFrame according to the provided mapping.
-
-        Args:
-            df: The DataFrame to modify
-            label_field_name: Name of the label column
-            label_field_instance: The LabelField instance
-            old_to_new_index_map: Mapping from old indices to new indices
-
-        Returns:
-            DataFrame with remapped label indices
-        """
-        col = pl.col(label_field_name)
-
-        if label_field_instance.is_list and label_field_instance.multi_label:
-            # List(List(UInt)) - remap each element in the inner lists
-            return df.with_columns(
-                col.list.eval(pl.element().list.eval(pl.element().replace_strict(old_to_new_index_map, default=None)))
-            )
-
-        if label_field_instance.is_list or label_field_instance.multi_label:
-            # List(UInt) - remap each element in the list
-            return df.with_columns(col.list.eval(pl.element().replace_strict(old_to_new_index_map, default=None)))
-
-        # Scalar UInt - remap the single value
-        return df.with_columns(col.replace_strict(old_to_new_index_map, default=None))
-
     def filter_by_labels(
         self,
         labels: str | int | Sequence[str | int],
@@ -807,9 +662,6 @@ class Dataset(Generic[DType]):
             # Using label indices
             filtered = dataset.filter_by_labels([0, 1])
 
-            # Mixing label names and indices
-            filtered = dataset.filter_by_labels(["cat", 1])
-
             # Explicit field name (required when multiple LabelFields exist)
             filtered = dataset.filter_by_labels(["cat", "dog"], label_field_name="labels")
 
@@ -818,30 +670,12 @@ class Dataset(Generic[DType]):
             ```
         """
 
-        label_field_name = self._resolve_label_field_name(label_field_name)
+        label_field_name = resolve_label_field_name(self.schema, label_field_name)
         attr_info = self.schema.attributes[label_field_name]
         label_field_instance: LabelField = attr_info.field  # type: ignore[assignment]
 
         # Validate LabelCategories
-        categories = attr_info.categories
-
-        if isinstance(categories, (LabelCategories, HierarchicalLabelCategories)):
-            # Supported label category types
-            pass
-        elif isinstance(categories, BaseLabelCategories):
-            # A BaseLabelCategories subclass that is not supported by this method
-            raise TypeError(
-                f"Attribute '{label_field_name}' has unsupported categories type "
-                f"'{type(categories).__name__}'. Expected LabelCategories or "
-                f"HierarchicalLabelCategories."
-            )
-        else:
-            # Either no categories or non-label categories attached
-            raise ValueError(
-                f"Attribute '{label_field_name}' does not have LabelCategories attached to the schema. "
-                f"LabelCategories are required to resolve label names to indices. "
-                f"Found categories: {categories}"
-            )
+        categories = validate_label_categories(attr_info.categories, label_field_name)
 
         if isinstance(labels, (str, int)):
             labels = [labels]
@@ -849,10 +683,14 @@ class Dataset(Generic[DType]):
         if len(labels) == 0:
             raise ValueError("No labels provided to filter by. Please provide at least one label name or index.")
 
-        label_indices = self._resolve_label_indices(labels, categories, label_field_name)
-        filtered_df = self._filter_df_by_label_indices(label_field_name, label_field_instance, label_indices)
+        label_indices = resolve_label_indices(labels, categories, label_field_name)
+        filtered_df = filter_df_by_label_indices(self.df, label_field_name, label_field_instance, label_indices)
 
         if update_categories:
+            # For hierarchical categories, automatically include all ancestor labels
+            if isinstance(categories, HierarchicalLabelCategories):
+                label_indices = expand_indices_with_ancestors(categories, label_indices)
+
             # Sort indices to maintain a consistent order in the new categories
             sorted_indices = sorted(label_indices)
 
@@ -860,25 +698,10 @@ class Dataset(Generic[DType]):
             old_to_new_index_map = {old_idx: new_idx for new_idx, old_idx in enumerate(sorted_indices)}
 
             # Remap label indices in the DataFrame
-            filtered_df = self._remap_label_indices(
-                filtered_df, label_field_name, label_field_instance, old_to_new_index_map
-            )
+            filtered_df = remap_label_indices(filtered_df, label_field_name, label_field_instance, old_to_new_index_map)
 
-            # Create new LabelCategories with only the filtered labels
-            filtered_labels = tuple(categories.labels[idx] for idx in sorted_indices)
-
-            # Preserve label_semantics for labels that are kept
-            filtered_semantics = {}
-            if hasattr(categories, "label_semantics"):
-                for semantic, label_name in categories.label_semantics.items():
-                    if label_name in filtered_labels:
-                        filtered_semantics[semantic] = label_name
-
-            new_categories = LabelCategories(
-                labels=filtered_labels,
-                group_type=categories.group_type,
-                label_semantics=filtered_semantics,
-            )
+            # Create new categories based on the original category type
+            new_categories = create_filtered_categories(categories, sorted_indices)
 
             # Create a new schema with the updated categories
             new_schema = self.schema.with_categories({label_field_name: new_categories})

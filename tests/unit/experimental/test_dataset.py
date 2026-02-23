@@ -1404,6 +1404,121 @@ def test_filter_by_labels_with_hierarchical_categories():
     assert {filtered[0].label, filtered[1].label} == {1, 2}
 
 
+def test_filter_by_labels_with_hierarchical_categories_update_categories():
+    """Test update_categories=True with HierarchicalLabelCategories.
+
+    This tests that filtering hierarchical categories with update_categories=True
+    works correctly, preserves the HierarchicalLabelCategories type, automatically
+    includes parent labels, and properly handles label groups.
+    """
+    from datumaro.experimental.categories import (
+        GroupType,
+        HierarchicalLabelCategories,
+        HierarchicalLabelCategory,
+        LabelGroup,
+    )
+
+    items = (
+        HierarchicalLabelCategory(name="animal"),
+        HierarchicalLabelCategory(name="cat", parent="animal"),
+        HierarchicalLabelCategory(name="dog", parent="animal"),
+        HierarchicalLabelCategory(name="bird"),
+    )
+    label_groups = (LabelGroup(name="pets", labels=("cat", "dog"), group_type=GroupType.EXCLUSIVE),)
+    categories = HierarchicalLabelCategories(items=items, label_groups=label_groups)
+
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))
+    ds.append(Sample(label=1))
+    ds.append(Sample(label=2))
+    ds.append(Sample(label=3))
+
+    filtered = ds.filter_by_labels(["cat", "bird"], label_field_name="label", update_categories=True)
+
+    assert len(filtered) == 2
+
+    new_cats = filtered.schema.attributes["label"].categories
+    assert isinstance(new_cats, HierarchicalLabelCategories)
+    assert new_cats.labels == ("animal", "cat", "bird")
+
+    assert len(new_cats.items) == 3
+    assert new_cats.items[0].name == "animal"
+    assert new_cats.items[1].name == "cat"
+    assert new_cats.items[1].parent == "animal"
+    assert new_cats.items[2].name == "bird"
+
+    assert len(new_cats.label_groups) == 1
+    assert new_cats.label_groups[0].labels == ("cat",)
+
+    labels = filtered.df["label"].to_list()
+    assert set(labels) == {1, 2}
+
+
+def test_filter_by_labels_with_hierarchical_categories_auto_includes_ancestors():
+    """Test that filtering hierarchical categories automatically includes all ancestor labels."""
+    from datumaro.experimental.categories import HierarchicalLabelCategories, HierarchicalLabelCategory
+
+    items = (
+        HierarchicalLabelCategory(name="animal"),
+        HierarchicalLabelCategory(name="mammal", parent="animal"),
+        HierarchicalLabelCategory(name="cat", parent="mammal"),
+        HierarchicalLabelCategory(name="dog", parent="mammal"),
+        HierarchicalLabelCategory(name="bird", parent="animal"),
+    )
+    categories = HierarchicalLabelCategories(items=items)
+
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=2))
+    ds.append(Sample(label=4))
+
+    filtered = ds.filter_by_labels(["cat"], label_field_name="label", update_categories=True)
+
+    new_cats = filtered.schema.attributes["label"].categories
+    assert isinstance(new_cats, HierarchicalLabelCategories)
+    assert new_cats.labels == ("animal", "mammal", "cat")
+
+    assert new_cats.items[0].name == "animal"
+    assert new_cats.items[1].name == "mammal"
+    assert new_cats.items[1].parent == "animal"
+    assert new_cats.items[2].name == "cat"
+    assert new_cats.items[2].parent == "mammal"
+
+
+def test_filter_by_labels_with_hierarchical_categories_preserves_parent():
+    """Test that parent relationships are preserved when parent is explicitly in filtered labels."""
+    from datumaro.experimental.categories import HierarchicalLabelCategories, HierarchicalLabelCategory
+
+    items = (
+        HierarchicalLabelCategory(name="animal"),
+        HierarchicalLabelCategory(name="cat", parent="animal"),
+        HierarchicalLabelCategory(name="dog", parent="animal"),
+    )
+    categories = HierarchicalLabelCategories(items=items)
+
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # animal
+    ds.append(Sample(label=1))  # cat
+    ds.append(Sample(label=2))  # dog
+
+    # Filter for animal and cat (parent is included)
+    filtered = ds.filter_by_labels(["animal", "cat"], label_field_name="label", update_categories=True)
+
+    assert len(filtered) == 2
+
+    new_cats = filtered.schema.attributes["label"].categories
+    assert isinstance(new_cats, HierarchicalLabelCategories)
+    assert new_cats.labels == ("animal", "cat")
+
+    # Check that parent relationship is preserved since "animal" is included
+    assert new_cats.items[0].name == "animal"
+    assert new_cats.items[0].parent == ""
+    assert new_cats.items[1].name == "cat"
+    assert new_cats.items[1].parent == "animal"  # Parent preserved!
+
+
 # ── immutability / original-unmodified tests ────────────────────────────────
 
 
