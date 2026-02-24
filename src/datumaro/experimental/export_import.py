@@ -228,7 +228,9 @@ def _export_images_from_dataset(
         skip_missing_images: Boolean indicating if to raise errors or skip when images are missing
 
     Returns:
-        Dictionary mapping field names to dictionaries of row_idx -> relative path
+        A :class:`polars.DataFrame` with image-related fields updated to contain
+        relative paths to the exported images. Rows with missing images are either
+        removed (when ``skip_missing_images`` is True) or cause a ValueError.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     images_paths: dict[str, dict[int, str]] = {}
