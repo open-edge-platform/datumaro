@@ -1179,6 +1179,264 @@ def test_filter_by_labels_removes_unwanted_labels_list_and_multi_label():
     assert tags_list[2] == [[2], [2]]  # was [[2], [0,2]], now [[2], [2]]
 
 
+def test_filter_by_labels_filters_associated_annotation_fields():
+    """Verify that filter_by_labels also filters associated annotation fields (e.g., bboxes)."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, semantic="default"),
+                categories=categories,
+            ),
+            "bboxes": AttributeInfo(
+                type=list,
+                field=bbox_field(dtype=pl.Float32(), semantic="default"),
+            ),
+        }
+    )
+    ds = Dataset(schema)
+    # Sample 0: cat (bbox [0,0,1,1]), dog (bbox [1,1,2,2])
+    ds.append(Sample(labels=[0, 1], bboxes=np.array([[0, 0, 1, 1], [1, 1, 2, 2]], dtype=np.float32)))
+    # Sample 1: bird (bbox [2,2,3,3])
+    ds.append(Sample(labels=[2], bboxes=np.array([[2, 2, 3, 3]], dtype=np.float32)))
+    # Sample 2: dog (bbox [3,3,4,4]), bird (bbox [4,4,5,5])
+    ds.append(Sample(labels=[1, 2], bboxes=np.array([[3, 3, 4, 4], [4, 4, 5, 5]], dtype=np.float32)))
+    # Sample 3: cat (bbox [5,5,6,6])
+    ds.append(Sample(labels=[0], bboxes=np.array([[5, 5, 6, 6]], dtype=np.float32)))
+
+    # Filter by "dog" - should keep only samples with dog and remove cat/bird bboxes
+    filtered = ds.filter_by_labels(["dog"])
+    assert len(filtered) == 2  # rows 0, 2
+    labels_list = filtered.df["labels"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+    # Row 0: was [cat, dog], now [dog] with only dog's bbox
+    assert labels_list[0] == [1]
+    assert len(bboxes_list[0]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[0][0], [1, 1, 2, 2])
+    # Row 2 (was row 2): was [dog, bird], now [dog] with only dog's bbox
+    assert labels_list[1] == [1]
+    assert len(bboxes_list[1]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[1][0], [3, 3, 4, 4])
+
+    # Filter by "cat" and "bird" - should keep all rows
+    filtered = ds.filter_by_labels(["cat", "bird"])
+    assert len(filtered) == 4
+    labels_list = filtered.df["labels"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+    # Row 0: was [cat, dog], now [cat] with only cat's bbox
+    assert labels_list[0] == [0]
+    assert len(bboxes_list[0]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[0][0], [0, 0, 1, 1])
+    # Row 1: bird unchanged
+    assert labels_list[1] == [2]
+    assert len(bboxes_list[1]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[1][0], [2, 2, 3, 3])
+    # Row 2: was [dog, bird], now [bird] with only bird's bbox
+    assert labels_list[2] == [2]
+    assert len(bboxes_list[2]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[2][0], [4, 4, 5, 5])
+    # Row 3: cat unchanged
+    assert labels_list[3] == [0]
+    assert len(bboxes_list[3]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[3][0], [5, 5, 6, 6])
+
+
+def test_filter_by_labels_filters_associated_annotation_fields_list_and_multi_label():
+    """Verify that filter_by_labels also filters associated annotation fields with is_list=True and multi_label=True."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, multi_label=True, semantic="default"),
+                categories=categories,
+            ),
+            "bboxes": AttributeInfo(
+                type=list,
+                field=bbox_field(dtype=pl.Float32(), semantic="default"),
+            ),
+        }
+    )
+    ds = Dataset(schema)
+    # Sample 0: annotation 0 has [cat, dog], annotation 1 has [bird]
+    ds.append(Sample(labels=[[0, 1], [2]], bboxes=np.array([[0, 0, 1, 1], [1, 1, 2, 2]], dtype=np.float32)))
+    # Sample 1: annotation 0 has [bird]
+    ds.append(Sample(labels=[[2]], bboxes=np.array([[2, 2, 3, 3]], dtype=np.float32)))
+    # Sample 2: annotation 0 has [dog], annotation 1 has [cat, bird]
+    ds.append(Sample(labels=[[1], [0, 2]], bboxes=np.array([[3, 3, 4, 4], [4, 4, 5, 5]], dtype=np.float32)))
+
+    # Filter by "dog" - should keep annotations where inner list contains "dog"
+    filtered = ds.filter_by_labels(["dog"], label_field_name="labels")
+    assert len(filtered) == 2  # rows 0, 2
+    labels_list = filtered.df["labels"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+    # Row 0: was [[cat,dog], [bird]], now [[dog]] with only first bbox
+    assert labels_list[0] == [[1]]  # dog only (cat removed from inner list)
+    assert len(bboxes_list[0]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[0][0], [0, 0, 1, 1])
+    # Row 2 (was row 2): was [[dog], [cat,bird]], now [[dog]] with only first bbox
+    assert labels_list[1] == [[1]]
+    assert len(bboxes_list[1]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[1][0], [3, 3, 4, 4])
+
+    # Filter by "cat" and "bird" - should keep annotations with cat or bird
+    filtered = ds.filter_by_labels(["cat", "bird"], label_field_name="labels")
+    assert len(filtered) == 3
+    labels_list = filtered.df["labels"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+    # Row 0: was [[cat,dog], [bird]], now [[cat], [bird]] (both annotations kept)
+    assert labels_list[0] == [[0], [2]]  # cat and bird (dog removed from inner list)
+    assert len(bboxes_list[0]) == 2
+    # Row 1: bird unchanged
+    assert labels_list[1] == [[2]]
+    assert len(bboxes_list[1]) == 1
+    # Row 2: was [[dog], [cat,bird]], now [[cat,bird]] (only second annotation kept)
+    assert labels_list[2] == [[0, 2]]
+    assert len(bboxes_list[2]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[2][0], [4, 4, 5, 5])
+
+
+# ── keep_empty_samples tests ────────────────────────────────────────────────
+
+
+def test_filter_by_labels_keep_empty_samples_list_field():
+    """Test keep_empty_samples=True with is_list=True LabelField."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "labels": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, semantic="default"),
+                categories=categories,
+            ),
+            "bboxes": AttributeInfo(
+                type=list,
+                field=bbox_field(dtype=pl.Float32(), semantic="default"),
+            ),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(labels=[0, 1], bboxes=np.array([[0, 0, 1, 1], [1, 1, 2, 2]], dtype=np.float32)))  # cat, dog
+    ds.append(Sample(labels=[2], bboxes=np.array([[2, 2, 3, 3]], dtype=np.float32)))  # bird
+    ds.append(Sample(labels=[1, 2], bboxes=np.array([[3, 3, 4, 4], [4, 4, 5, 5]], dtype=np.float32)))  # dog, bird
+
+    # Filter by "cat" with keep_empty_samples=True - all 3 samples should be kept
+    filtered = ds.filter_by_labels(["cat"], keep_empty_samples=True)
+    assert len(filtered) == 3  # All samples kept
+
+    labels_list = filtered.df["labels"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+
+    # Row 0: was [cat, dog], now [cat] with only cat's bbox
+    assert labels_list[0] == [0]
+    assert len(bboxes_list[0]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[0][0], [0, 0, 1, 1])
+
+    # Row 1: was [bird], now empty - but sample is kept
+    assert labels_list[1] == []
+    assert len(bboxes_list[1]) == 0
+
+    # Row 2: was [dog, bird], now empty - but sample is kept
+    assert labels_list[2] == []
+    assert len(bboxes_list[2]) == 0
+
+
+def test_filter_by_labels_keep_empty_samples_scalar():
+    """Test keep_empty_samples=True with scalar LabelField."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(type=int, field=label_field(), categories=categories),
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(label=0))  # cat
+    ds.append(Sample(label=1))  # dog
+    ds.append(Sample(label=2))  # bird
+
+    # Filter by "cat" with keep_empty_samples=True - all 3 samples should be kept
+    filtered = ds.filter_by_labels(["cat"], keep_empty_samples=True)
+    assert len(filtered) == 3
+
+    labels_list = filtered.df["label"].to_list()
+    assert labels_list[0] == 0  # cat kept
+    assert labels_list[1] is None  # dog -> None
+    assert labels_list[2] is None  # bird -> None
+
+
+def test_filter_by_labels_keep_empty_samples_multi_label():
+    """Test keep_empty_samples=True with multi_label=True LabelField."""
+    categories = LabelCategories(labels=("sunny", "rainy", "cloudy"))
+    schema = Schema(
+        attributes={
+            "weather": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), multi_label=True),
+                categories=categories,
+            )
+        }
+    )
+    ds = Dataset(schema)
+    ds.append(Sample(weather=[0, 2]))  # sunny + cloudy
+    ds.append(Sample(weather=[1]))  # rainy
+    ds.append(Sample(weather=[0, 1]))  # sunny + rainy
+
+    # Filter by "sunny" with keep_empty_samples=True - all samples should be kept
+    filtered = ds.filter_by_labels(["sunny"], label_field_name="weather", keep_empty_samples=True)
+    assert len(filtered) == 3
+
+    weather_list = filtered.df["weather"].to_list()
+    assert weather_list[0] == [0]  # sunny only (cloudy removed)
+    assert weather_list[1] == []  # rainy -> empty
+    assert weather_list[2] == [0]  # sunny only (rainy removed)
+
+
+def test_filter_by_labels_keep_empty_samples_list_and_multi_label():
+    """Test keep_empty_samples=True with is_list=True and multi_label=True."""
+    categories = LabelCategories(labels=("a", "b", "c"))
+    schema = Schema(
+        attributes={
+            "tags": AttributeInfo(
+                type=list,
+                field=label_field(dtype=pl.UInt8(), is_list=True, multi_label=True, semantic="default"),
+                categories=categories,
+            ),
+            "bboxes": AttributeInfo(
+                type=list,
+                field=bbox_field(dtype=pl.Float32(), semantic="default"),
+            ),
+        }
+    )
+    ds = Dataset(schema)
+    # Sample 0: annotation 0 has [a,b], annotation 1 has [c]
+    ds.append(Sample(tags=[[0, 1], [2]], bboxes=np.array([[0, 0, 1, 1], [1, 1, 2, 2]], dtype=np.float32)))
+    # Sample 1: annotation 0 has [c]
+    ds.append(Sample(tags=[[2]], bboxes=np.array([[2, 2, 3, 3]], dtype=np.float32)))
+    # Sample 2: annotation 0 has [b], annotation 1 has [a, c]
+    ds.append(Sample(tags=[[1], [0, 2]], bboxes=np.array([[3, 3, 4, 4], [4, 4, 5, 5]], dtype=np.float32)))
+
+    # Filter by "a" with keep_empty_samples=True - all samples should be kept
+    filtered = ds.filter_by_labels(["a"], label_field_name="tags", keep_empty_samples=True)
+    assert len(filtered) == 3
+
+    tags_list = filtered.df["tags"].to_list()
+    bboxes_list = filtered.df["bboxes"].to_list()
+
+    # Row 0: was [[a,b], [c]], now [[a]] (only first annotation kept, with only "a")
+    assert tags_list[0] == [[0]]
+    assert len(bboxes_list[0]) == 1
+
+    # Row 1: was [[c]], now [] - no annotations with "a", but sample kept
+    assert tags_list[1] == []
+    assert len(bboxes_list[1]) == 0
+
+    # Row 2: was [[b], [a, c]], now [[a]] (only second annotation kept, with only "a")
+    assert tags_list[2] == [[0]]
+    assert len(bboxes_list[2]) == 1
+    np.testing.assert_array_almost_equal(bboxes_list[2][0], [4, 4, 5, 5])
+
+
 # ── update_categories tests ─────────────────────────────────────────────────
 
 
