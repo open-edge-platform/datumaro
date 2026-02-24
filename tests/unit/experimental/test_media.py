@@ -1163,13 +1163,18 @@ class LazyVideoFrameClassTest:
     def test_lazy_video_frame_invalid_frame_index(self):
         """Test that invalid frame index raises error."""
         frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=999999)
-        with pytest.raises(ValueError, match="Could not read frame"):
+        with pytest.raises(ValueError, match="out of bounds"):
             _ = frame.data
+
+    def test_lazy_video_frame_negative_frame_index(self):
+        """Test that negative frame index raises error at construction time."""
+        with pytest.raises(ValueError, match="frame_index must be non-negative"):
+            LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=-1)
 
     def test_lazy_video_frame_invalid_video_path(self):
         """Test that invalid video path raises error."""
         frame = LazyVideoFrame(video_path="/non/existent/video.mp4", frame_index=0)
-        with pytest.raises(ValueError, match="Could not open video file"):
+        with pytest.raises(FileNotFoundError, match="Video file not found"):
             _ = frame.data
 
 

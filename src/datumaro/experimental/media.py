@@ -662,6 +662,12 @@ class LazyVideoFrame:
         if isinstance(self.video_path, Path):
             object.__setattr__(self, "video_path", str(self.video_path))
 
+        if self.frame_index < 0:
+            raise ValueError(
+                f"frame_index must be non-negative, got {self.frame_index}. "
+                "Frame indices are zero-based (0 is the first frame)."
+            )
+
     def _cache_key(self) -> tuple[str, int, str, bool]:
         """Generate a cache key for this video frame configuration."""
         return str(self.video_path), self.frame_index, self.format.upper(), self.channels_first
@@ -718,11 +724,23 @@ class LazyVideoFrame:
 
         video_path_str = str(self.video_path)
 
+        if not Path(video_path_str).exists():
+            raise FileNotFoundError(f"Video file not found: {video_path_str}")
+
         cap = cv2.VideoCapture(video_path_str)
         if not cap.isOpened():
             raise ValueError(f"Could not open video file: {video_path_str}")
 
         try:
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+            # Validate frame_index is within bounds
+            if self.frame_index >= total_frames:
+                raise ValueError(
+                    f"Frame index {self.frame_index} is out of bounds for video '{video_path_str}' "
+                    f"which has {total_frames} frames (valid indices: 0 to {total_frames - 1})."
+                )
+
             cap.set(cv2.CAP_PROP_POS_FRAMES, self.frame_index)
             ret, frame = cap.read()
 

@@ -20,6 +20,7 @@ from __future__ import annotations
 import json
 import shutil
 import tempfile
+from enum import Enum
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
@@ -82,6 +83,20 @@ try:
     VERSION = _pkg_version("datumaro")
 except PackageNotFoundError:
     VERSION = "0.0.0"
+
+
+class ExportMode(Enum):
+    """Export mode for media files (images and videos).
+
+    Attributes:
+        SKIP: Don't export media files
+        REFERENCE: Keep original absolute paths (not portable, but faster)
+        COPY: Copy files to output directory (portable, recommended for sharing)
+    """
+
+    SKIP = "skip"
+    REFERENCE = "reference"
+    COPY = "copy"
 
 
 def _get_image_fields(dataset: Dataset[DType]) -> list[tuple[str, object]]:
@@ -315,7 +330,8 @@ def _copy_video_files(
             dest_path = output_dir / f"{stem}_{counter}{suffix}"
             counter += 1
         shutil.copy2(source_path, dest_path)
-        video_path_mapping[video_path] = str(dest_path.relative_to(output_dir.parent))
+        rel_path = dest_path.relative_to(output_dir.parent).as_posix()
+        video_path_mapping[video_path] = rel_path
 
     return video_path_mapping
 
@@ -323,15 +339,15 @@ def _copy_video_files(
 def _export_videos_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
-    export_mode: str = "copy",
-) -> dict[str, dict[str, str]]:
+    export_mode: ExportMode = ExportMode.COPY,
+) -> dict[str, str]:
     """
     Export video data from the dataset.
 
     Modes:
-        - "reference": Store original video paths (default)
-        - "copy": Copy video files to output directory
-        - "frames": Export individual frames as images (for frame-only export)
+        - ExportMode.REFERENCE: Store original video paths
+        - ExportMode.COPY: Copy video files to output directory
+        - ExportMode.SKIP: Don't export videos
 
     Args:
         dataset: The dataset to export
@@ -341,7 +357,7 @@ def _export_videos_from_dataset(
     Returns:
         Mapping of original paths to exported paths
     """
-    if export_mode == "reference":
+    if export_mode in {ExportMode.REFERENCE, ExportMode.SKIP}:
         # Keep original paths, no copying needed
         return {}
 
@@ -354,7 +370,7 @@ def _export_videos_from_dataset(
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    if export_mode == "copy":
+    if export_mode == ExportMode.COPY:
         return _copy_video_files(video_paths, output_dir)
 
     return {}
@@ -428,7 +444,7 @@ def _write_parquet_and_metadata(
     df_to_export: pl.DataFrame,
     work_dir: Path,
     dataset: Dataset[DType],
-    export_videos: str,
+    export_videos: ExportMode,
     video_path_mapping: dict[str, str],
 ) -> None:
     """Write parquet file and metadata to the work directory."""
@@ -450,7 +466,7 @@ def _write_parquet_and_metadata(
         "object_columns": object_columns,
         "videos": {
             "fields": [name for name, _ in _get_video_fields(dataset)],
-            "export_mode": export_videos,
+            "export_mode": export_videos.value,
             "original_paths": {v: k for k, v in video_path_mapping.items()},
             "metadata": video_metadata_dict,
         },
@@ -467,15 +483,15 @@ def _create_zip_archive(output_path: Path, work_dir: Path) -> None:
     with ZipFile(output_path, "w", ZIP_DEFLATED) as zipf:
         for file_path in work_dir.rglob("*"):
             if file_path.is_file():
-                arcname = file_path.relative_to(work_dir)
+                arcname = file_path.relative_to(work_dir).as_posix()
                 zipf.write(file_path, arcname)
 
 
 def export_dataset(
     dataset: Dataset[DType],
     output_path: str | Path,
-    export_images: bool = True,
-    export_videos: str = "copy",
+    export_images: ExportMode = ExportMode.COPY,
+    export_videos: ExportMode = ExportMode.COPY,
     as_zip: bool = False,
 ) -> None:
     """
@@ -484,23 +500,30 @@ def export_dataset(
     The dataset is exported with the following structure:
     - data.parquet: The DataFrame in Parquet format
     - metadata.json: Schema, categories, image paths, and video metadata
-    - images/: Directory containing exported images (if export_images=True)
-    - videos/: Directory containing exported videos (if export_videos="copy")
+    - images/: Directory containing exported images (if export_images is COPY)
+    - videos/: Directory containing exported videos (if export_videos is COPY)
 
     Image format is automatically determined:
     - ImagePathField: Preserves original format (copied directly)
     - ImageCallableField: Saved as PNG (lossless)
     - InstanceMaskCallableField/MaskCallableField: Saved as PNG (best for masks)
 
-    Video handling modes:
-    - "reference": Keep original video paths
-    - "copy": Copy video files to output directory
+    Export modes:
+    - ExportMode.SKIP: Don't export media files. Use this when you don't need
+      the media files in the export (e.g., metadata-only export).
+    - ExportMode.REFERENCE: Keep original absolute paths in the DataFrame. Use
+      this when files should remain in their original locations and you don't
+      need a portable dataset. This is faster but the exported dataset will
+      break if moved or if original files are deleted.
+    - ExportMode.COPY: Copy files to a subdirectory in the output and update
+      paths to be relative. This creates a self-contained, portable dataset.
+      Recommended for sharing or archiving datasets.
 
     Args:
         dataset: The dataset to export
         output_path: Path to export to (directory or .zip file)
-        export_images: Whether to export images from callable/path fields
-        export_videos: How to handle videos ("reference" or "copy")
+        export_images: How to handle images. Default is ExportMode.COPY.
+        export_videos: How to handle videos. Default is ExportMode.COPY.
         as_zip: Whether to package everything as a ZIP file
     """
     output_path, temp_dir, work_dir = _setup_work_directory(Path(output_path), as_zip)
@@ -510,14 +533,14 @@ def export_dataset(
         video_path_mapping: dict[str, str] = {}
 
         # Export images if requested
-        if export_images:
+        if export_images == ExportMode.COPY:
             images_dir = work_dir / IMAGES_DIR
             images_paths = _export_images_from_dataset(dataset, images_dir)
             media_path_fields = {name for name, f in _get_image_fields(dataset) if isinstance(f, MediaPathField)}
             df_to_export = _update_df_with_image_paths(df_to_export, images_paths, media_path_fields)
 
         # Export videos
-        if export_videos != "reference":
+        if export_videos == ExportMode.COPY:
             videos_dir = work_dir / VIDEOS_DIR
             video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos)
             if video_path_mapping:

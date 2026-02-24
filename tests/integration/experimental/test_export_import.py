@@ -28,6 +28,7 @@ from datumaro.experimental.export_import import (
     METADATA_FILE,
     VERSION,
     VIDEOS_DIR,
+    ExportMode,
     _export_images_from_dataset,
     _get_registered_samples,
     _get_video_fields,
@@ -291,7 +292,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
     dataset.append(SimpleSample(label=2, score=0.8))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check directory structure
     assert output_dir.exists()
@@ -331,7 +332,7 @@ def test_export_dataset_with_images_to_directory(tmp_path):
     dataset.append(ImageSample(image=make_image(1), label=2))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Check directory structure
     assert output_dir.exists()
@@ -354,7 +355,7 @@ def test_export_dataset_as_zip(tmp_path):
     dataset.append(SimpleSample(label=1))
 
     output_zip = tmp_path / "export.zip"
-    export_dataset(dataset, output_zip, export_images=False, as_zip=True)
+    export_dataset(dataset, output_zip, export_images=ExportMode.SKIP, as_zip=True)
 
     # Check ZIP file was created
     assert output_zip.exists()
@@ -382,7 +383,7 @@ def test_export_with_object_columns(tmp_path):
     dataset.append(CallableSample(image=make_image, label=1))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check metadata tracks object columns
     with open(output_dir / METADATA_FILE) as f:
@@ -405,7 +406,7 @@ def test_export_dataset_with_categories(tmp_path):
     dataset.append(LabeledSample(label=1))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check schema is preserved
     with open(output_dir / METADATA_FILE) as f:
@@ -416,7 +417,7 @@ def test_export_dataset_with_categories(tmp_path):
 
 
 def test_export_images_false_skips_image_export(tmp_path):
-    """Test that export_images=False skips image export."""
+    """Test that export_images=ExportMode.SKIP skips image export."""
 
     class ImageSample(Sample):
         image: Callable[[], np.ndarray] = image_callable_field()
@@ -428,7 +429,7 @@ def test_export_images_false_skips_image_export(tmp_path):
     dataset.append(ImageSample(image=make_image))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Images directory should not exist
     assert not (output_dir / IMAGES_DIR).exists()
@@ -447,7 +448,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
     original_dataset.append(SimpleSample(label=2, score=0.8))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=SimpleSample)
@@ -472,7 +473,7 @@ def test_import_dataset_from_zip(tmp_path):
     original_dataset.append(SimpleSample(label=2))
 
     export_zip = tmp_path / "export.zip"
-    export_dataset(original_dataset, export_zip, export_images=False, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.SKIP, as_zip=True)
 
     # Import from ZIP
     imported_dataset = import_dataset(export_zip, dtype=SimpleSample)
@@ -504,7 +505,7 @@ def test_import_dataset_with_image_callables(tmp_path):
     original_dataset.append(ImageSample(image=make_image(1), label=2))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=ImageSample)
@@ -545,7 +546,7 @@ def test_import_dataset_with_image_paths(tmp_path):
     original_dataset.append(PathSample(image_path=str(img_path), label=1))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=PathSample)
@@ -582,7 +583,7 @@ def test_import_dataset_with_instance_masks(tmp_path):
     original_dataset.append(MaskSample(mask=make_mask(1), label=2))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=MaskSample)
@@ -640,7 +641,7 @@ def test_import_preserves_categories(tmp_path):
     original_dataset.append(LabeledSample(label=0))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=LabeledSample)
@@ -667,7 +668,7 @@ def test_import_with_none_image_values(tmp_path):
     original_dataset.append(OptionalImageSample(image=make_image, label=3))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
@@ -700,7 +701,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
 
     # Export and import
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
     imported_dataset = import_dataset(export_dir, dtype=ComplexSample)
 
     # Verify complete data integrity
@@ -727,7 +728,7 @@ def test_export_empty_dataset(tmp_path):
     dataset = Dataset(SimpleSample)
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Should succeed and create valid structure
     assert (output_dir / METADATA_FILE).exists()
@@ -749,7 +750,7 @@ def test_export_large_dataset(tmp_path):
         dataset.append(SimpleSample(value=i))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import and verify
     imported = import_dataset(output_dir, dtype=SimpleSample)
@@ -774,7 +775,7 @@ def test_export_with_special_characters_in_paths(tmp_path):
     dataset.append(PathSample(image_path=str(img_path)))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Should handle gracefully
     imported = import_dataset(output_dir, dtype=PathSample)
@@ -791,7 +792,7 @@ def test_zip_path_without_zip_extension(tmp_path):
     dataset.append(SimpleSample(label=1))
 
     output_path = tmp_path / "export_no_ext"
-    export_dataset(dataset, output_path, export_images=False, as_zip=True)
+    export_dataset(dataset, output_path, export_images=ExportMode.SKIP, as_zip=True)
 
     # Should create .zip file
     expected_zip = tmp_path / "export_no_ext/dataset.zip"
@@ -865,7 +866,7 @@ def test_export_import_different_field_types(tmp_path):
 
     # Export dataset
     export_dir = tmp_path / "export"
-    export_dataset(dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Verify export structure
     assert (export_dir / METADATA_FILE).exists()
@@ -942,8 +943,8 @@ def test_export_import_different_field_types(tmp_path):
 
 def test_export_dataset_export_images_true_and_false(tmp_path):
     """
-    Test that export_dataset stores relative paths in Parquet when export_images=True
-    and original absolute paths when export_images=False.
+    Test that export_dataset stores relative paths in Parquet when export_images=ExportMode.COPY
+    and original absolute paths when export_images=ExportMode.SKIP.
     """
     # 1. Setup: Create a temporary source image
     source_dir = tmp_path / "source_media"
@@ -957,14 +958,14 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     dataset = Dataset(SampleWithPath)
     dataset.append(SampleWithPath(img=str(source_img_path)))
 
-    # 2. Case: export_images=True
+    # 2. Case: export_images=ExportMode.COPY
     # The path in Parquet should be relative to the export directory
     export_dir_true = tmp_path / "exported_with_images"
     export_dataset(
         dataset=dataset,
         output_path=export_dir_true,
         as_zip=False,
-        export_images=True,
+        export_images=ExportMode.COPY,
     )
 
     df_true = pl.read_parquet(export_dir_true / DATAFRAME_FILE)
@@ -980,14 +981,14 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path
     assert exported_file_on_disk.exists()
 
-    # 3. Case: export_images=False
+    # 3. Case: export_images=ExportMode.SKIP
     # The path in Parquet should remain the original absolute path
     export_dir_false = tmp_path / "exported_without_images"
     export_dataset(
         dataset=dataset,
         output_path=export_dir_false,
         as_zip=False,
-        export_images=False,
+        export_images=ExportMode.SKIP,
     )
 
     df_false = pl.read_parquet(export_dir_false / DATAFRAME_FILE)
@@ -1127,7 +1128,7 @@ def test_import_without_dtype_falls_back_to_sample_for_unknown_schema(tmp_path):
     dataset.append(Sample(weird_field_xyz=42))
 
     export_dir = tmp_path / "export"
-    export_dataset(dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     imported_dataset = import_dataset(export_dir, dtype=None)
     assert len(imported_dataset) == 1
@@ -1148,7 +1149,7 @@ def test_import_auto_detects_dtype_roundtrip(tmp_path):
         original_dataset.append(AutoDetectSample(label=2, score=0.75, subset=Subset.TRAINING))
 
         export_dir = tmp_path / "export"
-        export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+        export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
         imported_dataset = import_dataset(export_dir)  # no dtype
         # Should auto-detect a matching subclass (not fall back to base Sample)
@@ -1204,7 +1205,7 @@ def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
     original_dataset.append(ImageSample(image=make_image, label=1))
 
     export_zip = tmp_path / "my_dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import from zip (no extract_dir provided)
     imported_dataset = import_dataset(export_zip, dtype=ImageSample)
@@ -1241,7 +1242,7 @@ def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_p
     original_dataset.append(ImageSample(image=make_image, label=2))
 
     export_zip = tmp_path / "dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import with custom extract_dir
     custom_extract_dir = tmp_path / "custom" / "location"
@@ -1288,7 +1289,7 @@ def test_import_zip_images_accessible_after_import(tmp_path):
     original_dataset.append(ImageSample(image=make_image(200), label=2))
 
     export_zip = tmp_path / "test_dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import from zip
     imported_dataset = import_dataset(export_zip, dtype=ImageSample)
@@ -1312,7 +1313,7 @@ def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
     original_dataset.append(SimpleSample(label=3))
 
     export_dir = tmp_path / "exported"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import from directory with extract_dir (should be ignored)
     custom_dir = tmp_path / "should_not_be_created"
@@ -1351,7 +1352,7 @@ def test_export_video_frame_path_field_reference_mode(tmp_path):
         )
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Check metadata
     with open(output_dir / METADATA_FILE) as f:
@@ -1382,7 +1383,7 @@ def test_export_video_frame_path_field_copy_mode(tmp_path):
         )
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
 
     # Check that video was copied
     videos_dir = output_dir / VIDEOS_DIR
@@ -1414,7 +1415,7 @@ def test_export_import_video_metadata_preserved(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Check metadata file has video metadata
     with open(output_dir / METADATA_FILE) as f:
@@ -1466,7 +1467,9 @@ def test_export_import_video_frames_roundtrip(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(original_dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+    export_dataset(
+        original_dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False
+    )
 
     # Import
     imported = import_dataset(output_dir, dtype=VideoSample)
@@ -1512,7 +1515,7 @@ def test_export_import_video_to_zip(tmp_path):
 
     # Export as ZIP with copy mode
     zip_path = tmp_path / "dataset.zip"
-    export_dataset(dataset, zip_path, export_images=False, export_videos="copy", as_zip=True)
+    export_dataset(dataset, zip_path, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=True)
 
     assert zip_path.exists()
 
@@ -1551,7 +1554,7 @@ def test_export_empty_video_fields(tmp_path):
     )
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
 
     # Should succeed without creating videos directory
     assert (output_dir / METADATA_FILE).exists()
@@ -1607,7 +1610,7 @@ def test_export_import_media_path_field_with_videos(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Import
     imported = import_dataset(output_dir, dtype=MediaSample)
@@ -1652,7 +1655,7 @@ def test_export_import_media_path_field_mixed_content(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Import
     imported = import_dataset(output_dir, dtype=MediaSample)
@@ -1707,7 +1710,7 @@ def test_video_metadata_multiple_videos(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Import
     imported = import_dataset(output_dir, dtype=VideoSample)
@@ -1730,14 +1733,14 @@ def test_export_videos_copy_mode_creates_correct_paths(tmp_path):
     dataset.append(VideoSample(frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="copy", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
 
     # Load the parquet and check the path is relative
     df = pl.read_parquet(output_dir / DATAFRAME_FILE)
     frame_path = df["frame"][0]
 
     # Path should be relative to export dir and start with videos/
-    assert frame_path.startswith(VIDEOS_DIR) or "/" not in frame_path[:5]
+    assert frame_path.startswith(VIDEOS_DIR + "/")
 
 
 def test_video_metadata_serialization_with_null_codec(tmp_path):
@@ -1761,7 +1764,7 @@ def test_video_metadata_serialization_with_null_codec(tmp_path):
 
     # Export
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, export_videos="reference", as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False)
 
     # Check metadata
     with open(output_dir / METADATA_FILE) as f:
