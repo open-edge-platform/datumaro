@@ -303,7 +303,7 @@ def export_dataset(
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
         as_zip: Whether to package everything as a ZIP file
-        skip_missing_images: Boolean indicating if to raise errors or skip when images are missing
+        skip_missing_images: Boolean indicating whether to raise errors or skip when images are missing. Only has an effect if ``export_images=True``; otherwise, it is ignored.
     """
     output_path = Path(output_path)
 
