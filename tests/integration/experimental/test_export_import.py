@@ -272,6 +272,52 @@ def test_export_with_none_values(tmp_path):
     assert "image_000002.png" in result["image"]
 
 
+def test_export_images_error_all_image_fields_null(tmp_path):
+    """Error when a row has null values for all image fields and skip_missing_images=False."""
+
+    class AllOptionalImagesSample(Sample):
+        image: Callable[[], np.ndarray] | None = image_callable_field()
+        image_path: str | None = image_path_field()
+
+    dataset = Dataset(AllOptionalImagesSample)
+    # Single row where all image-related fields are None
+    dataset.append(AllOptionalImagesSample(image=None, image_path=None))
+
+    output_dir = tmp_path / "output_all_null"
+    with pytest.raises(ValueError, match="image"):
+        _export_images_from_dataset(dataset, output_dir)
+
+
+def test_export_images_error_missing_image_path_file(tmp_path):
+    """Error when an ImagePathField points to a non-existent file and skip_missing_images=False."""
+
+    class PathImageSample(Sample):
+        image_path: str = image_path_field()
+
+    dataset = Dataset(PathImageSample)
+    missing_path = tmp_path / "does_not_exist.png"
+    dataset.append(PathImageSample(image_path=str(missing_path)))
+
+    output_dir = tmp_path / "output_missing_path"
+    with pytest.raises(ValueError, match="image"):
+        _export_images_from_dataset(dataset, output_dir)
+
+
+def test_export_images_error_failing_image_callable(tmp_path):
+    """Error when an ImageCallableField cannot generate an image and skip_missing_images=False."""
+
+    class CallableImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    dataset = Dataset(CallableImageSample)
+    dataset.append(CallableImageSample(image=bad_image))
+
+    output_dir = tmp_path / "output_bad_callable"
+    with pytest.raises(ValueError, match="image"):
+        _export_images_from_dataset(dataset, output_dir)
 def test_export_basic_dataset_to_directory(tmp_path):
     """Test basic export to directory."""
 
