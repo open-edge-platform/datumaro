@@ -549,6 +549,9 @@ def _import_dataset_from_dir(
     Returns:
         The imported Dataset instance
     """
+    # Normalize to an absolute path so that subsequent path joins (e.g. for
+    # metadata, the Parquet file, and image directories) behave consistently
+    # regardless of whether the caller passed a relative or absolute path.
     if not input_dir.is_absolute():
         input_dir = input_dir.resolve()
 
