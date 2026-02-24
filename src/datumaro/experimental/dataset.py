@@ -648,12 +648,14 @@ class Dataset(Generic[DType]):
                 self.df,
                 transforms.schema,
                 transforms,
+                video_metadata=self._video_metadata,
             )
         return Dataset.from_dataframe(
             self.df,
             dtype,
             transforms,
             schema=transforms.schema,
+            video_metadata=self._video_metadata,
         )
 
     def convert_to_schema(
@@ -733,6 +735,7 @@ class Dataset(Generic[DType]):
             df=filtered_df,
             dtype_or_schema=self.dtype,
             schema=self.schema,
+            video_metadata=self._video_metadata,
         )
 
     def filter_by_labels(
@@ -835,6 +838,7 @@ class Dataset(Generic[DType]):
                 df=filtered_df,
                 dtype_or_schema=self.dtype,
                 schema=new_schema,
+                video_metadata=self._video_metadata,
             )
 
         return Dataset.from_dataframe(
