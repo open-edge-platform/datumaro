@@ -318,6 +318,8 @@ def test_export_images_error_failing_image_callable(tmp_path):
     output_dir = tmp_path / "output_bad_callable"
     with pytest.raises(ValueError, match="image"):
         _export_images_from_dataset(dataset, output_dir)
+
+
 def test_export_basic_dataset_to_directory(tmp_path):
     """Test basic export to directory."""
 
