@@ -187,8 +187,6 @@ def _export_single_field(
     for idx in range(len(dataset)):
         value = _get_field_value(dataset, idx, field_name)
         if value is None:
-            if not skip_missing_images:
-                print(f"Warning: No value set for field {field_name}, idx {idx}.")
             continue
 
         rel_path = None
@@ -250,9 +248,6 @@ def _export_images_from_dataset(
 
     df_to_export = dataset.df.with_row_index("__idx")
     for field_name, path_map in images_paths.items():
-        if not path_map:
-            continue
-
         # Create a mapping DataFrame from the exported paths
         mapping_df = pl.DataFrame(
             {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},

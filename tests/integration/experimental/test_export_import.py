@@ -59,7 +59,7 @@ MASK_CATEGORIES = MaskCategories.generate(size=256)
 
 
 def test_export_no_image_fields(tmp_path):
-    """Test that datasets without image fields return empty dict."""
+    """Test that datasets without image fields return the original dataframe."""
 
     class SimpleSample(Sample):
         label: int = label_field()
