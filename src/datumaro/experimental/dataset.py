@@ -14,9 +14,20 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
+from datumaro.experimental.categories import HierarchicalLabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
+from datumaro.experimental.fields.annotations import LabelField
 from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
+from datumaro.experimental.filtering.label_filter import (
+    create_filtered_categories,
+    expand_indices_with_ancestors,
+    filter_df_by_label_indices,
+    remap_label_indices,
+    resolve_label_field_name,
+    resolve_label_indices,
+    validate_label_categories,
+)
 from datumaro.experimental.media import LazyVideoFrame, VideoInfo, extract_video_info
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
@@ -717,6 +728,114 @@ class Dataset(Generic[DType]):
             filtered_df = self.df.filter(self.df[subset_column_name].is_in(subset_names))
         else:
             filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+
+        return Dataset.from_dataframe(
+            df=filtered_df,
+            dtype_or_schema=self.dtype,
+            schema=self.schema,
+        )
+
+    def filter_by_labels(
+        self,
+        labels: str | int | Sequence[str | int],
+        label_field_name: str | None = None,
+        update_categories: bool = False,
+    ) -> Dataset[DType]:
+        """
+        Return a new dataset containing only items that have at least one of the given labels.
+
+        This method accepts either label names (as strings) or label indices (as integers)
+        and resolves them to their integer indices using the LabelCategories associated with
+        the specified label field. It supports all LabelField configurations: single labels,
+        multi-label fields, list fields, and combinations thereof.
+
+        When ``label_field_name`` is not provided, the method automatically
+        detects the LabelField in the schema. If the schema contains multiple
+        LabelFields, ``label_field_name`` must be specified explicitly.
+
+        Args:
+            labels: A single label name (str), label index (int), or a sequence of label names
+                and/or indices to filter by. Label indices must be within the valid range
+                [0, num_categories).
+            label_field_name: The name of the attribute on the Sample that uses a
+                LabelField. If ``None``, it is inferred automatically when the
+                schema contains exactly one LabelField.
+            update_categories: If ``True``, the returned dataset's LabelCategories will
+                contain only the filtered labels (with indices remapped to 0, 1, 2, ...).
+                If ``False`` (default), the original LabelCategories are preserved and
+                label indices remain unchanged.
+
+        Returns:
+            A new Dataset containing only the items whose label field contains
+            at least one of the specified labels.
+
+        Raises:
+            KeyError: If ``label_field_name`` is not found in the schema.
+            TypeError: If the specified field is not a LabelField, or if a label is
+                neither a string nor an integer.
+            RuntimeError: If ``label_field_name`` is ``None`` and the schema
+                contains zero or more than one LabelField.
+            ValueError: If the field does not have LabelCategories attached, if any
+                of the provided label names are not found in the categories, or if
+                any label index is out of range.
+
+        Example:
+            ```python
+            # Auto-detect (schema has exactly one LabelField)
+            filtered = dataset.filter_by_labels(["cat", "dog"])
+
+            # Using label indices
+            filtered = dataset.filter_by_labels([0, 1])
+
+            # Explicit field name (required when multiple LabelFields exist)
+            filtered = dataset.filter_by_labels(["cat", "dog"], label_field_name="labels")
+
+            # Update categories to only contain filtered labels (indices remapped)
+            filtered = dataset.filter_by_labels(["cat", "dog"], update_categories=True)
+            ```
+        """
+
+        label_field_name = resolve_label_field_name(self.schema, label_field_name)
+        attr_info = self.schema.attributes[label_field_name]
+        label_field_instance: LabelField = attr_info.field  # type: ignore[assignment]
+
+        # Validate LabelCategories
+        categories = validate_label_categories(attr_info.categories, label_field_name)
+
+        if isinstance(labels, (str, int)):
+            labels = [labels]
+
+        if len(labels) == 0:
+            raise ValueError("No labels provided to filter by. Please provide at least one label name or index.")
+
+        label_indices = resolve_label_indices(labels, categories, label_field_name)
+        filtered_df = filter_df_by_label_indices(self.df, label_field_name, label_field_instance, label_indices)
+
+        if update_categories:
+            # For hierarchical categories, automatically include all ancestor labels
+            if isinstance(categories, HierarchicalLabelCategories):
+                label_indices = expand_indices_with_ancestors(categories, label_indices)
+
+            # Sort indices to maintain a consistent order in the new categories
+            sorted_indices = sorted(set(label_indices))
+
+            # Create mapping from old indices to new indices (0, 1, 2, ...)
+            old_to_new_index_map = {old_idx: new_idx for new_idx, old_idx in enumerate(sorted_indices)}
+
+            # Remap label indices in the DataFrame
+            filtered_df = remap_label_indices(filtered_df, label_field_name, label_field_instance, old_to_new_index_map)
+
+            # Create new categories based on the original category type
+            new_categories = create_filtered_categories(categories, sorted_indices)
+
+            # Create a new schema with the updated categories
+            new_schema = self.schema.with_categories({label_field_name: new_categories})
+
+            return Dataset.from_dataframe(
+                df=filtered_df,
+                dtype_or_schema=self.dtype,
+                schema=new_schema,
+            )
 
         return Dataset.from_dataframe(
             df=filtered_df,
