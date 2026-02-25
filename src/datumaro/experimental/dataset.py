@@ -743,6 +743,7 @@ class Dataset(Generic[DType]):
         labels: str | int | Sequence[str | int],
         label_field_name: str | None = None,
         update_categories: bool = False,
+        keep_empty_samples: bool = False,
     ) -> Dataset[DType]:
         """
         Return a new dataset containing only items that have at least one of the given labels.
@@ -767,10 +768,17 @@ class Dataset(Generic[DType]):
                 contain only the filtered labels (with indices remapped to 0, 1, 2, ...).
                 If ``False`` (default), the original LabelCategories are preserved and
                 label indices remain unchanged.
+            keep_empty_samples: If ``True``, all samples are kept in the dataset even if
+                they have no matching labels. Non-matching labels and their corresponding
+                annotations are removed, but the sample's media data (e.g., images) is
+                preserved. If ``False`` (default), samples without any matching labels
+                are removed from the dataset entirely.
 
         Returns:
-            A new Dataset containing only the items whose label field contains
-            at least one of the specified labels.
+            A new Dataset containing items filtered by the specified labels.
+            If ``keep_empty_samples=False``, only items with at least one matching label
+            are included. If ``keep_empty_samples=True``, all items are included but with
+            non-matching labels and annotations stripped away.
 
         Raises:
             KeyError: If ``label_field_name`` is not found in the schema.
@@ -795,6 +803,9 @@ class Dataset(Generic[DType]):
 
             # Update categories to only contain filtered labels (indices remapped)
             filtered = dataset.filter_by_labels(["cat", "dog"], update_categories=True)
+
+            # Keep all samples but strip non-matching labels and annotations
+            filtered = dataset.filter_by_labels(["cat"], keep_empty_samples=True)
             ```
         """
 
@@ -812,7 +823,14 @@ class Dataset(Generic[DType]):
             raise ValueError("No labels provided to filter by. Please provide at least one label name or index.")
 
         label_indices = resolve_label_indices(labels, categories, label_field_name)
-        filtered_df = filter_df_by_label_indices(self.df, label_field_name, label_field_instance, label_indices)
+        filtered_df = filter_df_by_label_indices(
+            self.df,
+            label_field_name,
+            label_field_instance,
+            label_indices,
+            schema=self.schema,
+            keep_empty_samples=keep_empty_samples,
+        )
 
         if update_categories:
             # For hierarchical categories, automatically include all ancestor labels
