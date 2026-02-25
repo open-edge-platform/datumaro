@@ -400,6 +400,8 @@ def _collect_instances_for_image(
     for ann in instances_by_image.get(image_id, []):
         category_idx = cat_id_to_idx.get(ann.get("category_id"))
         segmentation = ann.get("segmentation")
+        original_bbox = ann.get("bbox")
+        original_area = ann.get("area")
 
         # Handle multi-part polygons by splitting them into separate annotations
         polygon_parts = _segmentation_to_poly_parts(segmentation)
@@ -419,6 +421,10 @@ def _collect_instances_for_image(
                 x2, y2 = float(x_coords.max()), float(y_coords.max())
                 computed_bbox = [x1, y1, x2 - x1, y2 - y1]  # x, y, w, h
                 area = (x2 - x1) * (y2 - y1)
+            elif original_bbox is not None and len(original_bbox) == 4:
+                # Use original bbox from annotation if no polygon
+                computed_bbox = [float(v) for v in original_bbox]
+                area = float(original_area) if original_area is not None else computed_bbox[2] * computed_bbox[3]
             else:
                 computed_bbox = [0.0, 0.0, 0.0, 0.0]
                 area = 0.0

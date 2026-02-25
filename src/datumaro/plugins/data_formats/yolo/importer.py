@@ -87,7 +87,7 @@ class _YoloLooseImporter(Importer):
             # Check the first line only
             return True
 
-        raise DatasetImportError("Empty file is not allowed.")
+        return True
 
     @classmethod
     def _find_loose(cls, path: str, dirname: str) -> List[Dict[str, Any]]:
@@ -171,12 +171,7 @@ class _YoloUltralyticsImporter(_YoloLooseImporter):
 
     @classmethod
     def _check_ann_file_impl(cls, fp: TextIOWrapper) -> bool:
-        try:
-            return _YoloLooseImporter._check_ann_file_impl(fp)
-        except DatasetImportError as e:
-            if e.args[0] == "Empty file is not allowed.":
-                return True
-            raise
+        return _YoloLooseImporter._check_ann_file_impl(fp)
 
 
 class YoloImporter(Importer):
