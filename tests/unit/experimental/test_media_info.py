@@ -23,7 +23,7 @@ from datumaro.experimental.media import LazyImage, LazyVideoFrame, MediaInfo, Vi
 TEST_VIDEO_PATH = Path(__file__).parent.parent.parent / "assets" / "cvat_dataset" / "test.mp4"
 
 
-class TestMediaInfoInstantiation:
+class MediaInfoInstantiationTest:
     """Tests for MediaInfo basic instantiation."""
 
     def test_create_image_media_info(self):
@@ -82,7 +82,7 @@ class TestMediaInfoInstantiation:
             info.width = 200  # type: ignore
 
 
-class TestMediaInfoProperties:
+class MediaInfoPropertiesTest:
     """Tests for MediaInfo properties."""
 
     def test_is_image_true_when_fps_is_none(self):
@@ -108,7 +108,7 @@ class TestMediaInfoProperties:
         assert info.size == (1280, 720)
 
 
-class TestMediaInfoSerialization:
+class MediaInfoSerializationTest:
     """Tests for MediaInfo serialization (to_dict/from_dict)."""
 
     def test_to_dict_image(self):
@@ -203,7 +203,7 @@ class TestMediaInfoSerialization:
         assert restored.frame_index == original.frame_index
 
 
-class TestMediaInfoFactoryMethods:
+class MediaInfoFactoryMethodsTest:
     """Tests for MediaInfo factory methods."""
 
     def test_from_lazy_image_with_real_file(self):
@@ -318,7 +318,7 @@ class TestMediaInfoFactoryMethods:
             MediaInfo.from_media(123)  # type: ignore
 
 
-class TestMediaInfoEdgeCases:
+class MediaInfoEdgeCasesTest:
     """Tests for MediaInfo edge cases."""
 
     def test_minimal_media_info(self):

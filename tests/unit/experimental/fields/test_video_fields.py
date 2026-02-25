@@ -843,7 +843,7 @@ class VideoFieldIntegrationTest:
         assert loaded_df["frame_frame_index"][1] == 10
 
 
-class TestMediaInfoField:
+class MediaInfoFieldTest:
     """Tests for MediaInfoField - unified media metadata field."""
 
     @pytest.fixture
@@ -1062,7 +1062,7 @@ class TestMediaInfoField:
         assert result is None
 
 
-class TestMediaInfoFieldInDataset:
+class MediaInfoFieldInDatasetTest:
     """Integration tests for MediaInfoField in Dataset."""
 
     @pytest.fixture

@@ -386,12 +386,12 @@ def test_export_dataset_ignore_missing_media_roundtrip(tmp_path):
     export_dir = tmp_path / "export"
     export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False, ignore_missing_media=True)
 
-    # Import back - should only have 2 samples (with images)
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
 
-    assert len(imported_dataset) == 2
+    assert len(imported_dataset) == 3
     assert callable(imported_dataset[0].image)
-    assert callable(imported_dataset[1].image)
+    assert imported_dataset[1].image is None
+    assert callable(imported_dataset[2].image)
 
 
 def test_export_basic_dataset_to_directory(tmp_path):

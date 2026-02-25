@@ -330,6 +330,10 @@ def _export_single_field(
     is_media_path_field = isinstance(field, MediaPathField)
 
     for idx in range(len(dataset)):
+        # Check if this is a video frame row (should be skipped, not an error)
+        if _is_video_frame_row(dataset, field_name, idx, is_media_path_field):
+            continue
+
         rel_path = _process_field_row(dataset, field_name, field, idx, output_dir, is_media_path_field)
 
         if rel_path is not None:
