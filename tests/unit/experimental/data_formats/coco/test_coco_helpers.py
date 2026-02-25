@@ -259,6 +259,32 @@ def test_collect_helpers_extract_expected_fields():
     assert caps == (["hi"], [5])
 
 
+def test_collect_instances_uses_bbox_when_no_polygon():
+    """Test that bbox values are preserved when there's no polygon segmentation."""
+    instances_by_image = {
+        1: [
+            # Annotation with bbox but no polygon (empty segmentation)
+            {
+                "image_id": 1,
+                "category_id": 1,
+                "bbox": [100.0, 150.0, 200.0, 250.0],
+                "area": 50000.0,
+                "segmentation": [],
+            },
+        ]
+    }
+    bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {1: 0})
+
+    # Should use the original bbox from annotation, not [0, 0, 0, 0]
+    assert bboxes[0] == [100.0, 150.0, 200.0, 250.0]
+    # Polygon should be empty
+    assert polys[0].shape == (0, 2)
+    assert labels == [0]
+    # Should use the original area from annotation
+    assert areas[0] == pytest.approx(50000.0)
+    assert iscrowd == [False]
+
+
 def test_serialize_instances_requires_labels():
     sample = _make_sample(labels=None)
     with pytest.raises(ValueError):
