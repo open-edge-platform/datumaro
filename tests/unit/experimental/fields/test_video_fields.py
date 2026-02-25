@@ -511,7 +511,7 @@ class MediaPathFieldTest:
 
         result = field.to_polars("media", path)
 
-        assert result["media"][0] == "/path/to/image.png"
+        assert result["media"][0] == str(path)
         assert result["media_frame_index"][0] is None
 
     def test_to_polars_with_none_value(self):
@@ -638,7 +638,7 @@ class MediaPathFieldTest:
         result = field.coerce(path, Union[LazyImage, LazyVideoFrame])
 
         assert isinstance(result, LazyImage)
-        assert result.path == "/path/to/image.png"
+        assert result.path == str(path)
 
     def test_coerce_tuple_to_lazy_video_frame(self):
         """Test coerce() converts (path, frame_index) tuple to LazyVideoFrame."""
