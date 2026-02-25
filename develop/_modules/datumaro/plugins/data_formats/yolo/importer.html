@@ -415,7 +415,7 @@
             <span class="c1"># Check the first line only</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_find_loose</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dirname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
@@ -499,12 +499,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">_YoloLooseImporter</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">DatasetImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-            <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">_YoloLooseImporter</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="YoloImporter">
