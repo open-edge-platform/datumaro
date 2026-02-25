@@ -280,6 +280,120 @@ def test_export_with_none_values(tmp_path):
     assert 2 in result["image"]
 
 
+def test_export_images_error_missing_image_path_file(tmp_path):
+    """Error when an ImagePathField points to a non-existent file and ignore_missing_media=False."""
+
+    class PathImageSample(Sample):
+        image_path: str = image_path_field()
+
+    dataset = Dataset(PathImageSample)
+    missing_path = tmp_path / "does_not_exist.png"
+    dataset.append(PathImageSample(image_path=str(missing_path)))
+
+    output_dir = tmp_path / "output_missing_path"
+    with pytest.raises(ValueError, match="image"):
+        _export_images_from_dataset(dataset, output_dir)
+
+
+def test_export_images_error_failing_image_callable(tmp_path):
+    """Error when an ImageCallableField cannot generate an image and ignore_missing_media=False."""
+
+    class CallableImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    dataset = Dataset(CallableImageSample)
+    dataset.append(CallableImageSample(image=bad_image))
+
+    output_dir = tmp_path / "output_bad_callable"
+    with pytest.raises(ValueError, match="image"):
+        _export_images_from_dataset(dataset, output_dir)
+
+
+def test_export_images_ignore_missing_media_skips_missing_image_path(tmp_path):
+    """Missing ImagePathField file is skipped when ignore_missing_media=True."""
+
+    class PathImageSample(Sample):
+        image_path: str = image_path_field()
+
+    # Create one valid image and one missing
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    valid_path = source_dir / "valid.png"
+    PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(valid_path)
+    missing_path = tmp_path / "does_not_exist.png"
+
+    dataset = Dataset(PathImageSample)
+    dataset.append(PathImageSample(image_path=str(valid_path)))
+    dataset.append(PathImageSample(image_path=str(missing_path)))
+
+    output_dir = tmp_path / "output"
+    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_media=True)
+
+    # Only the valid image should be exported
+    assert "image_path" in result
+    assert len(result["image_path"]) == 1
+    assert 0 in result["image_path"]
+    assert 1 not in result["image_path"]
+
+
+def test_export_images_ignore_missing_media_skips_failing_callable(tmp_path):
+    """Failing ImageCallableField is skipped when ignore_missing_media=True."""
+
+    class CallableImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+
+    def good_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    dataset = Dataset(CallableImageSample)
+    dataset.append(CallableImageSample(image=good_image))
+    dataset.append(CallableImageSample(image=bad_image))
+    dataset.append(CallableImageSample(image=good_image))
+
+    output_dir = tmp_path / "output"
+    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_media=True)
+
+    # Only the good images should be exported
+    assert "image" in result
+    assert len(result["image"]) == 2
+    assert 0 in result["image"]
+    assert 1 not in result["image"]
+    assert 2 in result["image"]
+
+
+def test_export_dataset_ignore_missing_media_roundtrip(tmp_path):
+    """Test that export_dataset with ignore_missing_media=True works end-to-end."""
+
+    class OptionalImageSample(Sample):
+        image: Callable[[], np.ndarray] | None = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    # Export dataset with mixed None values
+    original_dataset = Dataset(OptionalImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(OptionalImageSample(image=make_image, label=1))
+    original_dataset.append(OptionalImageSample(image=None, label=2))
+    original_dataset.append(OptionalImageSample(image=make_image, label=3))
+
+    export_dir = tmp_path / "export"
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False, ignore_missing_media=True)
+
+    # Import back - should only have 2 samples (with images)
+    imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
+
+    assert len(imported_dataset) == 2
+    assert callable(imported_dataset[0].image)
+    assert callable(imported_dataset[1].image)
+
+
 def test_export_basic_dataset_to_directory(tmp_path):
     """Test basic export to directory."""
 
@@ -1778,3 +1892,140 @@ def test_video_metadata_serialization_with_null_codec(tmp_path):
     imported_info = imported.get_video_info("/path/to/video.mp4")
     assert imported_info is not None
     assert imported_info.codec is None
+
+
+# ============================================================================
+# Missing Media Handling Tests (Videos)
+# ============================================================================
+
+
+def test_export_video_error_missing_video_file(tmp_path):
+    """Error when a video file does not exist and ignore_missing_media=False."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=0,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    with pytest.raises(ValueError, match="Video file not found"):
+        export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
+
+
+def test_export_video_ignore_missing_media_skips_missing_video(tmp_path):
+    """Missing video file is skipped when ignore_missing_media=True."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add one valid video frame and one missing
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0),
+            label=0,
+        )
+    )
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=1,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    # Should not raise when ignore_missing_media=True
+    export_dataset(
+        dataset,
+        output_dir,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+        as_zip=False,
+        ignore_missing_media=True,
+    )
+
+    # Check that the valid video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+
+def test_export_mixed_media_ignore_missing_media(tmp_path):
+    """Test ignore_missing_media works for both images and videos together."""
+
+    class MixedMediaSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    def good_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+
+    dataset = Dataset(MixedMediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Valid image, valid video
+    dataset.append(
+        MixedMediaSample(
+            image=good_image,
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0),
+            label=0,
+        )
+    )
+
+    # Bad image, valid video
+    dataset.append(
+        MixedMediaSample(
+            image=bad_image,
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=1),
+            label=1,
+        )
+    )
+
+    # Valid image, missing video
+    dataset.append(
+        MixedMediaSample(
+            image=good_image,
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=2,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    # Should not raise when ignore_missing_media=True
+    export_dataset(
+        dataset,
+        output_dir,
+        export_images=ExportMode.COPY,
+        export_videos=ExportMode.COPY,
+        as_zip=False,
+        ignore_missing_media=True,
+    )
+
+    # Check that valid video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Check that valid images were exported
+    images_dir = output_dir / IMAGES_DIR
+    assert images_dir.exists()
+    image_files = list(images_dir.glob("image_*.png"))
+    assert len(image_files) == 2  # Indices 0 and 2

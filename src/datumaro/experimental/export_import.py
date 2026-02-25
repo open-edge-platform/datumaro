@@ -18,6 +18,7 @@ including support for:
 from __future__ import annotations
 
 import json
+import logging
 import shutil
 import tempfile
 from enum import Enum
@@ -40,6 +41,8 @@ from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
     from .dataset import DType
+
+log = logging.getLogger(__name__)
 
 # Registry sample classes that can automatically be detected when importing datasets
 _sample_registry: set[type[Sample]] = set()
@@ -145,7 +148,7 @@ def _export_image_path_field(
     try:
         source_path = Path(str(value))
         if not source_path.exists():
-            print(f"Warning: Image file not found: {value}")
+            log.warning("Image file not found: %s", value)
             return None
 
         extension = source_path.suffix if source_path.suffix else ".png"
@@ -155,7 +158,7 @@ def _export_image_path_field(
         shutil.copy2(source_path, abs_path)
         return str(rel_path)
     except Exception as e:
-        print(f"Warning: Failed to copy image from {value}: {e}")
+        log.warning("Failed to copy image from %s: %s", value, e)
         return None
 
 
@@ -167,7 +170,7 @@ def _array_to_pil_image(img_data: np.ndarray, field_name: str, idx: int) -> Imag
         if img_data.shape[2] == 1:
             return Image.fromarray(img_data[:, :, 0].astype(np.uint8))
         return Image.fromarray(img_data.astype(np.uint8))
-    print(f"Warning: Unsupported image shape {img_data.shape} for field {field_name}, idx {idx}")
+    log.warning("Unsupported image shape %s for field %s, idx %d", img_data.shape, field_name, idx)
     return None
 
 
@@ -186,7 +189,7 @@ def _export_callable_field(
         img_data = value()
     except Exception as e:
         field_type = "mask" if is_mask else "image"
-        print(f"Warning: Failed to call {field_type} callable for field {field_name}, idx {idx}: {e}")
+        log.warning("Failed to call %s callable for field %s, idx %d: %s", field_type, field_name, idx, e)
         return None
 
     if img_data is None:
@@ -203,8 +206,98 @@ def _export_callable_field(
         return str(rel_path)
     except Exception as e:
         field_type = "mask" if is_mask else "image"
-        print(f"Warning: Failed to save {field_type} for field {field_name}, idx {idx}: {e}")
+        log.warning("Failed to save %s for field %s, idx %d: %s", field_type, field_name, idx, e)
         return None
+
+
+def _export_field_value(
+    value: object,
+    field: object,
+    field_name: str,
+    idx: int,
+    output_dir: Path,
+) -> str | None:
+    """Export a single field value based on field type.
+
+    Args:
+        value: The field value to export
+        field: The field object (determines export behavior)
+        field_name: Name of the field
+        idx: Row index
+        output_dir: Directory to save the exported file
+
+    Returns:
+        Relative path to the exported file, or None if export failed
+    """
+    if isinstance(field, ImagePathField | MediaPathField):
+        # MediaPathField with frame_index=None is treated like ImagePathField
+        return _export_image_path_field(value, field_name, idx, output_dir)
+    if isinstance(field, ImageCallableField):
+        return _export_callable_field(value, field_name, idx, output_dir, is_mask=False)
+    if isinstance(field, InstanceMaskCallableField | MaskCallableField):
+        return _export_callable_field(value, field_name, idx, output_dir, is_mask=True)
+    return None
+
+
+def _is_video_frame_row(
+    dataset: Dataset[DType],
+    field_name: str,
+    idx: int,
+    is_media_path_field: bool,
+) -> bool:
+    """Check if a row represents a video frame (should be skipped for image export).
+
+    For MediaPathField, rows where frame_index is not None are video frames.
+
+    Args:
+        dataset: The dataset
+        field_name: Name of the field
+        idx: Row index
+        is_media_path_field: Whether the field is a MediaPathField
+
+    Returns:
+        True if the row is a video frame, False otherwise
+    """
+    if not is_media_path_field:
+        return False
+
+    frame_idx_col = f"{field_name}_frame_index"
+    if frame_idx_col not in dataset.df.columns:
+        return False
+
+    frame_index = dataset.df[frame_idx_col][idx]
+    return frame_index is not None
+
+
+def _process_field_row(
+    dataset: Dataset[DType],
+    field_name: str,
+    field: object,
+    idx: int,
+    output_dir: Path,
+    is_media_path_field: bool,
+) -> str | None:
+    """Process a single row for field export.
+
+    Args:
+        dataset: The dataset
+        field_name: Name of the field
+        field: The field object
+        idx: Row index
+        output_dir: Directory to save the exported file
+        is_media_path_field: Whether the field is a MediaPathField
+
+    Returns:
+        Relative path if exported successfully, None if row should be skipped
+    """
+    value = _get_field_value(dataset, idx, field_name)
+    if value is None:
+        return None
+
+    if _is_video_frame_row(dataset, field_name, idx, is_media_path_field):
+        return None
+
+    return _export_field_value(value, field, field_name, idx, output_dir)
 
 
 def _export_single_field(
@@ -212,43 +305,49 @@ def _export_single_field(
     field_name: str,
     field: object,
     output_dir: Path,
+    ignore_missing_media: bool = False,
 ) -> dict[int, str]:
     """Export images for a single field across all rows.
 
     For MediaPathField, only rows where frame_index is None (indicating an image
     not a video frame) are exported.
+
+    Args:
+        dataset: The dataset to export from
+        field_name: Name of the field to export
+        field: The field object
+        output_dir: Directory to save images to
+        ignore_missing_media: If True, silently skip media that cannot be found or
+            generated, instead of raising an error.
+
+    Returns:
+        Dictionary mapping row indices to relative paths of exported images
+
+    Raises:
+        ValueError: If media is missing and ignore_missing_media is False
     """
     field_paths: dict[int, str] = {}
-
-    # For MediaPathField, we need to check frame_index to determine if it's an image
-    frame_idx_col = f"{field_name}_frame_index"
     is_media_path_field = isinstance(field, MediaPathField)
 
     for idx in range(len(dataset)):
+        rel_path = _process_field_row(dataset, field_name, field, idx, output_dir, is_media_path_field)
+
+        if rel_path is not None:
+            field_paths[idx] = rel_path
+            continue
+
+        # rel_path is None - check if we should raise an error
+        if ignore_missing_media:
+            continue
+
         value = _get_field_value(dataset, idx, field_name)
         if value is None:
             continue
 
-        # For MediaPathField, skip rows that are video frames (frame_index is not None)
-        if is_media_path_field and frame_idx_col in dataset.df.columns:
-            frame_index = dataset.df[frame_idx_col][idx]
-            if frame_index is not None:
-                # This is a video frame, not an image - skip for image export
-                continue
-
-        rel_path = None
-        if isinstance(field, ImagePathField):
-            rel_path = _export_image_path_field(value, field_name, idx, output_dir)
-        elif isinstance(field, MediaPathField):
-            # MediaPathField with frame_index=None is treated like ImagePathField
-            rel_path = _export_image_path_field(value, field_name, idx, output_dir)
-        elif isinstance(field, ImageCallableField):
-            rel_path = _export_callable_field(value, field_name, idx, output_dir, is_mask=False)
-        elif isinstance(field, InstanceMaskCallableField | MaskCallableField):
-            rel_path = _export_callable_field(value, field_name, idx, output_dir, is_mask=True)
-
-        if rel_path is not None:
-            field_paths[idx] = rel_path
+        raise ValueError(
+            f"Value was set for field {field_name}, index {idx}, value {value}, but no image could be obtained "
+            f"(ImagePathField/MediaPathField) or no image could be generated and saved (Image/MaskCallableField)."
+        )
 
     return field_paths
 
@@ -256,6 +355,7 @@ def _export_single_field(
 def _export_images_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
+    ignore_missing_media: bool = False,
 ) -> dict[str, dict[int, str]]:
     """
     Export images from callable or path fields in the dataset.
@@ -267,9 +367,14 @@ def _export_images_from_dataset(
     Args:
         dataset: The dataset to export images from
         output_dir: Directory to save images to
+        ignore_missing_media: If True, silently skip media that cannot be found or
+            generated, instead of raising an error.
 
     Returns:
         Dictionary mapping field names to dictionaries of row_idx -> relative path
+
+    Raises:
+        ValueError: If media is missing and ignore_missing_media is False
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     image_paths: dict[str, dict[int, str]] = {}
@@ -279,7 +384,7 @@ def _export_images_from_dataset(
         return image_paths
 
     for field_name, field in image_fields:
-        image_paths[field_name] = _export_single_field(dataset, field_name, field, output_dir)
+        image_paths[field_name] = _export_single_field(dataset, field_name, field, output_dir, ignore_missing_media)
 
     return image_paths
 
@@ -311,15 +416,31 @@ def _collect_video_paths_from_fields(
 def _copy_video_files(
     video_paths: set[str],
     output_dir: Path,
+    ignore_missing_media: bool = False,
 ) -> dict[str, str]:
-    """Copy video files to output directory and return path mapping."""
+    """Copy video files to output directory and return path mapping.
+
+    Args:
+        video_paths: Set of video file paths to copy
+        output_dir: Directory to copy videos to
+        ignore_missing_media: If True, silently skip videos that cannot be found,
+            instead of raising an error.
+
+    Returns:
+        Dictionary mapping original paths to relative exported paths
+
+    Raises:
+        ValueError: If video is missing and ignore_missing_media is False
+    """
     video_path_mapping: dict[str, str] = {}
 
     for video_path in video_paths:
         source_path = Path(video_path)
         if not source_path.exists():
-            print(f"Warning: Video file not found: {video_path}")
-            continue
+            if ignore_missing_media:
+                log.warning("Video file not found: %s", video_path)
+                continue
+            raise ValueError(f"Video file not found: {video_path}")
 
         dest_path = output_dir / source_path.name
         # Handle name collisions
@@ -340,6 +461,7 @@ def _export_videos_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
     export_mode: ExportMode = ExportMode.COPY,
+    ignore_missing_media: bool = False,
 ) -> dict[str, str]:
     """
     Export video data from the dataset.
@@ -353,9 +475,14 @@ def _export_videos_from_dataset(
         dataset: The dataset to export
         output_dir: Output directory
         export_mode: How to handle video files
+        ignore_missing_media: If True, silently skip videos that cannot be found,
+            instead of raising an error.
 
     Returns:
         Mapping of original paths to exported paths
+
+    Raises:
+        ValueError: If video is missing and ignore_missing_media is False
     """
     if export_mode in {ExportMode.REFERENCE, ExportMode.SKIP}:
         # Keep original paths, no copying needed
@@ -371,7 +498,7 @@ def _export_videos_from_dataset(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     if export_mode == ExportMode.COPY:
-        return _copy_video_files(video_paths, output_dir)
+        return _copy_video_files(video_paths, output_dir, ignore_missing_media)
 
     return {}
 
@@ -493,6 +620,7 @@ def export_dataset(
     export_images: ExportMode = ExportMode.COPY,
     export_videos: ExportMode = ExportMode.COPY,
     as_zip: bool = False,
+    ignore_missing_media: bool = False,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
@@ -525,6 +653,10 @@ def export_dataset(
         export_images: How to handle images. Default is ExportMode.COPY.
         export_videos: How to handle videos. Default is ExportMode.COPY.
         as_zip: Whether to package everything as a ZIP file
+        ignore_missing_media: If True, silently skip media files (images and videos)
+            that cannot be found or generated, instead of raising an error.
+            Only has an effect when ``export_images`` or ``export_videos`` is
+            ``ExportMode.COPY``; otherwise, it is ignored.
     """
     output_path, temp_dir, work_dir = _setup_work_directory(Path(output_path), as_zip)
 
@@ -535,14 +667,14 @@ def export_dataset(
         # Export images if requested
         if export_images == ExportMode.COPY:
             images_dir = work_dir / IMAGES_DIR
-            images_paths = _export_images_from_dataset(dataset, images_dir)
+            images_paths = _export_images_from_dataset(dataset, images_dir, ignore_missing_media)
             media_path_fields = {name for name, f in _get_image_fields(dataset) if isinstance(f, MediaPathField)}
             df_to_export = _update_df_with_image_paths(df_to_export, images_paths, media_path_fields)
 
         # Export videos
         if export_videos == ExportMode.COPY:
             videos_dir = work_dir / VIDEOS_DIR
-            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos)
+            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos, ignore_missing_media)
             if video_path_mapping:
                 video_fields = _get_video_fields(dataset)
                 df_to_export = _update_df_with_video_paths(df_to_export, video_path_mapping, video_fields)
@@ -620,9 +752,10 @@ def _load_metadata(input_dir: Path) -> dict:
         metadata = json.load(f)
 
     if metadata.get("version") != VERSION:
-        print(
-            f"Warning: Dataset version {metadata.get('version')} may not be fully "
-            f"compatible with current version {VERSION}"
+        log.warning(
+            "Dataset version %s may not be fully compatible with current version %s",
+            metadata.get("version"),
+            VERSION,
         )
 
     return metadata
