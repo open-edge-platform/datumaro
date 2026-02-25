@@ -179,6 +179,7 @@ def _export_single_field(
     field_name: str,
     field: object,
     output_dir: Path,
+    ignore_missing_images: bool = False,
 ) -> dict[int, str]:
     """Export images for a single field across all rows."""
     field_paths: dict[int, str] = {}
@@ -198,6 +199,11 @@ def _export_single_field(
 
         if rel_path is not None:
             field_paths[idx] = rel_path
+        elif not ignore_missing_images:
+            raise ValueError(
+                f"Value was set for field {field_name}, index {idx}, value {value}, but no image could be obtained "
+                f"(ImagePathField) or no image could be generated and saved (Image/MaskCallableField)."
+            )
 
     return field_paths
 
@@ -205,7 +211,8 @@ def _export_single_field(
 def _export_images_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
-) -> dict[str, dict[int, str]]:
+    ignore_missing_images: bool = False,
+) -> pl.DataFrame:
     """
     Export images from callable or path fields in the dataset.
 
@@ -216,21 +223,57 @@ def _export_images_from_dataset(
     Args:
         dataset: The dataset to export images from
         output_dir: Directory to save images to
+        ignore_missing_images: if True, silently skip images that cannot be found or generated, instead of raising an
+            error.
 
     Returns:
-        Dictionary mapping field names to dictionaries of row_idx -> relative path
+        A :class:`polars.DataFrame` with image-related fields updated to contain
+        relative paths to the exported images. Rows with missing images are either
+        removed (when ``skip_missing_images`` is True) or cause a ValueError.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    image_paths: dict[str, dict[int, str]] = {}
+    images_paths: dict[str, dict[int, str]] = {}
 
     image_fields = _get_image_fields(dataset)
     if not image_fields:
-        return image_paths
+        return dataset.df
 
     for field_name, field in image_fields:
-        image_paths[field_name] = _export_single_field(dataset, field_name, field, output_dir)
+        images_paths[field_name] = _export_single_field(
+            dataset=dataset,
+            field_name=field_name,
+            field=field,
+            output_dir=output_dir,
+            ignore_missing_images=ignore_missing_images,
+        )
 
-    return image_paths
+    df_to_export = dataset.df.with_row_index("__idx")
+    for field_name, path_map in images_paths.items():
+        # Create a mapping DataFrame from the exported paths
+        mapping_df = pl.DataFrame(
+            {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
+            schema={"__idx": pl.UInt32, "__new_path": pl.String},
+        )
+
+        # Left join to apply updates; rows not in path_map will have null paths
+        df_to_export = (
+            df_to_export.join(mapping_df, on="__idx", how="left")
+            .with_columns(pl.col("__new_path").alias(field_name))
+            .drop("__new_path")
+        )
+
+    # Check for missing images
+    image_fields = list(images_paths.keys())
+    missing_images_mask = pl.all_horizontal(pl.col(image_fields).is_null())
+
+    if ignore_missing_images:
+        df_to_export = df_to_export.filter(~missing_images_mask)
+    else:
+        bad_rows = df_to_export.filter(missing_images_mask).select("__idx")
+        if not bad_rows.is_empty():
+            raise ValueError(f"Missing images for indices {bad_rows.to_series().to_list()}")
+
+    return df_to_export.drop("__idx")
 
 
 def export_dataset(
@@ -238,6 +281,7 @@ def export_dataset(
     output_path: str | Path,
     export_images: bool = True,
     as_zip: bool = False,
+    ignore_missing_images: bool = False,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
@@ -257,6 +301,8 @@ def export_dataset(
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
         as_zip: Whether to package everything as a ZIP file
+        ignore_missing_images: if True, silently skip dataset items whose image cannot be found or generated, instead
+            of raising an error. Only has an effect if ``export_images=True``; otherwise, it is ignored.
     """
     output_path = Path(output_path)
 
@@ -273,30 +319,14 @@ def export_dataset(
         work_dir = output_path
 
     try:
-        df_to_export = dataset.df
         # Export images if requested
         if export_images:
             images_dir = work_dir / IMAGES_DIR
-            images_paths = _export_images_from_dataset(dataset, images_dir)
-
-            df_to_export = df_to_export.with_row_index("__idx")
-            for field_name, path_map in images_paths.items():
-                if not path_map:
-                    continue
-
-                # Create a mapping DataFrame from the exported paths
-                mapping_df = pl.DataFrame(
-                    {"__idx": list(path_map.keys()), "__new_path": list(path_map.values())},
-                    schema={"__idx": pl.UInt32, "__new_path": pl.String},
-                )
-
-                # Left join to apply updates; rows not in path_map will have null paths
-                df_to_export = (
-                    df_to_export.join(mapping_df, on="__idx", how="left")
-                    .with_columns(pl.col("__new_path").alias(field_name))
-                    .drop("__new_path")
-                )
-            df_to_export = df_to_export.drop("__idx")
+            df_to_export = _export_images_from_dataset(
+                dataset=dataset, output_dir=images_dir, ignore_missing_images=ignore_missing_images
+            )
+        else:
+            df_to_export = dataset.df
 
         # Export DataFrame to Parquet
         # Filter out Object columns (like callables) as they can't be serialized to Parquet
@@ -414,56 +444,6 @@ def _make_image_loader(path: Path):
     return load_image
 
 
-def _reconstruct_field_values(
-    field_name: str,
-    field: object,
-    images_base_dir: Path,
-    num_rows: int,
-) -> tuple[list[object | None], bool, bool]:
-    """
-    Reconstruct values for a single image-related field.
-
-    Returns:
-        Tuple of (values list, is_path_field, is_callable_field)
-    """
-    is_path_field = isinstance(field, ImagePathField)
-    is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
-
-    if not (is_path_field or is_callable_field):
-        return [], False, False
-
-    values: list[object | None] = []
-    for idx in range(num_rows):
-        pattern = f"{field_name}_{idx:06d}.*"
-        matches = sorted(images_base_dir.glob(pattern))
-        file_path = matches[0] if matches else None
-
-        if is_path_field:
-            values.append(str(file_path) if file_path is not None else None)
-        elif file_path is None:
-            values.append(None)
-        else:
-            values.append(_make_image_loader(file_path))
-
-    return values, is_path_field, is_callable_field
-
-
-def _update_dataframe_with_field(
-    df: pl.DataFrame,
-    field_name: str,
-    values: list[object | None],
-    is_path_field: bool,
-) -> pl.DataFrame:
-    """Update DataFrame with reconstructed field values."""
-    if is_path_field:
-        if field_name in df.columns:
-            df = df.drop(field_name)
-        return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
-    if field_name in df.columns:
-        return df.with_columns(pl.Series(field_name, values))
-    return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
-
-
 def _reconstruct_image_fields(
     df: pl.DataFrame,
     schema: Schema,
@@ -473,18 +453,33 @@ def _reconstruct_image_fields(
     if not images_base_dir.exists():
         return df
 
+    updates: dict[str, pl.Series] = {}
     for field_name, attr_info in schema.attributes.items():
         field = getattr(attr_info, "field", None)
-        if field is None:
+        if field is None or field_name not in df.columns:
             continue
 
-        values, is_path_field, is_callable_field = _reconstruct_field_values(
-            field_name, field, images_base_dir, len(df)
-        )
+        is_path_field = isinstance(field, ImagePathField)
+        is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
 
-        if is_path_field or is_callable_field:
-            df = _update_dataframe_with_field(df, field_name, values, is_path_field)
+        if not (is_path_field or is_callable_field):
+            continue
 
+        file_names = df.get_column(field_name)
+        values: list[object | None] = []
+        if is_path_field:
+            values = [str(images_base_dir / file_name) if file_name is not None else None for file_name in file_names]
+        else:
+            values = [
+                _make_image_loader(images_base_dir / file_name) if file_name is not None else None
+                for file_name in file_names
+            ]
+
+        field_dtype = pl.String() if is_path_field else pl.Object()
+        updates[field_name] = pl.Series(field_name, values, dtype=field_dtype)
+
+    if updates:
+        df = df.with_columns(list(updates.values()))
     return df
 
 
@@ -551,6 +546,12 @@ def _import_dataset_from_dir(
     Returns:
         The imported Dataset instance
     """
+    # Normalize to an absolute path so that subsequent path joins (e.g. for
+    # metadata, the Parquet file, and image directories) behave consistently
+    # regardless of whether the caller passed a relative or absolute path.
+    if not input_dir.is_absolute():
+        input_dir = input_dir.resolve()
+
     metadata = _load_metadata(input_dir)
     df = _load_dataframe(input_dir)  # Check DataFrame exists before processing schema
     schema = Schema.from_dict(metadata["schema"])
