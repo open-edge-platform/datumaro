@@ -179,7 +179,7 @@ def _export_single_field(
     field_name: str,
     field: object,
     output_dir: Path,
-    skip_missing_images: bool = False,
+    ignore_missing_images: bool = False,
 ) -> dict[int, str]:
     """Export images for a single field across all rows."""
     field_paths: dict[int, str] = {}
@@ -199,7 +199,7 @@ def _export_single_field(
 
         if rel_path is not None:
             field_paths[idx] = rel_path
-        elif not skip_missing_images:
+        elif not ignore_missing_images:
             raise ValueError(
                 f"Value was set for field {field_name}, index {idx}, value {value}, but no image could be obtained "
                 f"(ImagePathField) or no image could be generated and saved (Image/MaskCallableField)."
@@ -211,7 +211,7 @@ def _export_single_field(
 def _export_images_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
-    skip_missing_images: bool = False,
+    ignore_missing_images: bool = False,
 ) -> pl.DataFrame:
     """
     Export images from callable or path fields in the dataset.
@@ -223,7 +223,8 @@ def _export_images_from_dataset(
     Args:
         dataset: The dataset to export images from
         output_dir: Directory to save images to
-        skip_missing_images: Boolean indicating if to raise errors or skip when images are missing
+        ignore_missing_images: if True, silently skip images that cannot be found or generated, instead of raising an
+            error.
 
     Returns:
         A :class:`polars.DataFrame` with image-related fields updated to contain
@@ -243,7 +244,7 @@ def _export_images_from_dataset(
             field_name=field_name,
             field=field,
             output_dir=output_dir,
-            skip_missing_images=skip_missing_images,
+            ignore_missing_images=ignore_missing_images,
         )
 
     df_to_export = dataset.df.with_row_index("__idx")
@@ -265,7 +266,7 @@ def _export_images_from_dataset(
     image_fields = list(images_paths.keys())
     missing_images_mask = pl.all_horizontal(pl.col(image_fields).is_null())
 
-    if skip_missing_images:
+    if ignore_missing_images:
         df_to_export = df_to_export.filter(~missing_images_mask)
     else:
         bad_rows = df_to_export.filter(missing_images_mask).select("__idx")
@@ -280,7 +281,7 @@ def export_dataset(
     output_path: str | Path,
     export_images: bool = True,
     as_zip: bool = False,
-    skip_missing_images: bool = False,
+    ignore_missing_images: bool = False,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
@@ -300,8 +301,8 @@ def export_dataset(
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
         as_zip: Whether to package everything as a ZIP file
-        skip_missing_images: Boolean indicating whether to raise errors or skip when images are missing.
-            Only has an effect if ``export_images=True``; otherwise, it is ignored.
+        ignore_missing_images: if True, silently skip dataset items whose image cannot be found or generated, instead
+            of raising an error. Only has an effect if ``export_images=True``; otherwise, it is ignored.
     """
     output_path = Path(output_path)
 
@@ -322,7 +323,7 @@ def export_dataset(
         if export_images:
             images_dir = work_dir / IMAGES_DIR
             df_to_export = _export_images_from_dataset(
-                dataset=dataset, output_dir=images_dir, skip_missing_images=skip_missing_images
+                dataset=dataset, output_dir=images_dir, ignore_missing_images=ignore_missing_images
             )
         else:
             df_to_export = dataset.df

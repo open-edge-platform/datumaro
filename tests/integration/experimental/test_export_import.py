@@ -262,7 +262,7 @@ def test_export_with_none_values(tmp_path):
     dataset.append(OptionalImageSample(image=make_image))
 
     output_dir = tmp_path / "output"
-    result = _export_images_from_dataset(dataset, output_dir, skip_missing_images=True)
+    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_images=True)
 
     # Only indices 0 and 2 should be in result
     assert "image" in result
@@ -708,7 +708,7 @@ def test_import_with_none_image_values(tmp_path):
     original_dataset.append(OptionalImageSample(image=make_image, label=3))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False, skip_missing_images=True)
+    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False, ignore_missing_images=True)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
