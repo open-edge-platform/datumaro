@@ -61,10 +61,12 @@ from datumaro.experimental.fields.types import (
     string_field,
 )
 from datumaro.experimental.fields.videos import (
+    MediaInfoField,
     MediaPathField,
     VideoFrameCallableField,
     VideoFramePathField,
     VideoInfoField,
+    media_info_field,
     media_path_field,
     video_frame_callable_field,
     video_frame_path_field,
@@ -89,6 +91,7 @@ __all__ = [
     "LabelField",
     "MaskCallableField",
     "MaskField",
+    "MediaInfoField",
     "MediaPathField",
     "NumericField",
     "PolygonField",
@@ -118,6 +121,7 @@ __all__ = [
     "label_field",
     "mask_callable_field",
     "mask_field",
+    "media_info_field",
     "media_path_field",
     "numeric_field",
     "polygon_field",

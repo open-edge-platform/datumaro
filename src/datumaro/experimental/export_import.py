@@ -737,6 +737,15 @@ def import_dataset(
 
         extract_dir.mkdir(parents=True, exist_ok=True)
         with ZipFile(input_path) as zipf:
+            # Validate all zip entries to prevent Zip Slip (path traversal) attacks
+            resolved_extract_dir = extract_dir.resolve()
+            for member in zipf.namelist():
+                member_path = (resolved_extract_dir / member).resolve()
+                if not member_path.is_relative_to(resolved_extract_dir):
+                    raise ValueError(
+                        f"Zip entry '{member}' would extract outside the target directory. "
+                        f"This may indicate a malicious archive (Zip Slip attack)."
+                    )
             zipf.extractall(extract_dir)
         return _import_dataset_from_dir(extract_dir, dtype)
     return _import_dataset_from_dir(input_path, dtype)

@@ -841,3 +841,356 @@ class VideoFieldIntegrationTest:
         assert loaded_df["frame"][0] == str(test_video_exists)
         assert loaded_df["frame_frame_index"][0] == 0
         assert loaded_df["frame_frame_index"][1] == 10
+
+
+class TestMediaInfoField:
+    """Tests for MediaInfoField - unified media metadata field."""
+
+    @pytest.fixture
+    def test_video_exists(self):
+        """Skip if test video is not available."""
+        if not TEST_VIDEO_PATH.exists():
+            pytest.skip(f"Test video not found: {TEST_VIDEO_PATH}")
+        return TEST_VIDEO_PATH
+
+    def test_media_info_field_to_polars_schema(self):
+        """Test to_polars_schema() returns correct struct schema."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+
+        field = MediaInfoField(semantic="test")
+        schema = field.to_polars_schema("media_info")
+
+        assert "media_info" in schema
+        assert isinstance(schema["media_info"], pl.Struct)
+
+    def test_media_info_field_to_polars_with_image_info(self):
+        """Test to_polars() serializes image MediaInfo correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        info = MediaInfo(width=1920, height=1080, source_path="/image.jpg")
+
+        result = field.to_polars("media_info", info)
+
+        assert "media_info" in result
+        struct_val = result["media_info"][0]
+        assert struct_val["width"] == 1920
+        assert struct_val["height"] == 1080
+        assert struct_val["source_path"] == "/image.jpg"
+        assert struct_val["fps"] is None
+
+    def test_media_info_field_to_polars_with_video_info(self):
+        """Test to_polars() serializes video frame MediaInfo correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        info = MediaInfo(
+            width=1280,
+            height=720,
+            source_path="/video.mp4",
+            fps=30.0,
+            total_frames=1000,
+            duration=33.33,
+            codec="h264",
+            frame_index=42,
+        )
+
+        result = field.to_polars("media_info", info)
+
+        struct_val = result["media_info"][0]
+        assert struct_val["width"] == 1280
+        assert struct_val["height"] == 720
+        assert struct_val["fps"] == pytest.approx(30.0)
+        assert struct_val["frame_index"] == 42
+
+    def test_media_info_field_to_polars_with_none(self):
+        """Test to_polars() handles None value correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+
+        field = MediaInfoField(semantic="test")
+        result = field.to_polars("media_info", None)
+
+        assert result["media_info"][0] is None
+
+    def test_media_info_field_from_polars_image(self):
+        """Test from_polars() reconstructs image MediaInfo correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        df = pl.DataFrame(
+            {
+                "media_info": [
+                    {
+                        "width": 1920,
+                        "height": 1080,
+                        "source_path": "/image.jpg",
+                        "fps": None,
+                        "total_frames": None,
+                        "duration": None,
+                        "codec": None,
+                        "frame_index": None,
+                    }
+                ]
+            }
+        )
+
+        result = field.from_polars("media_info", 0, df, MediaInfo)
+
+        assert result is not None
+        assert result.width == 1920
+        assert result.height == 1080
+        assert result.source_path == "/image.jpg"
+        assert result.is_image is True
+
+    def test_media_info_field_from_polars_video(self):
+        """Test from_polars() reconstructs video frame MediaInfo correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        df = pl.DataFrame(
+            {
+                "media_info": [
+                    {
+                        "width": 1280,
+                        "height": 720,
+                        "source_path": "/video.mp4",
+                        "fps": 30.0,
+                        "total_frames": 1000,
+                        "duration": 33.33,
+                        "codec": "h264",
+                        "frame_index": 42,
+                    }
+                ]
+            }
+        )
+
+        result = field.from_polars("media_info", 0, df, MediaInfo)
+
+        assert result is not None
+        assert result.width == 1280
+        assert result.height == 720
+        assert result.fps == pytest.approx(30.0)
+        assert result.frame_index == 42
+        assert result.is_video_frame is True
+
+    def test_media_info_field_from_polars_none(self):
+        """Test from_polars() handles None value correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        df = pl.DataFrame({"media_info": [None]}, schema={"media_info": field.dtype})
+
+        result = field.from_polars("media_info", 0, df, MediaInfo)
+
+        assert result is None
+
+    def test_media_info_field_coerce_from_lazy_image(self, tmp_path):
+        """Test coerce() converts LazyImage to MediaInfo."""
+        from PIL import Image as PILImage
+
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        # Create test image
+        img_path = tmp_path / "test.png"
+        PILImage.new("RGB", (640, 480)).save(img_path)
+
+        field = MediaInfoField(semantic="test")
+        lazy_img = LazyImage(str(img_path))
+
+        result = field.coerce(lazy_img, MediaInfo)
+
+        assert isinstance(result, MediaInfo)
+        assert result.width == 640
+        assert result.height == 480
+        assert result.is_image is True
+
+    def test_media_info_field_coerce_from_lazy_video_frame(self, test_video_exists):
+        """Test coerce() converts LazyVideoFrame to MediaInfo."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        lazy_frame = LazyVideoFrame(str(test_video_exists), frame_index=5)
+
+        result = field.coerce(lazy_frame, MediaInfo)
+
+        assert isinstance(result, MediaInfo)
+        assert result.is_video_frame is True
+        assert result.frame_index == 5
+        assert result.fps is not None
+
+    def test_media_info_field_coerce_from_dict(self):
+        """Test coerce() converts dict to MediaInfo."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        data = {"width": 800, "height": 600}
+
+        result = field.coerce(data, MediaInfo)
+
+        assert isinstance(result, MediaInfo)
+        assert result.width == 800
+        assert result.height == 600
+
+    def test_media_info_field_coerce_passthrough(self):
+        """Test coerce() passes through MediaInfo unchanged."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        original = MediaInfo(width=1920, height=1080)
+
+        result = field.coerce(original, MediaInfo)
+
+        assert result is original
+
+    def test_media_info_field_coerce_none(self):
+        """Test coerce() handles None correctly."""
+        from datumaro.experimental.fields.videos import MediaInfoField
+        from datumaro.experimental.media import MediaInfo
+
+        field = MediaInfoField(semantic="test")
+        result = field.coerce(None, MediaInfo)
+
+        assert result is None
+
+
+class TestMediaInfoFieldInDataset:
+    """Integration tests for MediaInfoField in Dataset."""
+
+    @pytest.fixture
+    def test_video_exists(self):
+        """Skip if test video is not available."""
+        if not TEST_VIDEO_PATH.exists():
+            pytest.skip(f"Test video not found: {TEST_VIDEO_PATH}")
+        return TEST_VIDEO_PATH
+
+    def test_dataset_with_media_info_field(self):
+        """Test creating a dataset with MediaInfoField."""
+        from datumaro.experimental.fields.videos import media_info_field
+        from datumaro.experimental.media import MediaInfo
+
+        class SampleWithMediaInfo(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+            media_info: MediaInfo = media_info_field()
+
+        dataset = Dataset(SampleWithMediaInfo)
+
+        dataset.append(
+            SampleWithMediaInfo(
+                media=LazyImage("/path/to/image.jpg"),
+                media_info=MediaInfo(width=1920, height=1080),
+            )
+        )
+
+        sample = dataset[0]
+        assert sample.media_info.width == 1920
+        assert sample.media_info.height == 1080
+        assert sample.media_info.is_image is True
+
+    def test_dataset_with_mixed_media_info(self, test_video_exists, tmp_path):
+        """Test dataset with both image and video frame MediaInfo."""
+        from PIL import Image as PILImage
+
+        from datumaro.experimental.fields.videos import media_info_field
+        from datumaro.experimental.media import MediaInfo
+
+        # Create test image
+        img_path = tmp_path / "test.png"
+        PILImage.new("RGB", (640, 480)).save(img_path)
+
+        class SampleWithMediaInfo(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+            media_info: MediaInfo = media_info_field()
+
+        dataset = Dataset(SampleWithMediaInfo)
+
+        # Add image sample
+        dataset.append(
+            SampleWithMediaInfo(
+                media=LazyImage(str(img_path)),
+                media_info=MediaInfo(width=640, height=480, source_path=str(img_path)),
+            )
+        )
+
+        # Add video frame sample
+        dataset.append(
+            SampleWithMediaInfo(
+                media=LazyVideoFrame(str(test_video_exists), frame_index=0),
+                media_info=MediaInfo(
+                    width=1280,
+                    height=720,
+                    source_path=str(test_video_exists),
+                    fps=30.0,
+                    total_frames=100,
+                    duration=3.33,
+                    frame_index=0,
+                ),
+            )
+        )
+
+        # Verify image sample
+        img_sample = dataset[0]
+        assert img_sample.media_info.is_image is True
+        assert img_sample.media_info.width == 640
+
+        # Verify video sample
+        vid_sample = dataset[1]
+        assert vid_sample.media_info.is_video_frame is True
+        assert vid_sample.media_info.fps == 30.0
+        assert vid_sample.media_info.frame_index == 0
+
+    def test_dataset_export_import_with_media_info(self, tmp_path):
+        """Test that MediaInfo is preserved through export/import."""
+        from datumaro.experimental.export_import import ExportMode, export_dataset, import_dataset
+        from datumaro.experimental.fields.videos import media_info_field
+        from datumaro.experimental.media import MediaInfo
+
+        class SampleWithMediaInfo(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+            media_info: MediaInfo = media_info_field()
+
+        dataset = Dataset(SampleWithMediaInfo)
+
+        # Add samples
+        dataset.append(
+            SampleWithMediaInfo(
+                media=LazyImage("/path/to/image.jpg"),
+                media_info=MediaInfo(width=1920, height=1080),
+            )
+        )
+
+        dataset.append(
+            SampleWithMediaInfo(
+                media=LazyImage("/path/to/video_frame.jpg"),
+                media_info=MediaInfo(
+                    width=1280,
+                    height=720,
+                    fps=30.0,
+                    frame_index=42,
+                ),
+            )
+        )
+
+        # Export
+        export_path = tmp_path / "exported"
+        export_dataset(dataset, export_path, export_images=ExportMode.REFERENCE)
+
+        # Import
+        imported = import_dataset(export_path, dtype=SampleWithMediaInfo)
+
+        # Verify
+        assert len(imported) == 2
+        assert imported[0].media_info.width == 1920
+        assert imported[0].media_info.is_image is True
+
+        assert imported[1].media_info.fps == 30.0
+        assert imported[1].media_info.frame_index == 42
+        assert imported[1].media_info.is_video_frame is True

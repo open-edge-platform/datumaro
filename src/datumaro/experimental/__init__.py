@@ -9,6 +9,7 @@ from .media import (
     ImageCache,
     LazyImage,
     LazyVideoFrame,
+    MediaInfo,
     VideoFrameCache,
     VideoInfo,
     clear_video_info_cache,

@@ -20,7 +20,7 @@ from typing import Any, Union, get_args, get_origin
 import polars as pl
 
 from datumaro.experimental.fields.base import Field
-from datumaro.experimental.media import LazyImage, LazyVideoFrame, VideoInfo
+from datumaro.experimental.media import LazyImage, LazyVideoFrame, MediaInfo, VideoInfo
 
 
 @dataclass(frozen=True)
@@ -274,6 +274,198 @@ def video_info_field(semantic: str = "default") -> Any:
         ...     video_info: VideoInfo | None = video_info_field()
     """
     return VideoInfoField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class MediaInfoField(Field):
+    """
+    Unified field for storing media metadata (both images and video frames).
+
+    This field stores comprehensive metadata that works for both image files
+    and video frames:
+    - For images: width, height, source_path
+    - For video frames: width, height, source_path, fps, total_frames, duration, codec, frame_index
+
+    The field automatically detects whether the source is an image or video frame
+    based on the presence of video-specific fields (fps, etc.).
+
+    Schema columns (as a single Struct):
+        - width: Frame/image width (Int32)
+        - height: Frame/image height (Int32)
+        - source_path: Path to source file (String, nullable)
+        - fps: Frames per second (Float32, nullable - None for images)
+        - total_frames: Total frames in video (UInt32, nullable - None for images)
+        - duration: Video duration in seconds (Float32, nullable - None for images)
+        - codec: Video codec (String, nullable - None for images)
+        - frame_index: Frame index in video (UInt32, nullable - None for images)
+
+    Attributes:
+        semantic: String tag describing the media info's purpose
+
+    Examples:
+        >>> class DetectionSample(Sample):
+        ...     media: LazyImage | LazyVideoFrame = media_path_field()
+        ...     media_info: MediaInfo = media_info_field()
+        ...
+        >>> # For images
+        >>> sample.media_info.width, sample.media_info.height
+        (1920, 1080)
+        >>> sample.media_info.is_video_frame
+        False
+        >>>
+        >>> # For video frames
+        >>> sample.media_info.fps
+        30.0
+        >>> sample.media_info.frame_index
+        42
+    """
+
+    semantic: str = "default"
+    dtype: pl.DataType = field(
+        default_factory=lambda: pl.Struct(
+            [
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+                pl.Field("source_path", pl.String()),
+                pl.Field("fps", pl.Float32()),
+                pl.Field("total_frames", pl.UInt32()),
+                pl.Field("duration", pl.Float32()),
+                pl.Field("codec", pl.String()),
+                pl.Field("frame_index", pl.UInt32()),
+            ]
+        ),
+        init=False,
+    )
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for MediaInfo struct."""
+        return {
+            name: pl.Struct(
+                [
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
+                    pl.Field("source_path", pl.String()),
+                    pl.Field("fps", pl.Float32()),
+                    pl.Field("total_frames", pl.UInt32()),
+                    pl.Field("duration", pl.Float32()),
+                    pl.Field("codec", pl.String()),
+                    pl.Field("frame_index", pl.UInt32()),
+                ]
+            )
+        }
+
+    def to_polars(self, name: str, value: MediaInfo | None) -> dict[str, pl.Series]:
+        """Convert MediaInfo to Polars struct."""
+        schema = self.to_polars_schema(name)
+        if value is not None:
+            data = [
+                {
+                    "width": value.width,
+                    "height": value.height,
+                    "source_path": value.source_path,
+                    "fps": value.fps,
+                    "total_frames": value.total_frames,
+                    "duration": value.duration,
+                    "codec": value.codec,
+                    "frame_index": value.frame_index,
+                }
+            ]
+        else:
+            data = [None]
+        return {name: pl.Series(name, data, dtype=schema[name])}
+
+    def from_polars(
+        self,
+        name: str,
+        row_index: int,
+        df: pl.DataFrame,
+        target_type: type,  # noqa: ARG002
+    ) -> MediaInfo | None:
+        """Reconstruct MediaInfo from Polars struct."""
+        struct_val = df[name][row_index]
+        if struct_val is None:
+            return None
+
+        return MediaInfo(
+            width=struct_val["width"],
+            height=struct_val["height"],
+            source_path=struct_val.get("source_path"),
+            fps=struct_val.get("fps"),
+            total_frames=struct_val.get("total_frames"),
+            duration=struct_val.get("duration"),
+            codec=struct_val.get("codec"),
+            frame_index=struct_val.get("frame_index"),
+        )
+
+    def coerce(self, value: Any, target_type: type) -> Any:  # noqa: ARG002
+        """
+        Coerce various input types to MediaInfo.
+
+        Supports:
+        - MediaInfo instances (pass through)
+        - LazyImage instances (extract image info)
+        - LazyVideoFrame instances (extract video frame info)
+        - Dict with width/height keys (convert to MediaInfo)
+        """
+        if value is None:
+            return None
+
+        if isinstance(value, MediaInfo):
+            return value
+
+        if isinstance(value, LazyVideoFrame):
+            return MediaInfo.from_lazy_video_frame(value)
+
+        if isinstance(value, LazyImage):
+            return MediaInfo.from_lazy_image(value)
+
+        if isinstance(value, dict) and "width" in value and "height" in value:
+            return MediaInfo.from_dict(value)
+
+        return value
+
+
+def media_info_field(semantic: str = "default") -> Any:
+    """
+    Create a MediaInfoField for storing unified media metadata.
+
+    This field stores metadata that works for both images and video frames,
+    providing a consistent interface regardless of media type.
+
+    Args:
+        semantic: String tag describing the media info's purpose
+
+    Returns:
+        MediaInfoField instance
+
+    Examples:
+        >>> class DetectionSample(Sample):
+        ...     media: LazyImage | LazyVideoFrame = media_path_field()
+        ...     media_info: MediaInfo = media_info_field()
+        ...
+        >>> # For images - only width/height are populated
+        >>> img_sample = DetectionSample(
+        ...     media=LazyImage("image.jpg"),
+        ...     media_info=MediaInfo(width=1920, height=1080),
+        ... )
+        >>> img_sample.media_info.is_image
+        True
+        >>>
+        >>> # For video frames - full metadata available
+        >>> vid_sample = DetectionSample(
+        ...     media=LazyVideoFrame("video.mp4", frame_index=42),
+        ...     media_info=MediaInfo(
+        ...         width=1920, height=1080,
+        ...         fps=30.0, total_frames=1000,
+        ...         duration=33.33, frame_index=42
+        ...     ),
+        ... )
+        >>> vid_sample.media_info.is_video_frame
+        True
+        >>> vid_sample.media_info.fps
+        30.0
+    """
+    return MediaInfoField(semantic=semantic)
 
 
 @dataclass(frozen=True)

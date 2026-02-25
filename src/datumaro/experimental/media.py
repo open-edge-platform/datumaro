@@ -423,6 +423,194 @@ class VideoInfo:
         )
 
 
+@dataclass(frozen=True)
+class MediaInfo:
+    """
+    Unified media metadata container for both images and video frames.
+
+    This class provides a consistent interface for accessing media dimensions
+    and metadata regardless of whether the source is an image file or a video frame.
+
+    For images:
+        - width, height: Image dimensions
+        - fps, total_frames, duration, codec, frame_index: All None
+
+    For video frames:
+        - width, height: Frame dimensions
+        - fps: Video frame rate
+        - total_frames: Total frames in the video
+        - duration: Video duration in seconds
+        - codec: Video codec (e.g., 'h264')
+        - frame_index: The specific frame index this info refers to
+
+    Attributes:
+        width: Media width in pixels
+        height: Media height in pixels
+        fps: Frames per second (None for images)
+        total_frames: Total number of frames in the video (None for images)
+        duration: Video duration in seconds (None for images)
+        codec: Video codec string (None for images)
+        frame_index: Frame index within video (None for images)
+        source_path: Path to the source file (image or video)
+
+    Examples:
+        >>> # From an image
+        >>> info = MediaInfo.from_lazy_image(lazy_img)
+        >>> info.width, info.height
+        (1920, 1080)
+        >>> info.is_video_frame
+        False
+
+        >>> # From a video frame
+        >>> info = MediaInfo.from_lazy_video_frame(lazy_frame)
+        >>> info.fps
+        30.0
+        >>> info.is_video_frame
+        True
+    """
+
+    width: int
+    height: int
+    source_path: str | None = None
+    fps: float | None = None
+    total_frames: int | None = None
+    duration: float | None = None
+    codec: str | None = None
+    frame_index: int | None = None
+
+    @property
+    def is_video_frame(self) -> bool:
+        """Check if this MediaInfo represents a video frame (vs an image)."""
+        return self.fps is not None
+
+    @property
+    def is_image(self) -> bool:
+        """Check if this MediaInfo represents a static image (vs a video frame)."""
+        return self.fps is None
+
+    @property
+    def size(self) -> tuple[int, int]:
+        """Get (width, height) tuple."""
+        return (self.width, self.height)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize MediaInfo to a dictionary."""
+        return {
+            "width": self.width,
+            "height": self.height,
+            "source_path": self.source_path,
+            "fps": self.fps,
+            "total_frames": self.total_frames,
+            "duration": self.duration,
+            "codec": self.codec,
+            "frame_index": self.frame_index,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> MediaInfo:
+        """Deserialize MediaInfo from a dictionary."""
+        return cls(
+            width=data["width"],
+            height=data["height"],
+            source_path=data.get("source_path"),
+            fps=data.get("fps"),
+            total_frames=data.get("total_frames"),
+            duration=data.get("duration"),
+            codec=data.get("codec"),
+            frame_index=data.get("frame_index"),
+        )
+
+    @classmethod
+    def from_lazy_image(cls, lazy_image: LazyImage) -> MediaInfo:
+        """
+        Create MediaInfo from a LazyImage instance.
+
+        Extracts width and height without loading the full image data.
+
+        Args:
+            lazy_image: The LazyImage to extract info from
+
+        Returns:
+            MediaInfo with image dimensions populated
+        """
+        return cls(
+            width=lazy_image.width,
+            height=lazy_image.height,
+            source_path=str(lazy_image.path),
+        )
+
+    @classmethod
+    def from_lazy_video_frame(cls, lazy_frame: LazyVideoFrame) -> MediaInfo:
+        """
+        Create MediaInfo from a LazyVideoFrame instance.
+
+        Extracts both frame dimensions and video metadata.
+
+        Args:
+            lazy_frame: The LazyVideoFrame to extract info from
+
+        Returns:
+            MediaInfo with frame dimensions and video metadata populated
+        """
+        video_info = lazy_frame.video_info
+        return cls(
+            width=video_info.width,
+            height=video_info.height,
+            source_path=video_info.path,
+            fps=video_info.fps,
+            total_frames=video_info.total_frames,
+            duration=video_info.duration,
+            codec=video_info.codec,
+            frame_index=lazy_frame.frame_index,
+        )
+
+    @classmethod
+    def from_video_info(cls, video_info: VideoInfo, frame_index: int | None = None) -> MediaInfo:
+        """
+        Create MediaInfo from a VideoInfo instance.
+
+        Args:
+            video_info: The VideoInfo to convert
+            frame_index: Optional frame index if this represents a specific frame
+
+        Returns:
+            MediaInfo with video metadata populated
+        """
+        return cls(
+            width=video_info.width,
+            height=video_info.height,
+            source_path=video_info.path,
+            fps=video_info.fps,
+            total_frames=video_info.total_frames,
+            duration=video_info.duration,
+            codec=video_info.codec,
+            frame_index=frame_index,
+        )
+
+    @classmethod
+    def from_media(cls, media: LazyImage | LazyVideoFrame) -> MediaInfo:
+        """
+        Create MediaInfo from either a LazyImage or LazyVideoFrame.
+
+        This is a convenience method that automatically detects the media type
+        and extracts the appropriate information.
+
+        Args:
+            media: Either a LazyImage or LazyVideoFrame instance
+
+        Returns:
+            MediaInfo with appropriate fields populated
+
+        Raises:
+            TypeError: If media is not a LazyImage or LazyVideoFrame
+        """
+        if isinstance(media, LazyVideoFrame):
+            return cls.from_lazy_video_frame(media)
+        if isinstance(media, LazyImage):
+            return cls.from_lazy_image(media)
+        raise TypeError(f"Expected LazyImage or LazyVideoFrame, got {type(media)}")
+
+
 # Global cache for video metadata (extracted once per video file)
 _video_info_cache: dict[str, VideoInfo] = {}
 
