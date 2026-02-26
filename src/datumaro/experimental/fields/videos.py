@@ -85,7 +85,9 @@ class VideoFramePathField(Field):
 
         raise TypeError(f"Expected LazyVideoFrame or (path, frame_index) tuple, got {type(value)}")
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> LazyVideoFrame | tuple[str, int] | None:
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> LazyVideoFrame | tuple[str, int] | None:
         """Reconstruct LazyVideoFrame from stored path and frame_index."""
         path = df[name][row_index]
         frame_index = df[f"{name}_frame_index"][row_index]
