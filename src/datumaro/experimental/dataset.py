@@ -357,21 +357,14 @@ class Dataset(Generic[DType]):
         Returns:
             VideoInfo for the sample's video, or None if not a video frame
         """
-        # Check for media field (MediaPathField pattern)
-        media = getattr(sample, "media", None)
-        if isinstance(media, LazyVideoFrame):
-            path = str(media.video_path)
-            if path not in self._video_metadata:
-                self._video_metadata[path] = extract_video_info(path)
-            return self._video_metadata[path]
-
-        # Check for frame field (VideoFramePathField pattern)
-        frame = getattr(sample, "frame", None)
-        if isinstance(frame, LazyVideoFrame):
-            path = str(frame.video_path)
-            if path not in self._video_metadata:
-                self._video_metadata[path] = extract_video_info(path)
-            return self._video_metadata[path]
+        # Iterate over all schema-defined video fields and look for LazyVideoFrame values
+        for field_name, _field in self._get_video_fields():
+            value = getattr(sample, field_name, None)
+            if isinstance(value, LazyVideoFrame):
+                path = str(value.video_path)
+                if path not in self._video_metadata:
+                    self._video_metadata[path] = extract_video_info(path)
+                return self._video_metadata[path]
 
         return None
 
