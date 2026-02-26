@@ -18,7 +18,6 @@ from datumaro.experimental.categories import HierarchicalLabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.annotations import LabelField
 from datumaro.experimental.fields.datasets import Subset, SubsetField
-from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
 from datumaro.experimental.filtering.label_filter import (
     create_filtered_categories,
     expand_indices_with_ancestors,
@@ -28,11 +27,12 @@ from datumaro.experimental.filtering.label_filter import (
     resolve_label_indices,
     validate_label_categories,
 )
-from datumaro.experimental.media import LazyVideoFrame, VideoInfo, extract_video_info
+from datumaro.experimental.media import VideoInfo
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
 from datumaro.experimental.type_registry import is_type_optional
+from datumaro.experimental.video_dataset import VideoDatasetMixin
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -208,7 +208,7 @@ DType = TypeVar("DType", bound=Sample)
 DTargetType = TypeVar("DTargetType", bound=Sample)
 
 
-class Dataset(Generic[DType]):
+class Dataset(VideoDatasetMixin, Generic[DType]):
     """
     Represents a typed dataset with schema validation and conversion capabilities.
 
@@ -248,9 +248,8 @@ class Dataset(Generic[DType]):
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._transforms: Transform | None = None
 
-        # Video metadata storage - maps video paths to VideoInfo
-        # This avoids storing redundant VideoInfo per frame
-        self._video_metadata: dict[str, VideoInfo] = {}
+        # Initialize video metadata via mixin
+        self._init_video_metadata()
 
     def __getstate__(self) -> dict[str, Any]:
         """
@@ -262,9 +261,9 @@ class Dataset(Generic[DType]):
         """
         state = self.__dict__.copy()
 
-        # Serialize video metadata
+        # Serialize video metadata using mixin method
         if "_video_metadata" in state:
-            state["_video_metadata"] = {path: info.to_dict() for path, info in state["_video_metadata"].items()}
+            state["_video_metadata"] = self._serialize_video_metadata()
 
         return prepare_dataframe_for_pickle(self.df, "df", state)
 
@@ -277,13 +276,16 @@ class Dataset(Generic[DType]):
         """
         state["df"] = restore_dataframe_from_pickle(state, "df")
 
-        # Deserialize video metadata
-        if "_video_metadata" in state:
-            state["_video_metadata"] = {
-                path: VideoInfo.from_dict(info_dict) for path, info_dict in state["_video_metadata"].items()
-            }
+        # Temporarily store serialized video metadata
+        serialized_video_metadata = state.pop("_video_metadata", None)
 
         self.__dict__.update(state)
+
+        # Deserialize video metadata using mixin method
+        if serialized_video_metadata is not None:
+            self._deserialize_video_metadata(serialized_video_metadata)
+        else:
+            self._init_video_metadata()
 
     @classmethod
     def from_dataframe(
@@ -312,7 +314,7 @@ class Dataset(Generic[DType]):
         dataset.df = df
         dataset._transforms = transforms
         if video_metadata is not None:
-            dataset._video_metadata = video_metadata
+            dataset._init_video_metadata(video_metadata)
         return dataset
 
     @property
@@ -324,94 +326,6 @@ class Dataset(Generic[DType]):
     def dtype(self) -> type[DType]:
         """Get the sample type of this dataset."""
         return self._dtype
-
-    @property
-    def video_metadata(self) -> dict[str, VideoInfo]:
-        """
-        Get the video metadata dictionary.
-
-        Returns:
-            Dictionary mapping video paths to VideoInfo objects.
-        """
-        return self._video_metadata
-
-    def get_video_info(self, video_path: str) -> VideoInfo | None:
-        """
-        Get video metadata by path (O(1) lookup).
-
-        Args:
-            video_path: Path to the video file
-
-        Returns:
-            VideoInfo for the video, or None if not found
-        """
-        return self._video_metadata.get(video_path)
-
-    def get_video_info_for_sample(self, sample: Sample) -> VideoInfo | None:
-        """
-        Get video metadata for a sample, if it's a video frame.
-
-        Args:
-            sample: A Sample instance to get video info for
-
-        Returns:
-            VideoInfo for the sample's video, or None if not a video frame
-        """
-        # Iterate over all schema-defined video fields and look for LazyVideoFrame values
-        for field_name, _field in self._get_video_fields():
-            value = getattr(sample, field_name, None)
-            if isinstance(value, LazyVideoFrame):
-                path = str(value.video_path)
-                if path not in self._video_metadata:
-                    self._video_metadata[path] = extract_video_info(path)
-                return self._video_metadata[path]
-
-        return None
-
-    def add_video_metadata(self, video_path: str, video_info: VideoInfo) -> None:
-        """
-        Add or update video metadata for a video path.
-
-        Args:
-            video_path: Path to the video file
-            video_info: VideoInfo object for the video
-        """
-        self._video_metadata[video_path] = video_info
-
-    def _get_video_fields(self) -> list[tuple[str, MediaPathField | VideoFramePathField]]:
-        """
-        Extract all video-related fields from the dataset schema.
-
-        Returns:
-            List of tuples containing field name and field instance
-        """
-        video_fields = []
-        for name, attr_info in self._schema.attributes.items():
-            if isinstance(attr_info.field, (MediaPathField, VideoFramePathField)):
-                video_fields.append((name, attr_info.field))
-        return video_fields
-
-    def _optimize_storage(self) -> None:
-        """
-        Optimize DataFrame storage for video datasets.
-
-        Converts path columns to Categorical type for deduplication.
-        """
-        if self._transforms is not None:
-            raise RuntimeError("Cannot optimize storage on transformed datasets.")
-
-        # Find all path columns from video fields
-        video_fields = self._get_video_fields()
-        path_columns = [name for name, _ in video_fields]
-
-        # Also check for common media column
-        if "media" in self.df.columns and self.df["media"].dtype == pl.String:
-            path_columns.append("media")
-
-        # Convert path columns to Categorical for deduplication
-        for col in path_columns:
-            if col in self.df.columns and self.df[col].dtype == pl.String:
-                self.df = self.df.with_columns(pl.col(col).cast(pl.Categorical))
 
     def _generate_polars_schema(self) -> pl.Schema:
         """Generate a Polars schema from the dataset's field definitions."""
@@ -869,8 +783,8 @@ class Dataset(Generic[DType]):
         converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
         self.df = self.df.vstack(converted_dataset.df)
 
-        # Merge video metadata from the appended dataset
-        self._video_metadata.update(converted_dataset._video_metadata)
+        # Merge video metadata from the appended dataset using mixin method
+        self._merge_video_metadata(converted_dataset._video_metadata)
 
 
 def convert_sample_to_schema(

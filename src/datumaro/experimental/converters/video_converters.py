@@ -15,14 +15,14 @@ from typing import TYPE_CHECKING, Any
 import polars as pl
 
 from datumaro.experimental.converters.base import Converter
-
-if TYPE_CHECKING:
-    import numpy as np
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.images import ImageCallableField, ImageField
 from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
 from datumaro.experimental.media import LazyImage, LazyVideoFrame
 from datumaro.experimental.schema import AttributeSpec
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 @converter(lazy=True)
