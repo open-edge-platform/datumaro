@@ -168,7 +168,9 @@ def iter_video_frames(
     # Get frame step and calculate total frames to process
     frame_step = kwargs.get("frame_step", 1)
     start_frame = kwargs.get("start_frame", 0)
-    end_frame = kwargs.get("end_frame", video_info.total_frames)
+    end_frame = kwargs.get("end_frame")
+    if end_frame is None:
+        end_frame = video_info.total_frames
     frame_indices = kwargs.get("frame_indices")
 
     if frame_indices is not None:

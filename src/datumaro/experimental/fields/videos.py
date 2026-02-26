@@ -62,7 +62,7 @@ class VideoFramePathField(Field):
             f"{name}_frame_index": pl.UInt32(),
         }
 
-    def to_polars(self, name: str, value: LazyVideoFrame | None) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: LazyVideoFrame | tuple[Any, int] | None) -> dict[str, pl.Series]:
         if value is None:
             return {
                 name: pl.Series(name, [None], dtype=pl.String()),
@@ -85,7 +85,7 @@ class VideoFramePathField(Field):
 
         raise TypeError(f"Expected LazyVideoFrame or (path, frame_index) tuple, got {type(value)}")
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> LazyVideoFrame | None:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> LazyVideoFrame | tuple[str, int] | None:
         """Reconstruct LazyVideoFrame from stored path and frame_index."""
         path = df[name][row_index]
         frame_index = df[f"{name}_frame_index"][row_index]
@@ -191,10 +191,10 @@ class VideoInfoField(Field):
             [
                 pl.Field("path", pl.String()),
                 pl.Field("total_frames", pl.UInt32()),
-                pl.Field("fps", pl.Float32()),
-                pl.Field("width", pl.UInt16()),
-                pl.Field("height", pl.UInt16()),
-                pl.Field("duration", pl.Float32()),
+                pl.Field("fps", pl.Float64()),
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+                pl.Field("duration", pl.Float64()),
                 pl.Field("codec", pl.String()),
             ]
         ),
@@ -208,10 +208,10 @@ class VideoInfoField(Field):
                 [
                     pl.Field("path", pl.String()),
                     pl.Field("total_frames", pl.UInt32()),
-                    pl.Field("fps", pl.Float32()),
-                    pl.Field("width", pl.UInt16()),
-                    pl.Field("height", pl.UInt16()),
-                    pl.Field("duration", pl.Float32()),
+                    pl.Field("fps", pl.Float64()),
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
+                    pl.Field("duration", pl.Float64()),
                     pl.Field("codec", pl.String()),
                 ]
             )

@@ -90,7 +90,7 @@ class VideoFramePathToImageConverter(Converter):
         image_shapes: list[list[int]] = []
 
         for path, frame_idx in zip(df[input_path_col], df[input_frame_idx_col]):
-            if path is None:
+            if path is None or frame_idx is None:
                 image_data.append(None)
                 image_shapes.append([])
                 continue
@@ -160,7 +160,7 @@ class VideoFrameToImageCallableConverter(Converter):
         callables: list[Any] = []
 
         for path, frame_idx in zip(df[input_path_col], df[input_frame_idx_col]):
-            if path is None:
+            if path is None or frame_idx is None:
                 callables.append(None)
                 continue
 

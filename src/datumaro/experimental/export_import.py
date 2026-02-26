@@ -988,18 +988,51 @@ def _reconstruct_video_fields(
     return df
 
 
-def _load_video_metadata(metadata: dict) -> dict[str, VideoInfo]:
+def _load_video_metadata(metadata: dict, input_dir: Path | None = None) -> dict[str, VideoInfo]:
     """
     Load video metadata from the metadata dictionary.
 
+    When ``export_mode`` is ``"copy"``, metadata keys (which are original
+    absolute paths from the exporting machine) are remapped to the imported
+    absolute paths under *input_dir* so that ``Dataset.get_video_info()``
+    lookups match the paths stored in the DataFrame.
+
     Args:
         metadata: Loaded metadata dictionary
+        input_dir: Directory containing the imported dataset (needed for copy mode)
 
     Returns:
         Dictionary mapping video paths to VideoInfo objects
     """
     videos_info = metadata.get("videos", {})
     video_metadata_dict = videos_info.get("metadata", {})
+    export_mode = videos_info.get("export_mode", "reference")
+
+    if export_mode == "copy" and input_dir is not None:
+        # original_paths maps exported_rel_path -> original_abs_path
+        original_paths = videos_info.get("original_paths", {})
+        # Build reverse: original_abs_path -> exported_rel_path
+        orig_to_rel = {v: k for k, v in original_paths.items()}
+
+        result = {}
+        for orig_path, info_dict in video_metadata_dict.items():
+            rel_path = orig_to_rel.get(orig_path)
+            if rel_path is not None:
+                imported_path = str(input_dir / rel_path)
+            else:
+                imported_path = orig_path
+            video_info = VideoInfo.from_dict(info_dict)
+            video_info = VideoInfo(
+                path=imported_path,
+                total_frames=video_info.total_frames,
+                fps=video_info.fps,
+                width=video_info.width,
+                height=video_info.height,
+                duration=video_info.duration,
+                codec=video_info.codec,
+            )
+            result[imported_path] = video_info
+        return result
 
     return {path: VideoInfo.from_dict(info_dict) for path, info_dict in video_metadata_dict.items()}
 
@@ -1034,7 +1067,7 @@ def _import_dataset_from_dir(
     df = _reconstruct_video_fields(df, metadata, input_dir)
 
     # Load video metadata
-    video_metadata = _load_video_metadata(metadata)
+    video_metadata = _load_video_metadata(metadata, input_dir)
 
     if dtype is None:
         dtype = _match_dtype_from_schema(schema)
