@@ -897,9 +897,9 @@ class LazyVideoFrame:
             return cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
         if target_format == "BGRA":
             return cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
-        if target_format == "L":
+        if target_format in ("L", "GRAY"):
             return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        return frame
+        raise ValueError(f"Unsupported video frame format: {target_format!r}")
 
     @cachedmethod(
         cache=lambda _: VideoFrameCache._cache,
