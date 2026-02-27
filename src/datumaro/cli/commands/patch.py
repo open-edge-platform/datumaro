@@ -66,6 +66,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         default=None,
         help="Output directory (default: save in-place)",
     )
+    parser.add_argument("-f", "--format", help="Output format (default: target dataset format)")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -98,11 +99,12 @@ def patch_command(args):
         raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
-    # Get the exporter for the target format
+    # Get the exporter for the output format
+    format = args.format or target_dataset.format
     try:
-        exporter = env.exporters[target_dataset.format]
+        exporter = env.exporters[format]
     except KeyError:
-        raise CliException("Exporter for format '%s' is not found" % target_dataset.format)
+        raise CliException("Exporter for format '%s' is not found" % format)
 
     extra_args = exporter.parse_cmdline(args.extra_args)
 
@@ -110,7 +112,7 @@ def patch_command(args):
     target_dataset.update(patch_dataset)
 
     # Save the updated dataset
-    target_dataset.save(save_dir=dst_dir, **extra_args)
+    target_dataset.export(save_dir=dst_dir, format=format, **extra_args)
 
     log.info("Patched dataset has been saved to '%s'" % dst_dir)
 
