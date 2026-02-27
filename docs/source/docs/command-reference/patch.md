@@ -5,7 +5,8 @@
 Updates items of the first dataset with items from the second one.
 
 By default, datasets are updated in-place. The `-o/--output-dir`
-option can be used to specify another output directory. When
+option can be used to specify another output directory. The
+`-f/--format` option can be used to specify the output format. When
 updating in-place, use the `--overwrite` parameter along with the
 `--save-media` export option (in-place updates fail by default
 to prevent data loss).
@@ -26,7 +27,7 @@ This command can be applied to arbitrary datasets.
 
 ## Usage
 ```console
-datum patch [-h] [-o DST_DIR] [--overwrite]
+datum patch [-h] [-o DST_DIR] [-f FORMAT] [--overwrite]
                target patch
                [-- EXPORT_ARGS]
 ```
@@ -37,6 +38,7 @@ Parameters:
 - `target` (string) - Target dataset path (path to dataset directory, optionally with format specification)
 - `patch` (string) - Patch dataset path (path to dataset directory, optionally with format specification)
 - `-o, --output-dir` (string) - Output directory (default: save in-place)
+- `-f, --format` (string) - Output format (default: target dataset format)
 - `--overwrite` - Overwrite existing files in the save directory, if it is not empty
 - `-h, --help` - Print the help message and exit
 - `extra_args` - Additional arguments for exporting (pass '-- -h' for help). Must be specified after the main command arguments and after the '--' separator
@@ -50,4 +52,9 @@ Parameters:
 - Generate a patched dataset
   ```console
   datum patch -o patched_dataset/ dataset1/ dataset2/
+  ```
+
+- Generate a patched dataset in a different format
+  ```console
+  datum patch -o patched_dataset/ -f yolo_ultralytics dataset1/ dataset2/
   ```

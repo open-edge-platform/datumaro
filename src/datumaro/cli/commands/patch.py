@@ -21,7 +21,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         Updates items of the first dataset with items from the second one.|n
         |n
         By default, datasets are updated in-place. The '-o/--output-dir'
-        option can be used to specify another output directory. When
+        option can be used to specify another output directory. The
+        '-f/--format' option can be used to specify the output format. When
         updating in-place, use the '--overwrite' parameter along with the
         '--save-media' export option (in-place updates fail by default
         to prevent data loss).|n
@@ -53,6 +54,9 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         |n
         - Generate a patched dataset:|n
         |s|s%(prog)s -o patched_dataset/ dataset1/ dataset2/|n
+        |n
+        - Generate a patched dataset in a different format:|n
+        |s|s%(prog)s -o patched_dataset/ -f yolo_ultralytics dataset1/ dataset2/|n
         """,
         formatter_class=MultilineFormatter,
     )
