@@ -27,12 +27,10 @@ from datumaro.experimental.filtering.label_filter import (
     resolve_label_indices,
     validate_label_categories,
 )
-from datumaro.experimental.media import VideoInfo
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
 from datumaro.experimental.type_registry import is_type_optional
-from datumaro.experimental.video_dataset import VideoDatasetMixin
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -208,7 +206,7 @@ DType = TypeVar("DType", bound=Sample)
 DTargetType = TypeVar("DTargetType", bound=Sample)
 
 
-class Dataset(VideoDatasetMixin, Generic[DType]):
+class Dataset(Generic[DType]):
     """
     Represents a typed dataset with schema validation and conversion capabilities.
 
@@ -248,22 +246,14 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._transforms: Transform | None = None
 
-        # Initialize video metadata via mixin
-        self._init_video_metadata()
-
     def __getstate__(self) -> dict[str, Any]:
         """
         Prepare the dataset for pickling.
 
         Polars DataFrames with Object columns cannot be serialized using Polars' default
         serialization. This method extracts Object columns as Python lists before pickling.
-        Video metadata is serialized as dictionaries.
         """
         state = self.__dict__.copy()
-
-        # Serialize video metadata using mixin method
-        if "_video_metadata" in state:
-            state["_video_metadata"] = self._serialize_video_metadata()
 
         return prepare_dataframe_for_pickle(self.df, "df", state)
 
@@ -272,20 +262,10 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
         Restore the dataset after unpickling.
 
         Reconstructs Object columns from the Python lists stored during pickling.
-        Deserializes video metadata from dictionaries.
         """
         state["df"] = restore_dataframe_from_pickle(state, "df")
 
-        # Temporarily store serialized video metadata
-        serialized_video_metadata = state.pop("_video_metadata", None)
-
         self.__dict__.update(state)
-
-        # Deserialize video metadata using mixin method
-        if serialized_video_metadata is not None:
-            self._deserialize_video_metadata(serialized_video_metadata)
-        else:
-            self._init_video_metadata()
 
     @classmethod
     def from_dataframe(
@@ -295,7 +275,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
         transforms: Transform | None = None,
         categories: dict[str, Categories] | None = None,
         schema: Schema | None = None,
-        video_metadata: dict[str, VideoInfo] | None = None,
     ) -> Dataset[DTargetType]:
         """
         Create a Dataset from an existing DataFrame and lazy converters.
@@ -305,7 +284,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
             dtype_or_schema: Either a Schema instance or a Sample class type
             transforms: Optional Transform instance to apply during sample access
             categories: Optional dictionary mapping attribute names to categories
-            video_metadata: Optional dictionary mapping video paths to VideoInfo
 
         Returns:
             A new Dataset instance with the provided DataFrame and converters
@@ -313,8 +291,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
         dataset = Dataset(dtype_or_schema, categories, schema)
         dataset.df = df
         dataset._transforms = transforms
-        if video_metadata is not None:
-            dataset._init_video_metadata(video_metadata)
         return dataset
 
     @property
@@ -379,7 +355,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
             slice_df,
             self._dtype,
             transforms,
-            video_metadata=self._video_metadata,
         )
         dataset._dtype = self._dtype
 
@@ -555,14 +530,12 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
                 self.df,
                 transforms.schema,
                 transforms,
-                video_metadata=self._video_metadata,
             )
         return Dataset.from_dataframe(
             self.df,
             dtype,
             transforms,
             schema=transforms.schema,
-            video_metadata=self._video_metadata,
         )
 
     def convert_to_schema(
@@ -594,7 +567,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
             return Dataset.from_dataframe(
                 self.df,
                 target_dtype_or_schema,
-                video_metadata=self._video_metadata,
             )
 
         # Find the optimal conversion path using A* search
@@ -613,7 +585,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
             target_dtype_or_schema,
             transforms,
             categories=inferred_categories,
-            video_metadata=self._video_metadata,
         )
 
     def filter_by_subset(self, subset: Subset | Sequence[Subset]) -> Dataset[DType]:
@@ -642,7 +613,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
             df=filtered_df,
             dtype_or_schema=self.dtype,
             schema=self.schema,
-            video_metadata=self._video_metadata,
         )
 
     def filter_by_labels(
@@ -763,14 +733,12 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
                 df=filtered_df,
                 dtype_or_schema=self.dtype,
                 schema=new_schema,
-                video_metadata=self._video_metadata,
             )
 
         return Dataset.from_dataframe(
             df=filtered_df,
             dtype_or_schema=self.dtype,
             schema=self.schema,
-            video_metadata=self._video_metadata,
         )
 
     def append_dataset(self, dataset: Dataset) -> None:
@@ -782,9 +750,6 @@ class Dataset(VideoDatasetMixin, Generic[DType]):
         """
         converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
         self.df = self.df.vstack(converted_dataset.df)
-
-        # Merge video metadata from the appended dataset using mixin method
-        self._merge_video_metadata(converted_dataset._video_metadata)
 
 
 def convert_sample_to_schema(

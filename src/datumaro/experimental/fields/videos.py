@@ -56,22 +56,26 @@ class VideoFramePathField(Field):
     dtype: pl.DataType = field(default_factory=pl.String, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        """Generate schema with path and frame_index columns."""
+        """Generate schema with path and frame_index columns.
+
+        Uses Categorical for the path column since video datasets typically
+        have many frames from the same video, making deduplication beneficial.
+        """
         return {
-            name: pl.String(),
+            name: pl.Categorical(),
             f"{name}_frame_index": pl.UInt32(),
         }
 
     def to_polars(self, name: str, value: LazyVideoFrame | tuple[Any, int] | None) -> dict[str, pl.Series]:
         if value is None:
             return {
-                name: pl.Series(name, [None], dtype=pl.String()),
+                name: pl.Series(name, [None], dtype=pl.Categorical()),
                 f"{name}_frame_index": pl.Series(f"{name}_frame_index", [None], dtype=pl.UInt32()),
             }
 
         if isinstance(value, LazyVideoFrame):
             return {
-                name: pl.Series(name, [str(value.video_path)], dtype=pl.String()),
+                name: pl.Series(name, [str(value.video_path)], dtype=pl.Categorical()),
                 f"{name}_frame_index": pl.Series(f"{name}_frame_index", [value.frame_index], dtype=pl.UInt32()),
             }
 
@@ -79,7 +83,7 @@ class VideoFramePathField(Field):
         if isinstance(value, tuple) and len(value) == 2:
             path, frame_idx = value
             return {
-                name: pl.Series(name, [str(path)], dtype=pl.String()),
+                name: pl.Series(name, [str(path)], dtype=pl.Categorical()),
                 f"{name}_frame_index": pl.Series(f"{name}_frame_index", [frame_idx], dtype=pl.UInt32()),
             }
 
@@ -574,9 +578,13 @@ class MediaPathField(Field):
     dtype: pl.DataType = field(default_factory=pl.String, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        """Generate schema with path and nullable frame_index columns."""
+        """Generate schema with path and nullable frame_index columns.
+
+        Uses Categorical for the path column since video datasets typically
+        have many frames from the same video, making deduplication beneficial.
+        """
         return {
-            name: pl.String(),
+            name: pl.Categorical(),
             f"{name}_frame_index": pl.UInt32(),  # Nullable: None = image, int = video frame
         }
 
@@ -584,13 +592,13 @@ class MediaPathField(Field):
         """Convert LazyImage or LazyVideoFrame to path and frame_index columns."""
         if value is None:
             return {
-                name: pl.Series(name, [None], dtype=pl.String()),
+                name: pl.Series(name, [None], dtype=pl.Categorical()),
                 f"{name}_frame_index": pl.Series(f"{name}_frame_index", [None], dtype=pl.UInt32()),
             }
 
         if isinstance(value, LazyVideoFrame):
             return {
-                name: pl.Series(name, [str(value.video_path)], dtype=pl.String()),
+                name: pl.Series(name, [str(value.video_path)], dtype=pl.Categorical()),
                 f"{name}_frame_index": pl.Series(f"{name}_frame_index", [value.frame_index], dtype=pl.UInt32()),
             }
 
@@ -603,7 +611,7 @@ class MediaPathField(Field):
             raise TypeError(f"Expected LazyImage, LazyVideoFrame, or path string, got {type(value)}")
 
         return {
-            name: pl.Series(name, [path], dtype=pl.String()),
+            name: pl.Series(name, [path], dtype=pl.Categorical()),
             f"{name}_frame_index": pl.Series(f"{name}_frame_index", [None], dtype=pl.UInt32()),
         }
 

@@ -46,7 +46,7 @@ class VideoFramePathFieldTest:
 
         assert "frame" in schema
         assert "frame_frame_index" in schema
-        assert schema["frame"] == pl.String()
+        assert schema["frame"] == pl.Categorical()
         assert schema["frame_frame_index"] == pl.UInt32()
 
     def test_to_polars_with_lazy_video_frame(self):
@@ -472,7 +472,7 @@ class MediaPathFieldTest:
 
         assert "media" in schema
         assert "media_frame_index" in schema
-        assert schema["media"] == pl.String()
+        assert schema["media"] == pl.Categorical()
         assert schema["media_frame_index"] == pl.UInt32()
 
     def test_to_polars_with_lazy_image(self):

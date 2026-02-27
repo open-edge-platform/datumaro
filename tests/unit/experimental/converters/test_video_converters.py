@@ -43,13 +43,10 @@ class VideoFramePathToImageConverterTest:
         VideoFrameCache.clear()
 
     @pytest.fixture
-    def test_video_exists(self):
-        """Skip if test video is not available."""
-        if not TEST_VIDEO_PATH.exists():
-            pytest.skip(f"Test video not found: {TEST_VIDEO_PATH}")
+    def test_video(self):
         return TEST_VIDEO_PATH
 
-    def test_filter_output_spec_sets_correct_format(self, test_video_exists):
+    def test_filter_output_spec_sets_correct_format(self, test_video):
         """Test filter_output_spec() sets the correct output format."""
         converter = VideoFramePathToImageConverter()
 
@@ -137,7 +134,7 @@ class VideoFramePathToImageConverterTest:
         with pytest.raises(ValueError, match="Unsupported output format 'YUV'"):
             converter.filter_output_spec()
 
-    def test_convert_loads_video_frame(self, test_video_exists):
+    def test_convert_loads_video_frame(self, test_video):
         """Test convert() correctly loads video frame data."""
         converter = VideoFramePathToImageConverter()
 
@@ -160,7 +157,7 @@ class VideoFramePathToImageConverterTest:
         # Create test DataFrame with video frame reference
         df = pl.DataFrame(
             {
-                "frame": [str(test_video_exists)],
+                "frame": [str(test_video)],
                 "frame_frame_index": [0],  # First frame
             },
             schema={
@@ -183,7 +180,7 @@ class VideoFramePathToImageConverterTest:
         assert len(image_shape) == 3  # H, W, C
         assert image_shape[2] == 3  # RGB has 3 channels
 
-    def test_convert_handles_none_path(self, test_video_exists):
+    def test_convert_handles_none_path(self, test_video):
         """Test convert() handles None path correctly."""
         converter = VideoFramePathToImageConverter()
 
@@ -219,7 +216,7 @@ class VideoFramePathToImageConverterTest:
         assert result_df["image"][0] is None
         assert len(result_df["image_shape"][0]) == 0
 
-    def test_convert_multiple_frames(self, test_video_exists):
+    def test_convert_multiple_frames(self, test_video):
         """Test convert() handles multiple frames correctly."""
         converter = VideoFramePathToImageConverter()
 
@@ -241,7 +238,7 @@ class VideoFramePathToImageConverterTest:
 
         df = pl.DataFrame(
             {
-                "frame": [str(test_video_exists), str(test_video_exists)],
+                "frame": [str(test_video), str(test_video)],
                 "frame_frame_index": [0, 1],
             },
             schema={

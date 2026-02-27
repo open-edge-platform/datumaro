@@ -36,7 +36,6 @@ from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
 from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
 from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
-from datumaro.experimental.media import VideoInfo
 from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
@@ -587,9 +586,6 @@ def _write_parquet_and_metadata(
     # Track which columns are Object types (excluded from parquet)
     object_columns = [col for col, dtype in df_to_export.schema.items() if dtype == pl.Object]
 
-    # Serialize video metadata
-    video_metadata_dict = {path: info.to_dict() for path, info in dataset._video_metadata.items()}
-
     # Create metadata
     metadata = {
         "version": VERSION,
@@ -599,7 +595,6 @@ def _write_parquet_and_metadata(
             "fields": [name for name, _ in _get_video_fields(dataset)],
             "export_mode": export_videos.value,
             "original_paths": {v: k for k, v in video_path_mapping.items()},
-            "metadata": video_metadata_dict,
         },
     }
 
@@ -988,55 +983,6 @@ def _reconstruct_video_fields(
     return df
 
 
-def _load_video_metadata(metadata: dict, input_dir: Path | None = None) -> dict[str, VideoInfo]:
-    """
-    Load video metadata from the metadata dictionary.
-
-    When ``export_mode`` is ``"copy"``, metadata keys (which are original
-    absolute paths from the exporting machine) are remapped to the imported
-    absolute paths under *input_dir* so that ``Dataset.get_video_info()``
-    lookups match the paths stored in the DataFrame.
-
-    Args:
-        metadata: Loaded metadata dictionary
-        input_dir: Directory containing the imported dataset (needed for copy mode)
-
-    Returns:
-        Dictionary mapping video paths to VideoInfo objects
-    """
-    videos_info = metadata.get("videos", {})
-    video_metadata_dict = videos_info.get("metadata", {})
-    export_mode = videos_info.get("export_mode", "reference")
-
-    if export_mode == "copy" and input_dir is not None:
-        # original_paths maps exported_rel_path -> original_abs_path
-        original_paths = videos_info.get("original_paths", {})
-        # Build reverse: original_abs_path -> exported_rel_path
-        orig_to_rel = {v: k for k, v in original_paths.items()}
-
-        result = {}
-        for orig_path, info_dict in video_metadata_dict.items():
-            rel_path = orig_to_rel.get(orig_path)
-            if rel_path is not None:
-                imported_path = str(input_dir / rel_path)
-            else:
-                imported_path = orig_path
-            video_info = VideoInfo.from_dict(info_dict)
-            video_info = VideoInfo(
-                path=imported_path,
-                total_frames=video_info.total_frames,
-                fps=video_info.fps,
-                width=video_info.width,
-                height=video_info.height,
-                duration=video_info.duration,
-                codec=video_info.codec,
-            )
-            result[imported_path] = video_info
-        return result
-
-    return {path: VideoInfo.from_dict(info_dict) for path, info_dict in video_metadata_dict.items()}
-
-
 def _import_dataset_from_dir(
     input_dir: Path,
     dtype: type[DType] | None = None,
@@ -1066,10 +1012,7 @@ def _import_dataset_from_dir(
     # Reconstruct video fields
     df = _reconstruct_video_fields(df, metadata, input_dir)
 
-    # Load video metadata
-    video_metadata = _load_video_metadata(metadata, input_dir)
-
     if dtype is None:
         dtype = _match_dtype_from_schema(schema)
 
-    return Dataset.from_dataframe(df, dtype, schema=schema, video_metadata=video_metadata)
+    return Dataset.from_dataframe(df, dtype, schema=schema)

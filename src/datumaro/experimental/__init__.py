@@ -18,4 +18,3 @@ from .media import (
 from .schema import AttributeInfo, Schema
 from .tiling import tilers
 from .type_registry import register_from_polars_converter, register_numpy_converter
-from .video_dataset import VideoDatasetMixin
