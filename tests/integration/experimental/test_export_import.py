@@ -1317,6 +1317,7 @@ def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
     # Create and export dataset as zip
     original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(ImageSample(image=make_image, label=1))
+    original_dataset.append(ImageSample(image=make_image, label=2))
 
     export_zip = tmp_path / "my_dataset.zip"
     export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
@@ -1333,12 +1334,18 @@ def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
     assert (expected_extract_dir / IMAGES_DIR).exists()
 
     # Verify the dataset works correctly
-    assert len(imported_dataset) == 1
-    sample = imported_dataset[0]
-    assert sample.label == 1
-    assert callable(sample.image)
-    img = sample.image()
-    assert img.shape == (20, 30, 3)
+    assert len(imported_dataset) == 2
+    sample0 = imported_dataset[0]
+    assert sample0.label == 1
+    assert callable(sample0.image)
+    img0 = sample0.image()
+    assert img0.shape == (20, 30, 3)
+
+    sample1 = imported_dataset[1]
+    assert sample1.label == 2
+    assert callable(sample1.image)
+    img1 = sample1.image()
+    assert img1.shape == (20, 30, 3)
 
 
 def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_path):
@@ -1586,18 +1593,18 @@ def test_export_import_video_frames_roundtrip(tmp_path):
     )
 
     # Import
-    imported = import_dataset(output_dir, dtype=VideoSample)
+    imported_dataset = import_dataset(output_dir, dtype=VideoSample)
 
     # Verify
-    assert len(imported) == 5
+    assert len(imported_dataset) == 5
     for i in range(5):
-        sample = imported[i]
+        sample = imported_dataset[i]
         assert sample.label == i
         assert isinstance(sample.frame, LazyVideoFrame)
         assert sample.frame.frame_index == i * 2
 
     # Verify video metadata
-    assert str(TEST_VIDEO_PATH) in imported.video_metadata
+    assert str(TEST_VIDEO_PATH) in imported_dataset.video_metadata
 
 
 def test_export_import_video_to_zip(tmp_path):
@@ -2029,3 +2036,200 @@ def test_export_mixed_media_ignore_missing_media(tmp_path):
     assert images_dir.exists()
     image_files = list(images_dir.glob("image_*.png"))
     assert len(image_files) == 2  # Indices 0 and 2
+
+
+def test_video_to_images_end_to_end_workflow(tmp_path):
+    """End-to-end workflow: video frames → convert to images → export → import → ZIP."""
+    from datumaro.experimental.fields import image_field
+
+    # Step 1: Define sample classes
+    class VideoFrameSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    class ImageTensorSample(Sample):
+        image: np.ndarray | None = image_field(dtype=pl.UInt8(), format="RGB")
+        label: int = label_field()
+
+    # Step 2: Create dataset from video frames
+    source_dataset = Dataset(VideoFrameSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        source_dataset.append(
+            VideoFrameSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i % 3,
+            )
+        )
+
+    assert len(source_dataset) == 3
+
+    # Step 3: Convert to image tensor format
+    converted_dataset = source_dataset.convert_to_schema(ImageTensorSample)
+
+    # Verify conversion works (accessing samples loads image data)
+    for i in range(3):
+        sample = converted_dataset[i]
+        assert sample.image is not None
+        assert len(sample.image.shape) == 3  # H, W, C
+        assert sample.label == i % 3
+
+    # Step 4: Export to directory
+    export_path = tmp_path / "exported"
+    export_dataset(
+        source_dataset,  # Export original video frame dataset
+        export_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify videos were copied
+    videos_dir = export_path / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Step 5: Import from directory
+    imported_dataset = import_dataset(export_path, dtype=VideoFrameSample)
+    assert len(imported_dataset) == 3
+
+    # Verify data integrity
+    for i in range(3):
+        orig = source_dataset[i]
+        imp = imported_dataset[i]
+        assert orig.label == imp.label
+
+    # Step 6: Export as ZIP
+    zip_path = tmp_path / "dataset.zip"
+    export_dataset(
+        imported_dataset,
+        zip_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.REFERENCE,  # Keep paths in ZIP
+        as_zip=True,
+    )
+
+    assert zip_path.exists()
+
+    # Step 7: Import from ZIP
+    extract_dir = tmp_path / "extracted"
+    from_zip = import_dataset(zip_path, dtype=VideoFrameSample, extract_dir=extract_dir)
+    assert len(from_zip) == 3
+
+
+def test_multiple_videos_export_import_workflow(tmp_path):
+    """Test export/import with frames from multiple videos."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    # Create dataset with frames from same video (simulating multiple videos)
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add multiple frames from the test video
+    for frame_idx in range(5):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=frame_idx),
+                label=frame_idx % 3,
+            )
+        )
+
+    assert len(dataset) == 5
+
+    # Add video metadata
+    from datumaro.experimental.media import extract_video_info
+
+    video_info = extract_video_info(TEST_VIDEO_PATH)
+    dataset.add_video_metadata(str(TEST_VIDEO_PATH), video_info)
+
+    # Export with video copy
+    export_path = tmp_path / "multi_video_export"
+    export_dataset(
+        dataset,
+        export_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify video was copied
+    videos_dir = export_path / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Import and verify
+    imported = import_dataset(export_path, dtype=VideoSample)
+    assert len(imported) == 5
+
+    # Verify video metadata was preserved
+    assert len(imported.video_metadata) > 0
+
+    # Verify all samples accessible
+    for i, sample in enumerate(imported):
+        assert sample.label == i % 3
+        assert isinstance(sample.frame, LazyVideoFrame)
+
+
+def test_mixed_media_dataset_export_import(tmp_path):
+    """Test export/import with mixed images and video frames."""
+
+    class MixedSample(Sample):
+        media: LazyImage | LazyVideoFrame = media_path_field()
+        label: int = label_field()
+
+    # Create test image
+    test_image_path = tmp_path / "test_image.jpg"
+    test_img = PILImage.new("RGB", (100, 100), color=(255, 0, 0))
+    test_img.save(test_image_path)
+
+    dataset = Dataset(MixedSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add image sample
+    dataset.append(
+        MixedSample(
+            media=LazyImage(str(test_image_path)),
+            label=0,
+        )
+    )
+
+    # Add video frame samples
+    for i in range(2):
+        dataset.append(
+            MixedSample(
+                media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i + 1,
+            )
+        )
+
+    assert len(dataset) == 3
+
+    # Export with both image and video copy
+    export_path = tmp_path / "mixed_export"
+    export_dataset(
+        dataset,
+        export_path,
+        export_images=ExportMode.COPY,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify both images and videos directories exist
+    assert (export_path / IMAGES_DIR).exists()
+    assert (export_path / VIDEOS_DIR).exists()
+
+    # Verify image was copied
+    image_files = list((export_path / IMAGES_DIR).glob("*"))
+    assert len(image_files) == 1
+
+    # Verify video was copied
+    video_files = list((export_path / VIDEOS_DIR).glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Import and verify
+    imported = import_dataset(export_path, dtype=MixedSample)
+    assert len(imported) == 3
+
+    # Verify sample types
+    assert imported[0].label == 0  # Image sample
+    assert imported[1].label == 1  # Video frame
+    assert imported[2].label == 2  # Video frame

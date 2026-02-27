@@ -670,3 +670,171 @@ class VideoIntegrationTest:
         restored_sample = restored[0]
         assert isinstance(restored_sample.frame, LazyVideoFrame)
         assert restored_sample.frame.frame_index == 0
+
+
+class MultipleVideosDatasetTest:
+    """Tests for datasets containing frames from multiple video files."""
+
+    def test_dataset_with_multiple_videos(self):
+        """Test dataset with frames from multiple different videos."""
+
+        class VideoSample(Sample):
+            frame: LazyVideoFrame = video_frame_path_field()
+
+        dataset = Dataset(VideoSample)
+
+        # Add frames from multiple "videos" (using same path with different frame indices)
+        video1 = "/path/to/video1.mp4"
+        video2 = "/path/to/video2.mp4"
+        video3 = "/path/to/video3.mp4"
+
+        for video_path in [video1, video2, video3]:
+            for frame_idx in range(3):
+                dataset.append(VideoSample(frame=LazyVideoFrame(video_path=video_path, frame_index=frame_idx)))
+
+        assert len(dataset) == 9
+
+        # Check DataFrame structure
+        unique_videos = dataset.df["frame"].unique().to_list()
+        assert len(unique_videos) == 3
+        assert set(unique_videos) == {video1, video2, video3}
+
+    def test_multiple_videos_metadata_storage(self):
+        """Test that metadata for multiple videos can be stored and retrieved."""
+
+        class VideoSample(Sample):
+            frame: LazyVideoFrame = video_frame_path_field()
+
+        dataset = Dataset(VideoSample)
+
+        # Add metadata for multiple videos
+        for i in range(3):
+            video_path = f"/path/to/video{i}.mp4"
+            video_info = VideoInfo(
+                path=video_path,
+                total_frames=100 + i * 50,
+                fps=30.0 + i * 10,
+                width=1920,
+                height=1080,
+                duration=3.33,
+                codec="h264",
+            )
+            dataset.add_video_metadata(video_path, video_info)
+
+        assert len(dataset.video_metadata) == 3
+
+        # Verify each video's metadata
+        for i in range(3):
+            video_path = f"/path/to/video{i}.mp4"
+            info = dataset.get_video_info(video_path)
+            assert info is not None
+            assert info.total_frames == 100 + i * 50
+            assert info.fps == 30.0 + i * 10
+
+    def test_multiple_videos_groupby_operations(self):
+        """Test groupby operations on multiple videos using Polars."""
+
+        class VideoSample(Sample):
+            frame: LazyVideoFrame = video_frame_path_field()
+
+        dataset = Dataset(VideoSample)
+
+        # Add frames from multiple videos with different counts
+        dataset.append(VideoSample(frame=LazyVideoFrame("/video1.mp4", frame_index=0)))
+        dataset.append(VideoSample(frame=LazyVideoFrame("/video1.mp4", frame_index=1)))
+        dataset.append(VideoSample(frame=LazyVideoFrame("/video2.mp4", frame_index=0)))
+        dataset.append(VideoSample(frame=LazyVideoFrame("/video2.mp4", frame_index=1)))
+        dataset.append(VideoSample(frame=LazyVideoFrame("/video2.mp4", frame_index=2)))
+
+        # Group by video path using Polars
+        video_counts = dataset.df.group_by("frame").agg(pl.len().alias("count"))
+
+        assert len(video_counts) == 2
+        counts_dict = dict(zip(video_counts["frame"].to_list(), video_counts["count"].to_list()))
+        assert counts_dict["/video1.mp4"] == 2
+        assert counts_dict["/video2.mp4"] == 3
+
+
+class MixedMediaDatasetTest:
+    """Tests for datasets with mixed images and video frames."""
+
+    def test_mixed_media_dataset_creation(self):
+        """Test creating dataset with both images and video frames."""
+
+        class MixedSample(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+
+        dataset = Dataset(MixedSample)
+
+        # Add image samples
+        dataset.append(MixedSample(media=LazyImage("/path/to/image1.jpg")))
+        dataset.append(MixedSample(media=LazyImage("/path/to/image2.jpg")))
+
+        # Add video frame samples
+        dataset.append(MixedSample(media=LazyVideoFrame("/path/to/video.mp4", frame_index=0)))
+        dataset.append(MixedSample(media=LazyVideoFrame("/path/to/video.mp4", frame_index=1)))
+
+        assert len(dataset) == 4
+
+        # Verify DataFrame structure
+        assert "media" in dataset.df.columns
+        assert "media_frame_index" in dataset.df.columns
+
+        # Check frame_index values
+        frame_indices = dataset.df["media_frame_index"].to_list()
+        assert frame_indices[0] is None  # Image
+        assert frame_indices[1] is None  # Image
+        assert frame_indices[2] == 0  # Video frame
+        assert frame_indices[3] == 1  # Video frame
+
+    def test_mixed_media_filter_by_type(self):
+        """Test filtering mixed media dataset by media type using Polars."""
+
+        class MixedSample(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+
+        dataset = Dataset(MixedSample)
+
+        # Add mixed media
+        dataset.append(MixedSample(media=LazyImage("/image1.jpg")))
+        dataset.append(MixedSample(media=LazyVideoFrame("/video.mp4", frame_index=0)))
+        dataset.append(MixedSample(media=LazyImage("/image2.jpg")))
+        dataset.append(MixedSample(media=LazyVideoFrame("/video.mp4", frame_index=1)))
+
+        # Filter for images (frame_index is null)
+        image_df = dataset.df.filter(pl.col("media_frame_index").is_null())
+        assert len(image_df) == 2
+
+        # Filter for video frames (frame_index is not null)
+        video_df = dataset.df.filter(pl.col("media_frame_index").is_not_null())
+        assert len(video_df) == 2
+
+    def test_mixed_media_video_metadata_only_for_videos(self):
+        """Test that video metadata is only retrieved for video frames, not images."""
+
+        class MixedSample(Sample):
+            media: LazyImage | LazyVideoFrame = media_path_field()
+
+        dataset = Dataset(MixedSample)
+
+        # Add video metadata
+        video_info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        dataset.add_video_metadata("/path/to/video.mp4", video_info)
+
+        # Create samples
+        image_sample = MixedSample(media=LazyImage("/path/to/image.jpg"))
+        video_sample = MixedSample(media=LazyVideoFrame("/path/to/video.mp4", frame_index=0))
+
+        # Image should return None for video info
+        assert dataset.get_video_info_for_sample(image_sample) is None
+
+        # Video frame should return video info
+        assert dataset.get_video_info_for_sample(video_sample) == video_info
