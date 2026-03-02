@@ -645,27 +645,32 @@ def test_import_dataset_with_instance_masks(tmp_path):
 
 
 def test_import_missing_metadata_raises_error(tmp_path):
-    """Test that missing metadata file raises FileNotFoundError."""
+    """Test that an empty directory raises ValueError when format cannot be detected."""
 
     empty_dir = tmp_path / "empty"
     empty_dir.mkdir()
 
-    with pytest.raises(FileNotFoundError, match="Metadata file not found"):
+    with pytest.raises(ValueError, match="Could not detect dataset format"):
         import_dataset(empty_dir)
 
 
 def test_import_missing_dataframe_raises_error(tmp_path):
-    """Test that missing dataframe file raises FileNotFoundError."""
+    """Test that missing dataframe file raises appropriate error.
+
+    With automatic format detection, a directory with only metadata.json
+    but no data.parquet will not be detected as Datumaro format, so it
+    will raise a format detection error.
+    """
 
     export_dir = tmp_path / "export"
     export_dir.mkdir()
 
-    # Create metadata but no dataframe
+    # Create metadata but no dataframe - this won't be detected as Datumaro format
     metadata = {"version": VERSION, "schema": {}}
     with open(export_dir / METADATA_FILE, "w") as f:
         json.dump(metadata, f)
 
-    with pytest.raises(FileNotFoundError, match="DataFrame file not found"):
+    with pytest.raises(ValueError, match="Could not detect dataset format"):
         import_dataset(export_dir)
 
 
@@ -1364,3 +1369,115 @@ def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
     # Verify the dataset works correctly
     assert len(imported_dataset) == 1
     assert imported_dataset[0].label == 3
+
+
+# ============================================================================
+# Automatic Format Detection Tests
+# ============================================================================
+
+
+def test_import_dataset_auto_detects_coco_format(tmp_path):
+    """Test that import_dataset automatically detects and loads COCO format datasets."""
+    # Create a minimal COCO dataset structure
+    annotations_dir = tmp_path / "annotations"
+    annotations_dir.mkdir()
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+
+    # Create a test image
+    img = PILImage.new("RGB", (100, 100), color="red")
+    img.save(images_dir / "test.jpg")
+
+    # Create COCO annotation file
+    coco_annotations = {
+        "images": [{"id": 1, "file_name": "test.jpg", "width": 100, "height": 100}],
+        "annotations": [
+            {"id": 1, "image_id": 1, "category_id": 1, "bbox": [10, 20, 30, 40], "area": 1200, "iscrowd": 0}
+        ],
+        "categories": [{"id": 1, "name": "cat", "supercategory": "animal"}],
+    }
+
+    with open(annotations_dir / "instances.json", "w") as f:
+        json.dump(coco_annotations, f)
+
+    # Import using auto-detection
+    dataset = import_dataset(tmp_path)
+
+    # Verify the dataset was loaded correctly
+    assert len(dataset) == 1
+
+
+def test_import_dataset_auto_detects_yolo_ultralytics_format(tmp_path):
+    """Test that import_dataset automatically detects and loads YOLO Ultralytics format datasets."""
+    # Create Ultralytics YOLO structure
+    images_dir = tmp_path / "images" / "train"
+    images_dir.mkdir(parents=True)
+    labels_dir = tmp_path / "labels" / "train"
+    labels_dir.mkdir(parents=True)
+
+    # Create a test image
+    img = PILImage.new("RGB", (100, 100), color="blue")
+    img.save(images_dir / "test.jpg")
+
+    # Create label file (YOLO format: class x_center y_center width height)
+    with open(labels_dir / "test.txt", "w") as f:
+        f.write("0 0.5 0.5 0.3 0.4\n")
+
+    # Create data.yaml
+    import yaml
+
+    data_yaml = {"names": ["cat", "dog"], "nc": 2, "train": "images/train", "val": "images/train"}
+    with open(tmp_path / "data.yaml", "w") as f:
+        yaml.dump(data_yaml, f)
+
+    # Import using auto-detection
+    dataset = import_dataset(tmp_path)
+
+    # Verify the dataset was loaded correctly
+    assert len(dataset) == 1
+
+
+def test_import_dataset_auto_detects_yolo_traditional_format(tmp_path):
+    """Test that import_dataset automatically detects and loads traditional YOLO format datasets."""
+    # Create traditional YOLO structure
+    train_dir = tmp_path / "obj_train_data"
+    train_dir.mkdir()
+
+    # Create a test image
+    img = PILImage.new("RGB", (100, 100), color="green")
+    img.save(train_dir / "test.jpg")
+
+    # Create label file
+    with open(train_dir / "test.txt", "w") as f:
+        f.write("0 0.5 0.5 0.3 0.4\n")
+
+    # Create obj.names
+    with open(tmp_path / "obj.names", "w") as f:
+        f.write("cat\ndog\n")
+
+    # Import using auto-detection
+    dataset = import_dataset(tmp_path)
+
+    # Verify the dataset was loaded correctly
+    assert len(dataset) == 1
+
+
+def test_import_dataset_auto_detects_datumaro_format(tmp_path):
+    """Test that import_dataset correctly detects native Datumaro format."""
+
+    class SimpleSample(Sample):
+        label: int = label_field()
+
+    # Create and export a Datumaro dataset
+    original_dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(SimpleSample(label=1))
+    original_dataset.append(SimpleSample(label=2))
+
+    export_dir = tmp_path / "datumaro_export"
+    export_dataset(original_dataset, export_dir, export_images=False)
+
+    # Import using auto-detection
+    imported_dataset = import_dataset(export_dir)
+
+    # Verify the dataset was loaded correctly
+    assert len(imported_dataset) == 2
