@@ -18,6 +18,7 @@ class DataFormat(Enum):
     """Supported data formats for load/save."""
 
     DATUMARO = "DATUMARO"
+    DATUMARO_LEGACY = "DATUMARO_LEGACY"
     COCO = "COCO"
     YOLO = "YOLO"
     YOLO_ULTRALYTICS = "YOLO_ULTRALYTICS"

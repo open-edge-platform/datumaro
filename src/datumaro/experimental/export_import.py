@@ -599,6 +599,8 @@ def _import_dataset_from_dir(
             return import_yolo_dataset(input_dir)
         case DataFormat.DATUMARO:
             return _import_datumaro_dataset(input_dir, dtype)
+        case DataFormat.DATUMARO_LEGACY:
+            return _import_legacy_datumaro_dataset(input_dir)
         case _:
             raise ValueError(
                 f"Could not detect dataset format in '{input_dir}'. "
@@ -627,3 +629,25 @@ def _import_datumaro_dataset(
         dtype = _match_dtype_from_schema(schema)
 
     return Dataset.from_dataframe(df, dtype, schema=schema)
+
+
+def _import_legacy_datumaro_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a legacy Datumaro-format dataset from a directory.
+
+    This function provides backward compatibility for datasets exported with
+    the legacy Datumaro format. The legacy dataset is imported using the old
+    API and then converted to the new experimental Dataset format.
+
+    Args:
+        input_dir: Path to the legacy Datumaro dataset directory
+
+    Returns:
+        Dataset converted from the legacy format
+    """
+    # Import lazily to avoid circular imports and unnecessary dependencies
+    from datumaro import Dataset as LegacyDataset
+    from datumaro.experimental.legacy import convert_from_legacy
+
+    legacy_dataset = LegacyDataset.import_from(str(input_dir))
+    return convert_from_legacy(legacy_dataset)

@@ -1526,3 +1526,29 @@ def test_import_zip_with_nested_coco_structure(tmp_path):
 
     # Verify the dataset was loaded correctly
     assert len(dataset) == 1
+
+
+def test_import_dataset_auto_detects_legacy_datumaro_format(tmp_path):
+    """Test that import_dataset correctly detects and imports legacy Datumaro format."""
+    from datumaro import Dataset as LegacyDataset
+    from datumaro.components.annotation import Label
+    from datumaro.components.dataset import DatasetItem
+
+    # Create a simple legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(
+        [
+            DatasetItem(id="item1", annotations=[Label(0)]),
+            DatasetItem(id="item2", annotations=[Label(1)]),
+        ],
+        categories=["cat", "dog"],
+    )
+
+    # Export to temp directory in datumaro format
+    export_dir = tmp_path / "legacy_export"
+    legacy_dataset.export(str(export_dir), format="datumaro")
+
+    # Import using auto-detection
+    dataset = import_dataset(export_dir)
+
+    # Verify the dataset was loaded and converted
+    assert len(dataset) >= 1  # Should have at least one sample

@@ -123,23 +123,56 @@ def is_datumaro_format(input_dir: Path) -> bool:
     return (input_dir / METADATA_FILE).exists() and (input_dir / DATAFRAME_FILE).exists()
 
 
+def is_legacy_datumaro_format(input_dir: Path) -> bool:
+    """
+    Detect if a directory contains a legacy Datumaro-format dataset.
+
+    Legacy Datumaro format is identified by annotations/default.json file with 'dm_format_version' key
+
+    Args:
+        input_dir: Path to the directory to check
+
+    Returns:
+        True if the directory contains a legacy Datumaro-format dataset
+    """
+
+    default_json = input_dir / "annotations" / "default.json"
+    return default_json.exists() and _is_legacy_datumaro_json(default_json)
+
+
+def _is_legacy_datumaro_json(json_path: Path) -> bool:
+    """Check if a JSON file has legacy Datumaro structure (dm_format_version key)."""
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+            if isinstance(data, dict):
+                # Legacy Datumaro format has 'dm_format_version' key
+                return "dm_format_version" in data
+    except (json.JSONDecodeError, OSError):
+        pass
+    return False
+
+
 def detect_dataset_format(input_dir: Path) -> DataFormat:
     """
     Detect the format of a dataset directory.
 
     Checks formats in order of specificity:
     1. Datumaro (most specific - requires both metadata.json and data.parquet)
-    2. COCO (JSON files with images/annotations structure)
-    3. YOLO (data.yaml, obj.names, or directory structure)
+    2. Legacy Datumaro
+    3. COCO (JSON files with images/annotations structure)
+    4. YOLO (data.yaml, obj.names, or directory structure)
 
     Args:
         input_dir: Path to the directory to check
 
     Returns:
-        DataFormat enum value: DATUMARO, COCO, YOLO, or UNKNOWN
+        DataFormat enum value: DATUMARO, DATUMARO_LEGACY, COCO, YOLO, or UNKNOWN
     """
     if is_datumaro_format(input_dir):
         return DataFormat.DATUMARO
+    if is_legacy_datumaro_format(input_dir):
+        return DataFormat.DATUMARO_LEGACY
     if is_coco_format(input_dir):
         return DataFormat.COCO
     if is_yolo_format(input_dir):
