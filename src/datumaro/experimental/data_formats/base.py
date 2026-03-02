@@ -2,22 +2,26 @@
 #
 # SPDX-License-Identifier: MIT
 
+from __future__ import annotations
+
 import os
 import shutil
 import tempfile
 from enum import Enum
+from typing import TYPE_CHECKING
 
-from datumaro.experimental import Dataset
-from datumaro.experimental.data_formats.coco.sample import CocoSample
-from datumaro.experimental.data_formats.yolo.sample import YoloSample
+if TYPE_CHECKING:
+    from datumaro.experimental import Dataset
 
 
 class DataFormat(Enum):
     """Supported data formats for load/save."""
 
+    DATUMARO = "DATUMARO"
     COCO = "COCO"
     YOLO = "YOLO"
     YOLO_ULTRALYTICS = "YOLO_ULTRALYTICS"
+    UNKNOWN = "UNKNOWN"
 
 
 def load_dataset(
@@ -134,6 +138,7 @@ def _save_dataset_to_dir(
     """Internal helper to save dataset to a directory."""
     if data_format == DataFormat.COCO:
         from datumaro.experimental.data_formats.coco.io import save_coco_dataset
+        from datumaro.experimental.data_formats.coco.sample import CocoSample
 
         dataset = dataset.convert_to_schema(CocoSample.infer_schema())
         save_coco_dataset(
@@ -143,6 +148,7 @@ def _save_dataset_to_dir(
         )
     elif data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
         from datumaro.experimental.data_formats.yolo.io import save_yolo_dataset
+        from datumaro.experimental.data_formats.yolo.sample import YoloSample
 
         dataset = dataset.convert_to_schema(YoloSample.infer_schema())
         save_yolo_dataset(dataset, root_dir=output_dir, format=data_format)

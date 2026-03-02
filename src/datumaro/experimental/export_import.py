@@ -29,13 +29,13 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
+from datumaro.experimental.data_formats.base import DataFormat
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
 from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
 from datumaro.experimental.format_detection import (
     DATAFRAME_FILE,
     METADATA_FILE,
-    DetectedFormat,
     detect_dataset_format,
     find_dataset_root,
     import_coco_dataset,
@@ -593,11 +593,11 @@ def _import_dataset_from_dir(
 
     # Detect the dataset format and dispatch to appropriate loader
     match detect_dataset_format(input_dir):
-        case DetectedFormat.COCO:
+        case DataFormat.COCO:
             return import_coco_dataset(input_dir)
-        case DetectedFormat.YOLO:
+        case DataFormat.YOLO:
             return import_yolo_dataset(input_dir)
-        case DetectedFormat.DATUMARO:
+        case DataFormat.DATUMARO:
             return _import_datumaro_dataset(input_dir, dtype)
         case _:
             raise ValueError(

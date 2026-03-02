@@ -9,25 +9,21 @@ This module provides automatic detection of dataset formats (Datumaro, COCO, YOL
 and dispatches to the appropriate loader.
 """
 
+from __future__ import annotations
+
 import json
-from pathlib import Path
 from typing import TYPE_CHECKING
 
+from datumaro.experimental.data_formats.base import DataFormat
+
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from datumaro.experimental.dataset import Dataset
 
 # File names for native Datumaro format
 METADATA_FILE = "metadata.json"
 DATAFRAME_FILE = "data.parquet"
-
-
-class DetectedFormat:
-    """Detected dataset format types."""
-
-    DATUMARO = "datumaro"
-    COCO = "coco"
-    YOLO = "yolo"
-    UNKNOWN = "unknown"
 
 
 def is_coco_format(input_dir: Path) -> bool:
@@ -127,7 +123,7 @@ def is_datumaro_format(input_dir: Path) -> bool:
     return (input_dir / METADATA_FILE).exists() and (input_dir / DATAFRAME_FILE).exists()
 
 
-def detect_dataset_format(input_dir: Path) -> str:
+def detect_dataset_format(input_dir: Path) -> DataFormat:
     """
     Detect the format of a dataset directory.
 
@@ -140,15 +136,15 @@ def detect_dataset_format(input_dir: Path) -> str:
         input_dir: Path to the directory to check
 
     Returns:
-        One of: 'datumaro', 'coco', 'yolo', 'unknown'
+        DataFormat enum value: DATUMARO, COCO, YOLO, or UNKNOWN
     """
     if is_datumaro_format(input_dir):
-        return DetectedFormat.DATUMARO
+        return DataFormat.DATUMARO
     if is_coco_format(input_dir):
-        return DetectedFormat.COCO
+        return DataFormat.COCO
     if is_yolo_format(input_dir):
-        return DetectedFormat.YOLO
-    return DetectedFormat.UNKNOWN
+        return DataFormat.YOLO
+    return DataFormat.UNKNOWN
 
 
 def find_dataset_root(input_dir: Path) -> Path:
@@ -168,7 +164,7 @@ def find_dataset_root(input_dir: Path) -> Path:
         if format is detectable there, or a single nested child directory)
     """
     # If format is detectable at current level, return it
-    if detect_dataset_format(input_dir) != DetectedFormat.UNKNOWN:
+    if detect_dataset_format(input_dir) != DataFormat.UNKNOWN:
         return input_dir
 
     # Check if there's exactly one child directory (and no files)
@@ -216,7 +212,7 @@ def _find_coco_images_dir(input_dir: Path) -> str:
     return str(input_dir)
 
 
-def import_coco_dataset(input_dir: Path) -> "Dataset":
+def import_coco_dataset(input_dir: Path) -> Dataset:
     """
     Import a COCO-format dataset from a directory.
 
@@ -244,7 +240,7 @@ def import_coco_dataset(input_dir: Path) -> "Dataset":
     return load_coco_dataset(images_dir_path=images_dir, annotations_path=annotations_path)
 
 
-def import_yolo_dataset(input_dir: Path) -> "Dataset":
+def import_yolo_dataset(input_dir: Path) -> Dataset:
     """
     Import a YOLO-format dataset from a directory.
 
