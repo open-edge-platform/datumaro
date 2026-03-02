@@ -151,6 +151,39 @@ def detect_dataset_format(input_dir: Path) -> str:
     return DetectedFormat.UNKNOWN
 
 
+def find_dataset_root(input_dir: Path) -> Path:
+    """
+    Find the actual dataset root, descending at most one level into a single child directory.
+
+    Many third-party dataset zips extract with a single top-level folder
+    (e.g., dataset.zip -> dataset/annotations/...). This function checks if
+    the format is detectable at the input level, and if not, descends into
+    a single child directory (if one exists) to check there.
+
+    Args:
+        input_dir: The directory to start searching from
+
+    Returns:
+        The detected dataset root directory (may be the input directory itself
+        if format is detectable there, or a single nested child directory)
+    """
+    # If format is detectable at current level, return it
+    if detect_dataset_format(input_dir) != DetectedFormat.UNKNOWN:
+        return input_dir
+
+    # Check if there's exactly one child directory (and no files)
+    children = list(input_dir.iterdir())
+    child_dirs = [c for c in children if c.is_dir()]
+    child_files = [c for c in children if c.is_file()]
+
+    # Only descend if there's exactly one directory and no files
+    if len(child_dirs) == 1 and not child_files:
+        return child_dirs[0]
+
+    # Otherwise return the original directory
+    return input_dir
+
+
 def _find_coco_annotations(input_dir: Path) -> list[str]:
     """Find all COCO annotation files in a directory."""
     annotation_files: list[str] = []
@@ -178,11 +211,6 @@ def _find_coco_images_dir(input_dir: Path) -> str:
         candidate_dir = input_dir / candidate
         if candidate_dir.is_dir():
             return str(candidate_dir)
-
-    # Check for images/ subdirectory as fallback
-    images_subdir = input_dir / "images"
-    if images_subdir.is_dir():
-        return str(images_subdir)
 
     # Default to root directory
     return str(input_dir)

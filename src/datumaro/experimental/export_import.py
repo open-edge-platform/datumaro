@@ -37,6 +37,7 @@ from datumaro.experimental.format_detection import (
     METADATA_FILE,
     DetectedFormat,
     detect_dataset_format,
+    find_dataset_root,
     import_coco_dataset,
     import_yolo_dataset,
 )
@@ -434,7 +435,9 @@ def import_dataset(
         extract_dir.mkdir(parents=True, exist_ok=True)
         with ZipFile(input_path) as zipf:
             zipf.extractall(extract_dir)
-        return _import_dataset_from_dir(extract_dir, dtype)
+
+        dataset_root = find_dataset_root(extract_dir)
+        return _import_dataset_from_dir(dataset_root, dtype)
     return _import_dataset_from_dir(input_path, dtype)
 
 

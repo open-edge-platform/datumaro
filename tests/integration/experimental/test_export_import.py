@@ -1481,3 +1481,48 @@ def test_import_dataset_auto_detects_datumaro_format(tmp_path):
 
     # Verify the dataset was loaded correctly
     assert len(imported_dataset) == 2
+
+
+def test_import_zip_with_nested_coco_structure(tmp_path):
+    """Test that import_dataset handles zips with a single top-level folder.
+
+    Many third-party dataset zips contain a single folder at the root level
+    (e.g., dataset.zip -> dataset/annotations/...). The import should descend
+    into such directories to find the actual dataset.
+    """
+    # Create a nested COCO structure: nested_folder/annotations/instances.json
+    nested_folder = tmp_path / "coco_dataset"
+    annotations_dir = nested_folder / "annotations"
+    annotations_dir.mkdir(parents=True)
+    images_dir = nested_folder / "images"
+    images_dir.mkdir()
+
+    # Create a test image
+    img = PILImage.new("RGB", (100, 100), color="red")
+    img.save(images_dir / "test.jpg")
+
+    # Create COCO annotation file
+    coco_annotations = {
+        "images": [{"id": 1, "file_name": "test.jpg", "width": 100, "height": 100}],
+        "annotations": [
+            {"id": 1, "image_id": 1, "category_id": 1, "bbox": [10, 20, 30, 40], "area": 1200, "iscrowd": 0}
+        ],
+        "categories": [{"id": 1, "name": "cat", "supercategory": "animal"}],
+    }
+    with open(annotations_dir / "instances.json", "w") as f:
+        json.dump(coco_annotations, f)
+
+    # Create a zip file with the nested structure
+    zip_path = tmp_path / "nested_coco.zip"
+    with zipfile.ZipFile(zip_path, "w") as zipf:
+        for file_path in nested_folder.rglob("*"):
+            if file_path.is_file():
+                arcname = file_path.relative_to(tmp_path)
+                zipf.write(file_path, arcname)
+
+    # Import using auto-detection - should descend into coco_dataset/
+    extract_dir = tmp_path / "extracted"
+    dataset = import_dataset(zip_path, extract_dir=extract_dir)
+
+    # Verify the dataset was loaded correctly
+    assert len(dataset) == 1
