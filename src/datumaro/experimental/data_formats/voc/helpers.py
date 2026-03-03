@@ -9,6 +9,7 @@ Helper functions for Pascal VOC dataset I/O.
 import logging
 import shutil
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from xml.etree.ElementTree import Element  # nosec B405 - only used for type hints and writing, not parsing
@@ -271,7 +272,7 @@ def _parse_object_element(obj_elem: Element, result: dict, categories: LabelCate
     result["pose"].append(pose_elem.text if pose_elem is not None else "Unspecified")
 
 
-def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> callable:
+def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> Callable:
     """Create a lazy loader function for a segmentation mask.
 
     Args:
@@ -370,7 +371,7 @@ def _get_mask_loader(
     mask_dir: Path | None,
     image_id: str,
     colormap: dict[tuple[int, int, int], int] | None,
-) -> callable | None:
+) -> Callable | None:
     """Get a mask loader for a segmentation mask if it exists."""
     if mask_dir is None:
         return None
