@@ -39,6 +39,7 @@ from datumaro.experimental.format_detection import (
     detect_dataset_format,
     find_dataset_root,
     import_coco_dataset,
+    import_voc_dataset,
     import_yolo_dataset,
 )
 from datumaro.experimental.schema import Schema
@@ -386,6 +387,7 @@ def import_dataset(
       with 'images' and 'annotations' keys
     - **YOLO**: Detected by data.yaml (Ultralytics), obj.names/obj.data (traditional),
       or images/ and labels/ directories
+    - **VOC**: Detected by JPEGImages/, Annotations/, and ImageSets/ directories
 
     When dtype is None the function tries to automatically determine the correct Sample
     subclass by matching the stored schema against all registered subclasses (discovered
@@ -422,6 +424,10 @@ def import_dataset(
         Import a YOLO dataset (auto-detected)::
 
             dataset = import_dataset("/path/to/yolo_dataset")
+
+        Import a VOC dataset (auto-detected)::
+
+            dataset = import_dataset("/path/to/voc_dataset")
     """
     input_path = Path(input_path)
 
@@ -597,6 +603,8 @@ def _import_dataset_from_dir(
             return import_coco_dataset(input_dir)
         case DataFormat.YOLO:
             return import_yolo_dataset(input_dir)
+        case DataFormat.VOC:
+            return import_voc_dataset(input_dir)
         case DataFormat.DATUMARO:
             return _import_datumaro_dataset(input_dir, dtype)
         case DataFormat.DATUMARO_LEGACY:
@@ -606,7 +614,8 @@ def _import_dataset_from_dir(
                 f"Could not detect dataset format in '{input_dir}'. "
                 "Expected one of: Datumaro (metadata.json + data.parquet), "
                 "COCO (annotations/*.json with 'images' and 'annotations' keys), "
-                "or YOLO (data.yaml, obj.names, or images/ + labels/ directories)."
+                "YOLO (data.yaml, obj.names, or images/ + labels/ directories), "
+                "or VOC (JPEGImages/ + Annotations/ or ImageSets/ directories)."
             )
 
 

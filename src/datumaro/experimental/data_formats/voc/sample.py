@@ -1,0 +1,79 @@
+# Copyright (C) 2022-2026 Intel Corporation
+#
+# SPDX-License-Identifier: MIT
+
+"""
+Sample class for Pascal VOC format datasets.
+"""
+
+import numpy as np
+import polars as pl
+
+from datumaro.experimental import LazyImage, Sample, register_sample
+from datumaro.experimental.categories import LabelCategories
+from datumaro.experimental.data_formats.semantics import DIFFICULT, OCCLUDED, POSE, TRUNCATED
+from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
+from datumaro.experimental.fields import (
+    ImageInfo,
+    Subset,
+    bbox_field,
+    bool_field,
+    image_info_field,
+    image_path_field,
+    label_field,
+    string_field,
+    subset_field,
+)
+
+
+@register_sample
+class VocSample(Sample):
+    """
+    Sample class for Pascal VOC format datasets.
+
+    Pascal VOC format stores object detection and segmentation annotations
+    with bounding boxes in xyxy format (xmin, ymin, xmax, ymax) absolute coordinates,
+    along with label names and optional attributes like difficult, truncated, occluded, and pose.
+    """
+
+    # Basic image information
+    image: LazyImage = image_path_field()
+    image_info: ImageInfo = image_info_field()
+
+    # Object detection annotations - bboxes in xyxy format for VOC
+    bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="xyxy")
+    labels: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True)
+
+    # VOC-specific annotation attributes
+    difficult: np.ndarray | None = bool_field(is_list=True, semantic=DIFFICULT)
+    truncated: np.ndarray | None = bool_field(is_list=True, semantic=TRUNCATED)
+    occluded: np.ndarray | None = bool_field(is_list=True, semantic=OCCLUDED)
+    pose: np.ndarray | None = string_field(is_list=True, semantic=POSE)
+
+    # Dataset organization
+    subset: Subset = subset_field()
+
+
+class VocCategories(LabelCategories):
+    """
+    Categories for Pascal VOC datasets.
+
+    Initializes VocCategories with either default VOC labels or a provided label list.
+    If a custom list of labels is provided (e.g., loaded from a VOC labelmap file),
+    the categories will use that list and preserve its order. Otherwise, it will
+    fall back to the default VOC label order.
+    """
+
+    def __init__(self, labels: tuple[str, ...] | list[str] | None = None):
+        # Initialize using provided labels or the default VOC labels
+        provided = tuple(labels) if labels is not None else VOC_LABELS
+        super().__init__(labels=provided)
+
+    def get_foreground_labels(self) -> list[str]:
+        """
+        Get all labels except 'background'.
+
+        Returns:
+            List of label names excluding 'background'
+        """
+        return [label for label in self.labels if label != "background"]
