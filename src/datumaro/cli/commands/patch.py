@@ -21,7 +21,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         Updates items of the first dataset with items from the second one.|n
         |n
         By default, datasets are updated in-place. The '-o/--output-dir'
-        option can be used to specify another output directory. When
+        option can be used to specify another output directory. The
+        '-f/--format' option can be used to specify the output format. When
         updating in-place, use the '--overwrite' parameter along with the
         '--save-media' export option (in-place updates fail by default
         to prevent data loss).|n
@@ -53,6 +54,9 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         |n
         - Generate a patched dataset:|n
         |s|s%(prog)s -o patched_dataset/ dataset1/ dataset2/|n
+        |n
+        - Generate a patched dataset in a different format:|n
+        |s|s%(prog)s -o patched_dataset/ -f yolo_ultralytics dataset1/ dataset2/|n
         """,
         formatter_class=MultilineFormatter,
     )
@@ -66,6 +70,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         default=None,
         help="Output directory (default: save in-place)",
     )
+    parser.add_argument("-f", "--format", help="Output format (default: target dataset format)")
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -98,11 +103,12 @@ def patch_command(args):
         raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
-    # Get the exporter for the target format
+    # Get the exporter for the output format
+    format = args.format or target_dataset.format
     try:
-        exporter = env.exporters[target_dataset.format]
+        exporter = env.exporters[format]
     except KeyError:
-        raise CliException("Exporter for format '%s' is not found" % target_dataset.format)
+        raise CliException("Exporter for format '%s' is not found" % format)
 
     extra_args = exporter.parse_cmdline(args.extra_args)
 
@@ -110,7 +116,7 @@ def patch_command(args):
     target_dataset.update(patch_dataset)
 
     # Save the updated dataset
-    target_dataset.save(save_dir=dst_dir, **extra_args)
+    target_dataset.export(save_dir=dst_dir, format=format, **extra_args)
 
     log.info("Patched dataset has been saved to '%s'" % dst_dir)
 

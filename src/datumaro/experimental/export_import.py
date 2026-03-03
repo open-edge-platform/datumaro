@@ -32,10 +32,19 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
+from datumaro.experimental.data_formats.base import DataFormat
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
 from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
 from datumaro.experimental.fields.videos import MediaPathField, VideoFramePathField
+from datumaro.experimental.format_detection import (
+    DATAFRAME_FILE,
+    METADATA_FILE,
+    detect_dataset_format,
+    find_dataset_root,
+    import_coco_dataset,
+    import_yolo_dataset,
+)
 from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
@@ -77,8 +86,6 @@ def register_sample(cls: type[Sample]) -> type[Sample]:
 
 
 # Constants for export structure
-METADATA_FILE = "metadata.json"
-DATAFRAME_FILE = "data.parquet"
 IMAGES_DIR = "images"
 VIDEOS_DIR = "videos"
 try:
@@ -703,16 +710,26 @@ def import_dataset(
     directory.  Images are stored under ``images/`` and videos under ``videos/``,
     so no external root parameter is needed.
 
-    When dtype is None the function tries to automatically determine the correct
-    Sample subclass by matching the stored schema against all registered
-    subclasses (discovered via the :func:`register_sample` registry).  If no
-    match is found, it falls back to the base ``Sample`` class.
+    This function automatically detects the dataset format and calls the appropriate
+    loader. Supported formats include:
+
+    - **Datumaro**: Native format with metadata.json and data.parquet files
+    - **COCO**: Detected by annotations directory with COCO JSON files, or JSON files
+      with 'images' and 'annotations' keys
+    - **YOLO**: Detected by data.yaml (Ultralytics), obj.names/obj.data (traditional),
+      or images/ and labels/ directories
+
+    When dtype is None the function tries to automatically determine the correct Sample
+    subclass by matching the stored schema against all registered subclasses (discovered
+    via the :func:`register_sample` registry). If no match is found, it falls back to
+    the base ``Sample`` class.
 
     Args:
         input_path: Path to the exported dataset (directory or .zip file)
-        dtype: Optional Sample class to use for the dataset.  When provided,
-            the dataset is typed with this class directly.  When ``None``,
-            automatic dtype detection is attempted (see above).
+        dtype: Optional Sample class to use for the dataset. When provided,
+            the dataset is typed with this class directly. When ``None``,
+            automatic dtype detection is attempted (see above). This parameter
+            is only used for Datumaro format datasets.
         extract_dir: Optional directory to extract zip contents to. If not provided,
             the zip will be extracted to a directory next to the zip file with the
             same name (excluding the .zip extension). This parameter is ignored
@@ -723,7 +740,20 @@ def import_dataset(
 
     Raises:
         FileNotFoundError: If required files are missing
-        ValueError: If the dataset format is invalid
+        ValueError: If the dataset format is invalid or cannot be detected
+
+    Examples:
+        Import a Datumaro-exported dataset::
+
+            dataset = import_dataset("/path/to/exported_dataset")
+
+        Import a COCO dataset (auto-detected)::
+
+            dataset = import_dataset("/path/to/coco_dataset")
+
+        Import a YOLO dataset (auto-detected)::
+
+            dataset = import_dataset("/path/to/yolo_dataset")
     """
     input_path = Path(input_path)
 
@@ -746,7 +776,9 @@ def import_dataset(
                         f"This may indicate a malicious archive (Zip Slip attack)."
                     )
             zipf.extractall(extract_dir)
-        return _import_dataset_from_dir(extract_dir, dtype)
+
+        dataset_root = find_dataset_root(extract_dir)
+        return _import_dataset_from_dir(dataset_root, dtype)
     return _import_dataset_from_dir(input_path, dtype)
 
 
@@ -990,15 +1022,43 @@ def _import_dataset_from_dir(
     """
     Import dataset from a directory.
 
-    All media paths (images and videos) are resolved relative to *input_dir*.
+    Automatically detects the dataset format and delegates to the appropriate
+    loader for COCO, YOLO, or native Datumaro formats.
 
     Args:
         input_dir: Directory containing the exported dataset
-        dtype: Optional Sample class to use
+        dtype: Optional Sample class to use (only applies to Datumaro format)
 
     Returns:
         The imported Dataset instance
+
+    Raises:
+        ValueError: If the dataset format cannot be detected
     """
+    # Detect the dataset format and dispatch to appropriate loader
+    match detect_dataset_format(input_dir):
+        case DataFormat.COCO:
+            return import_coco_dataset(input_dir)
+        case DataFormat.YOLO:
+            return import_yolo_dataset(input_dir)
+        case DataFormat.DATUMARO:
+            return _import_datumaro_dataset(input_dir, dtype)
+        case DataFormat.DATUMARO_LEGACY:
+            return _import_legacy_datumaro_dataset(input_dir)
+        case _:
+            raise ValueError(
+                f"Could not detect dataset format in '{input_dir}'. "
+                "Expected one of: Datumaro (metadata.json + data.parquet), "
+                "COCO (annotations/*.json with 'images' and 'annotations' keys), "
+                "or YOLO (data.yaml, obj.names, or images/ + labels/ directories)."
+            )
+
+
+def _import_datumaro_dataset(
+    input_dir: Path,
+    dtype: type[DType] | None = None,
+) -> Dataset[DType]:
+    """Import a native Datumaro-format dataset from a directory."""
     metadata = _load_metadata(input_dir)
     df = _load_dataframe(input_dir)  # Check DataFrame exists before processing schema
     schema = Schema.from_dict(metadata["schema"])
@@ -1016,3 +1076,25 @@ def _import_dataset_from_dir(
         dtype = _match_dtype_from_schema(schema)
 
     return Dataset.from_dataframe(df, dtype, schema=schema)
+
+
+def _import_legacy_datumaro_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a legacy Datumaro-format dataset from a directory.
+
+    This function provides backward compatibility for datasets exported with
+    the legacy Datumaro format. The legacy dataset is imported using the old
+    API and then converted to the new experimental Dataset format.
+
+    Args:
+        input_dir: Path to the legacy Datumaro dataset directory
+
+    Returns:
+        Dataset converted from the legacy format
+    """
+    # Import lazily to avoid circular imports and unnecessary dependencies
+    from datumaro import Dataset as LegacyDataset
+    from datumaro.experimental.legacy import convert_from_legacy
+
+    legacy_dataset = LegacyDataset.import_from(str(input_dir))
+    return convert_from_legacy(legacy_dataset)
