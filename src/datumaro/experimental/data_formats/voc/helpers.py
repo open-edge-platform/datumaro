@@ -9,6 +9,7 @@ Helper functions for Pascal VOC dataset I/O.
 import logging
 import shutil
 from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 from xml.etree.ElementTree import Element  # nosec B405 - only used for type hints and writing, not parsing
 
@@ -25,6 +26,8 @@ from datumaro.experimental.data_formats.voc.constants import (
     VOC_LABELMAP_FILE,
     VOC_LABELS,
     VOC_MAIN_DIR,
+    VOC_SEGMENTATION_CLASS_DIR,
+    VOC_SEGMENTATION_OBJECT_DIR,
     VOC_SUBSET_NAME_TO_ENUM,
 )
 from datumaro.experimental.data_formats.voc.sample import VocSample
@@ -78,6 +81,38 @@ def _parse_voc_labelmap(labelmap_path: Path) -> list[str]:
                 if name:
                     labels.append(name)
     return labels
+
+
+def _parse_voc_labelmap_with_colors(labelmap_path: Path) -> dict[tuple[int, int, int], int]:
+    """
+    Parse a VOC labelmap file and return RGB-to-index mapping.
+
+    Format: 'name : color (r, g, b) : parts : actions'
+
+    Returns:
+        Dictionary mapping (R, G, B) tuples to class indices.
+    """
+    colormap: dict[tuple[int, int, int], int] = {}
+    index = 0
+    with open(labelmap_path, encoding="utf-8") as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+
+            # name : color : parts : actions
+            parts = line.split(":")
+            if len(parts) >= 2:
+                color_str = parts[1].strip()
+                if color_str:
+                    try:
+                        rgb = tuple(int(c.strip()) for c in color_str.split(","))
+                        if len(rgb) == 3:
+                            colormap[rgb] = index
+                    except (ValueError, TypeError):
+                        pass
+            index += 1
+    return colormap
 
 
 def _load_voc_categories(root_path: Path) -> LabelCategories:
@@ -236,23 +271,67 @@ def _parse_object_element(obj_elem: Element, result: dict, categories: LabelCate
     result["pose"].append(pose_elem.text if pose_elem is not None else "Unspecified")
 
 
+def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> callable:
+    """Create a lazy loader function for a segmentation mask.
+
+    Args:
+        mask_path: Path to the mask PNG file
+        colormap: Optional RGB-to-index mapping. If provided, RGB masks will be
+            converted to index masks.
+    """
+    from PIL import Image as PILImage
+
+    def load_mask() -> np.ndarray:
+        """Load mask from file and convert to numpy array."""
+        with PILImage.open(mask_path) as img:
+            mask_rgb = np.array(img, dtype=np.uint8)
+
+        # If no colormap or already indexed, return as-is
+        if colormap is None or len(mask_rgb.shape) < 3:
+            return mask_rgb
+
+        # Convert RGB mask to index mask using colormap
+        h, w = mask_rgb.shape[:2]
+        index_mask = np.zeros((h, w), dtype=np.uint8)
+
+        # Create a lookup from RGB tuples to indices
+        for rgb, idx in colormap.items():
+            # Find pixels matching this color
+            mask = np.all(mask_rgb[:, :, :3] == np.array(rgb), axis=2)
+            index_mask[mask] = idx
+
+        return index_mask
+
+    return load_mask
+
+
+@dataclass
+class VocLoadContext:
+    """Context for loading VOC samples, grouping related directory paths."""
+
+    images_dir: Path
+    annotations_dir: Path
+    categories: LabelCategories
+    segmentation_class_dir: Path | None = None
+    segmentation_object_dir: Path | None = None
+    colormap: dict[tuple[int, int, int], int] | None = None
+
+
 def _create_sample_from_annotation(
     image_id: str,
-    images_dir: Path,
-    annotations_dir: Path,
-    categories: LabelCategories,
+    ctx: VocLoadContext,
     subset_enum: Subset,
 ) -> VocSample | None:
     """Create a VocSample from image ID and annotation."""
     # Find image file
-    image_path = _find_image_file(images_dir, image_id)
+    image_path = _find_image_file(ctx.images_dir, image_id)
     if image_path is None:
         logger.warning("Image not found for ID '%s', skipping", image_id)
         return None
 
     # Parse annotation
-    anno_path = annotations_dir / f"{image_id}.xml"
-    annotation = _parse_voc_annotation(anno_path, categories)
+    anno_path = ctx.annotations_dir / f"{image_id}.xml"
+    annotation = _parse_voc_annotation(anno_path, ctx.categories)
 
     # Get image size from annotation or read from image
     height = annotation["height"]
@@ -268,6 +347,10 @@ def _create_sample_from_annotation(
     occluded = np.array(annotation["occluded"], dtype=bool) if annotation["occluded"] else None
     pose = np.array(annotation["pose"], dtype=object) if annotation["pose"] else None
 
+    # Create lazy mask loaders for segmentation masks
+    class_mask_loader = _get_mask_loader(ctx.segmentation_class_dir, image_id, ctx.colormap)
+    instance_mask_loader = _get_mask_loader(ctx.segmentation_object_dir, image_id, ctx.colormap)
+
     return VocSample(
         image=str(image_path),
         image_info=ImageInfo(height=height, width=width),
@@ -277,52 +360,114 @@ def _create_sample_from_annotation(
         truncated=truncated,
         occluded=occluded,
         pose=pose,
+        class_mask=class_mask_loader,
+        instance_mask=instance_mask_loader,
         subset=subset_enum,
     )
 
 
+def _get_mask_loader(
+    mask_dir: Path | None,
+    image_id: str,
+    colormap: dict[tuple[int, int, int], int] | None,
+) -> callable | None:
+    """Get a mask loader for a segmentation mask if it exists."""
+    if mask_dir is None:
+        return None
+    mask_path = mask_dir / f"{image_id}.png"
+    if mask_path.exists():
+        return _create_mask_loader(mask_path, colormap)
+    return None
+
+
+def _detect_segmentation_dir(root_path: Path, dir_name: str, label: str) -> Path | None:
+    """Detect and log a segmentation directory if it exists."""
+    seg_dir = root_path / dir_name
+    if seg_dir.exists():
+        logger.info("[VOC] Found segmentation %s masks at %s", label, seg_dir)
+        return seg_dir
+    return None
+
+
+def _load_colormap_if_needed(
+    root_path: Path,
+    segmentation_class_dir: Path | None,
+    segmentation_object_dir: Path | None,
+) -> dict[tuple[int, int, int], int] | None:
+    """Load colormap for RGB-to-index conversion if labelmap exists and segmentation is present."""
+    labelmap_path = root_path / VOC_LABELMAP_FILE
+    if not labelmap_path.exists() or (segmentation_class_dir is None and segmentation_object_dir is None):
+        return None
+
+    colormap = _parse_voc_labelmap_with_colors(labelmap_path)
+    if colormap:
+        logger.info("[VOC] Loaded colormap with %d colors for RGB-to-index conversion", len(colormap))
+    return colormap
+
+
+def _load_samples_from_images(ctx: VocLoadContext) -> list[VocSample]:
+    """Load samples by scanning all images in the images directory."""
+    samples = []
+    logger.info("No ImageSets found, loading all images from %s", ctx.images_dir)
+    image_files = list(find_images(str(ctx.images_dir)))
+    for image_path in image_files:
+        image_id = Path(image_path).stem
+        sample = _create_sample_from_annotation(image_id, ctx, Subset.UNASSIGNED)
+        if sample:
+            samples.append(sample)
+    return samples
+
+
+def _load_samples_from_subsets(
+    ctx: VocLoadContext,
+    subsets: dict[str, Path],
+) -> list[VocSample]:
+    """Load samples from ImageSets subset files."""
+    samples = []
+    for subset_name, subset_file in subsets.items():
+        subset_enum = VOC_SUBSET_NAME_TO_ENUM.get(subset_name, Subset.UNASSIGNED)
+        image_ids = _parse_subset_list(subset_file)
+
+        logger.info("[VOC] Loading subset '%s' with %d images", subset_name, len(image_ids))
+
+        for image_id in image_ids:
+            sample = _create_sample_from_annotation(image_id, ctx, subset_enum)
+            if sample:
+                samples.append(sample)
+    return samples
+
+
 def _load_voc_from_imagesets(root_path: Path, categories: LabelCategories) -> list[VocSample]:
     """Load VOC dataset using ImageSets structure."""
-    samples = []
-
     images_dir = root_path / VOC_IMAGES_DIR
     annotations_dir = root_path / VOC_ANNOTATIONS_DIR
 
     if not images_dir.exists():
         logger.warning("Images directory not found: %s", images_dir)
-        return samples
+        return []
+
+    # Detect segmentation directories
+    segmentation_class_dir = _detect_segmentation_dir(root_path, VOC_SEGMENTATION_CLASS_DIR, "class")
+    segmentation_object_dir = _detect_segmentation_dir(root_path, VOC_SEGMENTATION_OBJECT_DIR, "object")
+
+    # Load colormap for RGB-to-index conversion if labelmap exists
+    colormap = _load_colormap_if_needed(root_path, segmentation_class_dir, segmentation_object_dir)
+
+    # Create load context
+    ctx = VocLoadContext(
+        images_dir=images_dir,
+        annotations_dir=annotations_dir,
+        categories=categories,
+        segmentation_class_dir=segmentation_class_dir,
+        segmentation_object_dir=segmentation_object_dir,
+        colormap=colormap,
+    )
 
     subsets = _detect_voc_subsets(root_path)
 
-    if not subsets:
-        # No ImageSets found, try to load all images
-        logger.info("No ImageSets found, loading all images from %s", images_dir)
-        image_files = list(find_images(str(images_dir)))
-        for image_path in image_files:
-            image_id = Path(image_path).stem
-            sample = _create_sample_from_annotation(
-                image_id, images_dir, annotations_dir, categories, Subset.UNASSIGNED
-            )
-            if sample:
-                samples.append(sample)
-    else:
-        # Load from ImageSets
-        for subset_name, subset_file in subsets.items():
-            subset_enum = VOC_SUBSET_NAME_TO_ENUM.get(subset_name, Subset.UNASSIGNED)
-            image_ids = _parse_subset_list(subset_file)
-
-            logger.info(
-                "[VOC] Loading subset '%s' with %d images",
-                subset_name,
-                len(image_ids),
-            )
-
-            for image_id in image_ids:
-                sample = _create_sample_from_annotation(image_id, images_dir, annotations_dir, categories, subset_enum)
-                if sample:
-                    samples.append(sample)
-
-    return samples
+    if subsets:
+        return _load_samples_from_subsets(ctx, subsets)
+    return _load_samples_from_images(ctx)
 
 
 def _load_voc_simple(
@@ -339,11 +484,17 @@ def _load_voc_simple(
     if not images_dir.exists():
         raise FileNotFoundError(f"Images directory not found: {images_dir}")
 
+    ctx = VocLoadContext(
+        images_dir=images_dir,
+        annotations_dir=annotations_dir,
+        categories=categories,
+    )
+
     image_files = list(find_images(str(images_dir)))
 
     for image_path in image_files:
         image_id = Path(image_path).stem
-        sample = _create_sample_from_annotation(image_id, images_dir, annotations_dir, categories, Subset.UNASSIGNED)
+        sample = _create_sample_from_annotation(image_id, ctx, Subset.UNASSIGNED)
         if sample:
             samples.append(sample)
 

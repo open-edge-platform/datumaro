@@ -6,6 +6,8 @@
 Sample class for Pascal VOC format datasets.
 """
 
+from collections.abc import Callable
+
 import numpy as np
 import polars as pl
 
@@ -21,9 +23,14 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
     label_field,
+    mask_callable_field,
     string_field,
     subset_field,
 )
+
+# Semantic tags for mask fields
+CLASS_MASK = "class_mask"
+INSTANCE_MASK = "instance_mask"
 
 
 @register_sample
@@ -34,6 +41,9 @@ class VocSample(Sample):
     Pascal VOC format stores object detection and segmentation annotations
     with bounding boxes in xyxy format (xmin, ymin, xmax, ymax) absolute coordinates,
     along with label names and optional attributes like difficult, truncated, occluded, and pose.
+
+    Segmentation masks are loaded lazily from SegmentationClass/ and SegmentationObject/
+    directories when accessed.
     """
 
     # Basic image information
@@ -49,6 +59,12 @@ class VocSample(Sample):
     truncated: np.ndarray | None = bool_field(is_list=True, semantic=TRUNCATED)
     occluded: np.ndarray | None = bool_field(is_list=True, semantic=OCCLUDED)
     pose: np.ndarray | None = string_field(is_list=True, semantic=POSE)
+
+    # Segmentation masks (lazy loaded via callable)
+    # Class segmentation mask: 2D array (H, W) with class indices as pixel values
+    class_mask: Callable[[], np.ndarray] | None = mask_callable_field(dtype=pl.UInt8(), semantic=CLASS_MASK)
+    # Instance segmentation mask: 2D array (H, W) with instance indices as pixel values
+    instance_mask: Callable[[], np.ndarray] | None = mask_callable_field(dtype=pl.UInt8(), semantic=INSTANCE_MASK)
 
     # Dataset organization
     subset: Subset = subset_field()

@@ -219,7 +219,7 @@ class InstanceMaskCallableField(Field):
         - W is the mask width
         Each mask should be a binary mask for a single instance.
         """
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
@@ -231,7 +231,7 @@ class InstanceMaskCallableField(Field):
         one for each instance in the image.
         """
         value = df[name][row_index]
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
 
@@ -302,7 +302,7 @@ class MaskCallableField(Field):
         - W is the mask width
         The array should be a binary or category mask.
         """
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
@@ -314,7 +314,7 @@ class MaskCallableField(Field):
         a binary or category mask.
         """
         value = df[name][row_index]
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
 
