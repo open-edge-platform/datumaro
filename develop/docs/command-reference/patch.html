@@ -581,7 +581,8 @@
 <h2>Patch Datasets<a class="headerlink" href="#patch-datasets" title="Link to this heading">#</a></h2>
 <p>Updates items of the first dataset with items from the second one.</p>
 <p>By default, datasets are updated in-place. The <code class="docutils literal notranslate"><span class="pre">-o/--output-dir</span></code>
-option can be used to specify another output directory. When
+option can be used to specify another output directory. The
+<code class="docutils literal notranslate"><span class="pre">-f/--format</span></code> option can be used to specify the output format. When
 updating in-place, use the <code class="docutils literal notranslate"><span class="pre">--overwrite</span></code> parameter along with the
 <code class="docutils literal notranslate"><span class="pre">--save-media</span></code> export option (in-place updates fail by default
 to prevent data loss).</p>
@@ -599,7 +600,7 @@ images in the output dataset with <code class="docutils literal notranslate"><sp
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum patch [-h] [-o DST_DIR] [--overwrite]</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum patch [-h] [-o DST_DIR] [-f FORMAT] [--overwrite]</span>
 <span class="go">               target patch</span>
 <span class="go">               [-- EXPORT_ARGS]</span>
 </pre></div>
@@ -610,6 +611,7 @@ images in the output dataset with <code class="docutils literal notranslate"><sp
 <li><p><code class="docutils literal notranslate"><span class="pre">target</span></code> (string) - Target dataset path (path to dataset directory, optionally with format specification)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">patch</span></code> (string) - Patch dataset path (path to dataset directory, optionally with format specification)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output-dir</span></code> (string) - Output directory (default: save in-place)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f,</span> <span class="pre">--format</span></code> (string) - Output format (default: target dataset format)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--overwrite</span></code> - Overwrite existing files in the save directory, if it is not empty</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-h,</span> <span class="pre">--help</span></code> - Print the help message and exit</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">extra_args</span></code> - Additional arguments for exporting (pass ‘– -h’ for help). Must be specified after the main command arguments and after the ‘–’ separator</p></li>
@@ -625,6 +627,11 @@ images in the output dataset with <code class="docutils literal notranslate"><sp
 </li>
 <li><p>Generate a patched dataset</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum patch -o patched_dataset/ dataset1/ dataset2/</span>
+</pre></div>
+</div>
+</li>
+<li><p>Generate a patched dataset in a different format</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum patch -o patched_dataset/ -f yolo_ultralytics dataset1/ dataset2/</span>
 </pre></div>
 </div>
 </li>
