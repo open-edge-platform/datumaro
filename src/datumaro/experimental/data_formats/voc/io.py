@@ -110,8 +110,6 @@ def load_voc_dataset(
         if not images_path.exists():
             raise FileNotFoundError(f"Images directory not found: {images_dir_path}")
 
-        # Annotations directory is optional - some images may not have annotations
-
         logger.info("[VOC] Loading simple layout from '%s'", images_dir_path)
 
         # Load categories from parent or current directory

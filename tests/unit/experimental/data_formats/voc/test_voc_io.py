@@ -144,7 +144,7 @@ def test_load_voc_dataset_assigns_subsets_correctly(tmp_path: Path):
         subsets.add(sample.subset)
 
     # Should have both training and validation samples
-    assert Subset.TRAINING in subsets or Subset.VALIDATION in subsets
+    assert Subset.TRAINING in subsets and Subset.VALIDATION in subsets
 
 
 def test_load_voc_dataset_raises_on_missing_root():
@@ -257,7 +257,7 @@ def test_save_voc_dataset_creates_xml_annotations(tmp_path: Path):
     save_voc_dataset(dataset, root_dir=str(output_dir), save_images=True)
 
     # Check XML annotation
-    xml_path = output_dir / "Annotations" / "test001.xml"
+    xml_path = output_dir / "Annotations" / "test001_000000.xml"
     assert xml_path.exists()
     content = xml_path.read_text()
     assert "<annotation>" in content

@@ -509,7 +509,7 @@ def _get_image_id_from_sample(sample: VocSample, idx: int) -> str:
     """Generate a unique image ID from a sample."""
     image_path = _get_image_path_from_sample(sample)
     if image_path:
-        return image_path.stem
+        return f"{image_path.stem}_{idx:06d}"
     return f"image_{idx:06d}"
 
 
@@ -586,9 +586,14 @@ def _save_voc_dataset(
         image_id = _get_image_id_from_sample(sample, idx)
         samples_by_subset[sample.subset].append((image_id, sample))
 
-    # Process each subset
+    # Group by VOC subset name to handle multiple Subset enums mapping to the same name
+    samples_by_voc_name: dict[str, list[tuple[str, VocSample]]] = defaultdict(list)
     for subset, sample_list in samples_by_subset.items():
-        subset_name = SUBSET_TO_VOC_NAME.get(subset, "train")
+        voc_name = SUBSET_TO_VOC_NAME.get(subset, "train")
+        samples_by_voc_name[voc_name].extend(sample_list)
+
+    # Process each VOC subset
+    for subset_name, sample_list in samples_by_voc_name.items():
         subset_file = imagesets_dir / f"{subset_name}.txt"
 
         image_ids = _process_subset(sample_list, images_dir, annotations_dir, categories, save_images)
