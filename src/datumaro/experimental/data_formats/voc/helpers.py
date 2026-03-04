@@ -270,7 +270,9 @@ def _parse_object_element(obj_elem: Element, result: dict, categories: LabelCate
 
     pose_elem = obj_elem.find("pose")
     result["pose"].append(
-        pose_elem.text.strip() if (pose_elem is not None and pose_elem.text and pose_elem.text.strip()) else "Unspecified"
+        pose_elem.text.strip()
+        if (pose_elem is not None and pose_elem.text and pose_elem.text.strip())
+        else "Unspecified"
     )
 
 
