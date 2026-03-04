@@ -414,20 +414,10 @@ def import_dataset(
 
     Examples:
         Import a Datumaro-exported dataset::
-
             dataset = import_dataset("/path/to/exported_dataset")
 
-        Import a COCO dataset (auto-detected)::
-
-            dataset = import_dataset("/path/to/coco_dataset")
-
         Import a YOLO dataset (auto-detected)::
-
             dataset = import_dataset("/path/to/yolo_dataset")
-
-        Import a VOC dataset (auto-detected)::
-
-            dataset = import_dataset("/path/to/voc_dataset")
     """
     input_path = Path(input_path)
 
