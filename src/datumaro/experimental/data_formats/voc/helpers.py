@@ -269,7 +269,9 @@ def _parse_object_element(obj_elem: Element, result: dict, categories: LabelCate
     result["occluded"].append(occluded_elem is not None and occluded_elem.text == "1")
 
     pose_elem = obj_elem.find("pose")
-    result["pose"].append(pose_elem.text if pose_elem is not None else "Unspecified")
+    result["pose"].append(
+        pose_elem.text.strip() if (pose_elem is not None and pose_elem.text and pose_elem.text.strip()) else "Unspecified"
+    )
 
 
 def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> Callable:
