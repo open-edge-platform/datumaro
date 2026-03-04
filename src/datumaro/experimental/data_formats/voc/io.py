@@ -24,7 +24,6 @@ from pathlib import Path
 
 from datumaro.experimental import Dataset
 from datumaro.experimental.categories import MaskCategories
-from datumaro.experimental.data_formats.voc.constants import VOC_SEGMENTATION_CLASS_DIR, VOC_SEGMENTATION_OBJECT_DIR
 from datumaro.experimental.data_formats.voc.helpers import (
     _load_voc_categories,
     _load_voc_from_imagesets,
@@ -99,7 +98,15 @@ def load_voc_dataset(
         parent_dir = images_path.parent
         categories = _load_voc_categories(parent_dir)
         samples = _load_voc_simple(images_dir_path, annotations_dir_path, categories)
-        dataset = Dataset(VocSample, categories={"labels": categories})
+        # Build categories dict with MaskCategories for mask fields
+        mask_categories = MaskCategories.generate(size=len(categories.labels), include_background=True)
+        mask_categories = MaskCategories(labels=list(categories.labels), colormap=mask_categories.colormap)
+        # Note: instance_mask shares categories with class_mask via categories_from field attribute
+        dataset_categories: dict[str, object] = {
+            "labels": categories,
+            "class_mask": mask_categories,
+        }
+        dataset = Dataset(VocSample, categories=dataset_categories)
         for sample in samples:
             dataset.append(sample)
         logger.info("[VOC] Loaded %d samples", len(dataset))
@@ -113,18 +120,14 @@ def load_voc_dataset(
     samples = _load_voc_from_imagesets(root_path, categories)
     # Build categories dict - start with labels
     dataset_categories: dict[str, object] = {"labels": categories}
-    # Check for segmentation directories and add MaskCategories if present
-    has_segmentation = (root_path / VOC_SEGMENTATION_CLASS_DIR).exists() or (
-        root_path / VOC_SEGMENTATION_OBJECT_DIR
-    ).exists()
-    if has_segmentation:
-        # Create MaskCategories from the label categories
-        # VOC masks use pixel values that correspond to label indices
-        mask_categories = MaskCategories.generate(size=len(categories.labels), include_background=True)
-        # Add labels to the mask categories for label name lookup
-        mask_categories = MaskCategories(labels=list(categories.labels), colormap=mask_categories.colormap)
-        dataset_categories["class_mask"] = mask_categories
-        dataset_categories["instance_mask"] = mask_categories
+    # Always add MaskCategories for class_mask field,
+    # since VocSample schema defines this field and it requires categories
+    # for validation even if the dataset doesn't have segmentation data.
+    # Note: instance_mask shares categories with class_mask via categories_from field attribute
+    mask_categories = MaskCategories.generate(size=len(categories.labels), include_background=True)
+    # Add labels to the mask categories for label name lookup
+    mask_categories = MaskCategories(labels=list(categories.labels), colormap=mask_categories.colormap)
+    dataset_categories["class_mask"] = mask_categories
     dataset = Dataset(VocSample, categories=dataset_categories)
     for sample in samples:
         dataset.append(sample)

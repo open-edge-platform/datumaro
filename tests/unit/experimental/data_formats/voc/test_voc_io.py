@@ -196,10 +196,20 @@ def test_load_voc_dataset_from_simple_layout(tmp_path: Path):
 def test_save_voc_dataset_creates_correct_structure(tmp_path: Path):
     """Test that saving creates the correct VOC directory structure."""
     # Create a simple dataset
-    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.categories import LabelCategories, MaskCategories
     from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
 
-    dataset = Dataset(VocSample, categories={"labels": LabelCategories(labels=VOC_LABELS)})
+    label_categories = LabelCategories(labels=VOC_LABELS)
+    mask_categories = MaskCategories.generate(size=len(VOC_LABELS), include_background=True)
+    mask_categories = MaskCategories(labels=list(VOC_LABELS), colormap=mask_categories.colormap)
+    # Note: instance_mask shares categories with class_mask via categories_from field attribute
+    dataset = Dataset(
+        VocSample,
+        categories={
+            "labels": label_categories,
+            "class_mask": mask_categories,
+        },
+    )
 
     # Create a temp image
     img_path = tmp_path / "source" / "image.jpg"
@@ -215,6 +225,8 @@ def test_save_voc_dataset_creates_correct_structure(tmp_path: Path):
         truncated=np.array([False]),
         occluded=np.array([False]),
         pose=np.array(["Frontal"], dtype=object),
+        class_mask=None,
+        instance_mask=None,
         subset=Subset.TRAINING,
     )
     dataset.append(sample)
@@ -231,10 +243,20 @@ def test_save_voc_dataset_creates_correct_structure(tmp_path: Path):
 
 def test_save_voc_dataset_creates_xml_annotations(tmp_path: Path):
     """Test that XML annotation files are created."""
-    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.categories import LabelCategories, MaskCategories
     from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
 
-    dataset = Dataset(VocSample, categories={"labels": LabelCategories(labels=VOC_LABELS)})
+    label_categories = LabelCategories(labels=VOC_LABELS)
+    mask_categories = MaskCategories.generate(size=len(VOC_LABELS), include_background=True)
+    mask_categories = MaskCategories(labels=list(VOC_LABELS), colormap=mask_categories.colormap)
+    # Note: instance_mask shares categories with class_mask via categories_from field attribute
+    dataset = Dataset(
+        VocSample,
+        categories={
+            "labels": label_categories,
+            "class_mask": mask_categories,
+        },
+    )
 
     img_path = tmp_path / "source" / "test001.jpg"
     img_path.parent.mkdir()
@@ -249,6 +271,8 @@ def test_save_voc_dataset_creates_xml_annotations(tmp_path: Path):
         truncated=None,
         occluded=None,
         pose=None,
+        class_mask=None,
+        instance_mask=None,
         subset=Subset.TRAINING,
     )
     dataset.append(sample)
@@ -266,10 +290,20 @@ def test_save_voc_dataset_creates_xml_annotations(tmp_path: Path):
 
 def test_save_voc_dataset_creates_imagesets(tmp_path: Path):
     """Test that ImageSets files are created based on subsets."""
-    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.categories import LabelCategories, MaskCategories
     from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
 
-    dataset = Dataset(VocSample, categories={"labels": LabelCategories(labels=VOC_LABELS)})
+    label_categories = LabelCategories(labels=VOC_LABELS)
+    mask_categories = MaskCategories.generate(size=len(VOC_LABELS), include_background=True)
+    mask_categories = MaskCategories(labels=list(VOC_LABELS), colormap=mask_categories.colormap)
+    # Note: instance_mask shares categories with class_mask via categories_from field attribute
+    dataset = Dataset(
+        VocSample,
+        categories={
+            "labels": label_categories,
+            "class_mask": mask_categories,
+        },
+    )
 
     for i, subset in enumerate([Subset.TRAINING, Subset.VALIDATION]):
         img_path = tmp_path / "source" / f"image{i}.jpg"
@@ -285,6 +319,8 @@ def test_save_voc_dataset_creates_imagesets(tmp_path: Path):
             truncated=None,
             occluded=None,
             pose=None,
+            class_mask=None,
+            instance_mask=None,
             subset=subset,
         )
         dataset.append(sample)

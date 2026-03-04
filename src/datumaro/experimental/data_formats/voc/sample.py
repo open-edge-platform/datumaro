@@ -64,7 +64,10 @@ class VocSample(Sample):
     # Class segmentation mask: 2D array (H, W) with class indices as pixel values
     class_mask: Callable[[], np.ndarray] | None = mask_callable_field(dtype=pl.UInt8(), semantic=CLASS_MASK)
     # Instance segmentation mask: 2D array (H, W) with instance indices as pixel values
-    instance_mask: Callable[[], np.ndarray] | None = mask_callable_field(dtype=pl.UInt8(), semantic=INSTANCE_MASK)
+    # Shares the same MaskCategories with class_mask to avoid duplicate category definitions
+    instance_mask: Callable[[], np.ndarray] | None = mask_callable_field(
+        dtype=pl.UInt8(), semantic=INSTANCE_MASK, categories_from="class_mask"
+    )
 
     # Dataset organization
     subset: Subset = subset_field()

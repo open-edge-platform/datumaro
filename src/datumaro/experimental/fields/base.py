@@ -32,10 +32,15 @@ class Field:
     Attributes:
         semantic: A string tag used for disambiguation when multiple fields
             of the same type exist (e.g., "default", "left", "right").
+        categories_from: Optional name of another field from which to share categories.
+            When set, this field will use the same categories as the referenced field,
+            avoiding the need to specify duplicate categories. For example, in VOC format,
+            both class_mask and instance_mask can share the same MaskCategories.
     """
 
     semantic: str
     dtype: pl.DataType
+    categories_from: str | None = None
 
     def __post_init__(self):
         dtype = getattr(self, "dtype")
@@ -96,6 +101,14 @@ class Field:
 
         If None, no categories are expected.
         """
+
+    def get_categories_from(self) -> str | None:
+        """
+        Return the name of the field from which to share categories.
+
+        Returns None if this field doesn't share categories with another field.
+        """
+        return getattr(self, "categories_from", None)
 
     def __set_name__(self, _: Any, name: str):
         object.__setattr__(self, "_name", name)

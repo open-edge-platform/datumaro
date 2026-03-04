@@ -124,6 +124,32 @@ class Schema:
         self._fields_with_categories: dict[str, Categories] | None = None
         self._required_columns_cache: dict[str, set[str]] | None = None
 
+    def get_categories_for_field(self, attr_name: str) -> Categories | None:
+        """
+        Get the categories for a specific field, resolving category references.
+
+        If the field has `categories_from` set, this method will return the
+        categories from the referenced field.
+
+        Args:
+            attr_name: The attribute name to get categories for
+
+        Returns:
+            The Categories for this field, or None if not set
+        """
+        if attr_name not in self.attributes:
+            raise ValueError(f"Attribute '{attr_name}' not found in schema")
+
+        attr_info = self.attributes[attr_name]
+        categories = attr_info.categories
+
+        # If this field references categories from another field, resolve it
+        categories_from = attr_info.field.get_categories_from()
+        if categories is None and categories_from is not None and categories_from in self.attributes:
+            categories = self.attributes[categories_from].categories
+
+        return categories
+
     def get_required_columns(self, attr_name: str) -> set[str]:
         """
         Get the required Polars column names for a given attribute.
@@ -175,6 +201,16 @@ class Schema:
                 new_schema.attributes[attr_name].categories = category
             else:
                 raise ValueError(f"Attribute '{attr_name}' not found in schema")
+
+        # Validate that category references point to valid fields
+        for attr_name, attr_info in new_schema.attributes.items():
+            categories_from = attr_info.field.get_categories_from()
+            if categories_from is not None and categories_from not in new_schema.attributes:
+                raise ValueError(
+                    f"Field '{attr_name}' references categories from '{categories_from}', "
+                    f"but '{categories_from}' is not found in the schema."
+                )
+
         return new_schema
 
     def get_fields_with_required_categories(self) -> dict[str, Categories]:
@@ -190,7 +226,13 @@ class Schema:
             for attribute, attribute_info in self.attributes.items():
                 if expected_categories_type := attribute_info.field.get_expected_categories_type():
                     categories = attribute_info.categories
-                    if categories is None or not isinstance(attribute_info.categories, expected_categories_type):
+
+                    # If this field references categories from another field, resolve it
+                    categories_from = attribute_info.field.get_categories_from()
+                    if categories is None and categories_from is not None and categories_from in self.attributes:
+                        categories = self.attributes[categories_from].categories
+
+                    if categories is None or not isinstance(categories, expected_categories_type):
                         raise ValueError(
                             f"Expected schema attribute '{attribute}' to have categories defined of type "
                             f"'{expected_categories_type}', found '{categories}' instead. "
