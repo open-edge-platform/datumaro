@@ -27,8 +27,11 @@ from datumaro.experimental.export_import import (
     IMAGES_DIR,
     METADATA_FILE,
     VERSION,
+    VIDEOS_DIR,
+    ExportMode,
     _export_images_from_dataset,
     _get_registered_samples,
+    _get_video_fields,
     _match_dtype_from_schema,
     _sample_registry,
     export_dataset,
@@ -53,13 +56,15 @@ from datumaro.experimental.fields import (
     tensor_field,
     tile_field,
 )
+from datumaro.experimental.fields.videos import media_path_field, video_frame_path_field
+from datumaro.experimental.media import LazyImage, LazyVideoFrame
 
 LABEL_CATEGORIES = LabelCategories(labels=("apple", "orange", "pear", "mango", "coconut"))
 MASK_CATEGORIES = MaskCategories.generate(size=256)
 
 
 def test_export_no_image_fields(tmp_path):
-    """Test that datasets without image fields return the original dataframe."""
+    """Test that datasets without image fields return empty dict."""
 
     class SimpleSample(Sample):
         label: int = label_field()
@@ -73,7 +78,7 @@ def test_export_no_image_fields(tmp_path):
     output_dir = tmp_path / "output"
     result = _export_images_from_dataset(dataset, output_dir)
 
-    assert result.equals(dataset.df)
+    assert result == {}
 
 
 def test_export_image_callable_field(tmp_path):
@@ -104,8 +109,9 @@ def test_export_image_callable_field(tmp_path):
     assert "image" in result
     assert len(result["image"]) == 3
     for idx in range(3):
-        rel_path = f"image_{idx:06d}.png"
-        assert rel_path in result["image"]
+        assert idx in result["image"]
+        rel_path = result["image"][idx]
+        assert rel_path == f"image_{idx:06d}.png"
 
         # Verify file exists and is valid
         img_file = output_dir / rel_path
@@ -154,6 +160,7 @@ def test_export_image_path_field(tmp_path):
     assert len(result["image_path"]) == 3
 
     for idx in range(3):
+        assert idx in result["image_path"]
         rel_path = result["image_path"][idx]
 
         # Verify the file exists and format is preserved
@@ -192,6 +199,7 @@ def test_export_instance_mask_callable_field(tmp_path):
     assert len(result["mask"]) == 3
 
     for idx in range(3):
+        assert idx in result["mask"]
         rel_path = result["mask"][idx]
         assert rel_path == f"mask_{idx:06d}.png"
 
@@ -262,34 +270,18 @@ def test_export_with_none_values(tmp_path):
     dataset.append(OptionalImageSample(image=make_image))
 
     output_dir = tmp_path / "output"
-    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_images=True)
+    result = _export_images_from_dataset(dataset, output_dir)
 
     # Only indices 0 and 2 should be in result
     assert "image" in result
     assert len(result["image"]) == 2
-    assert "image_000000.png" in result["image"]
-    assert "image_000001.png" not in result["image"]
-    assert "image_000002.png" in result["image"]
-
-
-def test_export_images_error_all_image_fields_null(tmp_path):
-    """Error when a row has null values for all image fields and skip_missing_images=False."""
-
-    class AllOptionalImagesSample(Sample):
-        image: Callable[[], np.ndarray] | None = image_callable_field()
-        image_path: str | None = image_path_field()
-
-    dataset = Dataset(AllOptionalImagesSample)
-    # Single row where all image-related fields are None
-    dataset.append(AllOptionalImagesSample(image=None, image_path=None))
-
-    output_dir = tmp_path / "output_all_null"
-    with pytest.raises(ValueError, match="image"):
-        _export_images_from_dataset(dataset, output_dir)
+    assert 0 in result["image"]
+    assert 1 not in result["image"]
+    assert 2 in result["image"]
 
 
 def test_export_images_error_missing_image_path_file(tmp_path):
-    """Error when an ImagePathField points to a non-existent file and skip_missing_images=False."""
+    """Error when an ImagePathField points to a non-existent file and ignore_missing_media=False."""
 
     class PathImageSample(Sample):
         image_path: str = image_path_field()
@@ -304,7 +296,7 @@ def test_export_images_error_missing_image_path_file(tmp_path):
 
 
 def test_export_images_error_failing_image_callable(tmp_path):
-    """Error when an ImageCallableField cannot generate an image and skip_missing_images=False."""
+    """Error when an ImageCallableField cannot generate an image and ignore_missing_media=False."""
 
     class CallableImageSample(Sample):
         image: Callable[[], np.ndarray] = image_callable_field()
@@ -320,6 +312,88 @@ def test_export_images_error_failing_image_callable(tmp_path):
         _export_images_from_dataset(dataset, output_dir)
 
 
+def test_export_images_ignore_missing_media_skips_missing_image_path(tmp_path):
+    """Missing ImagePathField file is skipped when ignore_missing_media=True."""
+
+    class PathImageSample(Sample):
+        image_path: str = image_path_field()
+
+    # Create one valid image and one missing
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    valid_path = source_dir / "valid.png"
+    PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(valid_path)
+    missing_path = tmp_path / "does_not_exist.png"
+
+    dataset = Dataset(PathImageSample)
+    dataset.append(PathImageSample(image_path=str(valid_path)))
+    dataset.append(PathImageSample(image_path=str(missing_path)))
+
+    output_dir = tmp_path / "output"
+    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_media=True)
+
+    # Only the valid image should be exported
+    assert "image_path" in result
+    assert len(result["image_path"]) == 1
+    assert 0 in result["image_path"]
+    assert 1 not in result["image_path"]
+
+
+def test_export_images_ignore_missing_media_skips_failing_callable(tmp_path):
+    """Failing ImageCallableField is skipped when ignore_missing_media=True."""
+
+    class CallableImageSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+
+    def good_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    dataset = Dataset(CallableImageSample)
+    dataset.append(CallableImageSample(image=good_image))
+    dataset.append(CallableImageSample(image=bad_image))
+    dataset.append(CallableImageSample(image=good_image))
+
+    output_dir = tmp_path / "output"
+    result = _export_images_from_dataset(dataset, output_dir, ignore_missing_media=True)
+
+    # Only the good images should be exported
+    assert "image" in result
+    assert len(result["image"]) == 2
+    assert 0 in result["image"]
+    assert 1 not in result["image"]
+    assert 2 in result["image"]
+
+
+def test_export_dataset_ignore_missing_media_roundtrip(tmp_path):
+    """Test that export_dataset with ignore_missing_media=True works end-to-end."""
+
+    class OptionalImageSample(Sample):
+        image: Callable[[], np.ndarray] | None = image_callable_field()
+        label: int = label_field()
+
+    def make_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    # Export dataset with mixed None values
+    original_dataset = Dataset(OptionalImageSample, categories={"label": LABEL_CATEGORIES})
+    original_dataset.append(OptionalImageSample(image=make_image, label=1))
+    original_dataset.append(OptionalImageSample(image=None, label=2))
+    original_dataset.append(OptionalImageSample(image=make_image, label=3))
+
+    export_dir = tmp_path / "export"
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False, ignore_missing_media=True)
+
+    imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
+
+    assert len(imported_dataset) == 3
+    assert callable(imported_dataset[0].image)
+    assert imported_dataset[1].image is None
+    assert callable(imported_dataset[2].image)
+
+
 def test_export_basic_dataset_to_directory(tmp_path):
     """Test basic export to directory."""
 
@@ -332,7 +406,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
     dataset.append(SimpleSample(label=2, score=0.8))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check directory structure
     assert output_dir.exists()
@@ -372,7 +446,7 @@ def test_export_dataset_with_images_to_directory(tmp_path):
     dataset.append(ImageSample(image=make_image(1), label=2))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Check directory structure
     assert output_dir.exists()
@@ -395,7 +469,7 @@ def test_export_dataset_as_zip(tmp_path):
     dataset.append(SimpleSample(label=1))
 
     output_zip = tmp_path / "export.zip"
-    export_dataset(dataset, output_zip, export_images=False, as_zip=True)
+    export_dataset(dataset, output_zip, export_images=ExportMode.SKIP, as_zip=True)
 
     # Check ZIP file was created
     assert output_zip.exists()
@@ -423,7 +497,7 @@ def test_export_with_object_columns(tmp_path):
     dataset.append(CallableSample(image=make_image, label=1))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check metadata tracks object columns
     with open(output_dir / METADATA_FILE) as f:
@@ -446,7 +520,7 @@ def test_export_dataset_with_categories(tmp_path):
     dataset.append(LabeledSample(label=1))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Check schema is preserved
     with open(output_dir / METADATA_FILE) as f:
@@ -457,7 +531,7 @@ def test_export_dataset_with_categories(tmp_path):
 
 
 def test_export_images_false_skips_image_export(tmp_path):
-    """Test that export_images=False skips image export."""
+    """Test that export_images=ExportMode.SKIP skips image export."""
 
     class ImageSample(Sample):
         image: Callable[[], np.ndarray] = image_callable_field()
@@ -469,7 +543,7 @@ def test_export_images_false_skips_image_export(tmp_path):
     dataset.append(ImageSample(image=make_image))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Images directory should not exist
     assert not (output_dir / IMAGES_DIR).exists()
@@ -488,7 +562,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
     original_dataset.append(SimpleSample(label=2, score=0.8))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=SimpleSample)
@@ -513,7 +587,7 @@ def test_import_dataset_from_zip(tmp_path):
     original_dataset.append(SimpleSample(label=2))
 
     export_zip = tmp_path / "export.zip"
-    export_dataset(original_dataset, export_zip, export_images=False, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.SKIP, as_zip=True)
 
     # Import from ZIP
     imported_dataset = import_dataset(export_zip, dtype=SimpleSample)
@@ -545,7 +619,7 @@ def test_import_dataset_with_image_callables(tmp_path):
     original_dataset.append(ImageSample(image=make_image(1), label=2))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=ImageSample)
@@ -586,7 +660,7 @@ def test_import_dataset_with_image_paths(tmp_path):
     original_dataset.append(PathSample(image_path=str(img_path), label=1))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=PathSample)
@@ -623,7 +697,7 @@ def test_import_dataset_with_instance_masks(tmp_path):
     original_dataset.append(MaskSample(mask=make_mask(1), label=2))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=MaskSample)
@@ -686,7 +760,7 @@ def test_import_preserves_categories(tmp_path):
     original_dataset.append(LabeledSample(label=0))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=LabeledSample)
@@ -713,15 +787,16 @@ def test_import_with_none_image_values(tmp_path):
     original_dataset.append(OptionalImageSample(image=make_image, label=3))
 
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False, ignore_missing_images=True)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Import back
     imported_dataset = import_dataset(export_dir, dtype=OptionalImageSample)
 
     # Verify dataset
-    assert len(imported_dataset) == 2
+    assert len(imported_dataset) == 3
     assert callable(imported_dataset[0].image)
-    assert callable(imported_dataset[1].image)
+    assert imported_dataset[1].image is None
+    assert callable(imported_dataset[2].image)
 
 
 def test_roundtrip_preserves_data_integrity(tmp_path):
@@ -745,7 +820,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
 
     # Export and import
     export_dir = tmp_path / "export"
-    export_dataset(original_dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
     imported_dataset = import_dataset(export_dir, dtype=ComplexSample)
 
     # Verify complete data integrity
@@ -772,7 +847,7 @@ def test_export_empty_dataset(tmp_path):
     dataset = Dataset(SimpleSample)
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Should succeed and create valid structure
     assert (output_dir / METADATA_FILE).exists()
@@ -794,7 +869,7 @@ def test_export_large_dataset(tmp_path):
         dataset.append(SimpleSample(value=i))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import and verify
     imported = import_dataset(output_dir, dtype=SimpleSample)
@@ -819,7 +894,7 @@ def test_export_with_special_characters_in_paths(tmp_path):
     dataset.append(PathSample(image_path=str(img_path)))
 
     output_dir = tmp_path / "export"
-    export_dataset(dataset, output_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Should handle gracefully
     imported = import_dataset(output_dir, dtype=PathSample)
@@ -836,7 +911,7 @@ def test_zip_path_without_zip_extension(tmp_path):
     dataset.append(SimpleSample(label=1))
 
     output_path = tmp_path / "export_no_ext"
-    export_dataset(dataset, output_path, export_images=False, as_zip=True)
+    export_dataset(dataset, output_path, export_images=ExportMode.SKIP, as_zip=True)
 
     # Should create .zip file
     expected_zip = tmp_path / "export_no_ext/dataset.zip"
@@ -910,7 +985,7 @@ def test_export_import_different_field_types(tmp_path):
 
     # Export dataset
     export_dir = tmp_path / "export"
-    export_dataset(dataset, export_dir, export_images=True, as_zip=False)
+    export_dataset(dataset, export_dir, export_images=ExportMode.COPY, as_zip=False)
 
     # Verify export structure
     assert (export_dir / METADATA_FILE).exists()
@@ -987,8 +1062,8 @@ def test_export_import_different_field_types(tmp_path):
 
 def test_export_dataset_export_images_true_and_false(tmp_path):
     """
-    Test that export_dataset stores relative paths in Parquet when export_images=True
-    and original absolute paths when export_images=False.
+    Test that export_dataset stores relative paths in Parquet when export_images=ExportMode.COPY
+    and original absolute paths when export_images=ExportMode.SKIP.
     """
     # 1. Setup: Create a temporary source image
     source_dir = tmp_path / "source_media"
@@ -1002,14 +1077,14 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     dataset = Dataset(SampleWithPath)
     dataset.append(SampleWithPath(img=str(source_img_path)))
 
-    # 2. Case: export_images=True
+    # 2. Case: export_images=ExportMode.COPY
     # The path in Parquet should be relative to the export directory
     export_dir_true = tmp_path / "exported_with_images"
     export_dataset(
         dataset=dataset,
         output_path=export_dir_true,
         as_zip=False,
-        export_images=True,
+        export_images=ExportMode.COPY,
     )
 
     df_true = pl.read_parquet(export_dir_true / DATAFRAME_FILE)
@@ -1025,14 +1100,14 @@ def test_export_dataset_export_images_true_and_false(tmp_path):
     exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path
     assert exported_file_on_disk.exists()
 
-    # 3. Case: export_images=False
+    # 3. Case: export_images=ExportMode.SKIP
     # The path in Parquet should remain the original absolute path
     export_dir_false = tmp_path / "exported_without_images"
     export_dataset(
         dataset=dataset,
         output_path=export_dir_false,
         as_zip=False,
-        export_images=False,
+        export_images=ExportMode.SKIP,
     )
 
     df_false = pl.read_parquet(export_dir_false / DATAFRAME_FILE)
@@ -1172,7 +1247,7 @@ def test_import_without_dtype_falls_back_to_sample_for_unknown_schema(tmp_path):
     dataset.append(Sample(weird_field_xyz=42))
 
     export_dir = tmp_path / "export"
-    export_dataset(dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     imported_dataset = import_dataset(export_dir, dtype=None)
     assert len(imported_dataset) == 1
@@ -1193,7 +1268,7 @@ def test_import_auto_detects_dtype_roundtrip(tmp_path):
         original_dataset.append(AutoDetectSample(label=2, score=0.75, subset=Subset.TRAINING))
 
         export_dir = tmp_path / "export"
-        export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+        export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
         imported_dataset = import_dataset(export_dir)  # no dtype
         # Should auto-detect a matching subclass (not fall back to base Sample)
@@ -1247,9 +1322,10 @@ def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
     # Create and export dataset as zip
     original_dataset = Dataset(ImageSample, categories={"label": LABEL_CATEGORIES})
     original_dataset.append(ImageSample(image=make_image, label=1))
+    original_dataset.append(ImageSample(image=make_image, label=2))
 
     export_zip = tmp_path / "my_dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import from zip (no extract_dir provided)
     imported_dataset = import_dataset(export_zip, dtype=ImageSample)
@@ -1263,12 +1339,18 @@ def test_import_zip_extracts_to_directory_next_to_zip_by_default(tmp_path):
     assert (expected_extract_dir / IMAGES_DIR).exists()
 
     # Verify the dataset works correctly
-    assert len(imported_dataset) == 1
-    sample = imported_dataset[0]
-    assert sample.label == 1
-    assert callable(sample.image)
-    img = sample.image()
-    assert img.shape == (20, 30, 3)
+    assert len(imported_dataset) == 2
+    sample0 = imported_dataset[0]
+    assert sample0.label == 1
+    assert callable(sample0.image)
+    img0 = sample0.image()
+    assert img0.shape == (20, 30, 3)
+
+    sample1 = imported_dataset[1]
+    assert sample1.label == 2
+    assert callable(sample1.image)
+    img1 = sample1.image()
+    assert img1.shape == (20, 30, 3)
 
 
 def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_path):
@@ -1286,7 +1368,7 @@ def test_import_zip_extracts_to_custom_directory_when_extract_dir_provided(tmp_p
     original_dataset.append(ImageSample(image=make_image, label=2))
 
     export_zip = tmp_path / "dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import with custom extract_dir
     custom_extract_dir = tmp_path / "custom" / "location"
@@ -1333,7 +1415,7 @@ def test_import_zip_images_accessible_after_import(tmp_path):
     original_dataset.append(ImageSample(image=make_image(200), label=2))
 
     export_zip = tmp_path / "test_dataset.zip"
-    export_dataset(original_dataset, export_zip, export_images=True, as_zip=True)
+    export_dataset(original_dataset, export_zip, export_images=ExportMode.COPY, as_zip=True)
 
     # Import from zip
     imported_dataset = import_dataset(export_zip, dtype=ImageSample)
@@ -1357,7 +1439,7 @@ def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
     original_dataset.append(SimpleSample(label=3))
 
     export_dir = tmp_path / "exported"
-    export_dataset(original_dataset, export_dir, export_images=False, as_zip=False)
+    export_dataset(original_dataset, export_dir, export_images=ExportMode.SKIP, as_zip=False)
 
     # Import from directory with extract_dir (should be ignored)
     custom_dir = tmp_path / "should_not_be_created"
@@ -1369,6 +1451,607 @@ def test_import_zip_extract_dir_is_ignored_for_directory_input(tmp_path):
     # Verify the dataset works correctly
     assert len(imported_dataset) == 1
     assert imported_dataset[0].label == 3
+
+
+# ============================================================================
+# Video Export/Import Tests
+# ============================================================================
+
+# Path to test video in assets
+TEST_VIDEO_PATH = Path(__file__).parent.parent.parent / "assets" / "cvat_dataset" / "test.mp4"
+
+
+def test_export_video_frame_path_field_reference_mode(tmp_path):
+    """Test exporting VideoFramePathField in reference mode (keeps original paths)."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False)
+
+    # Check metadata
+    with open(output_dir / METADATA_FILE) as f:
+        metadata = json.load(f)
+
+    assert "videos" in metadata
+    assert metadata["videos"]["export_mode"] == "reference"
+    assert "frame" in metadata["videos"]["fields"]
+
+    # Video directory should not exist in reference mode
+    assert not (output_dir / VIDEOS_DIR).exists()
+
+
+def test_export_video_frame_path_field_copy_mode(tmp_path):
+    """Test exporting VideoFramePathField in copy mode (copies video files)."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
+
+    # Check that video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+
+def test_export_import_video_frames_roundtrip(tmp_path):
+    """Test complete export/import roundtrip for video frames."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    original_dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(5):
+        original_dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i * 2),
+                label=i,
+            )
+        )
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(
+        original_dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.REFERENCE, as_zip=False
+    )
+
+    # Import
+    imported_dataset = import_dataset(output_dir, dtype=VideoSample)
+
+    # Verify
+    assert len(imported_dataset) == 5
+    for i in range(5):
+        sample = imported_dataset[i]
+        assert sample.label == i
+        assert isinstance(sample.frame, LazyVideoFrame)
+        assert sample.frame.frame_index == i * 2
+
+
+def test_export_import_video_to_zip(tmp_path):
+    """Test exporting and importing video dataset as ZIP."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i,
+            )
+        )
+
+    # Export as ZIP with copy mode
+    zip_path = tmp_path / "dataset.zip"
+    export_dataset(dataset, zip_path, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=True)
+
+    assert zip_path.exists()
+
+    # Verify ZIP contents
+    with zipfile.ZipFile(zip_path, "r") as zf:
+        names = zf.namelist()
+        assert METADATA_FILE in names
+        assert DATAFRAME_FILE in names
+        # Check video file was included
+        video_files = [n for n in names if n.startswith(VIDEOS_DIR)]
+        assert len(video_files) >= 1
+
+    # Import from ZIP
+    imported = import_dataset(zip_path, dtype=VideoSample)
+
+    assert len(imported) == 3
+
+
+def test_export_empty_video_fields(tmp_path):
+    """Test exporting dataset with video fields but no video samples."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    # Add sample with None frame
+    dataset.df = pl.DataFrame(
+        {
+            "frame": [None],
+            "frame_frame_index": [None],
+            "label": [0],
+        }
+    )
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
+
+    # Should succeed without creating videos directory
+    assert (output_dir / METADATA_FILE).exists()
+    assert (output_dir / DATAFRAME_FILE).exists()
+
+
+def test_get_video_fields_identifies_video_fields(tmp_path):
+    """Test that _get_video_fields correctly identifies video-related fields."""
+
+    class MixedSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        image: str = image_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(MixedSample)
+
+    video_fields = _get_video_fields(dataset)
+    field_names = [name for name, _ in video_fields]
+
+    assert "frame" in field_names
+    assert "image" not in field_names
+    assert "label" not in field_names
+
+
+def test_export_import_media_path_field_with_videos(tmp_path):
+    """Test export/import of MediaPathField with video frames."""
+
+    class MediaSample(Sample):
+        media: LazyVideoFrame | LazyImage = media_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(MediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add video frame
+    dataset.append(
+        MediaSample(
+            media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=5),
+            label=0,
+        )
+    )
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, export_videos=ExportMode.REFERENCE, as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=MediaSample)
+
+    assert len(imported) == 1
+    sample = imported[0]
+    assert isinstance(sample.media, LazyVideoFrame)
+    assert sample.media.frame_index == 5
+
+
+def test_export_import_media_path_field_mixed_content(tmp_path):
+    """Test export/import of MediaPathField with both images and video frames."""
+
+    class MediaSample(Sample):
+        media: LazyVideoFrame | LazyImage = media_path_field()
+        label: int = label_field()
+
+    # Create a test image
+    test_image_path = tmp_path / "test_image.png"
+    img = np.zeros((50, 50, 3), dtype=np.uint8)
+    img[:, :, 0] = 128  # Red channel
+    PILImage.fromarray(img).save(test_image_path)
+
+    dataset = Dataset(MediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add image sample
+    dataset.append(
+        MediaSample(
+            media=LazyImage(path=str(test_image_path)),
+            label=0,
+        )
+    )
+
+    # Add video frame sample
+    dataset.append(
+        MediaSample(
+            media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=10),
+            label=1,
+        )
+    )
+
+    # Export
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.COPY, export_videos=ExportMode.REFERENCE, as_zip=False)
+
+    # Import
+    imported = import_dataset(output_dir, dtype=MediaSample)
+
+    assert len(imported) == 2
+
+    # First sample should be image
+    sample0 = imported[0]
+    assert sample0.label == 0
+    # After import, image paths become strings pointing to exported images
+
+    # Second sample should be video frame
+    sample1 = imported[1]
+    assert sample1.label == 1
+    assert isinstance(sample1.media, LazyVideoFrame)
+    assert sample1.media.frame_index == 10
+
+
+def test_export_videos_copy_mode_creates_correct_paths(tmp_path):
+    """Test that copy mode creates correct relative paths in the DataFrame."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+
+    dataset = Dataset(VideoSample)
+    dataset.append(VideoSample(frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)))
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
+
+    # Load the parquet and check the path is relative
+    df = pl.read_parquet(output_dir / DATAFRAME_FILE)
+    frame_path = df["frame"][0]
+
+    # Path should be relative to export dir and start with videos/
+    assert frame_path.startswith(VIDEOS_DIR + "/")
+
+
+def test_export_video_error_missing_video_file(tmp_path):
+    """Error when a video file does not exist and ignore_missing_media=False."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=0,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    with pytest.raises(ValueError, match="Video file not found"):
+        export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, export_videos=ExportMode.COPY, as_zip=False)
+
+
+def test_export_video_ignore_missing_media_skips_missing_video(tmp_path):
+    """Missing video file is skipped when ignore_missing_media=True."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add one valid video frame and one missing
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0),
+            label=0,
+        )
+    )
+    dataset.append(
+        VideoSample(
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=1,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    # Should not raise when ignore_missing_media=True
+    export_dataset(
+        dataset,
+        output_dir,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+        as_zip=False,
+        ignore_missing_media=True,
+    )
+
+    # Check that the valid video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+
+def test_export_mixed_media_ignore_missing_media(tmp_path):
+    """Test ignore_missing_media works for both images and videos together."""
+
+    class MixedMediaSample(Sample):
+        image: Callable[[], np.ndarray] = image_callable_field()
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    def good_image():
+        return np.zeros((10, 10, 3), dtype=np.uint8)
+
+    def bad_image():
+        raise RuntimeError("failed to generate image")
+
+    missing_video_path = tmp_path / "does_not_exist.mp4"
+
+    dataset = Dataset(MixedMediaSample, categories={"label": LABEL_CATEGORIES})
+
+    # Valid image, valid video
+    dataset.append(
+        MixedMediaSample(
+            image=good_image,
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0),
+            label=0,
+        )
+    )
+
+    # Bad image, valid video
+    dataset.append(
+        MixedMediaSample(
+            image=bad_image,
+            frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=1),
+            label=1,
+        )
+    )
+
+    # Valid image, missing video
+    dataset.append(
+        MixedMediaSample(
+            image=good_image,
+            frame=LazyVideoFrame(video_path=str(missing_video_path), frame_index=0),
+            label=2,
+        )
+    )
+
+    output_dir = tmp_path / "export"
+    # Should not raise when ignore_missing_media=True
+    export_dataset(
+        dataset,
+        output_dir,
+        export_images=ExportMode.COPY,
+        export_videos=ExportMode.COPY,
+        as_zip=False,
+        ignore_missing_media=True,
+    )
+
+    # Check that valid video was copied
+    videos_dir = output_dir / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Check that valid images were exported
+    images_dir = output_dir / IMAGES_DIR
+    assert images_dir.exists()
+    image_files = list(images_dir.glob("image_*.png"))
+    assert len(image_files) == 2  # Indices 0 and 2
+
+
+def test_video_to_images_end_to_end_workflow(tmp_path):
+    """End-to-end workflow: video frames → convert to images → export → import → ZIP."""
+    from datumaro.experimental.fields import image_field
+
+    # Step 1: Define sample classes
+    class VideoFrameSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    class ImageTensorSample(Sample):
+        image: np.ndarray | None = image_field(dtype=pl.UInt8(), format="RGB")
+        label: int = label_field()
+
+    # Step 2: Create dataset from video frames
+    source_dataset = Dataset(VideoFrameSample, categories={"label": LABEL_CATEGORIES})
+    for i in range(3):
+        source_dataset.append(
+            VideoFrameSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i % 3,
+            )
+        )
+
+    assert len(source_dataset) == 3
+
+    # Step 3: Convert to image tensor format
+    converted_dataset = source_dataset.convert_to_schema(ImageTensorSample)
+
+    # Verify conversion works (accessing samples loads image data)
+    for i in range(3):
+        sample = converted_dataset[i]
+        assert sample.image is not None
+        assert len(sample.image.shape) == 3  # H, W, C
+        assert sample.label == i % 3
+
+    # Step 4: Export to directory
+    export_path = tmp_path / "exported"
+    export_dataset(
+        source_dataset,  # Export original video frame dataset
+        export_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify videos were copied
+    videos_dir = export_path / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Step 5: Import from directory
+    imported_dataset = import_dataset(export_path, dtype=VideoFrameSample)
+    assert len(imported_dataset) == 3
+
+    # Verify data integrity
+    for i in range(3):
+        orig = source_dataset[i]
+        imp = imported_dataset[i]
+        assert orig.label == imp.label
+
+    # Step 6: Export as ZIP
+    zip_path = tmp_path / "dataset.zip"
+    export_dataset(
+        imported_dataset,
+        zip_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.REFERENCE,  # Keep paths in ZIP
+        as_zip=True,
+    )
+
+    assert zip_path.exists()
+
+    # Step 7: Import from ZIP
+    extract_dir = tmp_path / "extracted"
+    from_zip = import_dataset(zip_path, dtype=VideoFrameSample, extract_dir=extract_dir)
+    assert len(from_zip) == 3
+
+
+def test_multiple_videos_export_import_workflow(tmp_path):
+    """Test export/import with frames from multiple videos."""
+
+    class VideoSample(Sample):
+        frame: LazyVideoFrame = video_frame_path_field()
+        label: int = label_field()
+
+    # Create dataset with frames from same video (simulating multiple videos)
+    dataset = Dataset(VideoSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add multiple frames from the test video
+    for frame_idx in range(5):
+        dataset.append(
+            VideoSample(
+                frame=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=frame_idx),
+                label=frame_idx % 3,
+            )
+        )
+
+    assert len(dataset) == 5
+
+    # Export with video copy
+    export_path = tmp_path / "multi_video_export"
+    export_dataset(
+        dataset,
+        export_path,
+        export_images=ExportMode.SKIP,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify video was copied
+    videos_dir = export_path / VIDEOS_DIR
+    assert videos_dir.exists()
+    video_files = list(videos_dir.glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Import and verify
+    imported = import_dataset(export_path, dtype=VideoSample)
+    assert len(imported) == 5
+
+    # Verify all samples accessible
+    for i, sample in enumerate(imported):
+        assert sample.label == i % 3
+        assert isinstance(sample.frame, LazyVideoFrame)
+
+
+def test_mixed_media_dataset_export_import(tmp_path):
+    """Test export/import with mixed images and video frames."""
+
+    class MixedSample(Sample):
+        media: LazyImage | LazyVideoFrame = media_path_field()
+        label: int = label_field()
+
+    # Create test image
+    test_image_path = tmp_path / "test_image.jpg"
+    test_img = PILImage.new("RGB", (100, 100), color=(255, 0, 0))
+    test_img.save(test_image_path)
+
+    dataset = Dataset(MixedSample, categories={"label": LABEL_CATEGORIES})
+
+    # Add image sample
+    dataset.append(
+        MixedSample(
+            media=LazyImage(str(test_image_path)),
+            label=0,
+        )
+    )
+
+    # Add video frame samples
+    for i in range(2):
+        dataset.append(
+            MixedSample(
+                media=LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i),
+                label=i + 1,
+            )
+        )
+
+    assert len(dataset) == 3
+
+    # Export with both image and video copy
+    export_path = tmp_path / "mixed_export"
+    export_dataset(
+        dataset,
+        export_path,
+        export_images=ExportMode.COPY,
+        export_videos=ExportMode.COPY,
+    )
+
+    # Verify both images and videos directories exist
+    assert (export_path / IMAGES_DIR).exists()
+    assert (export_path / VIDEOS_DIR).exists()
+
+    # Verify image was copied
+    image_files = list((export_path / IMAGES_DIR).glob("*"))
+    assert len(image_files) == 1
+
+    # Verify video was copied
+    video_files = list((export_path / VIDEOS_DIR).glob("*.mp4"))
+    assert len(video_files) == 1
+
+    # Import and verify
+    imported = import_dataset(export_path, dtype=MixedSample)
+    assert len(imported) == 3
+
+    # Verify sample types
+    assert imported[0].label == 0  # Image sample
+    assert imported[1].label == 1  # Video frame
+    assert imported[2].label == 2  # Video frame
 
 
 # ============================================================================

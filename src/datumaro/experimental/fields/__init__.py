@@ -60,6 +60,18 @@ from datumaro.experimental.fields.types import (
     numeric_field,
     string_field,
 )
+from datumaro.experimental.fields.videos import (
+    MediaInfoField,
+    MediaPathField,
+    VideoFrameCallableField,
+    VideoFramePathField,
+    VideoInfoField,
+    media_info_field,
+    media_path_field,
+    video_frame_callable_field,
+    video_frame_path_field,
+    video_info_field,
+)
 
 __all__ = [
     "BBoxField",
@@ -79,6 +91,8 @@ __all__ = [
     "LabelField",
     "MaskCallableField",
     "MaskField",
+    "MediaInfoField",
+    "MediaPathField",
     "NumericField",
     "PolygonField",
     "RotatedBBoxField",
@@ -88,6 +102,9 @@ __all__ = [
     "TensorField",
     "TileField",
     "TileInfo",
+    "VideoFrameCallableField",
+    "VideoFramePathField",
+    "VideoInfoField",
     "bbox_field",
     "bool_field",
     "caption_field",
@@ -104,6 +121,8 @@ __all__ = [
     "label_field",
     "mask_callable_field",
     "mask_field",
+    "media_info_field",
+    "media_path_field",
     "numeric_field",
     "polygon_field",
     "rotated_bbox_field",
@@ -111,4 +130,7 @@ __all__ = [
     "subset_field",
     "tensor_field",
     "tile_field",
+    "video_frame_callable_field",
+    "video_frame_path_field",
+    "video_info_field",
 ]

@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 """
-Media types for lazy loading and caching of image data.
+Media types for lazy loading and caching of image and video data.
 
-This module provides the LazyImage class for lazy loading images from disk,
-along with a global LRU cache to manage memory usage when working with many images.
+This module provides the LazyImage and LazyVideoFrame classes for lazy loading
+media from disk, along with global LRU caches to manage memory usage when
+working with many images and video frames.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from threading import RLock
+from typing import Any
 
 import numpy as np
 from cachetools import LRUCache, cachedmethod
@@ -370,3 +372,624 @@ class LazyImage:
     def __fspath__(self) -> str:
         """Allow LazyImage to be used in os.path operations."""
         return str(self.path)
+
+
+@dataclass(frozen=True)
+class VideoInfo:
+    """
+    Immutable container for video metadata.
+
+    Attributes:
+        path: Path to the video file
+        total_frames: Total number of frames in the video
+        fps: Frames per second
+        width: Frame width in pixels
+        height: Frame height in pixels
+        duration: Video duration in seconds
+        codec: Video codec (e.g., 'h264', 'vp9')
+    """
+
+    path: str
+    total_frames: int
+    fps: float
+    width: int
+    height: int
+    duration: float
+    codec: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize VideoInfo to a dictionary."""
+        return {
+            "path": self.path,
+            "total_frames": self.total_frames,
+            "fps": self.fps,
+            "width": self.width,
+            "height": self.height,
+            "duration": self.duration,
+            "codec": self.codec,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> VideoInfo:
+        """Deserialize VideoInfo from a dictionary."""
+        return cls(
+            path=data["path"],
+            total_frames=data["total_frames"],
+            fps=data["fps"],
+            width=data["width"],
+            height=data["height"],
+            duration=data["duration"],
+            codec=data.get("codec"),
+        )
+
+
+@dataclass(frozen=True)
+class MediaInfo:
+    """
+    Unified media metadata container for both images and video frames.
+
+    This class provides a consistent interface for accessing media dimensions
+    and metadata regardless of whether the source is an image file or a video frame.
+
+    For images:
+        - width, height: Image dimensions
+        - fps, total_frames, duration, codec, frame_index: All None
+
+    For video frames:
+        - width, height: Frame dimensions
+        - fps: Video frame rate
+        - total_frames: Total frames in the video
+        - duration: Video duration in seconds
+        - codec: Video codec (e.g., 'h264')
+        - frame_index: The specific frame index this info refers to
+
+    Attributes:
+        width: Media width in pixels
+        height: Media height in pixels
+        fps: Frames per second (None for images)
+        total_frames: Total number of frames in the video (None for images)
+        duration: Video duration in seconds (None for images)
+        codec: Video codec string (None for images)
+        frame_index: Frame index within video (None for images)
+        source_path: Path to the source file (image or video)
+
+    Examples:
+        >>> # From an image
+        >>> info = MediaInfo.from_lazy_image(lazy_img)
+        >>> info.width, info.height
+        (1920, 1080)
+        >>> info.is_video_frame
+        False
+
+        >>> # From a video frame
+        >>> info = MediaInfo.from_lazy_video_frame(lazy_frame)
+        >>> info.fps
+        30.0
+        >>> info.is_video_frame
+        True
+    """
+
+    width: int
+    height: int
+    source_path: str | None = None
+    fps: float | None = None
+    total_frames: int | None = None
+    duration: float | None = None
+    codec: str | None = None
+    frame_index: int | None = None
+
+    @property
+    def is_video_frame(self) -> bool:
+        """Check if this MediaInfo represents a video frame (vs an image)."""
+        return self.fps is not None
+
+    @property
+    def is_image(self) -> bool:
+        """Check if this MediaInfo represents a static image (vs a video frame)."""
+        return self.fps is None
+
+    @property
+    def size(self) -> tuple[int, int]:
+        """Get (width, height) tuple."""
+        return (self.width, self.height)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize MediaInfo to a dictionary."""
+        return {
+            "width": self.width,
+            "height": self.height,
+            "source_path": self.source_path,
+            "fps": self.fps,
+            "total_frames": self.total_frames,
+            "duration": self.duration,
+            "codec": self.codec,
+            "frame_index": self.frame_index,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> MediaInfo:
+        """Deserialize MediaInfo from a dictionary."""
+        return cls(
+            width=data["width"],
+            height=data["height"],
+            source_path=data.get("source_path"),
+            fps=data.get("fps"),
+            total_frames=data.get("total_frames"),
+            duration=data.get("duration"),
+            codec=data.get("codec"),
+            frame_index=data.get("frame_index"),
+        )
+
+    @classmethod
+    def from_lazy_image(cls, lazy_image: LazyImage) -> MediaInfo:
+        """
+        Create MediaInfo from a LazyImage instance.
+
+        Extracts width and height without loading the full image data.
+
+        Args:
+            lazy_image: The LazyImage to extract info from
+
+        Returns:
+            MediaInfo with image dimensions populated
+        """
+        return cls(
+            width=lazy_image.width,
+            height=lazy_image.height,
+            source_path=str(lazy_image.path),
+        )
+
+    @classmethod
+    def from_lazy_video_frame(cls, lazy_frame: LazyVideoFrame) -> MediaInfo:
+        """
+        Create MediaInfo from a LazyVideoFrame instance.
+
+        Extracts both frame dimensions and video metadata.
+
+        Args:
+            lazy_frame: The LazyVideoFrame to extract info from
+
+        Returns:
+            MediaInfo with frame dimensions and video metadata populated
+        """
+        video_info = lazy_frame.video_info
+        return cls(
+            width=video_info.width,
+            height=video_info.height,
+            source_path=video_info.path,
+            fps=video_info.fps,
+            total_frames=video_info.total_frames,
+            duration=video_info.duration,
+            codec=video_info.codec,
+            frame_index=lazy_frame.frame_index,
+        )
+
+    @classmethod
+    def from_video_info(cls, video_info: VideoInfo, frame_index: int | None = None) -> MediaInfo:
+        """
+        Create MediaInfo from a VideoInfo instance.
+
+        Args:
+            video_info: The VideoInfo to convert
+            frame_index: Optional frame index if this represents a specific frame
+
+        Returns:
+            MediaInfo with video metadata populated
+        """
+        return cls(
+            width=video_info.width,
+            height=video_info.height,
+            source_path=video_info.path,
+            fps=video_info.fps,
+            total_frames=video_info.total_frames,
+            duration=video_info.duration,
+            codec=video_info.codec,
+            frame_index=frame_index,
+        )
+
+    @classmethod
+    def from_media(cls, media: LazyImage | LazyVideoFrame) -> MediaInfo:
+        """
+        Create MediaInfo from either a LazyImage or LazyVideoFrame.
+
+        This is a convenience method that automatically detects the media type
+        and extracts the appropriate information.
+
+        Args:
+            media: Either a LazyImage or LazyVideoFrame instance
+
+        Returns:
+            MediaInfo with appropriate fields populated
+
+        Raises:
+            TypeError: If media is not a LazyImage or LazyVideoFrame
+        """
+        if isinstance(media, LazyVideoFrame):
+            return cls.from_lazy_video_frame(media)
+        if isinstance(media, LazyImage):
+            return cls.from_lazy_image(media)
+        raise TypeError(f"Expected LazyImage or LazyVideoFrame, got {type(media)}")
+
+
+# Global cache for video metadata (extracted once per video file)
+_video_info_cache: dict[str, VideoInfo] = {}
+
+
+def _get_frame_size(frame: np.ndarray) -> int:
+    """Get the size of a video frame in bytes."""
+    return frame.nbytes
+
+
+class VideoFrameCache:
+    """
+    Global LRU cache for lazy-loaded video frames.
+
+    Similar to ImageCache but optimized for video access patterns.
+    The cache is keyed by (video_path, frame_index, format, channels_first) tuples.
+
+    Features:
+        - Configurable maximum size in bytes
+        - Thread-safe access with RLock
+        - Prefetch support for sequential access patterns
+
+    Examples:
+        >>> VideoFrameCache.set_size(512 * 1024 * 1024)  # 512 MB
+        >>> VideoFrameCache.clear()
+        >>> VideoFrameCache.info()
+    """
+
+    _cache: LRUCache[tuple[str, int, str, bool], np.ndarray] = LRUCache(
+        maxsize=_DEFAULT_CACHE_SIZE_BYTES, getsizeof=_get_frame_size
+    )
+    _lock = RLock()
+    _video_readers: dict[str, Any] = {}  # Cached video reader handles
+
+    @classmethod
+    def set_size(cls, maxsize_bytes: int) -> None:
+        """
+        Set the maximum size in bytes for the video frame cache.
+
+        When the cache exceeds this size, the least recently used frames are evicted.
+
+        Args:
+            maxsize_bytes: Maximum cache size in bytes. Set to 0 to disable caching.
+
+        Example:
+            >>> VideoFrameCache.set_size(512 * 1024 * 1024)  # Set cache to 512 MB
+        """
+        with cls._lock:
+            new_cache: LRUCache[tuple[str, int, str, bool], np.ndarray] = LRUCache(
+                maxsize=maxsize_bytes, getsizeof=_get_frame_size
+            )
+            if maxsize_bytes > 0:
+                for key, value in cls._cache.items():
+                    item_size = _get_frame_size(value)
+                    if new_cache.currsize + item_size <= maxsize_bytes:
+                        new_cache[key] = value
+            cls._cache = new_cache
+
+    @classmethod
+    def get_size(cls) -> int:
+        """
+        Get the current cache size in bytes.
+
+        Returns:
+            Current cache size in bytes.
+        """
+        with cls._lock:
+            return int(cls._cache.currsize)
+
+    @classmethod
+    def get_max_size(cls) -> int:
+        """
+        Get the maximum cache size in bytes.
+
+        Returns:
+            Maximum cache size in bytes.
+        """
+        with cls._lock:
+            return int(cls._cache.maxsize)
+
+    @classmethod
+    def clear(cls) -> None:
+        """
+        Clear all cached video frames from memory.
+
+        Example:
+            >>> VideoFrameCache.clear()  # Free all cached video frame memory
+        """
+        with cls._lock:
+            cls._cache.clear()
+            cls._video_readers.clear()
+
+    @classmethod
+    def length(cls) -> int:
+        """
+        Get the number of frames currently cached.
+
+        Returns:
+            Number of cached frames.
+        """
+        with cls._lock:
+            return len(cls._cache)
+
+    @classmethod
+    def info(cls) -> dict[str, int]:
+        """
+        Get information about the current cache state.
+
+        Returns:
+            A dictionary with:
+            - 'count': Number of frames currently cached
+            - 'current_size': Current cache size in bytes
+            - 'max_size': Maximum cache size in bytes
+        """
+        with cls._lock:
+            return {
+                "count": len(cls._cache),
+                "current_size": cls._cache.currsize,
+                "max_size": cls._cache.maxsize,
+            }
+
+    @classmethod
+    def prefetch(cls, video_path: str, frame_indices: list[int]) -> None:
+        """
+        Prefetch frames in background for sequential access optimization.
+
+        Args:
+            video_path: Path to the video file
+            frame_indices: List of frame indices to prefetch
+        """
+        # Import cv2 lazily to avoid import errors if not installed
+        try:
+            import cv2
+        except ImportError:
+            return
+
+        with cls._lock:
+            cap = cv2.VideoCapture(video_path)
+            try:
+                for frame_idx in frame_indices:
+                    cache_key = (video_path, frame_idx, "RGB", False)
+                    if cache_key not in cls._cache:
+                        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+                        ret, frame = cap.read()
+                        if ret:
+                            # Convert BGR to RGB
+                            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                            cls._cache[cache_key] = frame_rgb
+            finally:
+                cap.release()
+
+
+def extract_video_info(video_path: str | Path) -> VideoInfo:
+    """
+    Extract metadata from a video file without loading frames.
+
+    Uses OpenCV for efficient metadata extraction.
+
+    Args:
+        video_path: Path to the video file
+
+    Returns:
+        VideoInfo with all metadata populated
+
+    Raises:
+        FileNotFoundError: If video file doesn't exist
+        ValueError: If file is not a valid video
+    """
+    import cv2
+
+    video_path_str = str(video_path)
+
+    if not Path(video_path_str).exists():
+        raise FileNotFoundError(f"Video file not found: {video_path_str}")
+
+    cap = cv2.VideoCapture(video_path_str)
+    if not cap.isOpened():
+        raise ValueError(f"Could not open video file: {video_path_str}")
+
+    try:
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        duration = total_frames / fps if fps > 0 else 0.0
+
+        # Try to get codec information
+        fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
+        codec = "".join([chr((fourcc >> 8 * i) & 0xFF) for i in range(4)]) if fourcc else None
+
+        return VideoInfo(
+            path=video_path_str,
+            total_frames=total_frames,
+            fps=fps,
+            width=width,
+            height=height,
+            duration=duration,
+            codec=codec,
+        )
+    finally:
+        cap.release()
+
+
+@dataclass
+class LazyVideoFrame:
+    """
+    A wrapper class that holds a video path and frame index for lazy loading.
+
+    Similar to LazyImage, but extracts a specific frame from a video file.
+    The frame is only loaded when the `data` property is accessed.
+
+    Attributes:
+        video_path: Path to the video file
+        frame_index: Zero-based index of the frame to load
+        format: Color format for loading ("RGB", "BGR", etc.)
+        channels_first: Whether to return data in (C, H, W) format
+
+    Examples:
+        >>> frame = LazyVideoFrame("/path/to/video.mp4", frame_index=42)
+        >>> frame.video_path  # Returns path without loading
+        >>> frame.frame_index
+        >>> frame.data
+
+    Properties:
+        video_info: VideoInfo for the parent video (cached)
+        width: Frame width
+        height: Frame height
+        data: numpy array of frame pixels (lazy loaded)
+    """
+
+    video_path: str | Path
+    frame_index: int
+    format: str = "RGB"
+    channels_first: bool = False
+
+    def __post_init__(self) -> None:
+        # Ensure video_path is stored as a string for consistency
+        if isinstance(self.video_path, Path):
+            object.__setattr__(self, "video_path", str(self.video_path))
+
+        if self.frame_index < 0:
+            raise ValueError(
+                f"frame_index must be non-negative, got {self.frame_index}. "
+                "Frame indices are zero-based (0 is the first frame)."
+            )
+
+    def _cache_key(self) -> tuple[str, int, str, bool]:
+        """Generate a cache key for this video frame configuration."""
+        return str(self.video_path), self.frame_index, self.format.upper(), self.channels_first
+
+    @cached_property
+    def video_info(self) -> VideoInfo:
+        """
+        Get video metadata, extracted lazily and cached globally.
+
+        The first access for a video path triggers extraction.
+        Subsequent accesses (for any frame of the same video) use the cache.
+        """
+        video_path_str = str(self.video_path)
+        if video_path_str not in _video_info_cache:
+            _video_info_cache[video_path_str] = extract_video_info(video_path_str)
+        return _video_info_cache[video_path_str]
+
+    @property
+    def width(self) -> int:
+        """Frame width from video metadata."""
+        return self.video_info.width
+
+    @property
+    def height(self) -> int:
+        """Frame height from video metadata."""
+        return self.video_info.height
+
+    def _convert_frame_format(self, frame: np.ndarray, target_format: str) -> np.ndarray:
+        """Convert BGR frame (from OpenCV) to the target format."""
+        import cv2
+
+        target_format = target_format.upper()
+
+        if target_format == "BGR":
+            return frame
+        if target_format == "RGB":
+            return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        if target_format == "RGBA":
+            return cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+        if target_format == "BGRA":
+            return cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+        if target_format in ("L", "GRAY"):
+            return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        raise ValueError(f"Unsupported video frame format: {target_format!r}")
+
+    @cachedmethod(
+        cache=lambda _: VideoFrameCache._cache,
+        key=lambda self: self._cache_key(),
+        lock=lambda _: VideoFrameCache._lock,
+    )
+    def _load_data(self) -> np.ndarray:
+        """Load the video frame from disk (cached via @cachedmethod)."""
+        import cv2
+
+        video_path_str = str(self.video_path)
+
+        if not Path(video_path_str).exists():
+            raise FileNotFoundError(f"Video file not found: {video_path_str}")
+
+        cap = cv2.VideoCapture(video_path_str)
+        if not cap.isOpened():
+            raise ValueError(f"Could not open video file: {video_path_str}")
+
+        try:
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+            # Validate frame_index is within bounds
+            if self.frame_index >= total_frames:
+                raise ValueError(
+                    f"Frame index {self.frame_index} is out of bounds for video '{video_path_str}' "
+                    f"which has {total_frames} frames (valid indices: 0 to {total_frames - 1})."
+                )
+
+            cap.set(cv2.CAP_PROP_POS_FRAMES, self.frame_index)
+            ret, frame = cap.read()
+
+            if not ret:
+                raise ValueError(f"Could not read frame {self.frame_index} from video: {video_path_str}")
+
+            # Convert to target format
+            frame_converted = self._convert_frame_format(frame, self.format)
+
+            # Handle channels-first format
+            if self.channels_first and frame_converted.ndim == 3:
+                frame_converted = frame_converted.transpose(2, 0, 1)
+
+            return frame_converted
+        finally:
+            cap.release()
+
+    @property
+    def data(self) -> np.ndarray:
+        """
+        Load and return the frame data as a numpy array.
+
+        The frame is loaded from the video file on first access and cached
+        in a global LRU cache. Subsequent accesses return the cached data
+        if available.
+
+        Returns:
+            numpy.ndarray: The frame data as a numpy array with shape:
+                - (H, W, C) if channels_first is False
+                - (C, H, W) if channels_first is True
+
+        Raises:
+            FileNotFoundError: If the video file does not exist
+            ValueError: If the frame cannot be read
+        """
+        return self._load_data()
+
+    def clear_cache(self) -> None:
+        """Remove this frame from the cache to free memory."""
+        with VideoFrameCache._lock:
+            VideoFrameCache._cache.pop(self._cache_key(), None)
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """
+        Get the shape of the frame data.
+
+        Returns:
+            tuple: Shape of the frame array. If channels_first is False: (H, W, C).
+                   If channels_first is True: (C, H, W). For grayscale: (H, W).
+        """
+        return self.data.shape
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(video_path={self.video_path}, frame_index={self.frame_index})"
+
+    def __fspath__(self) -> str:
+        """Allow LazyVideoFrame to be used in os.path operations (returns video path)."""
+        return str(self.video_path)
+
+
+def clear_video_info_cache() -> None:
+    """Clear the global video info cache."""
+    _video_info_cache.clear()

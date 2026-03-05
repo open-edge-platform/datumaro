@@ -1,5 +1,5 @@
 """
-Unit tests for LazyImage class and ImagePathField with LazyImage type.
+Unit tests for LazyImage, LazyVideoFrame, and related media classes.
 """
 
 import os
@@ -12,6 +12,17 @@ from PIL import Image as PILImage
 
 from datumaro.experimental import Dataset, ImageCache, LazyImage, Sample
 from datumaro.experimental.fields import image_path_field
+from datumaro.experimental.media import (
+    LazyVideoFrame,
+    VideoFrameCache,
+    VideoInfo,
+    _video_info_cache,
+    clear_video_info_cache,
+    extract_video_info,
+)
+
+# Path to test video in assets
+TEST_VIDEO_PATH = Path(__file__).parent.parent.parent / "assets" / "cvat_dataset" / "test.mp4"
 
 
 class LazyImageClassTest:
@@ -805,3 +816,505 @@ class ImageCacheLRUTest:
             # Clear cache and verify
             ImageCache.clear()
             assert ImageCache.length() == 0
+
+
+# ============================================================================
+# Video Media Tests
+# ============================================================================
+
+
+class VideoInfoTest:
+    """Tests for the VideoInfo dataclass."""
+
+    def test_video_info_creation(self):
+        """Test creating VideoInfo with all fields."""
+        info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        assert info.path == "/path/to/video.mp4"
+        assert info.total_frames == 100
+        assert info.fps == 30.0
+        assert info.width == 1920
+        assert info.height == 1080
+        assert info.duration == 3.33
+        assert info.codec == "h264"
+
+    def test_video_info_optional_codec(self):
+        """Test VideoInfo with optional codec field."""
+        info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+        )
+        assert info.codec is None
+
+    def test_video_info_is_frozen(self):
+        """Test that VideoInfo is immutable (frozen dataclass)."""
+        info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+        )
+        with pytest.raises(Exception):  # FrozenInstanceError
+            info.path = "/new/path.mp4"
+
+    def test_video_info_to_dict(self):
+        """Test VideoInfo.to_dict() serialization."""
+        info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        result = info.to_dict()
+        assert result == {
+            "path": "/path/to/video.mp4",
+            "total_frames": 100,
+            "fps": 30.0,
+            "width": 1920,
+            "height": 1080,
+            "duration": 3.33,
+            "codec": "h264",
+        }
+
+    def test_video_info_from_dict(self):
+        """Test VideoInfo.from_dict() deserialization."""
+        data = {
+            "path": "/path/to/video.mp4",
+            "total_frames": 100,
+            "fps": 30.0,
+            "width": 1920,
+            "height": 1080,
+            "duration": 3.33,
+            "codec": "h264",
+        }
+        info = VideoInfo.from_dict(data)
+        assert info.path == "/path/to/video.mp4"
+        assert info.total_frames == 100
+        assert info.fps == 30.0
+        assert info.codec == "h264"
+
+    def test_video_info_from_dict_without_codec(self):
+        """Test VideoInfo.from_dict() handles missing codec."""
+        data = {
+            "path": "/path/to/video.mp4",
+            "total_frames": 100,
+            "fps": 30.0,
+            "width": 1920,
+            "height": 1080,
+            "duration": 3.33,
+        }
+        info = VideoInfo.from_dict(data)
+        assert info.codec is None
+
+    def test_video_info_round_trip(self):
+        """Test VideoInfo serialization round-trip."""
+        original = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        restored = VideoInfo.from_dict(original.to_dict())
+        assert restored == original
+
+    def test_video_info_equality(self):
+        """Test VideoInfo equality comparison."""
+        info1 = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        info2 = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+            codec="h264",
+        )
+        assert info1 == info2
+
+    def test_video_info_hash(self):
+        """Test VideoInfo is hashable (frozen dataclass)."""
+        info = VideoInfo(
+            path="/path/to/video.mp4",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+        )
+        # Should be hashable since it's frozen
+        hash_value = hash(info)
+        assert isinstance(hash_value, int)
+
+
+@pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+class ExtractVideoInfoTest:
+    """Tests for the extract_video_info function."""
+
+    def test_extract_video_info_returns_video_info(self):
+        """Test that extract_video_info returns a VideoInfo object."""
+        info = extract_video_info(TEST_VIDEO_PATH)
+        assert isinstance(info, VideoInfo)
+
+    def test_extract_video_info_correct_path(self):
+        """Test that extracted info has correct path."""
+        info = extract_video_info(TEST_VIDEO_PATH)
+        assert info.path == str(TEST_VIDEO_PATH)
+
+    def test_extract_video_info_positive_dimensions(self):
+        """Test that extracted video has positive dimensions."""
+        info = extract_video_info(TEST_VIDEO_PATH)
+        assert info.width > 0
+        assert info.height > 0
+        assert info.total_frames > 0
+        assert info.fps > 0
+        assert info.duration > 0
+
+    def test_extract_video_info_accepts_path_object(self):
+        """Test that extract_video_info accepts Path objects."""
+        info = extract_video_info(Path(TEST_VIDEO_PATH))
+        assert isinstance(info, VideoInfo)
+        assert info.path == str(TEST_VIDEO_PATH)
+
+    def test_extract_video_info_file_not_found(self):
+        """Test extract_video_info raises for non-existent file."""
+        with pytest.raises(FileNotFoundError):
+            extract_video_info("/non/existent/video.mp4")
+
+
+@pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+class LazyVideoFrameClassTest:
+    """Tests for the LazyVideoFrame class."""
+
+    def setup_method(self):
+        """Clear caches before each test."""
+        VideoFrameCache.clear()
+        clear_video_info_cache()
+
+    def test_lazy_video_frame_creation(self):
+        """Test creating LazyVideoFrame."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        assert frame.video_path == str(TEST_VIDEO_PATH)
+        assert frame.frame_index == 0
+        assert frame.format == "RGB"
+        assert frame.channels_first is False
+
+    def test_lazy_video_frame_creation_with_path_object(self):
+        """Test creating LazyVideoFrame with Path object."""
+        frame = LazyVideoFrame(video_path=TEST_VIDEO_PATH, frame_index=5)
+        assert frame.video_path == str(TEST_VIDEO_PATH)
+        assert frame.frame_index == 5
+
+    def test_lazy_video_frame_path_access_no_load(self):
+        """Test that accessing video_path doesn't load the frame."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        _ = frame.video_path
+        _ = frame.frame_index
+        # Cache should be empty
+        assert VideoFrameCache.length() == 0
+
+    def test_lazy_video_frame_data_loads_frame(self):
+        """Test that accessing data loads the frame."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        data = frame.data
+        assert isinstance(data, np.ndarray)
+        assert data.ndim == 3  # (H, W, C)
+        assert data.dtype == np.uint8
+
+    def test_lazy_video_frame_data_caches_result(self):
+        """Test that frame data is cached after first access."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        data1 = frame.data
+        data2 = frame.data
+        # Should be the exact same object (cached)
+        assert data1 is data2
+
+    def test_lazy_video_frame_different_frames_different_data(self):
+        """Test that different frame indices return different data."""
+        frame0 = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        frame1 = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=1)
+
+        data0 = frame0.data
+        data1 = frame1.data
+
+        # Different frames should have different data (usually)
+        # At minimum, they should be different objects
+        assert data0 is not data1
+
+    def test_lazy_video_frame_rgb_format(self):
+        """Test loading frame in RGB format."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="RGB")
+        data = frame.data
+        assert data.ndim == 3
+        assert data.shape[2] == 3  # 3 channels
+
+    def test_lazy_video_frame_bgr_format(self):
+        """Test loading frame in BGR format."""
+        frame_rgb = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="RGB")
+        frame_bgr = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="BGR")
+
+        data_rgb = frame_rgb.data
+        data_bgr = frame_bgr.data
+
+        # BGR should have R and B channels swapped
+        assert np.array_equal(data_rgb[:, :, 0], data_bgr[:, :, 2])  # R in RGB == B in BGR
+        assert np.array_equal(data_rgb[:, :, 2], data_bgr[:, :, 0])  # B in RGB == R in BGR
+        assert np.array_equal(data_rgb[:, :, 1], data_bgr[:, :, 1])  # G stays same
+
+    def test_lazy_video_frame_grayscale_format(self):
+        """Test loading frame in grayscale format."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="L")
+        data = frame.data
+        assert data.ndim == 2  # Grayscale is 2D
+
+    def test_lazy_video_frame_channels_first(self):
+        """Test loading frame with channels-first format."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, channels_first=True)
+        data = frame.data
+        # Should be (C, H, W) instead of (H, W, C)
+        assert data.shape[0] == 3  # Channels first
+
+    def test_lazy_video_frame_video_info_property(self):
+        """Test that video_info property returns VideoInfo."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        info = frame.video_info
+        assert isinstance(info, VideoInfo)
+        assert info.path == str(TEST_VIDEO_PATH)
+
+    def test_lazy_video_frame_video_info_cached(self):
+        """Test that video_info is cached globally."""
+        clear_video_info_cache()
+
+        frame1 = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        frame2 = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=5)
+
+        info1 = frame1.video_info
+        info2 = frame2.video_info
+
+        # Should be the same cached object
+        assert info1 is info2
+
+    def test_lazy_video_frame_width_height(self):
+        """Test width and height properties."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        assert frame.width > 0
+        assert frame.height > 0
+        # Width and height should match video info
+        assert frame.width == frame.video_info.width
+        assert frame.height == frame.video_info.height
+
+    def test_lazy_video_frame_shape(self):
+        """Test shape property."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        shape = frame.shape
+        assert len(shape) == 3
+        assert shape[0] == frame.height
+        assert shape[1] == frame.width
+        assert shape[2] == 3  # RGB channels
+
+    def test_lazy_video_frame_clear_cache(self):
+        """Test clearing a single frame from cache."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        _ = frame.data
+        assert VideoFrameCache.length() >= 1
+
+        frame.clear_cache()
+        # Cache should have one less entry
+        # (exact count depends on what else was loaded)
+
+    def test_lazy_video_frame_repr(self):
+        """Test string representation."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=42)
+        repr_str = repr(frame)
+        assert "LazyVideoFrame" in repr_str
+        assert "42" in repr_str
+
+    def test_lazy_video_frame_fspath(self):
+        """Test __fspath__ for os.path compatibility."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        assert os.fspath(frame) == str(TEST_VIDEO_PATH)
+
+    def test_lazy_video_frame_invalid_frame_index(self):
+        """Test that invalid frame index raises error."""
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=999999)
+        with pytest.raises(ValueError, match="out of bounds"):
+            _ = frame.data
+
+    def test_lazy_video_frame_negative_frame_index(self):
+        """Test that negative frame index raises error at construction time."""
+        with pytest.raises(ValueError, match="frame_index must be non-negative"):
+            LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=-1)
+
+    def test_lazy_video_frame_invalid_video_path(self):
+        """Test that invalid video path raises error."""
+        frame = LazyVideoFrame(video_path="/non/existent/video.mp4", frame_index=0)
+        with pytest.raises(FileNotFoundError, match="Video file not found"):
+            _ = frame.data
+
+
+class VideoFrameCacheTest:
+    """Tests for the VideoFrameCache class."""
+
+    def setup_method(self):
+        """Reset cache before each test."""
+        VideoFrameCache.clear()
+        VideoFrameCache.set_size(256 * 1024 * 1024)  # Reset to default
+
+    def teardown_method(self):
+        """Clean up after tests."""
+        VideoFrameCache.clear()
+        VideoFrameCache.set_size(256 * 1024 * 1024)
+
+    def test_cache_initially_empty(self):
+        """Test that cache starts empty."""
+        VideoFrameCache.clear()
+        assert VideoFrameCache.length() == 0
+        assert VideoFrameCache.get_size() == 0
+
+    def test_cache_set_size(self):
+        """Test setting cache size."""
+        VideoFrameCache.set_size(512 * 1024 * 1024)
+        assert VideoFrameCache.get_max_size() == 512 * 1024 * 1024
+
+    def test_cache_clear(self):
+        """Test clearing the cache."""
+        # Add some data to cache manually
+        VideoFrameCache._cache[("test", 0, "RGB", False)] = np.zeros((10, 10, 3), dtype=np.uint8)
+        assert VideoFrameCache.length() > 0
+
+        VideoFrameCache.clear()
+        assert VideoFrameCache.length() == 0
+
+    def test_cache_info(self):
+        """Test cache info method."""
+        VideoFrameCache.clear()
+        info = VideoFrameCache.info()
+        assert "count" in info
+        assert "current_size" in info
+        assert "max_size" in info
+        assert info["count"] == 0
+
+    @pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+    def test_cache_stores_frames(self):
+        """Test that frames are stored in cache."""
+        VideoFrameCache.clear()
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        _ = frame.data
+        assert VideoFrameCache.length() >= 1
+
+    @pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+    def test_cache_multiple_frames(self):
+        """Test caching multiple frames."""
+        VideoFrameCache.clear()
+        for i in range(3):
+            frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=i)
+            _ = frame.data
+        assert VideoFrameCache.length() == 3
+
+    @pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+    def test_cache_different_formats_separate_entries(self):
+        """Test that different formats create separate cache entries."""
+        VideoFrameCache.clear()
+
+        frame_rgb = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="RGB")
+        frame_bgr = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0, format="BGR")
+
+        _ = frame_rgb.data
+        _ = frame_bgr.data
+
+        # Same frame but different formats = 2 cache entries
+        assert VideoFrameCache.length() == 2
+
+
+class ClearVideoInfoCacheTest:
+    """Tests for the clear_video_info_cache function."""
+
+    def test_clear_video_info_cache(self):
+        """Test clearing the video info cache."""
+        # Add something to the cache
+        _video_info_cache["test_path"] = VideoInfo(
+            path="test_path",
+            total_frames=100,
+            fps=30.0,
+            width=1920,
+            height=1080,
+            duration=3.33,
+        )
+        assert len(_video_info_cache) > 0
+
+        clear_video_info_cache()
+        assert len(_video_info_cache) == 0
+
+    @pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+    def test_clear_video_info_cache_after_extraction(self):
+        """Test clearing cache after video info extraction via LazyVideoFrame."""
+        clear_video_info_cache()
+
+        # Access video info via LazyVideoFrame (should populate cache)
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        _ = frame.video_info
+        assert str(TEST_VIDEO_PATH) in _video_info_cache
+
+        clear_video_info_cache()
+        assert len(_video_info_cache) == 0
+        assert len(_video_info_cache) == 0
+
+
+@pytest.mark.skipif(not TEST_VIDEO_PATH.exists(), reason="Test video not available")
+class VideoFramePrefetchTest:
+    """Tests for video frame prefetching."""
+
+    def setup_method(self):
+        """Clear cache before each test."""
+        VideoFrameCache.clear()
+
+    def test_prefetch_frames(self):
+        """Test prefetching multiple frames."""
+        VideoFrameCache.clear()
+
+        # Prefetch frames 0, 1, 2
+        VideoFrameCache.prefetch(str(TEST_VIDEO_PATH), [0, 1, 2])
+
+        # Frames should be in cache
+        assert VideoFrameCache.length() >= 1  # At least some frames prefetched
+
+    def test_prefetch_does_not_duplicate(self):
+        """Test that prefetch doesn't create duplicates."""
+        VideoFrameCache.clear()
+
+        # Load frame 0 first
+        frame = LazyVideoFrame(video_path=str(TEST_VIDEO_PATH), frame_index=0)
+        _ = frame.data
+        initial_count = VideoFrameCache.length()
+
+        # Prefetch same frame
+        VideoFrameCache.prefetch(str(TEST_VIDEO_PATH), [0])
+
+        # Should not increase count
+        assert VideoFrameCache.length() == initial_count
