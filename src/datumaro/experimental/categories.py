@@ -621,12 +621,23 @@ class MaskCategories(Categories):
         return cls(labels=labels, colormap=colormap)
 
     @classmethod
-    def generate(cls, size: int = 255, include_background: bool = True) -> MaskCategories:
+    def generate(
+        cls,
+        size: int = 255,
+        include_background: bool = True,
+        labels: list[str] | None = None,
+    ) -> MaskCategories:
         """
         Generates MaskCategories with the specified size.
 
-        If include_background is True, the result will include the item
-            "0: (0, 0, 0)", which is typically used as a background color.
+        Args:
+            size: The number of colors to generate in the colormap.
+            include_background: If True, the result will include the item
+                "0: (0, 0, 0)", which is typically used as a background color.
+            labels: Optional list of label names to associate with the mask categories.
+
+        Returns:
+            A MaskCategories instance with the generated colormap and optional labels.
         """
         # Import here to avoid circular dependencies
         from datumaro.util.mask_tools import generate_colormap
@@ -638,7 +649,7 @@ class MaskCategories(Categories):
             colormap_data[index] = RgbColor(*(int(x) for x in color)) if isinstance(color, tuple) else color
 
         colormap = Colormap(data=colormap_data)
-        return cls(colormap=colormap)
+        return cls(labels=labels if labels is not None else [], colormap=colormap)
 
     def __getitem__(self, idx: int) -> RgbColor:
         return self.colormap[idx]

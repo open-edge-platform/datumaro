@@ -120,13 +120,10 @@ def load_voc_dataset(
     samples = _load_voc_from_imagesets(root_path, categories)
     # Build categories dict - start with labels
     dataset_categories: dict[str, object] = {"labels": categories}
-    # Always add MaskCategories for class_mask field,
-    # since VocSample schema defines this field and it requires categories
-    # for validation even if the dataset doesn't have segmentation data.
     # Note: instance_mask shares categories with class_mask via categories_from field attribute
-    mask_categories = MaskCategories.generate(size=len(categories.labels), include_background=True)
-    # Add labels to the mask categories for label name lookup
-    mask_categories = MaskCategories(labels=list(categories.labels), colormap=mask_categories.colormap)
+    mask_categories = MaskCategories.generate(
+        size=len(categories.labels), include_background=True, labels=list(categories.labels)
+    )
     dataset_categories["class_mask"] = mask_categories
     dataset = Dataset(VocSample, categories=dataset_categories)
     for sample in samples:
