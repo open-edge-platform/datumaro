@@ -34,7 +34,7 @@ jobs:
         python-version: ["3.10", "3.14"]
     # Use more descriptive job name for better visibility in CI results
     # Overflow labeled runner is equivalent to ubuntu-latest in terms of resources
-    name: pr test (${{ matrix.os == 'overflow' && 'ubuntu-' || matrix.os }}, Python ${{ matrix.python-version }})
+    name: pr test (${{ matrix.os == 'overflow' && 'ubuntu-24.04' || matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
       - name: Harden the runner (audit all outbound calls)
