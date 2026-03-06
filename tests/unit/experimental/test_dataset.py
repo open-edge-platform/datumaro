@@ -136,6 +136,78 @@ def test_append_dataset():
         np.testing.assert_array_equal(s.bbox, e.bbox.reshape(1, -1))
 
 
+def test_append_batch():
+    """Test efficient batch append functionality."""
+
+    class MySample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        label: int = label_field()
+
+    categories = {"label": LabelCategories(labels=("a", "b", "c"))}
+    ds = Dataset(MySample, categories=categories)
+
+    # Create multiple samples
+    samples = [MySample(image=np.array([[[i, i, i]]], dtype=np.uint8), label=i % 3) for i in range(10)]
+
+    # Batch append
+    ds.append_batch(samples)
+
+    # Verify all samples were added
+    assert len(ds) == 10
+
+    # Verify sample values
+    assert ds[0].label == 0
+    assert ds[1].label == 1
+    assert ds[2].label == 2
+    assert ds[9].label == 0  # 9 % 3 = 0
+
+
+def test_append_batch_empty():
+    """Test that empty batch does nothing."""
+
+    class MySample(Sample):
+        label: int = label_field()
+
+    categories = {"label": LabelCategories(labels=("a",))}
+    ds = Dataset(MySample, categories=categories)
+    ds.append_batch([])
+    assert len(ds) == 0
+
+
+def test_append_batch_immutable_transformed_dataset():
+    """Test that append_batch raises error on transformed dataset."""
+
+    class MySample(Sample):
+        label: int = label_field()
+
+    categories = {"label": LabelCategories(labels=("a", "b", "c"))}
+    ds = Dataset(MySample, categories=categories)
+    ds.append_batch([MySample(label=0)])
+
+    # Create a transformed dataset via convert_to_schema
+    converted = ds.convert_to_schema(MySample)
+
+    # Should raise RuntimeError when trying to append to transformed dataset
+    with pytest.raises(RuntimeError, match="immutable"):
+        converted.append_batch([MySample(label=1)])
+
+
+def test_append_batch_validates_categories():
+    """Test that append_batch validates category bounds."""
+
+    class MySample(Sample):
+        label: int = label_field()
+
+    categories = {"label": LabelCategories(labels=("a", "b"))}  # Only 2 labels (indices 0, 1)
+    ds = Dataset(MySample, categories=categories)
+
+    # Create sample with out-of-bounds label
+    samples = [MySample(label=5)]  # Index 5 is out of bounds
+
+    with pytest.raises(ValueError, match="exceed"):
+        ds.append_batch(samples)
+
+
 def test_filter_by_subset_raises_without_subset_field():
     class NoSubsetSample(Sample):
         image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")

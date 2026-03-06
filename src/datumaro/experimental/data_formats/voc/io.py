@@ -107,8 +107,8 @@ def load_voc_dataset(
             "class_mask": mask_categories,
         }
         dataset = Dataset(VocSample, categories=dataset_categories)
-        for sample in samples:
-            dataset.append(sample)
+        if samples:
+            dataset.append_batch(samples)
         logger.info("[VOC] Loaded %d samples", len(dataset))
         return dataset
     # Standard VOC layout
@@ -126,8 +126,8 @@ def load_voc_dataset(
     )
     dataset_categories["class_mask"] = mask_categories
     dataset = Dataset(VocSample, categories=dataset_categories)
-    for sample in samples:
-        dataset.append(sample)
+    if samples:
+        dataset.append_batch(samples)
     logger.info("[VOC] Loaded %d samples", len(dataset))
     return dataset
 

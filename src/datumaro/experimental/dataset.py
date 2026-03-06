@@ -336,6 +336,53 @@ class Dataset(Generic[DType]):
         else:
             self.df.extend(new_row)
 
+    def append_batch(self, samples: Sequence[DType]) -> None:
+        """
+        Add multiple samples to the dataset at once.
+
+        Args:
+            samples: A sequence of sample instances to add to the dataset
+
+        Raises:
+            RuntimeError: If the dataset has transforms applied (immutable)
+            ValueError: If any sample has category values out of range
+
+        Example:
+            >>> samples = [MySample(image=img1, label=0), MySample(image=img2, label=1)]
+            >>> dataset.append_batch(samples)
+        """
+        if not samples:
+            return
+
+        if self._transforms is not None:
+            raise RuntimeError("Transformed datasets are immutable.")
+
+        # Get the target schema for casting
+        target_schema = dict(self.df.schema)
+
+        # Build all rows, casting each to target schema to ensure compatibility
+        row_dfs: list[pl.DataFrame] = []
+        for sample in samples:
+            series_data: dict[str, pl.Series] = {}
+            for key, attr_info in self._schema.attributes.items():
+                value = getattr(sample, key)
+                series_data.update(attr_info.field.to_polars(key, value))
+            # Cast each row to target schema immediately to ensure compatibility
+            row_df = pl.DataFrame(series_data).cast(target_schema)  # type: ignore
+            row_dfs.append(row_df)
+
+        # Concatenate all rows
+        new_rows = pl.concat(row_dfs)
+
+        # Validate fields with categories have integers that refer to existing categories
+        self._validate_fields_with_categories(df=new_rows)
+
+        # Append to dataset
+        if any(dtype == pl.Object for dtype in self.df.schema.values()):
+            self.df = self.df.vstack(new_rows)
+        else:
+            self.df.extend(new_rows)
+
     def slice(self, offset: int, length: int | None = None) -> Dataset[DType]:
         """
         Create a new dataset that is a slice of this dataset.

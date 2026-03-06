@@ -279,6 +279,7 @@ def test_bbox_tiling():
                     [48, 48, 52, 52],
                 ]
             ],
+            "bboxes_canvas_size": [None],  # canvas_size column for tv_tensors support
         },
         schema=polars_schema,
     )
