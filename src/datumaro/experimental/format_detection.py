@@ -106,6 +106,50 @@ def is_yolo_format(input_dir: Path) -> bool:
     return (input_dir / "images").is_dir() and (input_dir / "labels").is_dir()
 
 
+def is_voc_format(input_dir: Path) -> bool:
+    """
+    Detect if a directory contains a Pascal VOC-format dataset.
+
+    Pascal VOC format is identified by:
+    - JPEGImages/ directory AND (Annotations/ or ImageSets/ directory)
+    - OR labelmap.txt file with VOC structure
+
+    Args:
+        input_dir: Path to the directory to check
+
+    Returns:
+        True if the directory contains a VOC-format dataset
+    """
+    # Check for standard VOC directory structure
+    jpeg_images_dir = input_dir / "JPEGImages"
+    annotations_dir = input_dir / "Annotations"
+    imagesets_dir = input_dir / "ImageSets"
+
+    if jpeg_images_dir.is_dir() and (annotations_dir.is_dir() or imagesets_dir.is_dir()):
+        return True
+
+    # Check for labelmap.txt with VOC structure
+    labelmap_file = input_dir / "labelmap.txt"
+    return labelmap_file.exists() and _is_voc_labelmap(labelmap_file)
+
+
+def _is_voc_labelmap(labelmap_path: Path) -> bool:
+    """Check if a file has VOC labelmap structure (name:color:parts:actions)."""
+    try:
+        with open(labelmap_path) as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                # VOC labelmap has format: name:color:parts:actions
+                parts = line.split(":")
+                if len(parts) == 4:
+                    return True
+    except OSError:
+        pass
+    return False
+
+
 def is_datumaro_format(input_dir: Path) -> bool:
     """
     Detect if a directory contains a Datumaro-exported dataset.
@@ -162,12 +206,13 @@ def detect_dataset_format(input_dir: Path) -> DataFormat:
     2. Legacy Datumaro
     3. COCO (JSON files with images/annotations structure)
     4. YOLO (data.yaml, obj.names, or directory structure)
+    5. VOC (JPEGImages/, Annotations/, ImageSets/ directories)
 
     Args:
         input_dir: Path to the directory to check
 
     Returns:
-        DataFormat enum value: DATUMARO, DATUMARO_LEGACY, COCO, YOLO, or UNKNOWN
+        DataFormat enum value: DATUMARO, DATUMARO_LEGACY, COCO, YOLO, VOC, or UNKNOWN
     """
     if is_datumaro_format(input_dir):
         return DataFormat.DATUMARO
@@ -177,6 +222,8 @@ def detect_dataset_format(input_dir: Path) -> DataFormat:
         return DataFormat.COCO
     if is_yolo_format(input_dir):
         return DataFormat.YOLO
+    if is_voc_format(input_dir):
+        return DataFormat.VOC
     return DataFormat.UNKNOWN
 
 
@@ -289,3 +336,24 @@ def import_yolo_dataset(input_dir: Path) -> Dataset:
     from datumaro.experimental.data_formats.yolo.io import load_yolo_dataset
 
     return load_yolo_dataset(root_dir=str(input_dir))
+
+
+def import_voc_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a Pascal VOC-format dataset from a directory.
+
+    Supports standard VOC directory structure with:
+    - JPEGImages/ for images
+    - Annotations/ for XML annotations
+    - ImageSets/Main/ for train/val/test splits
+
+    Args:
+        input_dir: Path to the VOC dataset directory
+
+    Returns:
+        Dataset containing VocSample instances
+    """
+    # Import inline to avoid circular imports
+    from datumaro.experimental.data_formats.voc.io import load_voc_dataset
+
+    return load_voc_dataset(root_dir=str(input_dir))

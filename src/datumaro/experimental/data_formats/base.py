@@ -20,6 +20,7 @@ class DataFormat(Enum):
     DATUMARO = "DATUMARO"
     DATUMARO_LEGACY = "DATUMARO_LEGACY"
     COCO = "COCO"
+    VOC = "VOC"
     YOLO = "YOLO"
     YOLO_ULTRALYTICS = "YOLO_ULTRALYTICS"
     UNKNOWN = "UNKNOWN"
@@ -37,8 +38,8 @@ def load_dataset(
     Args:
         data_format: The format of the dataset to load.
         images_dir_path: Path to image directory (str) or dict mapping subset names to paths.
-        annotations_path: Path to annotations file (str) or dict mapping subset names to paths.
-        root_dir: Root directory for YOLO format datasets.
+        annotations_path: Path to annotations file/directory (str) or dict mapping subset names to paths.
+        root_dir: Root directory for YOLO or VOC format datasets.
 
     Returns:
         Dataset containing the loaded samples.
@@ -56,6 +57,20 @@ def load_dataset(
             images_dir_path=images_dir_path,
             annotations_path=annotations_path,
         )
+    if data_format == DataFormat.VOC:
+        from datumaro.experimental.data_formats.voc.io import load_voc_dataset
+
+        # VOC supports either root_dir (standard layout) or separate paths
+        if root_dir is not None:
+            return load_voc_dataset(root_dir=root_dir)
+        if images_dir_path is not None:
+            # For simple layout, annotations_path should be a directory path
+            annotations_dir = annotations_path if isinstance(annotations_path, str) else None
+            return load_voc_dataset(
+                images_dir_path=images_dir_path if isinstance(images_dir_path, str) else None,
+                annotations_dir_path=annotations_dir,
+            )
+        raise ValueError("root_dir or images_dir_path is required for VOC format")
     if data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
         from datumaro.experimental.data_formats.yolo.io import load_yolo_dataset
 
@@ -147,6 +162,12 @@ def _save_dataset_to_dir(
             images_dir_path=os.path.join(output_dir, "images"),
             annotations_path=os.path.join(output_dir, "annotations.json"),
         )
+    elif data_format == DataFormat.VOC:
+        from datumaro.experimental.data_formats.voc.io import save_voc_dataset
+        from datumaro.experimental.data_formats.voc.sample import VocSample
+
+        dataset = dataset.convert_to_schema(VocSample.infer_schema())
+        save_voc_dataset(dataset, root_dir=output_dir)
     elif data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
         from datumaro.experimental.data_formats.yolo.io import save_yolo_dataset
         from datumaro.experimental.data_formats.yolo.sample import YoloSample

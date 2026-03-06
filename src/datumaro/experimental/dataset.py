@@ -254,6 +254,7 @@ class Dataset(Generic[DType]):
         serialization. This method extracts Object columns as Python lists before pickling.
         """
         state = self.__dict__.copy()
+
         return prepare_dataframe_for_pickle(self.df, "df", state)
 
     def __setstate__(self, state: dict[str, Any]) -> None:
@@ -263,6 +264,7 @@ class Dataset(Generic[DType]):
         Reconstructs Object columns from the Python lists stored during pickling.
         """
         state["df"] = restore_dataframe_from_pickle(state, "df")
+
         self.__dict__.update(state)
 
     @classmethod
@@ -562,7 +564,10 @@ class Dataset(Generic[DType]):
         # Early return if schemas are already compatible
         if has_schema(self, target_dtype_or_schema):
             # Same schema but mismatching dtype.
-            return Dataset.from_dataframe(self.df, target_dtype_or_schema)
+            return Dataset.from_dataframe(
+                self.df,
+                target_dtype_or_schema,
+            )
 
         # Find the optimal conversion path using A* search
         conversion_paths, inferred_categories = find_conversion_path(self._schema, target_schema)

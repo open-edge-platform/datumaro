@@ -219,7 +219,7 @@ class InstanceMaskCallableField(Field):
         - W is the mask width
         Each mask should be a binary mask for a single instance.
         """
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
@@ -231,7 +231,7 @@ class InstanceMaskCallableField(Field):
         one for each instance in the image.
         """
         value = df[name][row_index]
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
 
@@ -275,10 +275,13 @@ class MaskCallableField(Field):
     Attributes:
         semantic: String tag describing the callable's purpose
         dtype: Polars data type for mask values (e.g., pl.UInt8(), pl.Boolean())
+        categories_from: Optional name of another field from which to share categories.
+            When set, this field will use the same categories as the referenced field.
     """
 
     semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.UInt8)
+    categories_from: str | None = None
 
     def __post_init__(self) -> None:
         super().__post_init__()
@@ -302,7 +305,7 @@ class MaskCallableField(Field):
         - W is the mask width
         The array should be a binary or category mask.
         """
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
@@ -314,7 +317,7 @@ class MaskCallableField(Field):
         a binary or category mask.
         """
         value = df[name][row_index]
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
 
@@ -322,13 +325,18 @@ class MaskCallableField(Field):
         return MaskCategories
 
 
-def mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
+def mask_callable_field(
+    dtype: Any = pl.Boolean(), semantic: str = "default", categories_from: str | None = None
+) -> Any:
     """
     Create a MaskCallableField for storing mask-generating callables.
 
     Args:
         dtype: Polars data type for mask values (defaults to pl.Boolean())
         semantic: String tag describing the mask purpose (optional)
+        categories_from: Optional name of another field from which to share categories.
+            When set, this field will use the same categories as the referenced field,
+            avoiding the need to specify duplicate categories.
 
     Returns:
         MaskCallableField instance configured with the given parameters
@@ -339,5 +347,9 @@ def mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") ->
         ...     return np.array([[1, 1, 0], [1, 1, 0], [0, 0, 0]], dtype=bool)
         >>> field = mask_callable_field()
         >>> sample = Sample(mask=generate_mask)
+
+        # Sharing categories with another field:
+        >>> class_mask = mask_callable_field(semantic="class_mask")
+        >>> instance_mask = mask_callable_field(semantic="instance_mask", categories_from="class_mask")
     """
-    return MaskCallableField(semantic=semantic, dtype=dtype)
+    return MaskCallableField(semantic=semantic, dtype=dtype, categories_from=categories_from)
