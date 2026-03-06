@@ -17,4 +17,10 @@ from .media import (
 )
 from .schema import AttributeInfo, Schema
 from .tiling import tilers
-from .type_registry import register_from_polars_converter, register_numpy_converter
+from .type_registry import (
+    create_tv_tensors_bounding_boxes,
+    get_tv_tensors_canvas_size,
+    is_tv_tensors_bounding_boxes,
+    register_from_polars_converter,
+    register_numpy_converter,
+)

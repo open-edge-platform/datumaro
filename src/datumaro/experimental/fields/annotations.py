@@ -8,7 +8,12 @@ import polars as pl
 
 from datumaro.experimental.categories import BaseLabelCategories, Categories
 from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
-from datumaro.experimental.type_registry import from_polars_data, to_numpy
+from datumaro.experimental.type_registry import (
+    create_tv_tensors_bounding_boxes,
+    from_polars_data,
+    get_tv_tensors_canvas_size,
+    to_numpy,
+)
 
 
 @dataclass(frozen=True)
@@ -17,7 +22,8 @@ class BBoxField(Field):
     Represents a bounding box field with format and normalization options.
 
     Handles bounding box data with support for different coordinate formats
-    and optional normalization to [0,1] range.
+    and optional normalization to [0,1] range. Also supports torchvision
+    tv_tensors.BoundingBoxes with automatic canvas_size preservation.
 
     Attributes:
         semantic: String tag describing the bounding box purpose
@@ -32,11 +38,23 @@ class BBoxField(Field):
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        """Generate schema for bounding box as list of 4-element arrays."""
-        return {name: pl.List(pl.Array(self.dtype, 4))}
+        """Generate schema for bounding box as list of 4-element arrays.
+
+        Also includes a canvas_size column for tv_tensors.BoundingBoxes support.
+        """
+        return {
+            name: pl.List(pl.Array(self.dtype, 4)),
+            f"{name}_canvas_size": pl.List(pl.Int32()),
+        }
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
-        """Convert bounding box tensor to Polars list format."""
+        """Convert bounding box tensor to Polars list format.
+
+        If value is a tv_tensors.BoundingBoxes, also stores canvas_size.
+        """
+        # Extract canvas_size if this is a tv_tensors.BoundingBoxes
+        canvas_size = get_tv_tensors_canvas_size(value)
+
         numpy_value = to_numpy(value, self.dtype)
 
         if numpy_value is not None:
@@ -44,17 +62,50 @@ class BBoxField(Field):
         else:
             data = [None]
 
+        # Store canvas_size as a list [height, width] or None
+        canvas_size_data: Any = [list(canvas_size)] if canvas_size is not None else [None]
+
         return {
             name: pl.Series(
                 name,
                 data,
                 dtype=pl.List(pl.Array(self.dtype, 4)),
-            )
+            ),
+            f"{name}_canvas_size": pl.Series(
+                f"{name}_canvas_size",
+                canvas_size_data,
+                dtype=pl.List(pl.Int32()),
+            ),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
-        """Reconstruct bounding box tensor from Polars data."""
+        """Reconstruct bounding box tensor from Polars data.
+
+        If target_type is tv_tensors.BoundingBoxes and canvas_size is available,
+        returns a proper tv_tensors.BoundingBoxes instance.
+        """
         polars_data = df[name][row_index]
+
+        # Check if target type is tv_tensors.BoundingBoxes
+        try:
+            from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
+
+            if target_type is tv_tensors.BoundingBoxes:
+                # Try to get canvas_size from the stored column
+                canvas_size_col = f"{name}_canvas_size"
+                if canvas_size_col in df.columns:
+                    canvas_size_data = df[canvas_size_col][row_index]
+                    if canvas_size_data is not None:
+                        canvas_size = tuple(canvas_size_data.to_list())
+                        return create_tv_tensors_bounding_boxes(polars_data, canvas_size, self.format)  # type: ignore
+                # If no canvas_size stored, raise an error
+                raise ValueError(
+                    "Cannot reconstruct tv_tensors.BoundingBoxes without canvas_size. "
+                    "Use np.ndarray as target type or ensure canvas_size was stored."
+                )
+        except ImportError:
+            pass
+
         return from_polars_data(polars_data, target_type)
 
 

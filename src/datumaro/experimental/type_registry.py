@@ -340,6 +340,71 @@ try:
 except ImportError:
     pass
 
+
+def is_tv_tensors_bounding_boxes(value: Any) -> bool:
+    """Check if value is a tv_tensors.BoundingBoxes instance.
+
+    Args:
+        value: The value to check
+
+    Returns:
+        True if value is a tv_tensors.BoundingBoxes instance, False otherwise
+    """
+    try:
+        from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
+
+        return isinstance(value, tv_tensors.BoundingBoxes)
+    except ImportError:
+        return False
+
+
+def get_tv_tensors_canvas_size(value: Any) -> tuple[int, int] | None:
+    """Extract canvas_size from tv_tensors.BoundingBoxes.
+
+    Args:
+        value: A tv_tensors.BoundingBoxes instance
+
+    Returns:
+        The canvas_size tuple (height, width) or None if not a BoundingBoxes
+    """
+    if is_tv_tensors_bounding_boxes(value):
+        return value.canvas_size  # type: ignore
+    return None
+
+
+def create_tv_tensors_bounding_boxes(data: Any, canvas_size: tuple[int, int], bbox_format: str) -> Any:
+    """Create tv_tensors.BoundingBoxes from numpy data.
+
+    Args:
+        data: The bounding box data (numpy array or list)
+        canvas_size: The canvas size as (height, width)
+        bbox_format: The bounding box format string (e.g., "x1y1x2y2", "xywh")
+
+    Returns:
+        A tv_tensors.BoundingBoxes instance, or the original data if torchvision is not available
+    """
+    try:
+        import torch  # pyright: ignore[reportMissingImports]
+        from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
+
+        # Map format string to BoundingBoxFormat enum
+        format_map = {
+            "x1y1x2y2": tv_tensors.BoundingBoxFormat.XYXY,
+            "xyxy": tv_tensors.BoundingBoxFormat.XYXY,
+            "xywh": tv_tensors.BoundingBoxFormat.XYWH,
+            "cxcywh": tv_tensors.BoundingBoxFormat.CXCYWH,
+        }
+        tv_format = format_map.get(bbox_format.lower(), tv_tensors.BoundingBoxFormat.XYXY)
+
+        return tv_tensors.BoundingBoxes(
+            torch.tensor(data),
+            format=tv_format,
+            canvas_size=canvas_size,
+        )
+    except ImportError:
+        return data
+
+
 # Register PIL Image converters if available
 try:
     from PIL import Image
