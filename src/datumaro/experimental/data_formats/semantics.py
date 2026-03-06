@@ -14,3 +14,9 @@ IMAGE_ID = "image_id"  # NumericField | stores the image id
 AREAS = "areas"  # NumericField | stores the area of an annotation
 ISCROWD = "iscrowd"  # BoolField | stores whether an annotation is a crowd
 CAPTION_GROUP_IDS = "caption_group_ids"  # NumericField | stores group ids for captions to link multiple captions
+
+# VOC semantics
+DIFFICULT = "difficult"  # BoolField | stores whether an annotation is difficult to detect
+TRUNCATED = "truncated"  # BoolField | stores whether an object is truncated (partially visible)
+OCCLUDED = "occluded"  # BoolField | stores whether an object is occluded by another object
+POSE = "pose"  # StringField | stores the pose of an object (e.g., "Left", "Right", "Frontal", "Rear")
