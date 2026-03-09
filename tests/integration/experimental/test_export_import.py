@@ -2270,3 +2270,9 @@ def test_export_dataset_raises_error_if_output_already_exists(tmp_path):
     assert (output_dir_zip / "dataset.zip").exists()
     with pytest.raises(FileExistsError, match="Output file already exists"):
         export_dataset(dataset, output_dir_zip, export_images=ExportMode.SKIP, as_zip=True)
+
+    # Zip export without .zip suffix where output_path is an existing file (not a directory)
+    file_path = tmp_path / "existing_file"
+    file_path.touch()
+    with pytest.raises(FileExistsError, match="Output path already exists as a file"):
+        export_dataset(dataset, file_path, export_images=ExportMode.SKIP, as_zip=True)

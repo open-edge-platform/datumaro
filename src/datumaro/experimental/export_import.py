@@ -525,6 +525,11 @@ def _setup_work_directory(output_path: Path, as_zip: bool) -> tuple[Path, Path |
     """
     if as_zip:
         if output_path.suffix != ".zip":
+            if output_path.exists() and not output_path.is_dir():
+                raise FileExistsError(
+                    f"Output path already exists as a file: '{output_path}'. "
+                    "Please remove it or specify a different output path."
+                )
             zip_path = output_path / "dataset.zip"
         else:
             zip_path = output_path
