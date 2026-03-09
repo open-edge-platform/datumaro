@@ -245,6 +245,10 @@ def _load_subset_into_dataset(
     for idx, img in enumerate(images, start=1):
         if idx % 1000 == 0:
             logger.info("[COCO] Subset '%s': processed %d/%d images", subset, idx, num_images)
+            # Flush samples in chunks to keep memory bounded
+            if samples:
+                dataset.append_batch(samples)
+                samples = []
         sample = _assemble_sample_from_image_record(
             images_dir=images_dir,
             img=img,
@@ -256,7 +260,8 @@ def _load_subset_into_dataset(
         )
         samples.append(sample)
 
-    dataset.append_batch(samples)
+    if samples:
+        dataset.append_batch(samples)
 
     logger.info("[COCO] Finished subset '%s' with %d samples", subset, num_images)
 

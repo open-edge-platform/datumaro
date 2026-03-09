@@ -310,6 +310,21 @@ class Dataset(Generic[DType]):
             schema.update(attr_info.field.to_polars_schema(key))
         return pl.Schema(schema)
 
+    def _expand_df_with_auxiliary_columns(self, new_df: pl.DataFrame) -> None:
+        """Expand the main DataFrame with auxiliary columns from new_df that are not in the schema.
+
+        Some fields (e.g., BBoxField) produce auxiliary columns (like canvas_size)
+        that are not part of the required schema but are needed for full reconstruction.
+        This method adds those columns to the main DataFrame (backfilled with nulls)
+        so that vstack/extend can succeed.
+        """
+        for col_name in new_df.columns:
+            if col_name not in self.df.columns:
+                # Add a null-filled column with the same dtype to the main DataFrame
+                self.df = self.df.with_columns(
+                    pl.lit(None).cast(new_df[col_name].dtype).alias(col_name),
+                )
+
     def append(self, sample: DType) -> None:
         """
         Add a new sample to the dataset.
@@ -325,7 +340,12 @@ class Dataset(Generic[DType]):
             value = getattr(sample, key)
             series_data.update(attr_info.field.to_polars(key, value))
 
-        new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
+        new_row = pl.DataFrame(series_data)
+
+        # Add any auxiliary columns from new_row that are missing in the main DataFrame
+        self._expand_df_with_auxiliary_columns(new_row)
+
+        new_row = new_row.select(self.df.columns).cast(dict(self.df.schema))  # type: ignore
 
         # Validate fields with categories have integers that refer to existing categories
         self._validate_fields_with_categories(df=new_row)
@@ -357,22 +377,34 @@ class Dataset(Generic[DType]):
         if self._transforms is not None:
             raise RuntimeError("Transformed datasets are immutable.")
 
-        # Get the target schema for casting
-        target_schema = dict(self.df.schema)
-
-        # Build all rows, casting each to target schema to ensure compatibility
-        row_dfs: list[pl.DataFrame] = []
+        # Build all rows in a column-wise fashion to avoid per-sample DataFrame overhead
+        column_data: dict[str, list[pl.Series]] = {}
         for sample in samples:
-            series_data: dict[str, pl.Series] = {}
             for key, attr_info in self._schema.attributes.items():
                 value = getattr(sample, key)
-                series_data.update(attr_info.field.to_polars(key, value))
-            # Cast each row to target schema immediately to ensure compatibility
-            row_df = pl.DataFrame(series_data).cast(target_schema)  # type: ignore
-            row_dfs.append(row_df)
+                field_series_map = attr_info.field.to_polars(key, value)
+                for col_name, series in field_series_map.items():
+                    if col_name not in column_data:
+                        column_data[col_name] = [series]
+                    else:
+                        column_data[col_name].append(series)
 
-        # Concatenate all rows
-        new_rows = pl.concat(row_dfs)
+        # Concatenate series per column and build a single DataFrame, then cast once
+        combined_series: dict[str, pl.Series] = {}
+        for col_name, series_list in column_data.items():
+            if len(series_list) == 1:
+                combined_series[col_name] = series_list[0]
+            else:
+                # Use vstack via single-column DataFrames to handle type relaxation
+                # (e.g., Array[u32, N] vs List[u32] for variable-length labels)
+                col_dfs = [s.to_frame() for s in series_list]
+                combined_series[col_name] = pl.concat(col_dfs, how="vertical_relaxed").to_series()
+        new_rows = pl.DataFrame(combined_series)
+
+        # Add any auxiliary columns from new_rows that are missing in the main DataFrame
+        self._expand_df_with_auxiliary_columns(new_rows)
+
+        new_rows = new_rows.select(self.df.columns).cast(dict(self.df.schema))  # type: ignore
 
         # Validate fields with categories have integers that refer to existing categories
         self._validate_fields_with_categories(df=new_rows)

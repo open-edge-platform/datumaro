@@ -40,11 +40,13 @@ class BBoxField(Field):
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for bounding box as list of 4-element arrays.
 
-        Also includes a canvas_size column for tv_tensors.BoundingBoxes support.
+        The associated ``*_canvas_size`` column used for tv_tensors.BoundingBoxes
+        support is treated as an optional/auxiliary column and is therefore
+        not part of the required schema. This keeps older DataFrames that only
+        contain the bounding box column compatible.
         """
         return {
             name: pl.List(pl.Array(self.dtype, 4)),
-            f"{name}_canvas_size": pl.List(pl.Int32()),
         }
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
@@ -96,7 +98,11 @@ class BBoxField(Field):
                 if canvas_size_col in df.columns:
                     canvas_size_data = df[canvas_size_col][row_index]
                     if canvas_size_data is not None:
-                        canvas_size = tuple(canvas_size_data.to_list())
+                        # Handle list, tuple, pl.Series, and np.ndarray robustly
+                        if hasattr(canvas_size_data, "to_list"):
+                            canvas_size = tuple(canvas_size_data.to_list())
+                        else:
+                            canvas_size = tuple(canvas_size_data)
                         return create_tv_tensors_bounding_boxes(polars_data, canvas_size, self.format)  # type: ignore
                 # If no canvas_size stored, raise an error
                 raise ValueError(

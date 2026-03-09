@@ -396,8 +396,19 @@ def create_tv_tensors_bounding_boxes(data: Any, canvas_size: tuple[int, int], bb
         }
         tv_format = format_map.get(bbox_format.lower(), tv_tensors.BoundingBoxFormat.XYXY)
 
+        # Normalize data to a format torch.tensor can handle
+        if hasattr(data, "to_numpy"):
+            # Polars Series or similar
+            normalized = np.array(data.to_numpy())
+        elif hasattr(data, "to_list"):
+            normalized = data.to_list()
+        else:
+            normalized = data
+
+        tensor_data = torch.as_tensor(np.array(normalized)).reshape(-1, 4)
+
         return tv_tensors.BoundingBoxes(
-            torch.tensor(data),
+            tensor_data,
             format=tv_format,
             canvas_size=canvas_size,
         )

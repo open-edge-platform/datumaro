@@ -212,7 +212,6 @@ def test_bbox_field_polars_schema():
 
     expected = {
         "bbox": pl.List(pl.Array(pl.Float32, 4)),
-        "bbox_canvas_size": pl.List(pl.Int32()),
     }
     assert schema == expected
 
@@ -357,8 +356,8 @@ def test_bbox_field_polars_conversion():
 
 def test_bbox_field_tv_tensors_bounding_boxes():
     """Test BBoxField with tv_tensors.BoundingBoxes input and output."""
-    import torch
-    from torchvision import tv_tensors
+    torch = pytest.importorskip("torch")
+    tv_tensors = pytest.importorskip("torchvision.tv_tensors")
 
     field = cast("BBoxField", bbox_field(dtype=pl.Float32(), format="x1y1x2y2"))
 
@@ -397,8 +396,8 @@ def test_bbox_field_tv_tensors_bounding_boxes():
 
 def test_bbox_field_tv_tensors_to_numpy():
     """Test BBoxField with tv_tensors.BoundingBoxes input but numpy output."""
-    import torch
-    from torchvision import tv_tensors
+    torch = pytest.importorskip("torch")
+    tv_tensors = pytest.importorskip("torchvision.tv_tensors")
 
     field = cast("BBoxField", bbox_field(dtype=pl.Float32(), format="x1y1x2y2"))
 
