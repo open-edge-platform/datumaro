@@ -133,7 +133,16 @@ image_sample = MediaSample(
 
 video_sample = MediaSample(
     media=LazyVideoFrame("/path/to/video.mp4", frame_index=0),
-    media_info=MediaInfo(width=1920, height=1080),
+    media_info=MediaInfo(
+        width=1920,
+        height=1080,
+        fps=30.0,
+        total_frames=1000,
+        duration=33.33,
+        codec="h264",
+        frame_index=0,
+        source_path="/path/to/video.mp4",
+    ),
 )
 ```
 
