@@ -519,13 +519,31 @@ def _setup_work_directory(output_path: Path, as_zip: bool) -> tuple[Path, Path |
 
     Returns:
         Tuple of (final_output_path, temp_dir, work_dir)
+
+    Raises:
+        FileExistsError: If the output path already exists (directory or zip file)
     """
     if as_zip:
         if output_path.suffix != ".zip":
-            output_path.mkdir(parents=True, exist_ok=True)
-            output_path = output_path / "dataset.zip"
+            if output_path.exists() and not output_path.is_dir():
+                raise FileExistsError(
+                    f"Output path already exists as a file: '{output_path}'. "
+                    "Please remove it or specify a different output path."
+                )
+            zip_path = output_path / "dataset.zip"
+        else:
+            zip_path = output_path
+        if zip_path.exists():
+            raise FileExistsError(
+                f"Output file already exists: '{zip_path}'. Please remove it or specify a different output path."
+            )
+        zip_path.parent.mkdir(parents=True, exist_ok=True)
         temp_dir = Path(tempfile.mkdtemp())
-        return output_path, temp_dir, temp_dir
+        return zip_path, temp_dir, temp_dir
+    if output_path.exists():
+        raise FileExistsError(
+            f"Output directory already exists: '{output_path}'. Please remove it or specify a different output path."
+        )
     output_path.mkdir(parents=True, exist_ok=True)
     return output_path, None, output_path
 
