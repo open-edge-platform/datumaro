@@ -2235,3 +2235,38 @@ def test_import_dataset_auto_detects_legacy_datumaro_format(tmp_path):
 
     # Verify the dataset was loaded and converted
     assert len(dataset) >= 1  # Should have at least one sample
+
+
+def test_export_dataset_raises_error_if_output_already_exists(tmp_path):
+    """Test that export_dataset raises FileExistsError when the output already exists."""
+    import shutil
+
+    class SimpleSample(Sample):
+        label: int = label_field()
+
+    dataset = Dataset(SimpleSample, categories={"label": LABEL_CATEGORIES})
+    dataset.append(SimpleSample(label=1))
+
+    # Directory export: second call should fail
+    output_dir = tmp_path / "export_dir"
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
+    with pytest.raises(FileExistsError, match="Output directory already exists"):
+        export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
+
+    # After removing the directory, export should succeed again
+    shutil.rmtree(output_dir)
+    export_dataset(dataset, output_dir, export_images=ExportMode.SKIP, as_zip=False)
+    assert (output_dir / METADATA_FILE).exists()
+
+    # Zip export with .zip suffix: second call should fail
+    output_zip = tmp_path / "export.zip"
+    export_dataset(dataset, output_zip, export_images=ExportMode.SKIP, as_zip=True)
+    with pytest.raises(FileExistsError, match="Output file already exists"):
+        export_dataset(dataset, output_zip, export_images=ExportMode.SKIP, as_zip=True)
+
+    # Zip export without .zip suffix (creates dataset.zip inside dir): second call should fail
+    output_dir_zip = tmp_path / "export_zip_dir"
+    export_dataset(dataset, output_dir_zip, export_images=ExportMode.SKIP, as_zip=True)
+    assert (output_dir_zip / "dataset.zip").exists()
+    with pytest.raises(FileExistsError, match="Output file already exists"):
+        export_dataset(dataset, output_dir_zip, export_images=ExportMode.SKIP, as_zip=True)
