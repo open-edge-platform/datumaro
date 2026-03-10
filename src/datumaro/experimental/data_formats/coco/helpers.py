@@ -529,14 +529,19 @@ def _save_subset(
     written: dict[str, Path] = {}
 
     next_image_id = 1
+    assigned_ids: dict[int, int] = {}  # maps id(sample) -> assigned image_id
 
     def get_or_assign_image_id(s: CocoSample) -> int:
         nonlocal next_image_id
         img_id = s.image_id
         if isinstance(img_id, int):
             return img_id
+        sample_key = id(s)
+        if sample_key in assigned_ids:
+            return assigned_ids[sample_key]
         assigned = next_image_id
         next_image_id += 1
+        assigned_ids[sample_key] = assigned
         return assigned
 
     subset_dir = root_path / f"{subset_name(subset)}{version}"
@@ -599,14 +604,19 @@ def _save_subset_flexible(
     annotations_file.parent.mkdir(parents=True, exist_ok=True)
 
     next_image_id = 1
+    assigned_ids: dict[int, int] = {}  # maps id(sample) -> assigned image_id
 
     def get_or_assign_image_id(s: CocoSample) -> int:
         nonlocal next_image_id
         img_id = s.image_id
         if isinstance(img_id, int):
             return img_id
+        sample_key = id(s)
+        if sample_key in assigned_ids:
+            return assigned_ids[sample_key]
         assigned = next_image_id
         next_image_id += 1
+        assigned_ids[sample_key] = assigned
         return assigned
 
     # Build images section and copy images

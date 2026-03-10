@@ -340,3 +340,36 @@ def test_prepare_categories_and_save_subset(tmp_path: Path):
     assert "instances_train" in written
     content = json.loads(written["instances_train"].read_text())
     assert content["annotations"][0]["bbox"] == pytest.approx([1.0, 2.0, 3.0, 4.0])
+
+
+def test_save_subset_image_id_none_consistency(tmp_path: Path):
+    """Annotation image_ids must match image ids when samples have image_id=None.
+
+    Regression test: previously the auto-assigned counter was not cached so
+    _build_and_copy_images_section assigned ids 1..N while
+    _serialize_annotations_for_subset assigned ids N+1..2N.
+    """
+    samples = [_make_sample(image=str(tmp_path / f"img{i}.jpg"), image_id=None) for i in range(3)]
+    for i in range(3):
+        (tmp_path / f"img{i}.jpg").write_bytes(b"img")
+
+    cats = [{"id": 1, "name": "a", "supercategory": ""}]
+    to_cat_id = lambda idx: 1  # noqa: E731
+
+    annotations_dir = tmp_path / "ann"
+    annotations_dir.mkdir(parents=True, exist_ok=True)
+    written = _save_subset(
+        root_path=tmp_path,
+        annotations_path=annotations_dir,
+        version="2017",
+        subset=Subset.TRAINING,
+        samples=samples,
+        categories_coco=cats,
+        to_category_id=to_cat_id,
+    )
+    content = json.loads(written["instances_train"].read_text())
+    image_ids = {img["id"] for img in content["images"]}
+    ann_image_ids = {ann["image_id"] for ann in content["annotations"]}
+    assert ann_image_ids.issubset(image_ids), (
+        f"Annotation image_ids {ann_image_ids} not a subset of image ids {image_ids}"
+    )
