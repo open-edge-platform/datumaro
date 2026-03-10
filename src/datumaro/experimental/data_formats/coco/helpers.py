@@ -528,18 +528,27 @@ def _save_subset(
 
     written: dict[str, Path] = {}
 
-    next_image_id = 1
+    # Collect existing explicit image IDs to avoid collisions with auto-assigned IDs.
+    existing_image_ids = {s.image_id for s in samples if isinstance(s.image_id, int)}
+    next_image_id = (max(existing_image_ids) + 1) if existing_image_ids else 1
+    used_image_ids = set(existing_image_ids)
     assigned_ids: dict[int, int] = {}  # maps id(sample) -> assigned image_id
 
     def get_or_assign_image_id(s: CocoSample) -> int:
-        nonlocal next_image_id
+        nonlocal next_image_id, used_image_ids
         img_id = s.image_id
         if isinstance(img_id, int):
+            # Track explicit IDs to prevent future auto-assigned collisions.
+            used_image_ids.add(img_id)
             return img_id
         sample_key = id(s)
         if sample_key in assigned_ids:
             return assigned_ids[sample_key]
+        # Find the next unused image ID.
+        while next_image_id in used_image_ids:
+            next_image_id += 1
         assigned = next_image_id
+        used_image_ids.add(assigned)
         next_image_id += 1
         assigned_ids[sample_key] = assigned
         return assigned
