@@ -613,9 +613,7 @@ def _save_subset_flexible(
     annotations_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Collect explicitly used image IDs to avoid collisions when assigning new ones
-    used_image_ids: set[int] = {
-        s.image_id for s in samples if isinstance(s.image_id, int)
-    }
+    used_image_ids: set[int] = {s.image_id for s in samples if isinstance(s.image_id, int)}
     next_image_id = max(used_image_ids, default=0) + 1
     assigned_ids: dict[int, int] = {}  # maps id(sample) -> assigned image_id
 
