@@ -603,18 +603,26 @@ def _save_subset_flexible(
     images_dir.mkdir(parents=True, exist_ok=True)
     annotations_file.parent.mkdir(parents=True, exist_ok=True)
 
-    next_image_id = 1
+    # Collect explicitly used image IDs to avoid collisions when assigning new ones
+    used_image_ids: set[int] = {
+        s.image_id for s in samples if isinstance(s.image_id, int)
+    }
+    next_image_id = max(used_image_ids, default=0) + 1
     assigned_ids: dict[int, int] = {}  # maps id(sample) -> assigned image_id
 
     def get_or_assign_image_id(s: CocoSample) -> int:
-        nonlocal next_image_id
+        nonlocal next_image_id, used_image_ids
         img_id = s.image_id
         if isinstance(img_id, int):
             return img_id
         sample_key = id(s)
         if sample_key in assigned_ids:
             return assigned_ids[sample_key]
+        # Find the next unused image_id
+        while next_image_id in used_image_ids:
+            next_image_id += 1
         assigned = next_image_id
+        used_image_ids.add(assigned)
         next_image_id += 1
         assigned_ids[sample_key] = assigned
         return assigned
