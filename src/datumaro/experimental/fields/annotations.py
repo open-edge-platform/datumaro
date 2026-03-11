@@ -326,7 +326,7 @@ class KeypointsField(Field):
         return from_polars_data(polars_data, target_type)
 
     def get_expected_categories_type(self) -> type[Categories] | None:
-        """KeypointsCategories are optional for KeypointsField so we return None here"""
+        """KeypointCategories are optional for KeypointsField so we return None here"""
         return None
 
 
