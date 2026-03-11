@@ -9,6 +9,7 @@ from datumaro.experimental.categories import (
     GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
+    KeypointCategories,
     LabelCategories,
     LabelGroup,
     MaskCategories,
@@ -639,3 +640,104 @@ def test_colormap_serialization_round_trip():
     assert reconstructed_cats.colormap.inverse_colormap[RgbColor(255, 0, 0)] == 0
     assert reconstructed_cats.colormap.inverse_colormap[RgbColor(0, 255, 0)] == 1
     assert reconstructed_cats.colormap.inverse_colormap[RgbColor(0, 0, 255)] == 2
+
+
+# ==================== KeypointCategories Tests ====================
+
+
+def test_keypoint_categories_empty_creation():
+    categories = KeypointCategories()
+    assert len(categories) == 0
+    assert list(categories) == []
+
+
+def test_keypoint_categories_creation_with_labels():
+    categories = KeypointCategories(labels=("nose", "left_eye", "right_eye"))
+    assert len(categories) == 3
+    assert categories[0] == "nose"
+    assert categories[1] == "left_eye"
+    assert categories[2] == "right_eye"
+
+
+def test_keypoint_categories_list_coerced_to_tuple():
+    categories = KeypointCategories(labels=["nose", "left_eye"])
+    assert isinstance(categories.labels, tuple)
+    assert categories.labels == ("nose", "left_eye")
+
+
+def test_keypoint_categories_invalid_type_raises_error():
+    with pytest.raises(TypeError, match="labels must be a tuple of strings"):
+        KeypointCategories(labels="not_a_tuple")
+
+
+def test_keypoint_categories_contains_by_name():
+    categories = KeypointCategories(labels=("nose", "left_eye"))
+    assert "nose" in categories
+    assert "left_eye" in categories
+    assert "right_eye" not in categories
+
+
+def test_keypoint_categories_contains_by_index():
+    categories = KeypointCategories(labels=("nose", "left_eye"))
+    assert 0 in categories
+    assert 1 in categories
+    assert 2 not in categories
+    assert -1 not in categories
+
+
+def test_keypoint_categories_iteration():
+    categories = KeypointCategories(labels=("nose", "left_eye", "right_eye"))
+    names = list(categories)
+    assert names == ["nose", "left_eye", "right_eye"]
+
+
+def test_keypoint_categories_hash():
+    cat1 = KeypointCategories(labels=("nose", "left_eye"))
+    cat2 = KeypointCategories(labels=("nose", "left_eye"))
+    cat3 = KeypointCategories(labels=("nose", "right_eye"))
+
+    assert hash(cat1) == hash(cat2)
+    assert hash(cat1) != hash(cat3)
+
+
+def test_keypoint_categories_serialization():
+    """Test KeypointCategories to_dict/from_dict round-trip."""
+    categories = KeypointCategories(labels=("nose", "left_eye", "right_eye"))
+
+    cat_dict = categories.to_dict()
+    assert cat_dict["type"] == "KeypointCategories"
+    assert cat_dict["labels"] == ["nose", "left_eye", "right_eye"]
+
+    from datumaro.experimental.categories import Categories
+
+    reconstructed = Categories.from_dict(cat_dict)
+    assert isinstance(reconstructed, KeypointCategories)
+    assert reconstructed.labels == categories.labels
+
+
+def test_keypoint_categories_serialization_empty():
+    """Test KeypointCategories serialization with empty labels."""
+    categories = KeypointCategories()
+
+    cat_dict = categories.to_dict()
+    assert cat_dict["type"] == "KeypointCategories"
+    assert cat_dict["labels"] == []
+
+    from datumaro.experimental.categories import Categories
+
+    reconstructed = Categories.from_dict(cat_dict)
+    assert isinstance(reconstructed, KeypointCategories)
+    assert len(reconstructed) == 0
+
+
+def test_keypoint_categories_polymorphic_deserialization():
+    """Test that Categories.from_dict correctly dispatches to KeypointCategories."""
+    from datumaro.experimental.categories import Categories
+
+    kp_dict = {
+        "type": "KeypointCategories",
+        "labels": ["ankle", "knee", "hip"],
+    }
+    result = Categories.from_dict(kp_dict)
+    assert isinstance(result, KeypointCategories)
+    assert result.labels == ("ankle", "knee", "hip")

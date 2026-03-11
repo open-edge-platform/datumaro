@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 
 from datumaro.experimental import Dataset
-from datumaro.experimental.categories import LabelCategories
+from datumaro.experimental.categories import KeypointCategories, LabelCategories
 from datumaro.experimental.data_formats.coco.sample import CocoCategories, CocoSample
 from datumaro.experimental.fields import ImageInfo, Subset
 
@@ -123,6 +123,43 @@ def _detect_coco_label_categories_from_paths(
 
     logger.warning("Unable to extract labels from COCO annotations, falling back to defaults")
     return CocoCategories()
+
+
+def _detect_coco_keypoint_categories_from_paths(
+    subset_config: dict[Subset, dict[str, Path | list[Path]]],
+) -> KeypointCategories | None:
+    """
+    Detect COCO keypoint categories by probing available annotation JSON files.
+
+    Looks for ``"keypoints"`` lists inside the ``"categories"`` section of each
+    annotation file (the standard COCO format for person_keypoints files).
+
+    Args:
+        subset_config: Mapping with 'annotations' path(s) for each subset.
+
+    Returns:
+        KeypointCategories with discovered keypoint names, or None if not found.
+    """
+    for _subset, cfg in subset_config.items():
+        annotations_paths = cfg.get("annotations")
+        if annotations_paths is None:
+            continue
+
+        if isinstance(annotations_paths, Path):
+            paths_to_check = [annotations_paths]
+        else:
+            paths_to_check = annotations_paths
+
+        for annotations_path in paths_to_check:
+            annotations_data = _load_json_or_none(annotations_path)
+            if annotations_data and isinstance(annotations_data, dict):
+                for cat in annotations_data.get("categories") or []:
+                    if isinstance(cat, dict):
+                        kp_names = cat.get("keypoints")
+                        if isinstance(kp_names, list) and len(kp_names) > 0:
+                            return KeypointCategories(labels=tuple(str(n) for n in kp_names))
+
+    return None
 
 
 def _cat_id_to_idx_from_primary(primary_data: dict) -> dict[int, int]:
