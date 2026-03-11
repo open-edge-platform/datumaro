@@ -698,6 +698,7 @@ class KeypointCategories(Categories):
 
         if duplicates:
             raise ValueError(f"Duplicate keypoint labels found: {sorted(duplicates)}")
+
     def __getitem__(self, idx: int) -> str:
         return self.labels[idx]
 
