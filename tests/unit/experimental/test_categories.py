@@ -666,7 +666,7 @@ def test_keypoint_categories_list_coerced_to_tuple():
 
 
 def test_keypoint_categories_invalid_type_raises_error():
-    with pytest.raises(TypeError, match="labels must be a tuple of strings"):
+    with pytest.raises(TypeError, match="labels must be a list or tuple of strings"):
         KeypointCategories(labels="not_a_tuple")
 
 
