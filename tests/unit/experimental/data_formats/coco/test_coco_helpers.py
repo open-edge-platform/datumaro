@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from datumaro.experimental import Dataset
-from datumaro.experimental.categories import LabelCategories
+from datumaro.experimental.categories import KeypointCategories, LabelCategories
 from datumaro.experimental.data_formats.coco.helpers import (
     InstanceArrays,
     _assemble_sample_from_image_record,
@@ -15,6 +15,7 @@ from datumaro.experimental.data_formats.coco.helpers import (
     _collect_captions_for_image,
     _collect_instances_for_image,
     _collect_keypoints_for_image,
+    _detect_coco_keypoint_categories_from_paths,
     _index_annotations_by_image,
     _load_json_or_none,
     _prepare_categories,
@@ -340,3 +341,157 @@ def test_prepare_categories_and_save_subset(tmp_path: Path):
     assert "instances_train" in written
     content = json.loads(written["instances_train"].read_text())
     assert content["annotations"][0]["bbox"] == pytest.approx([1.0, 2.0, 3.0, 4.0])
+
+
+class DetectCocoKeypointCategoriesTest:
+    """Unit tests for _detect_coco_keypoint_categories_from_paths."""
+
+    def test_returns_none_when_no_keypoints_in_categories(self, tmp_path: Path):
+        ann_file = tmp_path / "instances.json"
+        _write_json(
+            ann_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [{"id": 1, "name": "person"}],
+            },
+        )
+        config = {Subset.TRAINING: {"annotations": [ann_file]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert result is None
+
+    def test_returns_none_when_no_categories_section(self, tmp_path: Path):
+        ann_file = tmp_path / "instances.json"
+        _write_json(ann_file, {"images": [], "annotations": []})
+        config = {Subset.TRAINING: {"annotations": [ann_file]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert result is None
+
+    def test_returns_none_when_annotations_key_missing(self):
+        config = {Subset.TRAINING: {"images_dir": Path("/tmp")}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert result is None
+
+    def test_returns_none_when_file_does_not_exist(self, tmp_path: Path):
+        config = {Subset.TRAINING: {"annotations": [tmp_path / "missing.json"]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert result is None
+
+    def test_returns_none_for_empty_keypoints_list(self, tmp_path: Path):
+        ann_file = tmp_path / "keypoints.json"
+        _write_json(
+            ann_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [{"id": 1, "name": "person", "keypoints": []}],
+            },
+        )
+        config = {Subset.TRAINING: {"annotations": [ann_file]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert result is None
+
+    def test_detects_keypoints_from_single_file(self, tmp_path: Path):
+        ann_file = tmp_path / "person_keypoints.json"
+        _write_json(
+            ann_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "person",
+                        "keypoints": ["nose", "left_eye", "right_eye"],
+                    }
+                ],
+            },
+        )
+        config = {Subset.TRAINING: {"annotations": [ann_file]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert isinstance(result, KeypointCategories)
+        assert result.labels == ("nose", "left_eye", "right_eye")
+
+    def test_detects_keypoints_from_multiple_files(self, tmp_path: Path):
+        instances_file = tmp_path / "instances.json"
+        _write_json(
+            instances_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [{"id": 1, "name": "person"}],
+            },
+        )
+        kp_file = tmp_path / "person_keypoints.json"
+        _write_json(
+            kp_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "person",
+                        "keypoints": ["nose", "left_eye"],
+                    }
+                ],
+            },
+        )
+        config = {Subset.TRAINING: {"annotations": [instances_file, kp_file]}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert isinstance(result, KeypointCategories)
+        assert result.labels == ("nose", "left_eye")
+
+    def test_detects_keypoints_across_subsets(self, tmp_path: Path):
+        train_file = tmp_path / "train.json"
+        _write_json(
+            train_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [{"id": 1, "name": "person"}],
+            },
+        )
+        val_file = tmp_path / "val_keypoints.json"
+        _write_json(
+            val_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "person",
+                        "keypoints": ["ankle", "knee"],
+                    }
+                ],
+            },
+        )
+        config = {
+            Subset.TRAINING: {"annotations": [train_file]},
+            Subset.VALIDATION: {"annotations": [val_file]},
+        }
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert isinstance(result, KeypointCategories)
+        assert result.labels == ("ankle", "knee")
+
+    def test_single_path_not_list(self, tmp_path: Path):
+        ann_file = tmp_path / "keypoints.json"
+        _write_json(
+            ann_file,
+            {
+                "images": [],
+                "annotations": [],
+                "categories": [
+                    {
+                        "id": 1,
+                        "name": "person",
+                        "keypoints": ["nose"],
+                    }
+                ],
+            },
+        )
+        config = {Subset.TRAINING: {"annotations": ann_file}}
+        result = _detect_coco_keypoint_categories_from_paths(config)
+        assert isinstance(result, KeypointCategories)
+        assert result.labels == ("nose",)

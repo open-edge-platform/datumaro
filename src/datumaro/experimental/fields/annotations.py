@@ -325,6 +325,10 @@ class KeypointsField(Field):
         polars_data = df[name][row_index]
         return from_polars_data(polars_data, target_type)
 
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        """KeypointCategories are optional for KeypointsField so we return None here"""
+        return None
+
 
 def keypoints_field(
     dtype: Any = pl.Float32(),

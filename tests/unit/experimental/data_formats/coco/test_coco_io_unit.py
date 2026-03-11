@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from datumaro.experimental import Dataset
+from datumaro.experimental.categories import KeypointCategories
 from datumaro.experimental.data_formats.coco.io import load_coco_dataset, save_coco_dataset
 from datumaro.experimental.data_formats.coco.sample import CocoCategories, CocoSample
 from datumaro.experimental.fields import ImageInfo, Subset
@@ -272,3 +273,110 @@ def test_load_coco_dataset_mismatched_keys(tmp_path: Path):
             annotations_path={"val": str(tmp_path / "val.json")},
         )
     assert "Subset keys must match" in str(exc_info.value)
+
+
+def test_load_coco_dataset_attaches_keypoint_categories(tmp_path: Path):
+    """When annotation file contains keypoint names, the dataset should have KeypointCategories."""
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+    (images_dir / "img.jpg").write_bytes(b"img")
+
+    annotations_file = tmp_path / "person_keypoints.json"
+    _write_json(
+        annotations_file,
+        {
+            "images": [{"id": 1, "file_name": "img.jpg", "height": 10, "width": 8}],
+            "annotations": [
+                {
+                    "id": 1,
+                    "image_id": 1,
+                    "category_id": 1,
+                    "keypoints": [100, 200, 2, 150, 250, 2, 180, 220, 1],
+                    "num_keypoints": 3,
+                }
+            ],
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "person",
+                    "keypoints": ["nose", "left_eye", "right_eye"],
+                    "skeleton": [[0, 1], [0, 2]],
+                }
+            ],
+        },
+    )
+
+    ds = load_coco_dataset(
+        images_dir_path=str(images_dir),
+        annotations_path=str(annotations_file),
+    )
+
+    kp_categories = ds.schema.get_categories_for_field("keypoints")
+    assert isinstance(kp_categories, KeypointCategories)
+    assert kp_categories.labels == ("nose", "left_eye", "right_eye")
+
+
+def test_load_coco_dataset_no_keypoint_categories_when_absent(tmp_path: Path):
+    """When annotation file has no keypoint names, keypoint categories should not be attached."""
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+    (images_dir / "img.jpg").write_bytes(b"img")
+
+    annotations_file = tmp_path / "instances.json"
+    _write_json(
+        annotations_file,
+        {
+            "images": [{"id": 1, "file_name": "img.jpg", "height": 10, "width": 8}],
+            "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "bbox": [0, 0, 2, 2], "area": 4, "iscrowd": 0}],
+            "categories": [{"id": 1, "name": "cat"}],
+        },
+    )
+
+    ds = load_coco_dataset(
+        images_dir_path=str(images_dir),
+        annotations_path=str(annotations_file),
+    )
+
+    kp_categories = ds.schema.get_categories_for_field("keypoints")
+    assert kp_categories is None
+
+
+def test_load_coco_dataset_keypoint_categories_from_second_file(tmp_path: Path):
+    """KeypointCategories should be detected even when only the second annotation file has them."""
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+    (images_dir / "img.jpg").write_bytes(b"img")
+
+    instances_file = tmp_path / "instances.json"
+    _write_json(
+        instances_file,
+        {
+            "images": [{"id": 1, "file_name": "img.jpg", "height": 10, "width": 8}],
+            "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "bbox": [0, 0, 2, 2], "area": 4, "iscrowd": 0}],
+            "categories": [{"id": 1, "name": "person"}],
+        },
+    )
+    keypoints_file = tmp_path / "person_keypoints.json"
+    _write_json(
+        keypoints_file,
+        {
+            "images": [{"id": 1, "file_name": "img.jpg", "height": 10, "width": 8}],
+            "annotations": [],
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "person",
+                    "keypoints": ["left_hip", "right_hip"],
+                }
+            ],
+        },
+    )
+
+    ds = load_coco_dataset(
+        images_dir_path=str(images_dir),
+        annotations_path=[str(instances_file), str(keypoints_file)],
+    )
+
+    kp_categories = ds.schema.get_categories_for_field("keypoints")
+    assert isinstance(kp_categories, KeypointCategories)
+    assert kp_categories.labels == ("left_hip", "right_hip")

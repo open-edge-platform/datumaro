@@ -18,6 +18,7 @@ from datumaro.experimental import Dataset
 from datumaro.experimental.data_formats.coco.helpers import (
     _assemble_sample_from_image_record,
     _cat_id_to_idx_from_primary,
+    _detect_coco_keypoint_categories_from_paths,
     _detect_coco_label_categories_from_paths,
     _load_json_or_none,
     _prepare_categories,
@@ -133,9 +134,12 @@ def load_coco_dataset(
 
     logger.info("[COCO] Loading dataset with %d subset(s)", len(subset_config))
 
-    # Determine label categories via helper
+    # Determine categories via helpers
     loaded_label_categories = _detect_coco_label_categories_from_paths(subset_config)
-    categories = {"labels": loaded_label_categories}
+    categories: dict = {"labels": loaded_label_categories}
+    loaded_keypoint_categories = _detect_coco_keypoint_categories_from_paths(subset_config)
+    if loaded_keypoint_categories is not None:
+        categories["keypoints"] = loaded_keypoint_categories
     dataset = Dataset(CocoSample, categories=categories)
 
     for subset, config in subset_config.items():

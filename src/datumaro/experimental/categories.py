@@ -94,6 +94,7 @@ class Categories:
             "LabelCategories": LabelCategories,
             "HierarchicalLabelCategories": HierarchicalLabelCategories,
             "MaskCategories": MaskCategories,
+            "KeypointCategories": KeypointCategories,
         }
 
         if cat_type in subclass_map:
@@ -664,3 +665,65 @@ class MaskCategories(Categories):
     def __hash__(self):
         colormap_data = self.colormap.data if isinstance(self.colormap, Colormap) else self.colormap
         return hash((tuple(self.labels), frozenset(colormap_data.items())))
+
+
+@dataclass(frozen=True)
+class KeypointCategories(Categories):
+    """
+    Represents the set of keypoint names for a keypoint detection dataset.
+
+    Each entry in ``labels`` corresponds to a single keypoint (e.g.
+    ``("nose", "left_eye", ...)`` for the 17 COCO person keypoints).
+
+    Attributes:
+        labels: Ordered tuple of keypoint names.
+    """
+
+    labels: tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self):
+        if isinstance(self.labels, list):
+            object.__setattr__(self, "labels", tuple(self.labels))
+        elif not isinstance(self.labels, tuple):
+            raise TypeError("labels must be a list or tuple of strings")
+
+        # Ensure that keypoint labels are unique to keep index->name mapping unambiguous
+        seen: set[str] = set()
+        duplicates: set[str] = set()
+        for name in self.labels:
+            if name in seen:
+                duplicates.add(name)
+            else:
+                seen.add(name)
+
+        if duplicates:
+            raise ValueError(f"Duplicate keypoint labels found: {sorted(duplicates)}")
+
+    def __getitem__(self, idx: int) -> str:
+        return self.labels[idx]
+
+    def __contains__(self, value: int | str) -> bool:
+        if isinstance(value, str):
+            return value in self.labels
+        return 0 <= value < len(self.labels)
+
+    def __len__(self) -> int:
+        return len(self.labels)
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.labels)
+
+    def __hash__(self):
+        return hash(self.labels)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to a JSON-compatible dictionary."""
+        return {
+            "type": "KeypointCategories",
+            "labels": list(self.labels),
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> KeypointCategories:
+        """Deserialize from a JSON dictionary."""
+        return cls(labels=tuple(data["labels"]))
