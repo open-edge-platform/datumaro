@@ -685,8 +685,19 @@ class KeypointCategories(Categories):
         if isinstance(self.labels, list):
             object.__setattr__(self, "labels", tuple(self.labels))
         elif not isinstance(self.labels, tuple):
-            raise TypeError("labels must be a tuple of strings")
+            raise TypeError("labels must be a list or tuple of strings")
 
+        # Ensure that keypoint labels are unique to keep index->name mapping unambiguous
+        seen: set[str] = set()
+        duplicates: set[str] = set()
+        for name in self.labels:
+            if name in seen:
+                duplicates.add(name)
+            else:
+                seen.add(name)
+
+        if duplicates:
+            raise ValueError(f"Duplicate keypoint labels found: {sorted(duplicates)}")
     def __getitem__(self, idx: int) -> str:
         return self.labels[idx]
 
