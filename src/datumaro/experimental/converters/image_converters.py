@@ -569,3 +569,129 @@ class ChannelsFirstConverter(Converter):
         """
 
         return copy_columns_with_shape(df, self.input_image.name, self.output_image.name)
+
+
+@converter
+class ImagePathToImageInfoConverter(Converter):
+    """
+    Converter that reads image dimensions from file paths without loading pixel data.
+
+    This is much more efficient than the alternative path of
+    ImagePathField → ImageField → ImageInfoField, which requires loading
+    the entire image into memory. This converter only reads image headers
+    to extract width and height using PIL.
+
+    Input: ImagePathField (path as String)
+    Output: ImageInfoField (struct with width, height)
+    """
+
+    input_path: AttributeSpec[ImagePathField]
+    output_info: AttributeSpec[ImageInfoField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output info specification based on input."""
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=ImageInfoField(
+                semantic=self.input_path.field.semantic,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Read image dimensions from file paths using PIL header-only reads.
+
+        Args:
+            df: DataFrame containing image path column
+
+        Returns:
+            DataFrame with ImageInfoField column containing width and height
+        """
+        input_col = self.input_path.name
+        output_col = self.output_info.name
+
+        widths: list[int | None] = []
+        heights: list[int | None] = []
+
+        for path in df[input_col]:
+            if path is None:
+                widths.append(None)
+                heights.append(None)
+                continue
+
+            try:
+                with Image.open(str(path)) as img:
+                    w, h = img.size
+                    widths.append(w)
+                    heights.append(h)
+            except Exception:
+                widths.append(None)
+                heights.append(None)
+
+        return df.with_columns(
+            pl.struct(
+                pl.Series("width", widths, dtype=pl.Int32()),
+                pl.Series("height", heights, dtype=pl.Int32()),
+            ).alias(output_col),
+        )
+
+
+@converter
+class ImagePathToImageCallableConverter(Converter):
+    """
+    Converter that wraps ImagePathField as ImageCallableField.
+
+    Creates a callable for each image path that loads the image on demand.
+    This is useful for pipeline compatibility where a callable interface
+    is expected rather than a file path.
+
+    Input: ImagePathField (path as String)
+    Output: ImageCallableField (callable that returns image data as numpy array)
+    """
+
+    input_path: AttributeSpec[ImagePathField]
+    output_callable: AttributeSpec[ImageCallableField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output callable specification based on input."""
+        self.output_callable = AttributeSpec(
+            name=self.output_callable.name,
+            field=ImageCallableField(
+                semantic=self.input_path.field.semantic,
+                format=self.input_path.field.format,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Wrap image paths as lazy-loading callables.
+
+        Args:
+            df: DataFrame containing image path column
+
+        Returns:
+            DataFrame with callable column that loads images on demand
+        """
+        from datumaro.experimental.media import LazyImage
+
+        input_col = self.input_path.name
+        output_col = self.output_callable.name
+
+        callables: list[Any] = []
+
+        for path in df[input_col]:
+            if path is None:
+                callables.append(None)
+                continue
+
+            def make_loader(p: str, fmt: str) -> callable:
+                def load_image() -> np.ndarray:
+                    return LazyImage(path=p, format=fmt).data
+
+                return load_image
+
+            callables.append(make_loader(str(path), self.input_path.field.format))
+
+        return df.with_columns(pl.Series(output_col, callables, dtype=pl.Object()))
