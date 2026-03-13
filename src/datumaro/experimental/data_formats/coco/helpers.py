@@ -550,6 +550,34 @@ def _prepare_categories(dataset: Dataset[CocoSample]):
     return categories_coco, to_category_id
 
 
+class _ImageIdAssigner:
+    """Assigns stable image IDs to samples, reusing explicit IDs and auto-assigning others."""
+
+    def __init__(self, samples: list[CocoSample]) -> None:
+        explicit = {s.image_id for s in samples if isinstance(s.image_id, int)}
+        self._used: set[int] = set(explicit)
+        self._next: int = (max(explicit) + 1) if explicit else 1
+        self._cache: dict[int, int] = {}
+
+    def __call__(self, s: CocoSample) -> int:
+        img_id = s.image_id
+        if isinstance(img_id, int):
+            # Track explicit IDs to prevent future auto-assigned collisions.
+            self._used.add(img_id)
+            return img_id
+        sample_key = id(s)
+        if sample_key in self._cache:
+            return self._cache[sample_key]
+        # Find the next unused image ID.
+        while self._next in self._used:
+            self._next += 1
+        assigned = self._next
+        self._used.add(assigned)
+        self._next += 1
+        self._cache[sample_key] = assigned
+        return assigned
+
+
 def _save_subset(
     *,
     root_path: Path,
@@ -560,23 +588,10 @@ def _save_subset(
     categories_coco: list[dict],
     to_category_id: Any,
 ) -> dict[str, Path]:
-    def subset_name(s: Subset) -> str:
-        return _subset_name(s)
-
     written: dict[str, Path] = {}
+    get_or_assign_image_id = _ImageIdAssigner(samples)
 
-    next_image_id = 1
-
-    def get_or_assign_image_id(s: CocoSample) -> int:
-        nonlocal next_image_id
-        img_id = s.image_id
-        if isinstance(img_id, int):
-            return img_id
-        assigned = next_image_id
-        next_image_id += 1
-        return assigned
-
-    subset_dir = root_path / f"{subset_name(subset)}{version}"
+    subset_dir = root_path / f"{_subset_name(subset)}{version}"
     subset_dir.mkdir(parents=True, exist_ok=True)
 
     images_section: list[dict] = _build_and_copy_images_section(samples, get_or_assign_image_id, subset_dir)
@@ -585,7 +600,7 @@ def _save_subset(
         samples, get_or_assign_image_id, to_category_id
     )
 
-    subset_key = subset_name(subset)
+    subset_key = _subset_name(subset)
 
     if len(instances_annotations) > 0 or len(images_section) > 0:
         inst_path = annotations_path / f"instances_{subset_key}{version}.json"
@@ -635,16 +650,7 @@ def _save_subset_flexible(
     images_dir.mkdir(parents=True, exist_ok=True)
     annotations_file.parent.mkdir(parents=True, exist_ok=True)
 
-    next_image_id = 1
-
-    def get_or_assign_image_id(s: CocoSample) -> int:
-        nonlocal next_image_id
-        img_id = s.image_id
-        if isinstance(img_id, int):
-            return img_id
-        assigned = next_image_id
-        next_image_id += 1
-        return assigned
+    get_or_assign_image_id = _ImageIdAssigner(samples)
 
     # Build images section and copy images
     images_section: list[dict] = _build_and_copy_images_section(samples, get_or_assign_image_id, images_dir)
