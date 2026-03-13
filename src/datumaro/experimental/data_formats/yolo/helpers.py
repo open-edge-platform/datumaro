@@ -419,15 +419,19 @@ def _load_yolo_ultralytics(root_path: Path) -> Dataset:
         logger.info("[YOLO] Loading subset '%s' from '%s'", subset_name, subset_dir)
 
         image_files = _find_image_files(subset_dir)
+        samples = []
         for image_path in image_files:
             try:
                 sample = _create_sample_from_image(image_path, labels_subset_dir, subset_enum)
                 if sample:
-                    dataset.append(sample)
+                    samples.append(sample)
             except Exception as e:
                 logger.warning("[YOLO] Failed to load image %s: %s", image_path, e)
 
-        logger.info("[YOLO] Loaded %d samples from subset '%s'", len(image_files), subset_name)
+        if samples:
+            dataset.append_batch(samples)
+
+        logger.info("[YOLO] Loaded %d samples from subset '%s'", len(samples), subset_name)
 
     logger.info("[YOLO] Finished loading dataset with %d samples", len(dataset))
     return dataset
@@ -453,15 +457,20 @@ def _load_yolo_traditional(root_path: Path) -> Dataset:
         logger.info("[YOLO] Loading subset from '%s'", subset_dir)
 
         image_files = _find_image_files(subset_dir)
+        samples = []
         for image_path in image_files:
             try:
                 sample = _create_sample_from_traditional_image(image_path, subset_enum)
                 if sample:
-                    dataset.append(sample)
+                    samples.append(sample)
             except Exception as e:
                 logger.warning("[YOLO] Failed to load image %s: %s", image_path, e)
 
-        logger.info("[YOLO] Loaded %d samples from '%s'", len(image_files), dir_name)
+        # Use batch append for efficiency
+        if samples:
+            dataset.append_batch(samples)
+
+        logger.info("[YOLO] Loaded %d samples from '%s'", len(samples), dir_name)
 
     logger.info("[YOLO] Finished loading dataset with %d samples", len(dataset))
     return dataset

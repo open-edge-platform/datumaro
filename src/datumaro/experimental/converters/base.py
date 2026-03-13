@@ -283,14 +283,27 @@ class AttributeRemapperConverter(Converter):
         """
         Rename columns according to column_map and keep all other columns.
 
+        Also renames auxiliary columns (e.g., ``*_canvas_size``) that are present
+        in the DataFrame but not part of the field's required schema.
+
         Args:
             df: Input DataFrame
 
         Returns:
             DataFrame with renamed columns
         """
+        # Build extended column map that includes auxiliary columns in the DataFrame
+        extended_map = dict(self.column_map)
+        for from_attr, to_attr in self.attr_mappings:
+            prefix = f"{from_attr.name}_"
+            new_prefix = f"{to_attr.name}_"
+            for col_name in df.columns:
+                if col_name.startswith(prefix) and col_name not in extended_map:
+                    suffix = col_name[len(prefix) :]
+                    extended_map[col_name] = f"{new_prefix}{suffix}"
+
         # Apply all renames
-        return df.rename(self.column_map)
+        return df.rename(extended_map)
 
     def filter_output_spec(self) -> bool:
         """Always return True as renaming is always applicable."""

@@ -18,6 +18,7 @@ from datumaro.experimental import Dataset
 from datumaro.experimental.data_formats.coco.helpers import (
     _assemble_sample_from_image_record,
     _cat_id_to_idx_from_primary,
+    _detect_coco_keypoint_categories_from_paths,
     _detect_coco_label_categories_from_paths,
     _load_json_or_none,
     _prepare_categories,
@@ -133,9 +134,12 @@ def load_coco_dataset(
 
     logger.info("[COCO] Loading dataset with %d subset(s)", len(subset_config))
 
-    # Determine label categories via helper
+    # Determine categories via helpers
     loaded_label_categories = _detect_coco_label_categories_from_paths(subset_config)
-    categories = {"labels": loaded_label_categories}
+    categories: dict = {"labels": loaded_label_categories}
+    loaded_keypoint_categories = _detect_coco_keypoint_categories_from_paths(subset_config)
+    if loaded_keypoint_categories is not None:
+        categories["keypoints"] = loaded_keypoint_categories
     dataset = Dataset(CocoSample, categories=categories)
 
     for subset, config in subset_config.items():
@@ -241,9 +245,14 @@ def _load_subset_into_dataset(
     num_images = len(images)
     logger.info("[COCO] Building %d samples for subset '%s'", num_images, subset)
 
+    samples = []
     for idx, img in enumerate(images, start=1):
         if idx % 1000 == 0:
             logger.info("[COCO] Subset '%s': processed %d/%d images", subset, idx, num_images)
+            # Flush samples in chunks to keep memory bounded
+            if samples:
+                dataset.append_batch(samples)
+                samples = []
         sample = _assemble_sample_from_image_record(
             images_dir=images_dir,
             img=img,
@@ -253,7 +262,10 @@ def _load_subset_into_dataset(
             captions_by_image=captions_by_image,
             subset=subset,
         )
-        dataset.append(sample)
+        samples.append(sample)
+
+    if samples:
+        dataset.append_batch(samples)
 
     logger.info("[COCO] Finished subset '%s' with %d samples", subset, num_images)
 
