@@ -757,6 +757,7 @@ def test_attribute_remapping_converter():
             "old_image": [[1, 2, 3]],
             "old_image_shape": [[3]],
             "old_bbox": [[[1, 2, 3, 4]]],
+            "old_bbox_canvas_size": [None],  # canvas_size column for bbox field
             "other_field": ["test"],
         }
     )
@@ -774,8 +775,8 @@ def test_attribute_remapping_converter():
     converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
     result_df = converter.convert(df)
 
-    # Check that columns were remapped correctly
-    expected_columns = {"new_image", "new_image_shape", "new_bbox", "other_field"}
+    # Check that columns were remapped correctly (including canvas_size column)
+    expected_columns = {"new_image", "new_image_shape", "new_bbox", "new_bbox_canvas_size", "other_field"}
     assert set(result_df.columns) == expected_columns
 
     # Check that data is preserved

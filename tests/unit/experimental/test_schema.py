@@ -210,7 +210,9 @@ def test_bbox_field_polars_schema():
     field = bbox_field(dtype=pl.Float32())
     schema = field.to_polars_schema("bbox")
 
-    expected = {"bbox": pl.List(pl.Array(pl.Float32, 4))}
+    expected = {
+        "bbox": pl.List(pl.Array(pl.Float32, 4)),
+    }
     assert schema == expected
 
 
@@ -350,6 +352,72 @@ def test_bbox_field_polars_conversion():
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.allclose(reconstructed, test_bbox)
+
+
+def test_bbox_field_tv_tensors_bounding_boxes():
+    """Test BBoxField with tv_tensors.BoundingBoxes input and output."""
+    torch = pytest.importorskip("torch")
+    tv_tensors = pytest.importorskip("torchvision.tv_tensors")
+
+    field = cast("BBoxField", bbox_field(dtype=pl.Float32(), format="x1y1x2y2"))
+
+    # Create tv_tensors.BoundingBoxes
+    boxes_data = torch.tensor([[10.0, 20.0, 50.0, 60.0], [30.0, 40.0, 80.0, 90.0]])
+    canvas_size = (100, 100)  # (height, width)
+    test_bboxes = tv_tensors.BoundingBoxes(
+        boxes_data,
+        format=tv_tensors.BoundingBoxFormat.XYXY,
+        canvas_size=canvas_size,
+    )
+
+    # Test to_polars - should store both bbox data and canvas_size
+    polars_data = field.to_polars("bbox", test_bboxes)
+    assert "bbox" in polars_data
+    assert "bbox_canvas_size" in polars_data
+    assert isinstance(polars_data["bbox"], pl.Series)
+    assert isinstance(polars_data["bbox_canvas_size"], pl.Series)
+
+    # Verify canvas_size is stored correctly
+    stored_canvas_size = polars_data["bbox_canvas_size"][0].to_list()
+    assert stored_canvas_size == list(canvas_size)
+
+    # Create DataFrame and test from_polars with tv_tensors.BoundingBoxes target type
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("bbox", 0, df, tv_tensors.BoundingBoxes)
+
+    # Verify the reconstructed object is a tv_tensors.BoundingBoxes
+    assert isinstance(reconstructed, tv_tensors.BoundingBoxes)
+    assert reconstructed.format == tv_tensors.BoundingBoxFormat.XYXY
+    assert reconstructed.canvas_size == canvas_size
+
+    # Verify the bbox data matches
+    assert torch.allclose(reconstructed, boxes_data)
+
+
+def test_bbox_field_tv_tensors_to_numpy():
+    """Test BBoxField with tv_tensors.BoundingBoxes input but numpy output."""
+    torch = pytest.importorskip("torch")
+    tv_tensors = pytest.importorskip("torchvision.tv_tensors")
+
+    field = cast("BBoxField", bbox_field(dtype=pl.Float32(), format="x1y1x2y2"))
+
+    # Create tv_tensors.BoundingBoxes
+    boxes_data = torch.tensor([[10.0, 20.0, 50.0, 60.0]])
+    test_bboxes = tv_tensors.BoundingBoxes(
+        boxes_data,
+        format=tv_tensors.BoundingBoxFormat.XYXY,
+        canvas_size=(100, 100),
+    )
+
+    # Store as tv_tensors.BoundingBoxes
+    polars_data = field.to_polars("bbox", test_bboxes)
+    df = pl.DataFrame(polars_data)
+
+    # Retrieve as numpy array (should work even though stored with canvas_size)
+    reconstructed = field.from_polars("bbox", 0, df, np.ndarray)
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert np.allclose(reconstructed, boxes_data.numpy())
 
 
 def test_rotated_bbox_field_creation():
