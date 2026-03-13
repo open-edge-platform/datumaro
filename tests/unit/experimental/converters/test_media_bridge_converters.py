@@ -685,7 +685,6 @@ class ImageInfoToMediaInfoConverterTest:
         info = result["media_info"][0]
         assert info["width"] == 640
         assert info["height"] == 480
-        assert info["source_path"] is None
         assert info["fps"] is None
         assert info["total_frames"] is None
         assert info["duration"] is None
@@ -1058,7 +1057,6 @@ class MediaInfoToImageInfoConverterTest:
             {
                 "width": pl.Int32,
                 "height": pl.Int32,
-                "source_path": pl.String,
                 "fps": pl.Float32,
                 "total_frames": pl.UInt32,
                 "duration": pl.Float32,
@@ -1072,7 +1070,6 @@ class MediaInfoToImageInfoConverterTest:
                     {
                         "width": 640,
                         "height": 480,
-                        "source_path": None,
                         "fps": None,
                         "total_frames": None,
                         "duration": None,
@@ -1119,7 +1116,6 @@ class MediaInfoToImageInfoConverterTest:
             {
                 "width": pl.Int32,
                 "height": pl.Int32,
-                "source_path": pl.String,
                 "fps": pl.Float32,
                 "total_frames": pl.UInt32,
                 "duration": pl.Float32,
@@ -1133,7 +1129,6 @@ class MediaInfoToImageInfoConverterTest:
                     {
                         "width": 1920,
                         "height": 1080,
-                        "source_path": "/path/to/video.mp4",
                         "fps": 30.0,
                         "total_frames": 1000,
                         "duration": 33.33,

@@ -2,6 +2,7 @@
 Unit tests for converter registry and converter implementations.
 """
 
+from collections import Counter
 from dataclasses import field
 
 import numpy as np
@@ -191,14 +192,17 @@ def test_multiple_converter_chaining():
     path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
     assert len(path.converters["image"]) == 2
-    image_converter_types = {type(c) for c in path.converters["image"]}
-    assert image_converter_types == {UInt8ToFloat32Converter, RedBlueColorConverter}
+    image_converter_counter = Counter(type(c) for c in path.converters["image"])
+    assert image_converter_counter == Counter([UInt8ToFloat32Converter, RedBlueColorConverter])
 
     # The BBoxCoordinateConverter needs an image for normalization (to get dimensions).
     # The bbox chain includes BBoxCoordinateConverter plus any image converters it depends on,
     # since the image field needs to be converted before the bbox can use it for normalization.
-    bbox_converter_types = {type(c) for c in path.converters["bbox"]}
-    assert BBoxCoordinateConverter in bbox_converter_types
+    bbox_converter_counter = Counter(type(c) for c in path.converters["bbox"])
+    # Ensure there is exactly one BBoxCoordinateConverter and no unexpected converter types.
+    assert bbox_converter_counter[BBoxCoordinateConverter] == 1
+    allowed_bbox_converters = {BBoxCoordinateConverter, UInt8ToFloat32Converter, RedBlueColorConverter}
+    assert set(bbox_converter_counter).issubset(allowed_bbox_converters)
 
 
 def test_astar_direct_conversion():

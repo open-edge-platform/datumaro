@@ -360,10 +360,14 @@ class MediaPathToImagePathConverter(Converter):
       saves it as a PNG image file, and outputs the saved image path.
 
     Extracted frames are saved to a deterministic path derived from the video
-    file path and frame index, placed in a ``_extracted_frames`` directory next
-    to the video file::
+    file path and frame index, placed in a directory named
+    ``{video_filename}_frames`` next to the video file.  The directory name
+    includes the file extension to avoid collisions between videos with the
+    same base name (e.g. ``clip.mp4`` vs ``clip.avi``).  For example, for
+    ``/path/to/video.mp4`` and ``frame_index=42`` the extracted frame will be
+    saved as::
 
-        /path/to/video_frames/video_frame000042.png
+        /path/to/video.mp4_frames/frame000042.png
 
     If the extracted image already exists on disk it is not re-extracted,
     making repeated conversions cheap.
@@ -388,13 +392,15 @@ class MediaPathToImagePathConverter(Converter):
         return True
 
     @staticmethod
-    def _extract_frame(video_path: str, frame_index: int, output_format: str) -> str:
+    def _extract_frame(
+        video_path: str,
+        frame_index: int,
+    ) -> str:
         """Extract a video frame and save it as a PNG image file.
 
         Args:
             video_path: Path to the video file.
             frame_index: Zero-based frame index to extract.
-            output_format: Color format for loading (e.g. "RGB").
 
         Returns:
             Path to the saved image file.
@@ -404,17 +410,21 @@ class MediaPathToImagePathConverter(Converter):
         from PIL import Image as _PILImage
 
         video_p = _Path(video_path)
-        output_dir = video_p.parent / f"{video_p.stem}_frames"
+        output_dir = video_p.parent / f"{video_p.name}_frames"
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = output_dir / f"{video_p.stem}_frame{frame_index:06d}.png"
+
+        output_path = output_dir / f"frame{frame_index:06d}.png"
 
         if output_path.exists():
             return str(output_path)
 
+        # Always extract in RGB for saving to PNG via PIL, regardless of the
+        # downstream output_format.  The saved file is format-agnostic;
+        # consumers will re-load in whatever format they need.
         frame = LazyVideoFrame(
             video_path=video_path,
             frame_index=frame_index,
-            format=output_format,
+            format="RGB",
         )
         img_array = frame.data
         _PILImage.fromarray(img_array).save(output_path)
@@ -437,10 +447,9 @@ class MediaPathToImagePathConverter(Converter):
         input_col = self.input_media.name
         frame_idx_col = f"{input_col}_frame_index"
         output_col = self.output_path.name
-        output_format = self.input_media.field.format
 
         has_frame_idx = frame_idx_col in df.columns
-        has_video_frames = has_frame_idx and df.filter(pl.col(frame_idx_col).is_not_null()).height > 0
+        has_video_frames = has_frame_idx and bool(df.select(pl.col(frame_idx_col).is_not_null().any()).item())
 
         if not has_video_frames:
             # Fast path — all rows are standalone images
@@ -454,7 +463,7 @@ class MediaPathToImagePathConverter(Converter):
             if path is None:
                 output_paths.append(None)
             elif frame_idx is not None:
-                output_paths.append(self._extract_frame(str(path), int(frame_idx), output_format))
+                output_paths.append(self._extract_frame(str(path), int(frame_idx)))
             else:
                 output_paths.append(str(path))
 
@@ -468,14 +477,14 @@ class MediaInfoToImageInfoConverter(Converter):
     """
     Converter that extracts image info from MediaInfoField to ImageInfoField.
 
-    MediaInfoField stores comprehensive metadata (width, height, source_path,
+    MediaInfoField stores comprehensive metadata (width, height,
     fps, total_frames, duration, codec, frame_index) as a Polars struct.
     ImageInfoField stores only width and height as a simpler struct.
 
     This converter extracts the width and height fields from the MediaInfoField
     struct and produces an ImageInfoField struct.
 
-    Input: MediaInfoField (struct with width, height, source_path, fps, ...)
+    Input: MediaInfoField (struct with width, height, fps, ...)
     Output: ImageInfoField (struct with width, height)
     """
 
@@ -616,12 +625,12 @@ class ImageInfoToMediaInfoConverter(Converter):
     Converter that promotes ImageInfoField to MediaInfoField.
 
     ImageInfoField stores a struct with {width, height}. MediaInfoField stores
-    a richer struct with {width, height, source_path, fps, total_frames,
+    a richer struct with {width, height, fps, total_frames,
     duration, codec, frame_index}. This converter creates the MediaInfoField
     struct by copying width and height and filling video-specific fields with null.
 
     Input: ImageInfoField (struct with width, height)
-    Output: MediaInfoField (struct with width, height, source_path=null, fps=null, ...)
+    Output: MediaInfoField (struct with width, height, fps=null, ...)
     """
 
     input_info: AttributeSpec[ImageInfoField]
@@ -654,7 +663,6 @@ class ImageInfoToMediaInfoConverter(Converter):
             pl.struct(
                 pl.col(input_col).struct.field("width").alias("width"),
                 pl.col(input_col).struct.field("height").alias("height"),
-                pl.lit(None, dtype=pl.String()).alias("source_path"),
                 pl.lit(None, dtype=pl.Float32()).alias("fps"),
                 pl.lit(None, dtype=pl.UInt32()).alias("total_frames"),
                 pl.lit(None, dtype=pl.Float32()).alias("duration"),

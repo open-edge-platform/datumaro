@@ -611,23 +611,19 @@ class ImagePathToImageInfoConverter(Converter):
         input_col = self.input_path.name
         output_col = self.output_info.name
 
-        widths: list[int | None] = []
-        heights: list[int | None] = []
+        widths: list[int] = []
+        heights: list[int] = []
 
         for path in df[input_col]:
             if path is None:
-                widths.append(None)
-                heights.append(None)
-                continue
+                raise ValueError(
+                    f"Encountered None path in column '{input_col}'. All image paths must be valid to read dimensions."
+                )
 
-            try:
-                with Image.open(str(path)) as img:
-                    w, h = img.size
-                    widths.append(w)
-                    heights.append(h)
-            except Exception:
-                widths.append(None)
-                heights.append(None)
+            with Image.open(str(path)) as img:
+                w, h = img.size
+                widths.append(w)
+                heights.append(h)
 
         return df.with_columns(
             pl.struct(
