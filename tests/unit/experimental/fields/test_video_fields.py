@@ -869,7 +869,7 @@ class MediaInfoFieldTest:
         from datumaro.experimental.media import MediaInfo
 
         field = MediaInfoField(semantic="test")
-        info = MediaInfo(width=1920, height=1080, source_path="/image.jpg")
+        info = MediaInfo(width=1920, height=1080)
 
         result = field.to_polars("media_info", info)
 
@@ -877,7 +877,6 @@ class MediaInfoFieldTest:
         struct_val = result["media_info"][0]
         assert struct_val["width"] == 1920
         assert struct_val["height"] == 1080
-        assert struct_val["source_path"] == "/image.jpg"
         assert struct_val["fps"] is None
 
     def test_media_info_field_to_polars_with_video_info(self):
@@ -889,7 +888,6 @@ class MediaInfoFieldTest:
         info = MediaInfo(
             width=1280,
             height=720,
-            source_path="/video.mp4",
             fps=30.0,
             total_frames=1000,
             duration=33.33,
@@ -926,7 +924,6 @@ class MediaInfoFieldTest:
                     {
                         "width": 1920,
                         "height": 1080,
-                        "source_path": "/image.jpg",
                         "fps": None,
                         "total_frames": None,
                         "duration": None,
@@ -942,7 +939,6 @@ class MediaInfoFieldTest:
         assert result is not None
         assert result.width == 1920
         assert result.height == 1080
-        assert result.source_path == "/image.jpg"
         assert result.is_image is True
 
     def test_media_info_field_from_polars_video(self):
@@ -957,7 +953,6 @@ class MediaInfoFieldTest:
                     {
                         "width": 1280,
                         "height": 720,
-                        "source_path": "/video.mp4",
                         "fps": 30.0,
                         "total_frames": 1000,
                         "duration": 33.33,
@@ -1116,7 +1111,7 @@ class MediaInfoFieldInDatasetTest:
         dataset.append(
             SampleWithMediaInfo(
                 media=LazyImage(str(img_path)),
-                media_info=MediaInfo(width=640, height=480, source_path=str(img_path)),
+                media_info=MediaInfo(width=640, height=480),
             )
         )
 
@@ -1127,7 +1122,6 @@ class MediaInfoFieldInDatasetTest:
                 media_info=MediaInfo(
                     width=1280,
                     height=720,
-                    source_path=str(test_video_exists),
                     fps=30.0,
                     total_frames=100,
                     duration=3.33,

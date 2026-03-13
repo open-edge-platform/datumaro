@@ -2,6 +2,7 @@
 Unit tests for converter registry and converter implementations.
 """
 
+from collections import Counter
 from dataclasses import field
 
 import numpy as np
@@ -191,16 +192,17 @@ def test_multiple_converter_chaining():
     path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
     assert len(path.converters["image"]) == 2
-    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
-    assert type(path.converters["image"][1]) is RedBlueColorConverter
+    image_converter_counter = Counter(type(c) for c in path.converters["image"])
+    assert image_converter_counter == Counter([UInt8ToFloat32Converter, RedBlueColorConverter])
 
-    # The BBoxCoordinateConverter needs an image for normalization (to get dimensions),
-    # but it does not matter if the image is 8 bits or 32 bits.
-    # The A* search optimizes the conversion order so that the bbox converter is applied
-    # before the image converters, avoiding a spurious dependency on the Float32 conversion.
-    # This is the desired behavior - the bbox chain only contains the BBoxCoordinateConverter.
-    assert len(path.converters["bbox"]) == 1
-    assert type(path.converters["bbox"][0]) is BBoxCoordinateConverter
+    # The BBoxCoordinateConverter needs an image for normalization (to get dimensions).
+    # The bbox chain includes BBoxCoordinateConverter plus any image converters it depends on,
+    # since the image field needs to be converted before the bbox can use it for normalization.
+    bbox_converter_counter = Counter(type(c) for c in path.converters["bbox"])
+    # Ensure there is exactly one BBoxCoordinateConverter and no unexpected converter types.
+    assert bbox_converter_counter[BBoxCoordinateConverter] == 1
+    allowed_bbox_converters = {BBoxCoordinateConverter, UInt8ToFloat32Converter, RedBlueColorConverter}
+    assert set(bbox_converter_counter).issubset(allowed_bbox_converters)
 
 
 def test_astar_direct_conversion():

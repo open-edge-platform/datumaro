@@ -39,23 +39,12 @@ class MediaInfoInstantiationTest:
         assert info.duration is None
         assert info.codec is None
         assert info.frame_index is None
-        assert info.source_path is None
-
-    def test_create_image_media_info_with_source_path(self):
-        """Test creating MediaInfo for an image with source path."""
-        info = MediaInfo(width=640, height=480, source_path="/path/to/image.jpg")
-
-        assert info.width == 640
-        assert info.height == 480
-        assert info.source_path == "/path/to/image.jpg"
-        assert info.is_image is True
 
     def test_create_video_frame_media_info(self):
         """Test creating MediaInfo for a video frame with all fields."""
         info = MediaInfo(
             width=1280,
             height=720,
-            source_path="/path/to/video.mp4",
             fps=30.0,
             total_frames=1000,
             duration=33.33,
@@ -65,7 +54,6 @@ class MediaInfoInstantiationTest:
 
         assert info.width == 1280
         assert info.height == 720
-        assert info.source_path == "/path/to/video.mp4"
         assert info.fps == 30.0
         assert info.total_frames == 1000
         assert info.duration == 33.33
@@ -113,12 +101,11 @@ class MediaInfoSerializationTest:
 
     def test_to_dict_image(self):
         """Test to_dict() for image MediaInfo."""
-        info = MediaInfo(width=1920, height=1080, source_path="/image.jpg")
+        info = MediaInfo(width=1920, height=1080)
         result = info.to_dict()
 
         assert result["width"] == 1920
         assert result["height"] == 1080
-        assert result["source_path"] == "/image.jpg"
         assert result["fps"] is None
         assert result["total_frames"] is None
         assert result["duration"] is None
@@ -130,7 +117,6 @@ class MediaInfoSerializationTest:
         info = MediaInfo(
             width=1280,
             height=720,
-            source_path="/video.mp4",
             fps=30.0,
             total_frames=1000,
             duration=33.33,
@@ -141,7 +127,6 @@ class MediaInfoSerializationTest:
 
         assert result["width"] == 1280
         assert result["height"] == 720
-        assert result["source_path"] == "/video.mp4"
         assert result["fps"] == 30.0
         assert result["total_frames"] == 1000
         assert result["duration"] == 33.33
@@ -150,12 +135,11 @@ class MediaInfoSerializationTest:
 
     def test_from_dict_image(self):
         """Test from_dict() for image MediaInfo."""
-        data = {"width": 640, "height": 480, "source_path": "/image.png"}
+        data = {"width": 640, "height": 480}
         info = MediaInfo.from_dict(data)
 
         assert info.width == 640
         assert info.height == 480
-        assert info.source_path == "/image.png"
         assert info.is_image is True
 
     def test_from_dict_video_frame(self):
@@ -163,7 +147,6 @@ class MediaInfoSerializationTest:
         data = {
             "width": 1280,
             "height": 720,
-            "source_path": "/video.mp4",
             "fps": 24.0,
             "total_frames": 500,
             "duration": 20.83,
@@ -183,7 +166,6 @@ class MediaInfoSerializationTest:
         original = MediaInfo(
             width=1920,
             height=1080,
-            source_path="/path/to/video.mp4",
             fps=60.0,
             total_frames=3600,
             duration=60.0,
@@ -195,7 +177,6 @@ class MediaInfoSerializationTest:
 
         assert restored.width == original.width
         assert restored.height == original.height
-        assert restored.source_path == original.source_path
         assert restored.fps == original.fps
         assert restored.total_frames == original.total_frames
         assert restored.duration == original.duration
@@ -221,7 +202,6 @@ class MediaInfoFactoryMethodsTest:
 
             assert info.width == 320
             assert info.height == 240
-            assert info.source_path == str(image_path)
             assert info.is_image is True
             assert info.fps is None
 
@@ -235,7 +215,6 @@ class MediaInfoFactoryMethodsTest:
 
         assert info.width > 0
         assert info.height > 0
-        assert info.source_path == str(TEST_VIDEO_PATH)
         assert info.fps is not None
         assert info.fps > 0
         assert info.total_frames is not None
@@ -258,7 +237,6 @@ class MediaInfoFactoryMethodsTest:
 
         assert info.width == 1920
         assert info.height == 1080
-        assert info.source_path == "/path/to/video.mp4"
         assert info.fps == 30.0
         assert info.total_frames == 1000
         assert info.duration == 33.33

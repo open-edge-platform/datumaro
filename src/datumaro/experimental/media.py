@@ -451,7 +451,6 @@ class MediaInfo:
         duration: Video duration in seconds (None for images)
         codec: Video codec string (None for images)
         frame_index: Frame index within video (None for images)
-        source_path: Path to the source file (image or video)
 
     Examples:
         >>> # From an image
@@ -471,7 +470,6 @@ class MediaInfo:
 
     width: int
     height: int
-    source_path: str | None = None
     fps: float | None = None
     total_frames: int | None = None
     duration: float | None = None
@@ -498,7 +496,6 @@ class MediaInfo:
         return {
             "width": self.width,
             "height": self.height,
-            "source_path": self.source_path,
             "fps": self.fps,
             "total_frames": self.total_frames,
             "duration": self.duration,
@@ -512,7 +509,6 @@ class MediaInfo:
         return cls(
             width=data["width"],
             height=data["height"],
-            source_path=data.get("source_path"),
             fps=data.get("fps"),
             total_frames=data.get("total_frames"),
             duration=data.get("duration"),
@@ -536,7 +532,6 @@ class MediaInfo:
         return cls(
             width=lazy_image.width,
             height=lazy_image.height,
-            source_path=str(lazy_image.path),
         )
 
     @classmethod
@@ -556,7 +551,6 @@ class MediaInfo:
         return cls(
             width=video_info.width,
             height=video_info.height,
-            source_path=video_info.path,
             fps=video_info.fps,
             total_frames=video_info.total_frames,
             duration=video_info.duration,
@@ -579,7 +573,6 @@ class MediaInfo:
         return cls(
             width=video_info.width,
             height=video_info.height,
-            source_path=video_info.path,
             fps=video_info.fps,
             total_frames=video_info.total_frames,
             duration=video_info.duration,

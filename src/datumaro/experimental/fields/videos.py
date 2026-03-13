@@ -289,8 +289,8 @@ class MediaInfoField(Field):
 
     This field stores comprehensive metadata that works for both image files
     and video frames:
-    - For images: width, height, source_path
-    - For video frames: width, height, source_path, fps, total_frames, duration, codec, frame_index
+    - For images: width, height
+    - For video frames: width, height, fps, total_frames, duration, codec, frame_index
 
     The field automatically detects whether the source is an image or video frame
     based on the presence of video-specific fields (fps, etc.).
@@ -298,7 +298,6 @@ class MediaInfoField(Field):
     Schema columns (as a single Struct):
         - width: Frame/image width (Int32)
         - height: Frame/image height (Int32)
-        - source_path: Path to source file (String, nullable)
         - fps: Frames per second (Float32, nullable - None for images)
         - total_frames: Total frames in video (UInt32, nullable - None for images)
         - duration: Video duration in seconds (Float32, nullable - None for images)
@@ -332,7 +331,6 @@ class MediaInfoField(Field):
             [
                 pl.Field("width", pl.Int32()),
                 pl.Field("height", pl.Int32()),
-                pl.Field("source_path", pl.String()),
                 pl.Field("fps", pl.Float32()),
                 pl.Field("total_frames", pl.UInt32()),
                 pl.Field("duration", pl.Float32()),
@@ -350,7 +348,6 @@ class MediaInfoField(Field):
                 [
                     pl.Field("width", pl.Int32()),
                     pl.Field("height", pl.Int32()),
-                    pl.Field("source_path", pl.String()),
                     pl.Field("fps", pl.Float32()),
                     pl.Field("total_frames", pl.UInt32()),
                     pl.Field("duration", pl.Float32()),
@@ -368,7 +365,6 @@ class MediaInfoField(Field):
                 {
                     "width": value.width,
                     "height": value.height,
-                    "source_path": value.source_path,
                     "fps": value.fps,
                     "total_frames": value.total_frames,
                     "duration": value.duration,
@@ -395,7 +391,6 @@ class MediaInfoField(Field):
         return MediaInfo(
             width=struct_val["width"],
             height=struct_val["height"],
-            source_path=struct_val.get("source_path"),
             fps=struct_val.get("fps"),
             total_frames=struct_val.get("total_frames"),
             duration=struct_val.get("duration"),
