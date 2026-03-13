@@ -146,7 +146,7 @@ class ImagePathToImageInfoConverterTest:
         assert info["height"] == 30
 
     def test_convert_none_path(self):
-        """Test that None paths produce None info."""
+        """Test that None paths raise a ValueError."""
         conv = ImagePathToImageInfoConverter()
 
         setattr(
@@ -168,14 +168,11 @@ class ImagePathToImageInfoConverterTest:
         conv.filter_output_spec()
 
         df = pl.DataFrame({"img": [None]}, schema={"img": pl.String()})
-        result = conv.convert(df)
-
-        info = result["info"][0]
-        assert info["width"] is None
-        assert info["height"] is None
+        with pytest.raises(ValueError, match="None path"):
+            conv.convert(df)
 
     def test_convert_invalid_path(self):
-        """Test that invalid paths produce None info gracefully."""
+        """Test that invalid paths raise a FileNotFoundError."""
         conv = ImagePathToImageInfoConverter()
 
         setattr(
@@ -197,11 +194,8 @@ class ImagePathToImageInfoConverterTest:
         conv.filter_output_spec()
 
         df = pl.DataFrame({"img": ["/nonexistent/path/image.png"]})
-        result = conv.convert(df)
-
-        info = result["info"][0]
-        assert info["width"] is None
-        assert info["height"] is None
+        with pytest.raises(FileNotFoundError):
+            conv.convert(df)
 
     def test_convert_multiple_images(self, tmp_path):
         """Test with multiple images of different sizes."""

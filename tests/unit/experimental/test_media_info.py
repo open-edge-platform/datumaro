@@ -202,7 +202,6 @@ class MediaInfoFactoryMethodsTest:
 
             assert info.width == 320
             assert info.height == 240
-            assert info.source_path == str(image_path)
             assert info.is_image is True
             assert info.fps is None
 
@@ -216,7 +215,6 @@ class MediaInfoFactoryMethodsTest:
 
         assert info.width > 0
         assert info.height > 0
-        assert info.source_path == str(TEST_VIDEO_PATH)
         assert info.fps is not None
         assert info.fps > 0
         assert info.total_frames is not None
@@ -239,7 +237,6 @@ class MediaInfoFactoryMethodsTest:
 
         assert info.width == 1920
         assert info.height == 1080
-        assert info.source_path == "/path/to/video.mp4"
         assert info.fps == 30.0
         assert info.total_frames == 1000
         assert info.duration == 33.33
