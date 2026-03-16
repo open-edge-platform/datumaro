@@ -658,11 +658,13 @@ class Dataset(Generic[DType]):
 
         transforms = ConverterTransform(transforms, target_schema, conversion_paths)
 
+        remaining_transforms: Transform | None = transforms if transforms.get_lazy_attributes() else None
+
         # Create new dataset with converted data and inferred categories
         return Dataset.from_dataframe(
-            self.df,
+            transforms._df,
             target_dtype_or_schema,
-            transforms,
+            remaining_transforms,
             categories=inferred_categories,
         )
 

@@ -175,7 +175,8 @@ def test_append_batch_empty():
 
 
 def test_append_batch_immutable_transformed_dataset():
-    """Test that append_batch raises error on transformed dataset."""
+    """Test that append_batch raises error on dataset with pending lazy transforms,
+    and succeeds on a fully-materialised converted dataset."""
 
     class MySample(Sample):
         label: int = label_field()
@@ -184,12 +185,18 @@ def test_append_batch_immutable_transformed_dataset():
     ds = Dataset(MySample, categories=categories)
     ds.append_batch([MySample(label=0)])
 
-    # Create a transformed dataset via convert_to_schema
+    # Fully-materialised conversion (no lazy converters) should be mutable
     converted = ds.convert_to_schema(MySample)
+    assert converted._transforms is None
+    converted.append_batch([MySample(label=1)])
+    assert len(converted) == 2
 
-    # Should raise RuntimeError when trying to append to transformed dataset
+    # Simulate a dataset with pending lazy transforms (e.g. image loading)
+    from datumaro.experimental.transform import IdentityTransform
+
+    lazy_ds = Dataset.from_dataframe(ds.df, MySample, transforms=IdentityTransform(ds.df, ds.schema), schema=ds.schema)
     with pytest.raises(RuntimeError, match="immutable"):
-        converted.append_batch([MySample(label=1)])
+        lazy_ds.append_batch([MySample(label=2)])
 
 
 def test_append_batch_validates_categories():

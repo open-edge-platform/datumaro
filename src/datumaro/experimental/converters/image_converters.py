@@ -15,6 +15,19 @@ from datumaro.experimental.fields.images import ImageCallableField, ImageField, 
 from datumaro.experimental.schema import AttributeSpec
 from datumaro.experimental.type_registry import polars_to_numpy_dtype
 
+# Mapping from numpy dtype to Polars dtype for image data.
+# Used by converters that load/decode images to detect and preserve bit depth.
+_NUMPY_TO_POLARS_DTYPE: dict[np.dtype, pl.DataType] = {
+    np.dtype(np.uint8): pl.UInt8(),
+    np.dtype(np.uint16): pl.UInt16(),
+    np.dtype(np.uint32): pl.UInt32(),
+    np.dtype(np.int8): pl.Int8(),
+    np.dtype(np.int16): pl.Int16(),
+    np.dtype(np.int32): pl.Int32(),
+    np.dtype(np.float32): pl.Float32(),
+    np.dtype(np.float64): pl.Float64(),
+}
+
 
 @converter
 class RedBlueColorConverter(Converter):
@@ -86,13 +99,41 @@ class RedBlueColorConverter(Converter):
         )
 
 
-@converter
-class UInt8ToFloat32Converter(Converter):
-    """
-    Convert image data from UInt8 to Float32 with normalization.
+# Maximum representable value for each integer Polars dtype, used for normalization.
+_INTEGER_DTYPE_MAX: dict[pl.DataType, float] = {
+    pl.UInt8(): 255.0,
+    pl.UInt16(): 65535.0,
+    pl.UInt32(): 4294967295.0,
+    pl.Int8(): 127.0,
+    pl.Int16(): 32767.0,
+    pl.Int32(): 2147483647.0,
+}
 
-    This converter transforms 8-bit integer pixel values (0-255) to
-    32-bit floating point values normalized to the range [0.0, 1.0].
+
+def _is_integer_dtype(dtype: pl.DataType) -> bool:
+    """Check if a Polars dtype is an integer type."""
+    return dtype in _INTEGER_DTYPE_MAX
+
+
+def _is_float_dtype(dtype: pl.DataType) -> bool:
+    """Check if a Polars dtype is a float type."""
+    return dtype in (pl.Float32(), pl.Float64())
+
+
+@converter
+class ImageDtypeConverter(Converter):
+    """
+    Convert image data between different data types with appropriate normalization.
+
+    Supports the following conversions:
+
+    - **Integer → Float**: Normalizes pixel values to [0.0, 1.0] by dividing
+      by the maximum value of the source integer type (e.g., UInt8: /255, UInt16: /65535).
+    - **Float → Integer**: Denormalizes by multiplying by the target integer type's
+      maximum value, clamping, and rounding.
+    - **Integer → Integer**: Rescales between integer ranges (e.g., UInt8 [0,255] →
+      UInt16 [0,65535]) by normalizing to [0,1] then denormalizing to the target range.
+    - **Float → Float**: Simple dtype cast (e.g., Float64 → Float32).
     """
 
     input_image: AttributeSpec[ImageField]
@@ -100,35 +141,31 @@ class UInt8ToFloat32Converter(Converter):
 
     def filter_output_spec(self) -> bool:
         """
-        Check if input uses UInt8 dtype and configure Float32 output.
+        Check if input and output dtypes differ, and configure the output specification.
 
         Returns:
-            True if the converter should be applied (UInt8 input), False otherwise
+            True if the converter should be applied (dtypes differ), False otherwise
         """
-        # Configure output specification for Float32 dtype
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_image.field.semantic,
-                dtype=pl.Float32(),
+                dtype=self.output_image.field.dtype,
                 format=self.input_image.field.format,
                 channels_first=self.output_image.field.channels_first,
             ),
         )
-        return self.input_image.field.dtype == pl.UInt8
+        return self.input_image.field.dtype != self.output_image.field.dtype
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
-        Convert image data from UInt8 to normalized Float32.
-
-        Transforms pixel values from the range [0, 255] to [0.0, 1.0]
-        by dividing by 255.0.
+        Convert image data between dtypes with proper normalization.
 
         Args:
-            df: Input DataFrame containing UInt8 image data
+            df: Input DataFrame containing image data
 
         Returns:
-            DataFrame with normalized Float32 image data
+            DataFrame with converted image data
         """
         input_column_name = self.input_image.name
         output_column_name = self.output_image.name
@@ -136,13 +173,46 @@ class UInt8ToFloat32Converter(Converter):
         input_shape_column_name = self.input_image.name + "_shape"
         output_shape_column_name = self.output_image.name + "_shape"
 
+        src_dtype = self.input_image.field.dtype
+        dst_dtype = self.output_image.field.dtype
+
+        expr = self._build_conversion_expr(src_dtype, dst_dtype)
+
         return df.with_columns(
-            # Normalize UInt8 values (0-255) to Float32 (0.0-1.0)
-            pl.col(input_column_name)
-            .list.eval((pl.element() / 255.0).cast(self.output_image.field.dtype))
-            .alias(output_column_name),
+            pl.col(input_column_name).list.eval(expr).alias(output_column_name),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
+
+    @staticmethod
+    def _build_conversion_expr(src_dtype: pl.DataType, dst_dtype: pl.DataType) -> pl.Expr:
+        """Build the Polars expression for the dtype conversion."""
+        src_is_int = _is_integer_dtype(src_dtype)
+        dst_is_int = _is_integer_dtype(dst_dtype)
+        src_is_float = _is_float_dtype(src_dtype)
+        dst_is_float = _is_float_dtype(dst_dtype)
+
+        if src_is_int and dst_is_float:
+            # Integer → Float: normalize to [0.0, 1.0]
+            src_max = _INTEGER_DTYPE_MAX[src_dtype]
+            return (pl.element() / src_max).cast(dst_dtype)
+
+        if src_is_float and dst_is_int:
+            # Float → Integer: denormalize from [0.0, 1.0], clamp, round
+            dst_max = _INTEGER_DTYPE_MAX[dst_dtype]
+            return (pl.element() * dst_max).round(0).clip(0, dst_max).cast(dst_dtype)
+
+        if src_is_int and dst_is_int:
+            # Integer → Integer: rescale between ranges
+            src_max = _INTEGER_DTYPE_MAX[src_dtype]
+            dst_max = _INTEGER_DTYPE_MAX[dst_dtype]
+            return (pl.element() * (dst_max / src_max)).round(0).clip(0, dst_max).cast(dst_dtype)
+
+        # Float → Float: simple cast
+        if src_is_float and dst_is_float:
+            return pl.element().cast(dst_dtype)
+
+        # Fallback: attempt a direct cast
+        return pl.element().cast(dst_dtype)
 
 
 @converter(lazy=True)
@@ -169,12 +239,12 @@ class ImagePathToImageConverter(Converter):
     # Supported output formats for this converter
     SUPPORTED_FORMATS = {"RGB", "BGR", "RGBA", "GRAY"}
 
-    # OpenCV read flags for each format
+    # OpenCV read flags for each format (combined with IMREAD_ANYDEPTH to preserve bit depth)
     _CV2_READ_FLAGS = {
-        "RGB": cv2.IMREAD_COLOR,
-        "BGR": cv2.IMREAD_COLOR,
+        "RGB": cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH,
+        "BGR": cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH,
         "RGBA": cv2.IMREAD_UNCHANGED,
-        "GRAY": cv2.IMREAD_GRAYSCALE,
+        "GRAY": cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH,
     }
 
     # PIL target modes for each format
@@ -197,11 +267,16 @@ class ImagePathToImageConverter(Converter):
                 f"Supported formats are: {', '.join(sorted(self.SUPPORTED_FORMATS))}."
             )
 
+        # Use the requested output dtype if specified, otherwise default to UInt8.
+        # The actual dtype will be updated at convert time based on the loaded image
+        # to handle cases like 16-bit images (UInt16) automatically.
+        output_dtype = self.output_image.field.dtype if self.output_image.field.dtype else pl.UInt8()
+
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_path.field.semantic,
-                dtype=pl.UInt8(),  # Default to UInt8 for loaded images
+                dtype=output_dtype,
                 format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -262,10 +337,17 @@ class ImagePathToImageConverter(Converter):
         target_mode = self._PIL_MODES[output_format]
 
         with Image.open(path) as img:
-            # Convert to target mode if needed
-            source_img = img if img.mode == target_mode else img.convert(target_mode)
-
-            img_array = np.array(source_img, dtype=np.uint8)
+            # For 16-bit grayscale images, PIL uses mode 'I;16' or 'I'
+            # Convert to target mode if needed, preserving bit depth
+            if output_format == "GRAY" and img.mode in ("I;16", "I;16L", "I;16B"):
+                # Preserve 16-bit depth for grayscale
+                img_array = np.array(img, dtype=np.uint16)
+            elif output_format == "GRAY" and img.mode == "I":
+                # 32-bit integer images
+                img_array = np.array(img, dtype=np.int32)
+            else:
+                source_img = img if img.mode == target_mode else img.convert(target_mode)
+                img_array = np.array(source_img)
 
             # Handle BGR format (swap R and B channels)
             if output_format == "BGR":
@@ -307,6 +389,22 @@ class ImagePathToImageConverter(Converter):
 
             image_data.append(img_array.flatten())
             image_shapes.append(list(img_array.shape))
+
+        # Detect actual dtype from loaded images and update the output field
+        # to match. This handles 16-bit (uint16), 32-bit (float32), etc.
+        if image_data:
+            actual_numpy_dtype = image_data[0].dtype
+            actual_polars_dtype = _NUMPY_TO_POLARS_DTYPE.get(actual_numpy_dtype)
+            if actual_polars_dtype is not None and actual_polars_dtype != self.output_image.field.dtype:
+                self.output_image = AttributeSpec(
+                    name=self.output_image.name,
+                    field=ImageField(
+                        semantic=self.output_image.field.semantic,
+                        dtype=actual_polars_dtype,
+                        format=self.output_image.field.format,
+                        channels_first=self.output_image.field.channels_first,
+                    ),
+                )
 
         # Create output DataFrame
         image_schema = self.output_image.field.to_polars_schema("image")
@@ -382,17 +480,66 @@ class ImageBytesToImageConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
-        # Configure output specification with default RGB format
+        # Use the requested output dtype if specified, otherwise default to UInt8.
+        # The actual dtype will be updated at convert time based on the decoded image.
+        output_dtype = self.output_image.field.dtype if self.output_image.field.dtype else pl.UInt8()
+        output_format = self.output_image.field.format if self.output_image.field.format else "RGB"
+
+        # Configure output specification
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_bytes.field.semantic,
-                dtype=pl.UInt8(),  # Default to UInt8 for decoded images
-                format="RGB",  # Default to RGB format
+                dtype=output_dtype,
+                format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
+
+    @staticmethod
+    def _decode_image_bytes(image_bytes: bytes, output_format: str) -> np.ndarray:
+        """
+        Decode image bytes into a numpy array in the requested format.
+
+        Handles 8-bit and 16-bit images, preserving bit depth.
+
+        Args:
+            image_bytes: Raw image bytes (PNG, JPEG, etc.)
+            output_format: Desired output format (RGB, BGR, RGBA, GRAY)
+
+        Returns:
+            Image as numpy array in the requested format
+        """
+        from io import BytesIO
+
+        with Image.open(BytesIO(image_bytes)) as img:
+            is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
+
+            if is_16bit and output_format in ("RGB", "BGR"):
+                # For 16-bit grayscale, stack into 3-channel uint16
+                gray = np.array(img, dtype=np.uint16)
+                img_array = np.stack([gray, gray, gray], axis=-1)
+                if output_format == "BGR":
+                    img_array = img_array[..., ::-1].copy()
+            elif is_16bit and output_format == "GRAY":
+                img_array = np.array(img, dtype=np.uint16)
+                if img_array.ndim == 2:
+                    img_array = img_array[:, :, np.newaxis]
+            else:
+                target_mode = output_format if output_format != "BGR" else "RGB"
+                if target_mode == "GRAY":
+                    target_mode = "L"
+                converted_img = img if img.mode == target_mode else img.convert(target_mode)
+                img_array = np.array(converted_img)
+
+                if output_format == "BGR":
+                    img_array = img_array[..., ::-1].copy()
+
+                if output_format == "GRAY" and img_array.ndim == 2:
+                    img_array = img_array[:, :, np.newaxis]
+
+        return img_array
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
@@ -406,30 +553,40 @@ class ImageBytesToImageConverter(Converter):
         """
         input_col = self.input_bytes.name
         output_col = self.output_image.name
+        output_format = self.output_image.field.format
 
         # Decode images from bytes
         image_data: list[np.ndarray] = []
         image_shapes: list[list[int]] = []
 
         for image_bytes in df[input_col]:
-            # Decode image using PIL
-            from io import BytesIO
+            img_array = self._decode_image_bytes(image_bytes, output_format)
+            image_data.append(img_array.reshape(-1))
+            image_shapes.append(list(img_array.shape))
 
-            with Image.open(BytesIO(image_bytes)) as img:
-                # Convert to RGB if needed
-                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
+        # Detect actual dtype from decoded images and update the output field
+        if image_data:
+            actual_numpy_dtype = image_data[0].dtype
+            actual_polars_dtype = _NUMPY_TO_POLARS_DTYPE.get(actual_numpy_dtype)
+            if actual_polars_dtype is not None and actual_polars_dtype != self.output_image.field.dtype:
+                self.output_image = AttributeSpec(
+                    name=self.output_image.name,
+                    field=ImageField(
+                        semantic=self.output_image.field.semantic,
+                        dtype=actual_polars_dtype,
+                        format=self.output_image.field.format,
+                        channels_first=self.output_image.field.channels_first,
+                    ),
+                )
 
-                # Convert to numpy array
-                img_array = np.array(rgb_img, dtype=np.uint8)
-                image_data.append(img_array.reshape(-1))
-                image_shapes.append(list(img_array.shape))
+        # Create output DataFrame using the correct schema
+        image_schema = self.output_image.field.to_polars_schema("image")
 
-        # Create output DataFrame
         result_df = df.clone()
         return result_df.with_columns(
             [
-                pl.Series(output_col, image_data),
-                pl.Series(output_col + "_shape", image_shapes),
+                pl.Series(output_col, image_data, dtype=image_schema["image"]),
+                pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
             ]
         )
 
@@ -449,12 +606,16 @@ class ImageCallableToImageConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output image and info specifications based on input."""
+        # Use the requested output dtype if specified, otherwise default to UInt8.
+        # The actual dtype will be updated at convert time based on the callable's output.
+        output_dtype = self.output_image.field.dtype if self.output_image.field.dtype else pl.UInt8()
+
         # Configure output image specification
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_callable.field.semantic,
-                dtype=pl.UInt8(),  # Default to UInt8 for image data
+                dtype=output_dtype,
                 format=self.input_callable.field.format,  # Use format from callable field
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -496,13 +657,6 @@ class ImageCallableToImageConverter(Converter):
                 if len(img_array.shape) != 3:
                     raise ValueError(f"Image array must be 3D (height, width, channels), got shape {img_array.shape}")
 
-                # Check that the array has the expected dtype (no conversion)
-                expected_dtype = self.output_image.field.dtype
-                expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
-                if img_array.dtype != expected_numpy_dtype:
-                    raise TypeError(f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}")
-                # If no specific dtype checking needed, accept as-is
-
                 # Store flattened image data and shape
                 image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
@@ -510,12 +664,33 @@ class ImageCallableToImageConverter(Converter):
             except Exception as e:
                 raise RuntimeError(f"Error executing callable for image generation: {e}") from e
 
-        # Create output DataFrame
+        # Detect actual dtype from callable outputs and update the output field
+        # to match. This handles 16-bit (uint16), float32, etc.
+        if image_data:
+            # Find the first non-None entry to detect dtype
+            first_data = next((d for d in image_data if d is not None), None)
+            if first_data is not None:
+                actual_numpy_dtype = first_data.dtype
+                actual_polars_dtype = _NUMPY_TO_POLARS_DTYPE.get(actual_numpy_dtype)
+                if actual_polars_dtype is not None and actual_polars_dtype != self.output_image.field.dtype:
+                    self.output_image = AttributeSpec(
+                        name=self.output_image.name,
+                        field=ImageField(
+                            semantic=self.output_image.field.semantic,
+                            dtype=actual_polars_dtype,
+                            format=self.output_image.field.format,
+                            channels_first=self.output_image.field.channels_first,
+                        ),
+                    )
+
+        # Create output DataFrame using the correct schema
+        image_schema = self.output_image.field.to_polars_schema("image")
+
         result_df = df.clone()
         return result_df.with_columns(
             [
-                pl.Series(output_col, image_data),
-                pl.Series(output_col + "_shape", image_shapes),
+                pl.Series(output_col, image_data, dtype=image_schema["image"]),
+                pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
             ]
         )
 

@@ -93,7 +93,7 @@ The module includes many pre-registered converters:
 | Converter | Description |
 |-----------|-------------|
 | `RedBlueColorConverter` | RGB / BGR color format conversion |
-| `UInt8ToFloat32Converter` | Image dtype conversion |
+| `ImageDtypeConverter` | Image dtype conversion with normalization |
 | `ChannelsFirstConverter` | HWC / CHW channel order conversion |
 | `ImagePathToImageConverter` | Load image from path |
 | `ImageCallableToImageConverter` | Execute lazy image loader |
