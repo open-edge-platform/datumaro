@@ -17,9 +17,9 @@ from datumaro.experimental.converters import (
     ConversionError,
     Converter,
     ConverterRegistry,
+    ImageDtypeConverter,
     ImagePathToImageConverter,
     RedBlueColorConverter,
-    UInt8ToFloat32Converter,
     converter,
     find_conversion_path,
 )
@@ -81,7 +81,7 @@ def test_find_conversion_path():
     # This should find a conversion path (UInt8 -> Float32)
     path, _ = find_conversion_path(source_schema, target_schema)
     assert len(path.converters["image"]) == 1
-    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["image"][0]) is ImageDtypeConverter
 
 
 def test_convert_dataframe():
@@ -193,7 +193,7 @@ def test_multiple_converter_chaining():
     # If successful, should have multiple steps
     assert len(path.converters["image"]) == 2
     image_converter_counter = Counter(type(c) for c in path.converters["image"])
-    assert image_converter_counter == Counter([UInt8ToFloat32Converter, RedBlueColorConverter])
+    assert image_converter_counter == Counter([ImageDtypeConverter, RedBlueColorConverter])
 
     # The BBoxCoordinateConverter needs an image for normalization (to get dimensions).
     # The bbox chain includes BBoxCoordinateConverter plus any image converters it depends on,
@@ -201,7 +201,7 @@ def test_multiple_converter_chaining():
     bbox_converter_counter = Counter(type(c) for c in path.converters["bbox"])
     # Ensure there is exactly one BBoxCoordinateConverter and no unexpected converter types.
     assert bbox_converter_counter[BBoxCoordinateConverter] == 1
-    allowed_bbox_converters = {BBoxCoordinateConverter, UInt8ToFloat32Converter, RedBlueColorConverter}
+    allowed_bbox_converters = {BBoxCoordinateConverter, ImageDtypeConverter, RedBlueColorConverter}
     assert set(bbox_converter_counter).issubset(allowed_bbox_converters)
 
 

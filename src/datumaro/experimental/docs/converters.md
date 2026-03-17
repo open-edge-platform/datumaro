@@ -93,7 +93,7 @@ The module includes many pre-registered converters:
 | Converter | Description |
 |-----------|-------------|
 | `RedBlueColorConverter` | RGB / BGR color format conversion |
-| `UInt8ToFloat32Converter` | Image dtype conversion |
+| `ImageDtypeConverter` | Image dtype conversion with normalization |
 | `ChannelsFirstConverter` | HWC / CHW channel order conversion |
 | `ImagePathToImageConverter` | Load image from path |
 | `ImageCallableToImageConverter` | Execute lazy image loader |
@@ -131,6 +131,7 @@ The module includes many pre-registered converters:
 | `KeypointsDtypeConverter` | Keypoints dtype conversion |
 | `KeypointsToBBoxConverter` | Generate bboxes from keypoints |
 | `LabelDtypeConverter` | Label dtype conversion |
+| `LabelMultiLabelConverter` | Convert between single-label and multi-label representations |
 | `LabelIndexConverter` | Convert label names to indices |
 ### Mask Converters
 | Converter | Description |

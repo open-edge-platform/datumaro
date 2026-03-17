@@ -1,6 +1,8 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+import logging
+
 import polars as pl
 
 from datumaro.experimental.categories import LabelCategories
@@ -16,6 +18,8 @@ from datumaro.experimental.fields.annotations import (
 )
 from datumaro.experimental.fields.images import ImageField
 from datumaro.experimental.schema import AttributeSpec
+
+log = logging.getLogger(__name__)
 
 
 @converter
@@ -305,6 +309,58 @@ class RotatedBBoxDtypeConverter(Converter):
 
 
 @converter
+class LabelMultiLabelConverter(Converter):
+    """Convert Label field between single-label and multi-label representations.
+
+    When converting from single-label (multi_label=False) to multi-label (multi_label=True),
+    each individual label value is wrapped in a list.
+    When converting from multi-label to single-label, the first label in each list is taken.
+    """
+
+    input_label: AttributeSpec[LabelField]
+    output_label: AttributeSpec[LabelField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output label specification with target multi_label setting."""
+        self.output_label = AttributeSpec(
+            name=self.output_label.name,
+            field=LabelField(
+                semantic=self.input_label.field.semantic,
+                dtype=self.input_label.field.dtype,
+                multi_label=self.output_label.field.multi_label,
+                is_list=self.input_label.field.is_list,
+            ),
+        )
+        return self.input_label.field.multi_label != self.output_label.field.multi_label
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Convert label data between single-label and multi-label formats."""
+        input_col = self.input_label.name
+        output_col = self.output_label.name
+        input_multi = self.input_label.field.multi_label
+        is_list = self.input_label.field.is_list
+
+        if not input_multi:
+            # single-label → multi-label: wrap each label value in a list
+            if is_list:
+                # List(dtype) → List(List(dtype)): wrap each element in the list
+                return df.with_columns(pl.col(input_col).list.eval(pl.concat_list(pl.element())).alias(output_col))
+            # dtype → List(dtype): wrap the scalar value in a list
+            return df.with_columns(pl.concat_list(pl.col(input_col)).alias(output_col))
+        # multi-label → single-label: take the first label from each list
+        log.warning(
+            "Converting multi-label to single-label for field '%s': "
+            "only the first label per sample is kept, all other labels are discarded.",
+            input_col,
+        )
+        if is_list:
+            # List(List(dtype)) → List(dtype): take first element from each inner list
+            return df.with_columns(pl.col(input_col).list.eval(pl.element().list.first()).alias(output_col))
+        # List(dtype) → dtype: take first element
+        return df.with_columns(pl.col(input_col).list.first().alias(output_col))
+
+
+@converter
 class LabelDtypeConverter(Converter):
     """Convert Label field between different data types."""
 
@@ -330,7 +386,12 @@ class LabelDtypeConverter(Converter):
         output_col = self.output_label.name
         target_dtype = self.output_label.field.dtype
 
-        if self.input_label.field.is_list:
+        if self.input_label.field.multi_label and self.input_label.field.is_list:
+            # List(List(dtype)) → List(List(target_dtype)): cast inner elements
+            return df.with_columns(
+                pl.col(input_col).list.eval(pl.element().list.eval(pl.element().cast(target_dtype))).alias(output_col)
+            )
+        if self.input_label.field.multi_label or self.input_label.field.is_list:
             return df.with_columns(pl.col(input_col).list.eval(pl.element().cast(target_dtype)).alias(output_col))
         return df.with_columns(pl.col(input_col).cast(target_dtype).alias(output_col))
 

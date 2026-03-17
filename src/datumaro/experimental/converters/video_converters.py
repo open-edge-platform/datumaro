@@ -64,11 +64,13 @@ class VideoFramePathToImageConverter(Converter):
                 f"Supported formats are: {', '.join(sorted(self.SUPPORTED_FORMATS))}."
             )
 
+        output_dtype = self.output_image.field.dtype if self.output_image.field.dtype else pl.UInt8()
+
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_frame.field.semantic,
-                dtype=pl.UInt8(),
+                dtype=output_dtype,
                 format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -218,11 +220,13 @@ class MediaPathToImageConverter(Converter):
                 f"Supported formats are: {', '.join(sorted(self.SUPPORTED_FORMATS))}."
             )
 
+        output_dtype = self.output_image.field.dtype if self.output_image.field.dtype else pl.UInt8()
+
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_media.field.semantic,
-                dtype=pl.UInt8(),
+                dtype=output_dtype,
                 format=output_format,
                 channels_first=self.output_image.field.channels_first,
             ),
