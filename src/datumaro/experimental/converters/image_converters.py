@@ -99,27 +99,6 @@ class RedBlueColorConverter(Converter):
         )
 
 
-# Maximum representable value for each integer Polars dtype, used for normalization.
-_INTEGER_DTYPE_MAX: dict[pl.DataType, float] = {
-    pl.UInt8(): 255.0,
-    pl.UInt16(): 65535.0,
-    pl.UInt32(): 4294967295.0,
-    pl.Int8(): 127.0,
-    pl.Int16(): 32767.0,
-    pl.Int32(): 2147483647.0,
-}
-
-
-def _is_integer_dtype(dtype: pl.DataType) -> bool:
-    """Check if a Polars dtype is an integer type."""
-    return dtype in _INTEGER_DTYPE_MAX
-
-
-def _is_float_dtype(dtype: pl.DataType) -> bool:
-    """Check if a Polars dtype is a float type."""
-    return dtype in (pl.Float32(), pl.Float64())
-
-
 @converter
 class ImageDtypeConverter(Converter):
     """
@@ -186,26 +165,24 @@ class ImageDtypeConverter(Converter):
     @staticmethod
     def _build_conversion_expr(src_dtype: pl.DataType, dst_dtype: pl.DataType) -> pl.Expr:
         """Build the Polars expression for the dtype conversion."""
-        src_is_int = _is_integer_dtype(src_dtype)
-        dst_is_int = _is_integer_dtype(dst_dtype)
-        src_is_float = _is_float_dtype(src_dtype)
-        dst_is_float = _is_float_dtype(dst_dtype)
+        src_is_int = src_dtype.is_integer()
+        dst_is_int = dst_dtype.is_integer()
+        src_is_float = src_dtype.is_float()
+        dst_is_float = dst_dtype.is_float()
 
         if src_is_int and dst_is_float:
             # Integer → Float: normalize to [0.0, 1.0]
-            src_max = _INTEGER_DTYPE_MAX[src_dtype]
-            return (pl.element() / src_max).cast(dst_dtype)
+            return (pl.element() / src_dtype.max()).cast(dst_dtype)
 
         if src_is_float and dst_is_int:
             # Float → Integer: denormalize from [0.0, 1.0], clamp, round
-            dst_max = _INTEGER_DTYPE_MAX[dst_dtype]
-            return (pl.element() * dst_max).round(0).clip(0, dst_max).cast(dst_dtype)
+            return (pl.element() * dst_dtype.max()).round(0).clip(0, dst_dtype.max()).cast(dst_dtype)
 
         if src_is_int and dst_is_int:
             # Integer → Integer: rescale between ranges
-            src_max = _INTEGER_DTYPE_MAX[src_dtype]
-            dst_max = _INTEGER_DTYPE_MAX[dst_dtype]
-            return (pl.element() * (dst_max / src_max)).round(0).clip(0, dst_max).cast(dst_dtype)
+            return (
+                (pl.element() * (dst_dtype.max() / src_dtype.max())).round(0).clip(0, dst_dtype.max()).cast(dst_dtype)
+            )
 
         # Float → Float: simple cast
         if src_is_float and dst_is_float:
