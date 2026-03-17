@@ -2,11 +2,13 @@
 Unit tests for annotation converter implementations.
 """
 
+import logging
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 import polars as pl
+import pytest
 
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.converters import (
@@ -734,6 +736,257 @@ def test_label_dtype_converter_same_dtype():
     assert converter_instance.filter_output_spec() is False
 
 
+def test_label_dtype_converter_multi_label_and_list():
+    """Test LabelDtypeConverter with multi_label=True and is_list=True (List(List(dtype)))."""
+    from datumaro.experimental.converters import LabelDtypeConverter
+
+    converter_instance = LabelDtypeConverter()
+
+    # Create test data with List(List(UInt32)) labels
+    df = pl.DataFrame(
+        {"labels": [[[1, 2], [3, 4, 5]]]},
+        schema=pl.Schema({"labels": pl.List(pl.List(pl.UInt32()))}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=True)
+    output_field = LabelField(dtype=pl.UInt8(), multi_label=True, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "labels" in result_df.columns
+    assert result_df["labels"].dtype == pl.List(pl.List(pl.UInt8))
+    row = result_df["labels"][0].to_list()
+    assert row == [[1, 2], [3, 4, 5]]
+
+
+def test_label_multi_label_converter_single_to_multi_scalar():
+    """Test LabelMultiLabelConverter converting scalar single-label to multi-label."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Create test data with a scalar UInt32 label
+    df = pl.DataFrame(
+        {"label": [5]},
+        schema=pl.Schema({"label": pl.UInt32()}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=False)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=False)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="label", field=output_field))
+
+    # Test filter - should return True for multi_label change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion: scalar → List(dtype)
+    result_df = converter_instance.convert(df)
+
+    assert "label" in result_df.columns
+    assert result_df["label"].dtype == pl.List(pl.UInt32)
+    assert result_df["label"][0].to_list() == [5]
+
+
+def test_label_multi_label_converter_single_to_multi_list():
+    """Test LabelMultiLabelConverter converting list of single labels to list of multi-labels."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Create test data with List(UInt32) labels (e.g. per-bbox labels in detection)
+    df = pl.DataFrame(
+        {"labels": [[1, 2, 3]]},
+        schema=pl.Schema({"labels": pl.List(pl.UInt32())}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # Test filter - should return True for multi_label change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion: List(dtype) → List(List(dtype))
+    result_df = converter_instance.convert(df)
+
+    assert "labels" in result_df.columns
+    assert result_df["labels"].dtype == pl.List(pl.List(pl.UInt32))
+    row = result_df["labels"][0].to_list()
+    # Each element should be wrapped in its own list
+    assert row == [[1], [2], [3]]
+
+
+def test_label_multi_label_converter_multi_to_single_scalar(caplog: pytest.LogCaptureFixture):
+    """Test LabelMultiLabelConverter converting multi-label to single-label (scalar)."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Create test data with List(UInt32) multi-label
+    df = pl.DataFrame(
+        {"label": [[5, 10, 15]]},
+        schema=pl.Schema({"label": pl.List(pl.UInt32())}),
+    )
+
+    # Set up converter attributes: multi_label=True → multi_label=False
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=False)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=False)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="label", field=output_field))
+
+    # Test filter - should return True for multi_label change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion: List(dtype) → dtype (takes first element) and logs a warning
+    with caplog.at_level(logging.WARNING):
+        result_df = converter_instance.convert(df)
+
+    assert any("only the first label" in msg for msg in caplog.messages)
+
+    assert "label" in result_df.columns
+    assert result_df["label"].dtype == pl.UInt32
+    assert result_df["label"][0] == 5
+
+
+def test_label_multi_label_converter_multi_to_single_list(caplog: pytest.LogCaptureFixture):
+    """Test LabelMultiLabelConverter converting list of multi-labels to list of single labels."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Create test data with List(List(UInt32)) labels
+    df = pl.DataFrame(
+        {"labels": [[[5, 10], [15, 20], [25]]]},
+        schema=pl.Schema({"labels": pl.List(pl.List(pl.UInt32()))}),
+    )
+
+    # Set up converter attributes: multi_label=True → multi_label=False, is_list=True
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=True)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # Test filter - should return True for multi_label change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion: List(List(dtype)) → List(dtype) (takes first from each inner list)
+    with caplog.at_level(logging.WARNING):
+        result_df = converter_instance.convert(df)
+
+    assert any("only the first label" in msg for msg in caplog.messages)
+
+    assert "labels" in result_df.columns
+    assert result_df["labels"].dtype == pl.List(pl.UInt32)
+    assert result_df["labels"][0].to_list() == [5, 15, 25]
+
+
+def test_label_multi_label_converter_same_multi_label():
+    """Test LabelMultiLabelConverter returns False when multi_label is unchanged."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Set up converter attributes with same multi_label
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # Test filter - should return False when multi_label is the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_label_multi_label_converter_preserves_dtype_and_is_list():
+    """Test that LabelMultiLabelConverter preserves dtype and is_list from input."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt8(), multi_label=True, is_list=False)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # After filter_output_spec, the output should use input's dtype and is_list
+    assert converter_instance.filter_output_spec() is True
+    assert converter_instance.output_label.field.dtype == pl.UInt32()  # Preserved from input
+    assert converter_instance.output_label.field.is_list is True  # Preserved from input
+    assert converter_instance.output_label.field.multi_label is True  # From target
+
+
+def test_label_multi_label_converter_with_nulls():
+    """Test LabelMultiLabelConverter handles null values correctly."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    # Create test data with some null values
+    df = pl.DataFrame(
+        {"labels": [[1, 2], None, [3]]},
+        schema=pl.Schema({"labels": pl.List(pl.UInt32())}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    result_df = converter_instance.convert(df)
+
+    assert result_df["labels"].dtype == pl.List(pl.List(pl.UInt32))
+    # Non-null rows should be wrapped
+    assert result_df["labels"][0].to_list() == [[1], [2]]
+    assert result_df["labels"][1] is None
+    assert result_df["labels"][2].to_list() == [[3]]
+
+
+def test_label_multi_label_converter_with_different_column_names():
+    """Test LabelMultiLabelConverter when input and output column names differ."""
+    from datumaro.experimental.converters import LabelMultiLabelConverter
+
+    converter_instance = LabelMultiLabelConverter()
+
+    df = pl.DataFrame(
+        {"source_labels": [[1, 2, 3]]},
+        schema=pl.Schema({"source_labels": pl.List(pl.UInt32())}),
+    )
+
+    input_field = LabelField(dtype=pl.UInt32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt32(), multi_label=True, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="source_labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="target_labels", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    result_df = converter_instance.convert(df)
+
+    assert "target_labels" in result_df.columns
+    assert result_df["target_labels"].dtype == pl.List(pl.List(pl.UInt32))
+    assert result_df["target_labels"][0].to_list() == [[1], [2], [3]]
+
+
 def test_polygon_dtype_converter_int_to_float():
     """Test PolygonDtypeConverter converting Int32 to Float32."""
     from datumaro.experimental.converters import PolygonDtypeConverter
@@ -866,7 +1119,7 @@ def test_convert_fixed_array_dtype():
 
     # Check result
     assert "output" in result_df.columns
-    assert result_df["output"].dtype == pl.List(pl.Array(pl.Float32(), 5))
+    assert result_df["output"].dtype == pl.List(pl.Array(pl.Float32, 5))
     np.testing.assert_array_almost_equal(result_df["output"][0][0].to_numpy(), [10.0, 20.0, 30.0, 40.0, 50.0])
 
 
@@ -1272,3 +1525,58 @@ def test_rotated_bbox_coordinate_converter():
     # cx and w normalized by width (500), cy and h normalized by height (400), r unchanged
     expected = [250.0 / 500, 200.0 / 400, 100.0 / 500, 80.0 / 400, 0.5]
     np.testing.assert_array_almost_equal(result_rbbox, expected, decimal=5)
+
+
+def test_label_multi_label_conversion_path_found():
+    """Test that find_conversion_path can find a path for multi_label=False → multi_label=True."""
+    from datumaro.experimental.converters.registry import find_conversion_path
+    from datumaro.experimental.fields import label_field
+
+    class SourceSample(Sample):
+        label: npt.NDArray[Any] = label_field(dtype=pl.UInt32(), multi_label=False, is_list=True)
+
+    class TargetSample(Sample):
+        label: npt.NDArray[Any] = label_field(dtype=pl.UInt8(), multi_label=True, is_list=True)
+
+    source_schema = SourceSample.infer_schema()
+    target_schema = TargetSample.infer_schema()
+
+    # This should NOT raise a ConversionError
+    conversion_paths, _categories = find_conversion_path(source_schema, target_schema)
+
+    # There should be converters in the path
+    assert len(conversion_paths.converters) > 0
+
+
+def test_label_multi_label_dataset_conversion():
+    """Test end-to-end dataset conversion with multi_label change."""
+    from datumaro.experimental.fields import label_field
+
+    class SourceSample(Sample):
+        label: npt.NDArray[Any] = label_field(dtype=pl.UInt32(), multi_label=False, is_list=True)
+
+    class TargetSample(Sample):
+        label: npt.NDArray[Any] = label_field(dtype=pl.UInt8(), multi_label=True, is_list=True)
+
+    categories = {"label": LabelCategories(labels=("cat", "dog", "bird", "fish", "horse"))}
+    dataset = Dataset(SourceSample, categories=categories)
+
+    # Add samples with list-of-single-labels (detection-style)
+    sample1 = SourceSample(label=np.array([0, 1, 2], dtype=np.uint32))
+    sample2 = SourceSample(label=np.array([3, 4], dtype=np.uint32))
+    dataset.append(sample1)
+    dataset.append(sample2)
+
+    # Convert to multi-label schema
+    converted = dataset.convert_to_schema(TargetSample)
+
+    assert len(converted) == 2
+    assert converted.schema.attributes["label"].field.multi_label is True
+    assert converted.schema.attributes["label"].field.dtype == pl.UInt8()
+    assert converted.df["label"].dtype == pl.List(pl.List(pl.UInt8))
+
+    # Each single label should be wrapped in its own list
+    row0 = converted.df["label"][0].to_list()
+    assert row0 == [[0], [1], [2]]
+    row1 = converted.df["label"][1].to_list()
+    assert row1 == [[3], [4]]
