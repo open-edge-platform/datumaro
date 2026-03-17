@@ -517,11 +517,11 @@ class ImageBytesToImageConverter(Converter):
             is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
 
             if is_16bit and output_format in ("RGB", "BGR"):
-                # For 16-bit grayscale, stack into 3-channel uint16
+                # For 16-bit grayscale, stack into 3-channel uint16.
+                # All channels are identical, so no channel reordering is needed
+                # even when the requested format is BGR.
                 gray = np.array(img, dtype=np.uint16)
                 img_array = np.stack([gray, gray, gray], axis=-1)
-                if output_format == "BGR":
-                    img_array = img_array[..., ::-1].copy()
             elif is_16bit and output_format == "GRAY":
                 img_array = np.array(img, dtype=np.uint16)
                 if img_array.ndim == 2:
