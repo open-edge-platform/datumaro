@@ -309,55 +309,113 @@ class RotatedBBoxDtypeConverter(Converter):
 
 
 @converter
-class LabelMultiLabelConverter(Converter):
-    """Convert Label field between single-label and multi-label representations.
+class LabelShapeConverter(Converter):
+    """Convert Label field between different multi_label and is_list configurations.
 
-    When converting from single-label (multi_label=False) to multi-label (multi_label=True),
-    each individual label value is wrapped in a list.
-    When converting from multi-label to single-label, the first label in each list is taken.
+    This converter handles changes to both the ``multi_label`` and ``is_list``
+    flags of a :class:`LabelField` in a single step.  It is activated whenever
+    at least one of the two flags differs between input and output.
+
+    The Polars column type is built as::
+
+        base = dtype
+        if multi_label: base = List(base)   # inner dimension
+        if is_list:     base = List(base)   # outer dimension
+
+    Supported conversions (non-exhaustive examples):
+
+    multi_label changes (is_list unchanged):
+      - ``dtype → List(dtype)``: wrap scalar in a list
+      - ``List(dtype) → dtype``: take first element (with warning)
+      - ``List(dtype) → List(List(dtype))``: wrap each element (is_list=True)
+      - ``List(List(dtype)) → List(dtype)``: unwrap inner lists (is_list=True)
+
+    is_list changes (multi_label unchanged):
+      - ``dtype → List(dtype)``: wrap scalar in a list
+      - ``List(dtype) → dtype``: take first element (with warning)
+      - ``List(dtype) → List(List(dtype))``: wrap whole list (multi_label=True)
+      - ``List(List(dtype)) → List(dtype)``: take first outer element (multi_label=True)
+
+    Both change simultaneously:
+      - ``dtype → List(List(dtype))``: wrap scalar twice
+      - ``List(List(dtype)) → dtype``: unwrap both layers
+      - etc.
     """
 
     input_label: AttributeSpec[LabelField]
     output_label: AttributeSpec[LabelField]
 
     def filter_output_spec(self) -> bool:
-        """Configure output label specification with target multi_label setting."""
+        """Configure output label specification with target multi_label and is_list settings."""
         self.output_label = AttributeSpec(
             name=self.output_label.name,
             field=LabelField(
                 semantic=self.input_label.field.semantic,
                 dtype=self.input_label.field.dtype,
                 multi_label=self.output_label.field.multi_label,
-                is_list=self.input_label.field.is_list,
+                is_list=self.output_label.field.is_list,
             ),
         )
-        return self.input_label.field.multi_label != self.output_label.field.multi_label
+        input_field = self.input_label.field
+        output_field = self.output_label.field
+        return input_field.multi_label != output_field.multi_label or input_field.is_list != output_field.is_list
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
-        """Convert label data between single-label and multi-label formats."""
+        """Convert label data between different multi_label/is_list configurations."""
         input_col = self.input_label.name
         output_col = self.output_label.name
-        input_multi = self.input_label.field.multi_label
-        is_list = self.input_label.field.is_list
 
-        if not input_multi:
-            # single-label → multi-label: wrap each label value in a list
-            if is_list:
+        input_multi = self.input_label.field.multi_label
+        output_multi = self.output_label.field.multi_label
+        input_is_list = self.input_label.field.is_list
+        output_is_list = self.output_label.field.is_list
+
+        # Step 1: handle multi_label conversion (inner dimension)
+        if input_multi and not output_multi:
+            log.warning(
+                "Converting multi-label to single-label for field '%s': "
+                "only the first label per sample is kept, all other labels are discarded.",
+                input_col,
+            )
+            if input_is_list:
+                # List(List(dtype)) → List(dtype): take first element from each inner list
+                df = df.with_columns(pl.col(input_col).list.eval(pl.element().list.first()).alias(output_col))
+            else:
+                # List(dtype) → dtype: take first element
+                df = df.with_columns(pl.col(input_col).list.first().alias(output_col))
+        elif not input_multi and output_multi:
+            if input_is_list:
                 # List(dtype) → List(List(dtype)): wrap each element in the list
-                return df.with_columns(pl.col(input_col).list.eval(pl.concat_list(pl.element())).alias(output_col))
-            # dtype → List(dtype): wrap the scalar value in a list
-            return df.with_columns(pl.concat_list(pl.col(input_col)).alias(output_col))
-        # multi-label → single-label: take the first label from each list
-        log.warning(
-            "Converting multi-label to single-label for field '%s': "
-            "only the first label per sample is kept, all other labels are discarded.",
-            input_col,
-        )
-        if is_list:
-            # List(List(dtype)) → List(dtype): take first element from each inner list
-            return df.with_columns(pl.col(input_col).list.eval(pl.element().list.first()).alias(output_col))
-        # List(dtype) → dtype: take first element
-        return df.with_columns(pl.col(input_col).list.first().alias(output_col))
+                df = df.with_columns(pl.col(input_col).list.eval(pl.concat_list(pl.element())).alias(output_col))
+            else:
+                # dtype → List(dtype): wrap the scalar value in a list
+                df = df.with_columns(pl.concat_list(pl.col(input_col)).alias(output_col))
+
+        # After step 1 the multi_label dimension matches the output.
+        # The effective is_list state is still ``input_is_list``.
+
+        # Step 2: handle is_list conversion (outer dimension)
+        # Determine the column to read from (may have been updated in step 1)
+        step2_col = output_col if input_multi != output_multi else input_col
+
+        if input_is_list and not output_is_list:
+            log.warning(
+                "Converting list to non-list for field '%s': "
+                "only the first element per sample is kept, all other elements are discarded.",
+                input_col,
+            )
+            # List(X) → X: take first element from outer list
+            df = df.with_columns(pl.col(step2_col).list.first().alias(output_col))
+        elif not input_is_list and output_is_list:
+            # X → List(X): wrap each sample's value in a list
+            target_pl_type = self.output_label.field._pl_type
+            df = df.with_columns(
+                pl.col(step2_col)
+                .map_elements(lambda x: [x] if x is not None else None, return_dtype=target_pl_type)
+                .alias(output_col)
+            )
+
+        return df
 
 
 @converter
