@@ -53,7 +53,7 @@ sample = DepthSample(depth=np.ones((480, 640), dtype=np.float32))
 | `BBoxField` | Bounding boxes | `bbox_field(dtype, format, normalize)` |
 | `RotatedBBoxField` | Rotated bounding boxes | `rotated_bbox_field(dtype, format)` |
 | `PolygonField` | Polygon annotations | `polygon_field(dtype)` |
-| `LabelField` | Class labels | `label_field(dtype, is_list)` |
+| `LabelField` | Class labels | `label_field(dtype, multi_label, is_list)` |
 | `KeypointsField` | Keypoint annotations | `keypoints_field(dtype)` |
 | `CaptionField` | Text captions | `caption_field(is_list)` |
 | `EllipseField` | Ellipse annotations | `ellipse_field(dtype)` |

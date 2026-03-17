@@ -131,6 +131,7 @@ The module includes many pre-registered converters:
 | `KeypointsDtypeConverter` | Keypoints dtype conversion |
 | `KeypointsToBBoxConverter` | Generate bboxes from keypoints |
 | `LabelDtypeConverter` | Label dtype conversion |
+| `LabelMultiLabelConverter` | Convert between single-label and multi-label representations |
 | `LabelIndexConverter` | Convert label names to indices |
 ### Mask Converters
 | Converter | Description |
