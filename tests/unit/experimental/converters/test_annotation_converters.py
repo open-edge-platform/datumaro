@@ -871,6 +871,7 @@ def test_label_shape_converter_preserves_dtype():
     "input_multi, input_is_list, output_multi, output_is_list, data, schema_type, expected_dtype, expected_non_null, expected_null_idx",  # noqa: E501
     [
         pytest.param(False, True,  True, True, {"labels": [[1, 2], None, [3]]}, pl.List(pl.UInt32()), pl.List(pl.List(pl.UInt32)), {0: [[1], [2]], 2: [[3]]}, 1, id="multi_label_with_nulls"),  # noqa: E501
+        pytest.param(False, False, True, False, {"labels": [5, None, 3]},      pl.UInt32(),          pl.List(pl.UInt32),          {0: [5], 2: [3]},          1, id="scalar_to_multi_label_with_nulls"),  # noqa: E501
         pytest.param(False, False, False, True, {"labels": [5, None, 3]},       pl.UInt32(),          pl.List(pl.UInt32),          {0: [5], 2: [3]},          1, id="is_list_with_nulls"),  # noqa: E501
     ],
 )  # fmt: on noqa: RUF028

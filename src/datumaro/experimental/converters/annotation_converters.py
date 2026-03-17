@@ -388,8 +388,13 @@ class LabelShapeConverter(Converter):
                 # List(dtype) → List(List(dtype)): wrap each element in the list
                 df = df.with_columns(pl.col(input_col).list.eval(pl.concat_list(pl.element())).alias(output_col))
             else:
-                # dtype → List(dtype): wrap the scalar value in a list
-                df = df.with_columns(pl.concat_list(pl.col(input_col)).alias(output_col))
+                # dtype → List(dtype): wrap the scalar value in a list, preserving nulls
+                df = df.with_columns(
+                    pl.when(pl.col(input_col).is_not_null())
+                    .then(pl.concat_list(pl.col(input_col)))
+                    .otherwise(pl.lit(None, dtype=pl.List(self.input_label.field.dtype)))
+                    .alias(output_col)
+                )
 
         # After step 1 the multi_label dimension matches the output.
         # The effective is_list state is still ``input_is_list``.
@@ -407,13 +412,23 @@ class LabelShapeConverter(Converter):
             # List(X) → X: take first element from outer list
             df = df.with_columns(pl.col(step2_col).list.first().alias(output_col))
         elif not input_is_list and output_is_list:
-            # X → List(X): wrap each sample's value in a list
-            target_pl_type = self.output_label.field._pl_type
-            df = df.with_columns(
-                pl.col(step2_col)
-                .map_elements(lambda x: [x] if x is not None else None, return_dtype=target_pl_type)
-                .alias(output_col)
-            )
+            # X → List(X): wrap each sample's value in a 1-element list, preserving nulls
+            if not output_multi:
+                # Scalar → List(scalar): use native concat_list (fast path)
+                df = df.with_columns(
+                    pl.when(pl.col(step2_col).is_not_null())
+                    .then(pl.concat_list(pl.col(step2_col)))
+                    .otherwise(pl.lit(None, dtype=self.output_label.field._pl_type))
+                    .alias(output_col)
+                )
+            else:
+                # List(X) → List(List(X))
+                target_pl_type = self.output_label.field._pl_type
+                df = df.with_columns(
+                    pl.col(step2_col)
+                    .map_elements(lambda x: [x] if x is not None else None, return_dtype=target_pl_type)
+                    .alias(output_col)
+                )
 
         return df
 
