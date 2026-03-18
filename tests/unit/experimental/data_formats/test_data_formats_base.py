@@ -262,13 +262,14 @@ def test_import_dataset_uses_input_path_as_default_root_dir(monkeypatch):
 
     monkeypatch.setattr("datumaro.experimental.data_formats.yolo.io.load_yolo_dataset", fake_loader)
 
+    input_path = os.path.join("/some", "yolo", "path")
     result = import_dataset(
-        "/some/yolo/path",
+        input_path,
         data_format=DataFormat.YOLO,
     )
 
     assert result == "dataset"
-    assert captured["root_dir"] == "/some/yolo/path"
+    assert captured["root_dir"] == input_path
 
 
 def test_import_dataset_explicit_root_dir_overrides_input_path(monkeypatch):
