@@ -621,12 +621,19 @@ class Dataset(Generic[DType]):
         self,
         target_dtype_or_schema: Schema | type[DTargetType],
         target_categories: dict[str, Categories] | None = None,
+        direct_only: bool = False,
     ) -> Dataset[DTargetType]:
         """
         Convert this dataset to a new schema using registered converters.
 
         Args:
             target_dtype_or_schema: The target schema or sample type to convert to
+            target_categories: Optional dictionary mapping attribute names to categories
+            direct_only: If True, only apply converters where all output field types
+                match (are a subset of) the input field types. Cross-field-type
+                converters (e.g., BBoxField→PolygonField) are skipped. Converters
+                that operate within the same field type (e.g., BBoxField→BBoxField
+                for format or dtype changes) are still allowed.
 
         Returns:
             A new Dataset instance with the converted schema
@@ -649,7 +656,9 @@ class Dataset(Generic[DType]):
             )
 
         # Find the optimal conversion path using A* search
-        conversion_paths, inferred_categories = find_conversion_path(self._schema, target_schema)
+        conversion_paths, inferred_categories = find_conversion_path(
+            self._schema, target_schema, direct_only=direct_only
+        )
 
         # Create a converter transform
         transforms = self._transforms
@@ -822,14 +831,17 @@ class Dataset(Generic[DType]):
             schema=self.schema,
         )
 
-    def append_dataset(self, dataset: Dataset) -> None:
+    def append_dataset(self, dataset: Dataset, direct_only: bool = False) -> None:
         """
         Append another dataset to this dataset in place.
 
         Args:
             dataset: The dataset to append
+            direct_only: If True, only apply converters where all output field types
+                match (are a subset of) the input field types. Cross-field-type
+                converters (e.g., BBoxField→PolygonField) are skipped.
         """
-        converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
+        converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema, direct_only=direct_only)
         self.df = self.df.vstack(converted_dataset.df)
 
 
@@ -837,6 +849,7 @@ def convert_sample_to_schema(
     sample: Sample,
     source_schema: Schema,
     target_dtype_or_schema: Schema | type[DTargetType],
+    direct_only: bool = False,
 ) -> DTargetType:
     """
     Convert a sample to a new schema using registered converters.
@@ -848,7 +861,9 @@ def convert_sample_to_schema(
     Args:
         sample: The sample instance to convert
         source_schema: The source schema of the sample
-        target_schema: The target schema to convert to
+        target_dtype_or_schema: The target schema to convert to
+        direct_only: If True, only apply converters where all output field types
+            match (are a subset of) the input field types.
 
     Returns:
         A new Sample instance with the converted schema
@@ -858,7 +873,7 @@ def convert_sample_to_schema(
     temp_dataset.append(sample)
 
     # Convert the dataset
-    converted_dataset = temp_dataset.convert_to_schema(target_dtype_or_schema)
+    converted_dataset = temp_dataset.convert_to_schema(target_dtype_or_schema, direct_only=direct_only)
 
     # Return the converted sample
     return converted_dataset[0]

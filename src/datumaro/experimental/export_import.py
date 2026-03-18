@@ -639,29 +639,38 @@ def _create_zip_archive(output_path: Path, work_dir: Path) -> None:
                 zipf.write(file_path, arcname)
 
 
-def export_dataset(
+def export_dataset(  # noqa: PLR0913
     dataset: Dataset[DType],
     output_path: str | Path,
     export_images: ExportMode = ExportMode.COPY,
     export_videos: ExportMode = ExportMode.COPY,
     as_zip: bool = False,
     ignore_missing_media: bool = False,
+    direct_only: bool = False,
+    data_format: DataFormat | None = None,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
 
-    The dataset is exported with the following structure:
+    By default the dataset is exported in native Datumaro format with the
+    following structure:
+
     - data.parquet: The DataFrame in Parquet format
     - metadata.json: Schema, categories, image paths, and video metadata
     - images/: Directory containing exported images (if export_images is COPY)
     - videos/: Directory containing exported videos (if export_videos is COPY)
+
+    When ``data_format`` is set to a non-Datumaro format (e.g.
+    ``DataFormat.COCO``, ``DataFormat.VOC``, ``DataFormat.YOLO``), the dataset
+    is first converted to the target format's schema and then saved using the
+    format-specific writer.
 
     Image format is automatically determined:
     - ImagePathField: Preserves original format (copied directly)
     - ImageCallableField: Saved as PNG (lossless)
     - InstanceMaskCallableField/MaskCallableField: Saved as PNG (best for masks)
 
-    Export modes:
+    Export modes (only apply to native Datumaro format):
     - ExportMode.SKIP: Don't export media files. Use this when you don't need
       the media files in the export (e.g., metadata-only export).
     - ExportMode.REFERENCE: Keep original absolute paths in the DataFrame. Use
@@ -682,7 +691,28 @@ def export_dataset(
             that cannot be found or generated, instead of raising an error.
             Only has an effect when ``export_images`` or ``export_videos`` is
             ``ExportMode.COPY``; otherwise, it is ignored.
+        direct_only: If True, only apply converters where all output field types
+            match (are a subset of) the input field types. Cross-field-type
+            converters (e.g., BBoxField→PolygonField) are skipped. Only has an
+            effect when ``data_format`` is set to a non-Datumaro format that
+            requires schema conversion.
+        data_format: Target data format for export. When ``None`` (default),
+            exports in native Datumaro format (parquet + metadata).  Set to
+            ``DataFormat.COCO``, ``DataFormat.VOC``, ``DataFormat.YOLO``, etc.
+            to convert and save in that format.
     """
+    if data_format is not None and data_format != DataFormat.DATUMARO:
+        from datumaro.experimental.data_formats.base import save_dataset
+
+        save_dataset(
+            dataset,
+            data_format=data_format,
+            output_path=str(output_path),
+            as_zip=as_zip,
+            direct_only=direct_only,
+        )
+        return
+
     output_path, temp_dir, work_dir = _setup_work_directory(Path(output_path), as_zip)
 
     try:

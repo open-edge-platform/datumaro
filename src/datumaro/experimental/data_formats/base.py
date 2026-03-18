@@ -88,6 +88,7 @@ def save_dataset(
     data_format: DataFormat,
     output_path: str,
     as_zip: bool = False,
+    direct_only: bool = False,
 ) -> None:
     """
     Save a dataset in the specified format.
@@ -98,6 +99,9 @@ def save_dataset(
         output_path: Output location. When as_zip=False, this is the output directory.
             When as_zip=True, this is the zip file path (with or without .zip extension).
         as_zip: If True, save as a zip archive.
+        direct_only: If True, only apply converters where all output field types
+            match (are a subset of) the input field types. Cross-field-type
+            converters (e.g., BBoxField→PolygonField) are skipped.
 
     Raises:
         ValueError: If the data format is not supported.
@@ -114,12 +118,14 @@ def save_dataset(
             dataset=dataset,
             data_format=data_format,
             output_path=output_path,
+            direct_only=direct_only,
         )
     else:
         _save_dataset_to_dir(
             dataset=dataset,
             data_format=data_format,
             output_dir=output_path,
+            direct_only=direct_only,
         )
 
 
@@ -127,6 +133,7 @@ def _save_dataset_as_zip(
     dataset: Dataset,
     data_format: DataFormat,
     output_path: str,
+    direct_only: bool = False,
 ) -> None:
     """Save dataset as a zip archive."""
     # Strip .zip extension if present since shutil.make_archive adds it automatically
@@ -137,6 +144,7 @@ def _save_dataset_as_zip(
             dataset=dataset,
             data_format=data_format,
             output_dir=temp_dir,
+            direct_only=direct_only,
         )
 
         shutil.make_archive(
@@ -150,13 +158,14 @@ def _save_dataset_to_dir(
     dataset: Dataset,
     data_format: DataFormat,
     output_dir: str,
+    direct_only: bool = False,
 ) -> None:
     """Internal helper to save dataset to a directory."""
     if data_format == DataFormat.COCO:
         from datumaro.experimental.data_formats.coco.io import save_coco_dataset
         from datumaro.experimental.data_formats.coco.sample import CocoSample
 
-        dataset = dataset.convert_to_schema(CocoSample.infer_schema())
+        dataset = dataset.convert_to_schema(CocoSample.infer_schema(), direct_only=direct_only)
         save_coco_dataset(
             dataset,
             images_dir_path=os.path.join(output_dir, "images"),
@@ -166,13 +175,13 @@ def _save_dataset_to_dir(
         from datumaro.experimental.data_formats.voc.io import save_voc_dataset
         from datumaro.experimental.data_formats.voc.sample import VocSample
 
-        dataset = dataset.convert_to_schema(VocSample.infer_schema())
+        dataset = dataset.convert_to_schema(VocSample.infer_schema(), direct_only=direct_only)
         save_voc_dataset(dataset, root_dir=output_dir)
     elif data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
         from datumaro.experimental.data_formats.yolo.io import save_yolo_dataset
         from datumaro.experimental.data_formats.yolo.sample import YoloSample
 
-        dataset = dataset.convert_to_schema(YoloSample.infer_schema())
+        dataset = dataset.convert_to_schema(YoloSample.infer_schema(), direct_only=direct_only)
         save_yolo_dataset(dataset, root_dir=output_dir, format=data_format)
     else:
         raise ValueError(f"Unsupported data format: {data_format}")

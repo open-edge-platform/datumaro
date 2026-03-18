@@ -17,7 +17,7 @@ class DummyDataset:
     def __init__(self):
         self.converted_schema = None
 
-    def convert_to_schema(self, schema):
+    def convert_to_schema(self, schema, **kwargs):
         self.converted_schema = schema
         return self
 
