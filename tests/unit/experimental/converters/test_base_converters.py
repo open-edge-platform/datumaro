@@ -1102,3 +1102,84 @@ def test_find_conversion_path_converts_reachable_optional_fields():
     # Should have a converter for the format change
     assert "bbox" in conversion_paths.converters
     assert len(conversion_paths.converters["bbox"]) >= 1
+
+
+def test_conversion_error_message_end_to_end():
+    """End-to-end test: verify the error raised by find_conversion_path contains
+    the right semantic group, attribute names, diagnosis sections, and that
+    reachable field types are not incorrectly reported as missing.
+    """
+    from datumaro.experimental.fields import image_info_field, image_path_field, numeric_field, string_field
+    from datumaro.experimental.fields.masks import MaskField
+    from datumaro.experimental.fields.videos import media_info_field, media_path_field
+
+    # 1) Missing field type - includes semantic group and attribute name
+    with pytest.raises(ConversionError, match=r"semantic group 'default'") as exc_info:
+        find_conversion_path(
+            Schema(attributes={"img": AttributeInfo(type=str, field=image_path_field())}),
+            Schema(
+                attributes={
+                    "img": AttributeInfo(type=str, field=image_path_field()),
+                    "caption": AttributeInfo(type=str, field=string_field(semantic="default")),
+                }
+            ),
+        )
+    assert "'caption'" in str(exc_info.value) and "StringField" in str(exc_info.value)
+
+    # 2) Empty source semantic group
+    with pytest.raises(ConversionError, match=r"semantic group 'metadata'") as exc_info:
+        find_conversion_path(
+            Schema(attributes={"img": AttributeInfo(type=str, field=image_path_field())}),
+            Schema(
+                attributes={
+                    "img": AttributeInfo(type=str, field=image_path_field()),
+                    "tag": AttributeInfo(type=str, field=string_field(semantic="metadata")),
+                }
+            ),
+        )
+    assert "Source fields: (none)" in str(exc_info.value)
+
+    # 3) Reachable fields (MediaPath→ImagePath) not flagged as missing;
+    #    only truly unreachable MaskField appears under "Missing field types"
+    with pytest.raises(ConversionError) as exc_info:
+        find_conversion_path(
+            Schema(
+                attributes={
+                    "media": AttributeInfo(type=str, field=media_path_field()),
+                    "info": AttributeInfo(type=str, field=media_info_field()),
+                }
+            ),
+            Schema(
+                attributes={
+                    "image": AttributeInfo(type=str, field=image_path_field()),
+                    "info": AttributeInfo(type=str, field=image_info_field()),
+                    "mask": AttributeInfo(type=str, field=MaskField(semantic="default", dtype=pl.UInt8())),
+                }
+            ),
+        )
+    msg = str(exc_info.value)
+    assert "'mask' (MaskField)" in msg
+    after_missing = msg.split("Missing field types:")[1]
+    assert "ImagePathField" not in after_missing
+    assert "ImageInfoField" not in after_missing
+
+    # 4) Incompatible field properties (NumericField is_list mismatch)
+    with pytest.raises(ConversionError, match=r"Incompatible field properties"):
+        find_conversion_path(
+            Schema(
+                attributes={
+                    "img": AttributeInfo(type=str, field=image_path_field()),
+                    "score": AttributeInfo(
+                        type=float, field=numeric_field(semantic="default", dtype=pl.Float32(), is_list=False)
+                    ),
+                }
+            ),
+            Schema(
+                attributes={
+                    "img": AttributeInfo(type=str, field=image_path_field()),
+                    "score": AttributeInfo(
+                        type=float, field=numeric_field(semantic="default", dtype=pl.Float32(), is_list=True)
+                    ),
+                }
+            ),
+        )
