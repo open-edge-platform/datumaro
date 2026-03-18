@@ -72,15 +72,16 @@ def test_export_dataset_delegates_to_coco_with_converted_schema(monkeypatch):
     monkeypatch.setattr("datumaro.experimental.data_formats.coco.io.save_coco_dataset", fake_saver)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
+        output_dir = os.path.join(tmp_dir, "output")
         export_dataset(
             dummy_dataset,
-            tmp_dir,
+            output_dir,
             data_format=DataFormat.COCO,
         )
 
         assert captured["dataset"] is dummy_dataset
-        assert captured["images_dir_path"] == os.path.join(tmp_dir, "images")
-        assert captured["annotations_path"] == os.path.join(tmp_dir, "annotations.json")
+        assert captured["images_dir_path"] == os.path.join(output_dir, "images")
+        assert captured["annotations_path"] == os.path.join(output_dir, "annotations.json")
         assert dummy_dataset.converted_schema == CocoSample.infer_schema()
 
 
@@ -201,3 +202,90 @@ def test_export_as_zip_cleans_up_on_error(monkeypatch):
         # Verify temp directory was still cleaned up
         assert len(created_temp_dirs) > 0
         assert not os.path.exists(created_temp_dirs[-1])
+
+
+# Tests for FileExistsError protection
+
+
+def test_export_to_existing_directory_raises(monkeypatch):
+    """Test that exporting to an existing directory raises FileExistsError."""
+    dummy_dataset = DummyDataset()
+
+    def fake_saver(dataset, images_dir_path, annotations_path):
+        pass  # Should never be called
+
+    monkeypatch.setattr("datumaro.experimental.data_formats.coco.io.save_coco_dataset", fake_saver)
+
+    # tmp_dir already exists, so export should fail
+    with tempfile.TemporaryDirectory() as tmp_dir, pytest.raises(FileExistsError, match="already exists"):
+        export_dataset(
+            dummy_dataset,
+            tmp_dir,
+            data_format=DataFormat.COCO,
+        )
+
+
+def test_export_as_zip_to_existing_archive_raises(monkeypatch):
+    """Test that exporting to an existing ZIP archive raises FileExistsError."""
+    dummy_dataset = DummyDataset()
+
+    def fake_saver(dataset, images_dir_path, annotations_path):
+        pass
+
+    monkeypatch.setattr("datumaro.experimental.data_formats.coco.io.save_coco_dataset", fake_saver)
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        zip_path = os.path.join(tmp_dir, "existing.zip")
+        # Create an existing zip file
+        with zipfile.ZipFile(zip_path, "w") as zf:
+            zf.writestr("dummy.txt", "existing data")
+
+        with pytest.raises(FileExistsError, match="already exists"):
+            export_dataset(
+                dummy_dataset,
+                zip_path,
+                data_format=DataFormat.COCO,
+                as_zip=True,
+            )
+
+
+# Tests for input_path as default root_dir
+
+
+def test_import_dataset_uses_input_path_as_default_root_dir(monkeypatch):
+    """Test that input_path is used as default root_dir when data_format is set."""
+    captured = {}
+
+    def fake_loader(root_dir, format):
+        captured["root_dir"] = root_dir
+        return "dataset"
+
+    monkeypatch.setattr("datumaro.experimental.data_formats.yolo.io.load_yolo_dataset", fake_loader)
+
+    result = import_dataset(
+        "/some/yolo/path",
+        data_format=DataFormat.YOLO,
+    )
+
+    assert result == "dataset"
+    assert captured["root_dir"] == "/some/yolo/path"
+
+
+def test_import_dataset_explicit_root_dir_overrides_input_path(monkeypatch):
+    """Test that explicit root_dir overrides input_path."""
+    captured = {}
+
+    def fake_loader(root_dir, format):
+        captured["root_dir"] = root_dir
+        return "dataset"
+
+    monkeypatch.setattr("datumaro.experimental.data_formats.yolo.io.load_yolo_dataset", fake_loader)
+
+    result = import_dataset(
+        "/some/input/path",
+        data_format=DataFormat.YOLO,
+        root_dir="/explicit/root",
+    )
+
+    assert result == "dataset"
+    assert captured["root_dir"] == "/explicit/root"

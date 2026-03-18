@@ -681,19 +681,42 @@ def _save_format_dataset(
     as_zip: bool = False,
     direct_only: bool = False,
 ) -> None:
-    """Export *dataset* in a non-Datumaro format, optionally as a ZIP archive."""
-    import os
+    """Export *dataset* in a non-Datumaro format, optionally as a ZIP archive.
 
-    output_dir = os.path.dirname(output_path) if as_zip else output_path
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+    Raises:
+        FileExistsError: If the target output (directory or ZIP archive) already exists.
+        ValueError: If *data_format* is not a supported export format.
+    """
+    _SUPPORTED_EXPORT_FORMATS = {
+        DataFormat.COCO,
+        DataFormat.VOC,
+        DataFormat.YOLO,
+        DataFormat.YOLO_ULTRALYTICS,
+    }
+    if data_format not in _SUPPORTED_EXPORT_FORMATS:
+        raise ValueError(f"Unsupported data format for export: {data_format}")
+
+    output_path_obj = Path(output_path)
 
     if as_zip:
-        base, _ = os.path.splitext(output_path)
+        archive_path = output_path_obj.with_suffix(".zip")
+        base = str(archive_path.with_suffix(""))
+        if archive_path.exists():
+            raise FileExistsError(
+                f"Target ZIP archive already exists: '{archive_path}'. "
+                "Please remove it or specify a different output path."
+            )
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory() as tmp_dir:
             _save_format_to_dir(dataset, data_format, tmp_dir, direct_only=direct_only)
             shutil.make_archive(base_name=base, format="zip", root_dir=tmp_dir)
     else:
+        if output_path_obj.exists():
+            raise FileExistsError(
+                f"Target output directory already exists: '{output_path_obj}'. "
+                "Please remove it or specify a different output path."
+            )
+        output_path_obj.mkdir(parents=True, exist_ok=True)
         _save_format_to_dir(dataset, data_format, output_path, direct_only=direct_only)
 
 
@@ -920,15 +943,19 @@ def import_dataset(
                 annotations_path="/path/to/annotations.json",
             )
     """
+    input_path = Path(input_path)
+
     if data_format is not None:
+        # When an explicit format is provided, use input_path as the default
+        # root_dir so that the positional argument is not silently ignored.
+        if root_dir is None:
+            root_dir = str(input_path)
         return _load_format_dataset(
             data_format=data_format,
             images_dir_path=images_dir_path,
             annotations_path=annotations_path,
             root_dir=root_dir,
         )
-
-    input_path = Path(input_path)
 
     if is_zipfile(input_path):
         if extract_dir is not None:
