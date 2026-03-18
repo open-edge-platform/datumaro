@@ -1175,7 +1175,7 @@ class MediaInfoFieldInDatasetTest:
 
         # Export
         export_path = tmp_path / "exported"
-        export_dataset(dataset, export_path, export_images=ExportMode.REFERENCE)
+        export_dataset(dataset, export_path, export_media=ExportMode.REFERENCE)
 
         # Import
         imported = import_dataset(export_path, dtype=SampleWithMediaInfo)

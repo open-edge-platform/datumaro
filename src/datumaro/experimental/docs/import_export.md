@@ -32,7 +32,7 @@ dataset.append(MySample(
 ))
 
 # 2. Export to disk
-export_dataset(dataset, "/tmp/my_dataset", export_images=ExportMode.COPY)
+export_dataset(dataset, "/tmp/my_dataset", export_media=ExportMode.COPY)
 
 # 3. Re-import
 loaded = import_dataset("/tmp/my_dataset", dtype=MySample)
@@ -48,24 +48,16 @@ from datumaro.experimental import export_dataset, import_dataset
 from datumaro.experimental.export_import import ExportMode
 
 # Export to directory (copies images and videos to output)
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.COPY)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.COPY)
 
 # Export as ZIP archive
-export_dataset(dataset, "/path/to/output.zip", export_images=ExportMode.COPY, as_zip=True)
+export_dataset(dataset, "/path/to/output.zip", export_media=ExportMode.COPY, as_zip=True)
 
 # Export with references only (faster, but not portable)
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.REFERENCE)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.REFERENCE)
 
 # Skip media export entirely
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.SKIP)
-
-# Control images and videos separately
-export_dataset(
-    dataset, 
-    "/path/to/output",
-    export_images=ExportMode.COPY,
-    export_videos=ExportMode.REFERENCE,
-)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.SKIP)
 
 # Import dataset
 loaded_dataset = import_dataset("/path/to/output")

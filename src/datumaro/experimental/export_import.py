@@ -600,7 +600,7 @@ def _write_parquet_and_metadata(
     df_to_export: pl.DataFrame,
     work_dir: Path,
     dataset: Dataset[DType],
-    export_videos: ExportMode,
+    export_media: ExportMode,
     video_path_mapping: dict[str, str],
 ) -> None:
     """Write parquet file and metadata to the work directory."""
@@ -619,7 +619,7 @@ def _write_parquet_and_metadata(
         "object_columns": object_columns,
         "videos": {
             "fields": [name for name, _ in _get_video_fields(dataset)],
-            "export_mode": export_videos.value,
+            "export_mode": export_media.value,
             "original_paths": {v: k for k, v in video_path_mapping.items()},
         },
     }
@@ -639,11 +639,10 @@ def _create_zip_archive(output_path: Path, work_dir: Path) -> None:
                 zipf.write(file_path, arcname)
 
 
-def export_dataset(  # noqa: PLR0913
+def export_dataset(
     dataset: Dataset[DType],
     output_path: str | Path,
-    export_images: ExportMode = ExportMode.COPY,
-    export_videos: ExportMode = ExportMode.COPY,
+    export_media: ExportMode = ExportMode.COPY,
     as_zip: bool = False,
     ignore_missing_media: bool = False,
     direct_only: bool = False,
@@ -657,8 +656,8 @@ def export_dataset(  # noqa: PLR0913
 
     - data.parquet: The DataFrame in Parquet format
     - metadata.json: Schema, categories, image paths, and video metadata
-    - images/: Directory containing exported images (if export_images is COPY)
-    - videos/: Directory containing exported videos (if export_videos is COPY)
+    - images/: Directory containing exported images (if export_media is COPY)
+    - videos/: Directory containing exported videos (if export_media is COPY)
 
     When ``data_format`` is set to a non-Datumaro format (e.g.
     ``DataFormat.COCO``, ``DataFormat.VOC``, ``DataFormat.YOLO``), the dataset
@@ -684,13 +683,13 @@ def export_dataset(  # noqa: PLR0913
     Args:
         dataset: The dataset to export
         output_path: Path to export to (directory or .zip file)
-        export_images: How to handle images. Default is ExportMode.COPY.
-        export_videos: How to handle videos. Default is ExportMode.COPY.
+        export_media: How to handle media (images and videos). Default is
+            ExportMode.COPY.
         as_zip: Whether to package everything as a ZIP file
         ignore_missing_media: If True, silently skip media files (images and videos)
             that cannot be found or generated, instead of raising an error.
-            Only has an effect when ``export_images`` or ``export_videos`` is
-            ``ExportMode.COPY``; otherwise, it is ignored.
+            Only has an effect when ``export_media`` is ``ExportMode.COPY``;
+            otherwise, it is ignored.
         direct_only: If True, only apply converters where all output field types
             match (are a subset of) the input field types. Cross-field-type
             converters (e.g., BBoxField→PolygonField) are skipped. Only has an
@@ -720,22 +719,22 @@ def export_dataset(  # noqa: PLR0913
         video_path_mapping: dict[str, str] = {}
 
         # Export images if requested
-        if export_images == ExportMode.COPY:
+        if export_media == ExportMode.COPY:
             images_dir = work_dir / IMAGES_DIR
             images_paths = _export_images_from_dataset(dataset, images_dir, ignore_missing_media)
             media_path_fields = {name for name, f in _get_image_fields(dataset) if isinstance(f, MediaPathField)}
             df_to_export = _update_df_with_image_paths(df_to_export, images_paths, media_path_fields)
 
         # Export videos
-        if export_videos == ExportMode.COPY:
+        if export_media == ExportMode.COPY:
             videos_dir = work_dir / VIDEOS_DIR
-            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos, ignore_missing_media)
+            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_media, ignore_missing_media)
             if video_path_mapping:
                 video_fields = _get_video_fields(dataset)
                 df_to_export = _update_df_with_video_paths(df_to_export, video_path_mapping, video_fields)
 
         # Write parquet and metadata
-        _write_parquet_and_metadata(df_to_export, work_dir, dataset, export_videos, video_path_mapping)
+        _write_parquet_and_metadata(df_to_export, work_dir, dataset, export_media, video_path_mapping)
 
         # Create ZIP if requested
         if as_zip:

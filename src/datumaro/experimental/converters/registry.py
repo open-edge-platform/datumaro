@@ -204,16 +204,32 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
     return cost
 
 
-def _is_direct_converter(converter_class: type[Converter]) -> bool:
-    """Check whether a converter's output field types are a subset of its input field types.
+def _resolve_output_attr_spec(
+    field_type: type[Field],
+    target_state: _SchemaState,
+    semantic: str,
+    iteration: int,
+) -> AttributeSpec[Field]:
+    """Resolve the output AttributeSpec for a converter output field type.
 
-    A "direct" converter transforms data within the same field type(s)
-    (e.g. BBoxField → BBoxField for format/dtype changes) rather than
-    producing a new field type (e.g. BBoxField → PolygonField).
+    If the target state has a matching field type, use its name/field/categories.
+    Otherwise, create a temporary AttributeSpec with a generated name.
     """
-    from_types = converter_class.get_from_types()
-    to_types = converter_class.get_to_types()
-    return set(to_types.values()).issubset(set(from_types.values()))
+    if field_type in target_state.field_to_attr_spec:
+        target_attr_spec = target_state.field_to_attr_spec[field_type]
+        return AttributeSpec(
+            name=target_attr_spec.name,
+            field=target_attr_spec.field,
+            categories=target_attr_spec.categories,
+        )
+
+    # The field does not exist, use a temporary name and create a new instance
+    output_name = f"{field_type.__name__.lower()}_temp_{iteration}"
+    return AttributeSpec(
+        name=output_name,
+        field=field_type(semantic=semantic),
+        categories=None,
+    )
 
 
 def _get_applicable_converters(
@@ -247,8 +263,12 @@ def _get_applicable_converters(
             continue
 
         # Skip cross-field-type converters when direct_only is True
-        if direct_only and not _is_direct_converter(converter_class):
-            continue
+        if direct_only:
+            to_types = converter_class.get_to_types()
+            input_field_types = set(from_types.values())
+            output_field_types = set(to_types.values())
+            if not output_field_types.issubset(input_field_types):
+                continue
 
         # Collect available input AttributeSpec instances
         converter_kwargs = {
@@ -257,32 +277,8 @@ def _get_applicable_converters(
 
         # Collect desired output AttributeSpec instances
         to_types = converter_class.get_to_types()
-        to_attr_specs: list[AttributeSpec[Field]] = []
-        for field_type in to_types.values():
-            if field_type in target_state.field_to_attr_spec:
-                attr_spec = target_state.field_to_attr_spec[field_type]
-                to_attr_specs.append(attr_spec)
-
         for attr_name, field_type in to_types.items():
-            # First, check if target state has a matching field type and use its name/field
-            if field_type in target_state.field_to_attr_spec:
-                target_attr_spec = target_state.field_to_attr_spec[field_type]
-                output_name = target_attr_spec.name
-                output_field = target_attr_spec.field
-                output_categories = target_attr_spec.categories
-            else:
-                # The field does not exist, use a temporary name
-                output_name = field_type.__name__.lower()
-                # and create a new instance of the field
-                output_field = field_type(semantic=semantic)
-                output_categories = None
-
-                # Add the iteration count at the end to ensure uniqueness
-                # and avoid any conflict with existing attribute names
-                output_name = f"{output_name}_temp_{iteration}"
-
-            output_attr_spec = AttributeSpec(name=output_name, field=output_field, categories=output_categories)
-            converter_kwargs[attr_name] = output_attr_spec
+            converter_kwargs[attr_name] = _resolve_output_attr_spec(field_type, target_state, semantic, iteration)
 
         # Create converter instance with all AttributeSpec instances as kwargs
         converter_instance = converter_class(**converter_kwargs)
@@ -796,8 +792,11 @@ def _get_reachable_field_types(
             to_types = converter_class.get_to_types()
 
             # Skip cross-field-type converters when direct_only is True
-            if direct_only and not _is_direct_converter(converter_class):
-                continue
+            if direct_only:
+                input_field_types = set(from_types.values())
+                output_field_types = set(to_types.values())
+                if not output_field_types.issubset(input_field_types):
+                    continue
 
             # Check if all required input types are available
             if reachable.issuperset(from_types.values()):
