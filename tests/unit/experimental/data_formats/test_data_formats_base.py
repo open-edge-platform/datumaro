@@ -269,7 +269,7 @@ def test_import_dataset_uses_input_path_as_default_root_dir(monkeypatch):
     )
 
     assert result == "dataset"
-    assert captured["root_dir"] == input_path
+    assert os.path.normpath(captured["root_dir"]) == os.path.normpath(input_path)
 
 
 def test_import_dataset_explicit_root_dir_overrides_input_path(monkeypatch):
