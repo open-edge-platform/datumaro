@@ -5,8 +5,9 @@ from enum import Enum
 
 import pytest
 
-from datumaro.experimental.data_formats.base import DataFormat, load_dataset, save_dataset
+from datumaro.experimental.data_formats.base import DataFormat
 from datumaro.experimental.data_formats.coco.sample import CocoSample
+from datumaro.experimental.export_import import export_dataset, import_dataset
 
 
 class FakeFormat(Enum):
@@ -22,7 +23,7 @@ class DummyDataset:
         return self
 
 
-def test_load_dataset_delegates_to_coco(monkeypatch):
+def test_import_dataset_delegates_to_coco(monkeypatch):
     captured = {}
 
     def fake_loader(images_dir_path, annotations_path):
@@ -32,8 +33,9 @@ def test_load_dataset_delegates_to_coco(monkeypatch):
 
     monkeypatch.setattr("datumaro.experimental.data_formats.coco.io.load_coco_dataset", fake_loader)
 
-    result = load_dataset(
-        DataFormat.COCO,
+    result = import_dataset(
+        "",
+        data_format=DataFormat.COCO,
         images_dir_path="/tmp/images",
         annotations_path="/tmp/annotations.json",
     )
@@ -43,21 +45,22 @@ def test_load_dataset_delegates_to_coco(monkeypatch):
     assert captured["annotations_path"] == "/tmp/annotations.json"
 
 
-def test_load_dataset_requires_paths_for_coco():
+def test_import_dataset_requires_paths_for_coco():
     with pytest.raises(ValueError, match="images_dir_path and annotations_path are required"):
-        load_dataset(DataFormat.COCO)
+        import_dataset("", data_format=DataFormat.COCO)
 
 
-def test_load_dataset_unsupported_format_raises():
+def test_import_dataset_unsupported_format_raises():
     with pytest.raises(ValueError, match="Unsupported data format"):
-        load_dataset(
-            FakeFormat.OTHER,
+        import_dataset(
+            "",
+            data_format=FakeFormat.OTHER,
             images_dir_path="/tmp/images",
             annotations_path="/tmp/annotations.json",
         )
 
 
-def test_save_dataset_delegates_to_coco_with_converted_schema(monkeypatch):
+def test_export_dataset_delegates_to_coco_with_converted_schema(monkeypatch):
     dummy_dataset = DummyDataset()
     captured = {}
 
@@ -69,10 +72,10 @@ def test_save_dataset_delegates_to_coco_with_converted_schema(monkeypatch):
     monkeypatch.setattr("datumaro.experimental.data_formats.coco.io.save_coco_dataset", fake_saver)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
-        save_dataset(
+        export_dataset(
             dummy_dataset,
-            DataFormat.COCO,
             tmp_dir,
+            data_format=DataFormat.COCO,
         )
 
         assert captured["dataset"] is dummy_dataset
@@ -81,19 +84,19 @@ def test_save_dataset_delegates_to_coco_with_converted_schema(monkeypatch):
         assert dummy_dataset.converted_schema == CocoSample.infer_schema()
 
 
-def test_save_dataset_unsupported_format_raises():
+def test_export_dataset_unsupported_format_raises():
     with pytest.raises(ValueError, match="Unsupported data format"):
-        save_dataset(
+        export_dataset(
             DummyDataset(),
-            FakeFormat.OTHER,
             "/tmp/output",
+            data_format=FakeFormat.OTHER,
         )
 
 
-# Tests for the as_zip functionality in save_dataset
+# Tests for the as_zip functionality in export_dataset
 
 
-def test_save_as_zip_creates_archive_with_correct_files(monkeypatch):
+def test_export_as_zip_creates_archive_with_correct_files(monkeypatch):
     """Test that as_zip=True creates a zip archive containing the expected files."""
     dummy_dataset = DummyDataset()
 
@@ -109,10 +112,10 @@ def test_save_as_zip_creates_archive_with_correct_files(monkeypatch):
     with tempfile.TemporaryDirectory() as tmp_dir:
         zip_path = os.path.join(tmp_dir, "my_dataset.zip")
 
-        save_dataset(
+        export_dataset(
             dummy_dataset,
-            DataFormat.COCO,
             zip_path,
+            data_format=DataFormat.COCO,
             as_zip=True,
         )
 
@@ -125,7 +128,7 @@ def test_save_as_zip_creates_archive_with_correct_files(monkeypatch):
             assert "images/test_image.jpg" in names
 
 
-def test_save_as_zip_adds_extension_if_missing(monkeypatch):
+def test_export_as_zip_adds_extension_if_missing(monkeypatch):
     """Test that .zip extension is added if not present in output_path."""
     dummy_dataset = DummyDataset()
 
@@ -140,10 +143,10 @@ def test_save_as_zip_adds_extension_if_missing(monkeypatch):
         # No .zip extension
         output_path = os.path.join(tmp_dir, "my_dataset")
 
-        save_dataset(
+        export_dataset(
             dummy_dataset,
-            DataFormat.COCO,
             output_path,
+            data_format=DataFormat.COCO,
             as_zip=True,
         )
 
@@ -152,34 +155,32 @@ def test_save_as_zip_adds_extension_if_missing(monkeypatch):
         assert os.path.exists(zip_path)
 
 
-def test_save_as_zip_unsupported_format_raises():
+def test_export_as_zip_unsupported_format_raises():
     """Test that unsupported format raises ValueError when as_zip=True."""
     with pytest.raises(ValueError, match="Unsupported data format"):
-        save_dataset(
+        export_dataset(
             DummyDataset(),
-            FakeFormat.OTHER,
             "/tmp/test.zip",
+            data_format=FakeFormat.OTHER,
             as_zip=True,
         )
 
 
-def test_save_as_zip_cleans_up_on_error(monkeypatch):
+def test_export_as_zip_cleans_up_on_error(monkeypatch):
     """Test that temp directory is cleaned up even if an error occurs."""
     dummy_dataset = DummyDataset()
-    created_temp_dir = None
+    created_temp_dirs: list[str] = []
 
-    original_mkdtemp = tempfile.mkdtemp
+    original_td = tempfile.TemporaryDirectory
 
-    def tracking_mkdtemp(*args, **kwargs):
-        nonlocal created_temp_dir
-        result = original_mkdtemp(*args, **kwargs)
-        created_temp_dir = result
-        return result
+    class TrackingTempDir(original_td):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            created_temp_dirs.append(self.name)
 
-    # Import the base module and patch tempfile.mkdtemp on its imported tempfile
-    import datumaro.experimental.data_formats.base as base_module
+    import datumaro.experimental.export_import as ei_module
 
-    monkeypatch.setattr(base_module.tempfile, "mkdtemp", tracking_mkdtemp)
+    monkeypatch.setattr(ei_module.tempfile, "TemporaryDirectory", TrackingTempDir)
 
     def failing_saver(dataset, images_dir_path, annotations_path):
         raise RuntimeError("Simulated save failure")
@@ -190,13 +191,13 @@ def test_save_as_zip_cleans_up_on_error(monkeypatch):
         zip_path = os.path.join(tmp_dir, "test.zip")
 
         with pytest.raises(RuntimeError, match="Simulated save failure"):
-            save_dataset(
+            export_dataset(
                 dummy_dataset,
-                DataFormat.COCO,
                 zip_path,
+                data_format=DataFormat.COCO,
                 as_zip=True,
             )
 
         # Verify temp directory was still cleaned up
-        assert created_temp_dir is not None
-        assert not os.path.exists(created_temp_dir)
+        assert len(created_temp_dirs) > 0
+        assert not os.path.exists(created_temp_dirs[-1])
