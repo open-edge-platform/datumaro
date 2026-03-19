@@ -424,10 +424,90 @@ def _can_lazy_converter_handle_conversion(from_field_type: type[Field], to_field
     return False
 
 
+def _format_field_sections(
+    effective_start_state: _SchemaState,
+    target_state: _SchemaState,
+    optional_field_types: set[type[Field]],
+) -> tuple[str, str]:
+    """Format source and target fields into readable multi-line sections.
+
+    Returns:
+        Tuple of (source_section, target_section) strings.
+    """
+    source_lines = [f"  {asp.name}: {asp.field}" for asp in effective_start_state.field_to_attr_spec.values()]
+    source_section = ("Source fields:\n" + "\n".join(source_lines)) if source_lines else "Source fields: (none)"
+
+    target_lines = [
+        f"  {asp.name}: {asp.field}"
+        for ft, asp in target_state.field_to_attr_spec.items()
+        if ft not in optional_field_types
+    ]
+    target_section = "Required target fields:\n" + "\n".join(target_lines)
+
+    return source_section, target_section
+
+
+def _diagnose_conversion_issues(
+    effective_start_state: _SchemaState,
+    target_state: _SchemaState,
+    optional_field_types: set[type[Field]],
+    reachable_types: set[type[Field]],
+) -> tuple[list[str], list[str]]:
+    """Classify each unsatisfied target field as missing or property-incompatible.
+
+    Returns:
+        Tuple of (truly_missing_fields, type_conversion_issues) diagnostic line lists.
+    """
+    source_field_types = set(effective_start_state.field_to_attr_spec.keys())
+    type_conversion_issues: list[str] = []
+    truly_missing_fields: list[str] = []
+
+    for target_field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+        if target_field_type in optional_field_types:
+            continue
+
+        if target_field_type in source_field_types:
+            src_attr_spec = effective_start_state.field_to_attr_spec[target_field_type]
+            if src_attr_spec.field != target_attr_spec.field and not _can_lazy_converter_handle_conversion(
+                type(src_attr_spec.field),
+                type(target_attr_spec.field),
+            ):
+                type_conversion_issues.append(
+                    f"  - '{target_attr_spec.name}' ({target_field_type.__name__}): "
+                    f"source has {src_attr_spec.field}, target needs {target_attr_spec.field}"
+                )
+        elif target_field_type not in reachable_types:
+            truly_missing_fields.append(
+                f"  - '{target_attr_spec.name}' ({target_field_type.__name__}): "
+                f"no registered converter can produce this field type from the available source fields"
+            )
+
+    return truly_missing_fields, type_conversion_issues
+
+
+def _assemble_diagnosis(truly_missing_fields: list[str], type_conversion_issues: list[str]) -> str:
+    """Build the diagnosis section from classified issue lists."""
+    parts: list[str] = []
+    if truly_missing_fields:
+        parts.append("Missing field types:\n" + "\n".join(truly_missing_fields))
+    if type_conversion_issues:
+        parts.append(
+            "Incompatible field properties (no converter handles this conversion):\n"
+            + "\n".join(type_conversion_issues)
+        )
+    if not parts:
+        parts.append(
+            "All required field types are present, but converters could not satisfy "
+            "all target field properties simultaneously."
+        )
+    return "\n\n".join(parts)
+
+
 def _create_conversion_error_message(
     effective_start_state: _SchemaState,
     target_state: _SchemaState,
     optional_field_types: set[type[Field]] | None = None,
+    semantic: str | None = None,
 ) -> str:
     """
     Create a detailed error message when no conversion path is found.
@@ -436,6 +516,7 @@ def _create_conversion_error_message(
         effective_start_state: The effective source state after initial renaming
         target_state: Target state for this semantic
         optional_field_types: Set of optional field types (should not be reported as missing)
+        semantic: The semantic tag being processed (included in message for context)
 
     Returns:
         Formatted error message string
@@ -443,70 +524,34 @@ def _create_conversion_error_message(
     if optional_field_types is None:
         optional_field_types = set()
 
-    available_source_fields = {
-        field_type: attr_spec.field for field_type, attr_spec in effective_start_state.field_to_attr_spec.items()
-    }
-    required_target_fields = {
-        field_type: attr_spec.field
-        for field_type, attr_spec in target_state.field_to_attr_spec.items()
-        if field_type not in optional_field_types
-    }
+    header = (
+        f"No conversion path found for semantic group '{semantic}'."
+        if semantic is not None
+        else "No conversion path found."
+    )
 
-    if available_source_fields:
-        available_msg = f"Available source fields: {list(available_source_fields.values())}"
-    else:
-        available_msg = "No source fields available"
+    source_section, target_section = _format_field_sections(
+        effective_start_state,
+        target_state,
+        optional_field_types,
+    )
 
-    required_msg = f"Required target fields: {list(required_target_fields.values())}"
+    reachable_types = (
+        _get_reachable_field_types(effective_start_state, semantic)
+        if semantic is not None
+        else set(effective_start_state.field_to_attr_spec.keys())
+    )
 
-    # Check if field types exist but need property conversion (dtype, format, etc.)
-    source_field_types = set(effective_start_state.field_to_attr_spec.keys())
+    truly_missing, prop_issues = _diagnose_conversion_issues(
+        effective_start_state,
+        target_state,
+        optional_field_types,
+        reachable_types,
+    )
 
-    type_conversion_issues = []
-    truly_missing_fields = []
+    diagnosis_section = _assemble_diagnosis(truly_missing, prop_issues)
 
-    for target_field_type, target_attr_spec in target_state.field_to_attr_spec.items():
-        # Skip optional fields - they don't need to be reported as issues
-        if target_field_type in optional_field_types:
-            continue
-
-        if target_field_type in source_field_types:
-            # Field type exists in source - check if properties differ
-            src_attr_spec = effective_start_state.field_to_attr_spec[target_field_type]
-            if src_attr_spec.field != target_attr_spec.field and not _can_lazy_converter_handle_conversion(
-                type(src_attr_spec.field),
-                type(target_attr_spec.field),
-            ):
-                # Check if a lazy converter can handle this field property conversion
-                type_conversion_issues.append(
-                    f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
-                )
-        else:
-            # Field type does not exist in source - truly missing
-            truly_missing_fields.append(f"'{target_attr_spec.name}' ({target_field_type.__name__})")
-
-    # Create appropriate error message based on the type of issue
-    if type_conversion_issues and not truly_missing_fields:
-        missing_section = "\nMissing converters for type/dtype conversions:\n" + "\n".join(
-            f"  - {issue}" for issue in type_conversion_issues
-        )
-    elif truly_missing_fields and not type_conversion_issues:
-        missing_section = "\nMissing field types:\n" + "\n".join(f"  - {field}" for field in truly_missing_fields)
-    elif type_conversion_issues and truly_missing_fields:
-        missing_section = (
-            "\nMissing field types:\n"
-            + "\n".join(f"  - {field}" for field in truly_missing_fields)
-            + "\n\nMissing converters for type/dtype conversions:\n"
-            + "\n".join(f"  - {issue}" for issue in type_conversion_issues)
-        )
-    else:
-        missing_section = "\nAll required field types are available but conversion failed"
-
-    # Format the complete error message with clear sections
-    return f"""No conversion path found.
-    
-    {available_msg}
-    {required_msg}{missing_section}"""
+    return f"{header}\n\n{source_section}\n\n{target_section}\n\n{diagnosis_section}"
 
 
 def _find_conversion_path_for_semantic(
@@ -591,7 +636,7 @@ def _find_conversion_path_for_semantic(
             heapq.heappush(open_set, new_node)
 
     # No path found - create a more informative error message
-    error_msg = _create_conversion_error_message(effective_start_state, target_state, optional_field_types)
+    error_msg = _create_conversion_error_message(effective_start_state, target_state, optional_field_types, semantic)
     raise ConversionError(error_msg)
 
 
