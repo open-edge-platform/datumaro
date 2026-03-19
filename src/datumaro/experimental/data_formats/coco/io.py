@@ -10,6 +10,7 @@ Supports both:
 - Simple COCOAPI layout: single images folder and single annotation file
 """
 
+import json
 import logging
 from collections import defaultdict
 from pathlib import Path
@@ -42,6 +43,188 @@ _SUBSET_NAME_TO_ENUM: dict[str, Subset] = {
     "testing": Subset.TESTING,
     _DEFAULT_SUBSET_KEY: Subset.UNASSIGNED,
 }
+
+
+def is_coco_json_file(json_path: Path) -> bool:
+    """
+    Check if a JSON file has COCO structure.
+
+    Args:
+        json_path: Path to the JSON file to check
+
+    Returns:
+        True if the file contains COCO-style data (images and annotations/categories keys)
+    """
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+            if isinstance(data, dict):
+                return "images" in data and ("annotations" in data or "categories" in data)
+    except (json.JSONDecodeError, OSError):
+        pass
+    return False
+
+
+def is_coco_format(input_dir: Path) -> bool:
+    """
+    Detect if a directory contains a COCO-format dataset.
+
+    COCO format is identified by:
+    - An 'annotations' subdirectory containing JSON files with COCO structure
+    - OR JSON files in the root containing 'images' and 'annotations' keys
+
+    Args:
+        input_dir: Path to the directory to check
+
+    Returns:
+        True if the directory contains a COCO-format dataset
+    """
+    annotations_dir = input_dir / "annotations"
+    if annotations_dir.is_dir():
+        for json_file in annotations_dir.glob("*.json"):
+            if is_coco_json_file(json_file):
+                return True
+
+    for json_file in input_dir.glob("*.json"):
+        if json_file.name == "metadata.json":
+            continue
+        if is_coco_json_file(json_file):
+            return True
+
+    return False
+
+
+def _find_coco_annotations(input_dir: Path) -> list[str]:
+    """Find all COCO annotation files in a directory."""
+    annotation_files: list[str] = []
+
+    annotations_dir = input_dir / "annotations"
+    if annotations_dir.is_dir():
+        for json_file in annotations_dir.glob("*.json"):
+            if is_coco_json_file(json_file):
+                annotation_files.append(str(json_file))
+    else:
+        for json_file in input_dir.glob("*.json"):
+            if json_file.name != "metadata.json" and is_coco_json_file(json_file):
+                annotation_files.append(str(json_file))
+
+    return annotation_files
+
+
+def _find_coco_images_dir(input_dir: Path) -> str:
+    """Find the images directory for a COCO dataset."""
+    candidates = ["train2017", "val2017", "images", "train", "val"]
+    for candidate in candidates:
+        candidate_dir = input_dir / candidate
+        if candidate_dir.is_dir():
+            return str(candidate_dir)
+
+    return str(input_dir)
+
+
+def _extract_subset_name_from_annotation(annotation_path: str) -> str | None:
+    """
+    Extract the subset name from a COCO annotation file name.
+
+    Common COCO annotation naming patterns:
+    - instances_<subset>.json  (e.g., instances_default.json, instances_train2017.json)
+    - person_keypoints_<subset>.json
+    - captions_<subset>.json
+    - stuff_<subset>.json
+    - panoptic_<subset>.json
+
+    Returns the subset name portion, or None if no known prefix is found.
+    """
+    stem = Path(annotation_path).stem
+    known_prefixes = [
+        "instances_",
+        "person_keypoints_",
+        "captions_",
+        "stuff_",
+        "panoptic_",
+        "image_info_",
+    ]
+    for prefix in known_prefixes:
+        if stem.startswith(prefix):
+            return stem[len(prefix) :]
+    return None
+
+
+def _detect_subset_image_layout(
+    input_dir: Path,
+    annotation_files: list[str],
+) -> tuple[dict[str, str], dict[str, list[str]]] | None:
+    """
+    Detect a subset-based image directory layout (e.g., CVAT exports).
+
+    In this layout, annotation files follow patterns like ``instances_<subset>.json``
+    and the corresponding images live under ``images/<subset>/``.
+
+    Returns:
+        A tuple of (images_config, annotations_config) dicts if subset layout is
+        detected, or None if the dataset uses a flat image directory.
+    """
+    images_base = _find_coco_images_dir(input_dir)
+    images_base_path = Path(images_base)
+
+    subset_annotations: dict[str, list[str]] = {}
+    for ann_path in annotation_files:
+        subset_name = _extract_subset_name_from_annotation(ann_path)
+        if subset_name is not None:
+            subset_annotations.setdefault(subset_name, []).append(ann_path)
+
+    if not subset_annotations:
+        return None
+
+    images_config: dict[str, str] = {}
+    annotations_config: dict[str, list[str]] = {}
+    for subset_name, ann_paths in subset_annotations.items():
+        subset_images_dir = images_base_path / subset_name
+        if subset_images_dir.is_dir():
+            images_config[subset_name] = str(subset_images_dir)
+            annotations_config[subset_name] = ann_paths
+
+    if not images_config:
+        return None
+
+    return images_config, annotations_config
+
+
+def import_coco_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a COCO-format dataset from a directory.
+
+    Automatically discovers annotation files and image directories.
+    Supports both flat image directories and subset-based layouts
+    (e.g., CVAT exports where images are in ``images/<subset>/`` and
+    annotations are named ``instances_<subset>.json``).
+
+    Args:
+        input_dir: Path to the COCO dataset directory
+
+    Returns:
+        Dataset containing CocoSample instances
+
+    Raises:
+        FileNotFoundError: If no COCO annotation files are found
+    """
+    annotation_files = _find_coco_annotations(input_dir)
+    if not annotation_files:
+        raise FileNotFoundError(f"No COCO annotation files found in {input_dir}")
+
+    subset_layout = _detect_subset_image_layout(input_dir, annotation_files)
+    if subset_layout is not None:
+        images_config, annotations_config = subset_layout
+        return load_coco_dataset(images_dir_path=images_config, annotations_path=annotations_config)
+
+    images_dir = _find_coco_images_dir(input_dir)
+    annotations_path = annotation_files if len(annotation_files) > 1 else annotation_files[0]
+    return load_coco_dataset(images_dir_path=images_dir, annotations_path=annotations_path)
+
+
+# ---------------------------------------------------------------------------
+# Dataset loading
+# ---------------------------------------------------------------------------
 
 
 def load_coco_dataset(

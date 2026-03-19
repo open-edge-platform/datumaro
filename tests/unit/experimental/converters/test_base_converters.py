@@ -1104,6 +1104,142 @@ def test_find_conversion_path_converts_reachable_optional_fields():
     assert len(conversion_paths.converters["bbox"]) >= 1
 
 
+def test_direct_only_blocks_cross_field_type_conversion():
+    """Test that direct_only=True blocks cross-field-type converters like BBoxToPolygon."""
+    source_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=BBoxField(dtype=pl.Float32(), format="xywh"),
+            ),
+        }
+    )
+
+    target_schema = Schema(
+        attributes={
+            "polygon": AttributeInfo(
+                type=np.ndarray,
+                field=PolygonField(dtype=pl.Float32()),
+            ),
+        }
+    )
+
+    # Without direct_only, conversion should succeed (BBoxToPolygonConverter exists)
+    path, _ = find_conversion_path(source_schema, target_schema, direct_only=False)
+    assert "polygon" in path.converters
+
+    # With direct_only, conversion should fail (BBox→Polygon is cross-field-type)
+    with pytest.raises(ConversionError):
+        find_conversion_path(source_schema, target_schema, direct_only=True)
+
+
+def test_direct_only_allows_same_field_type_conversion():
+    """Test that direct_only=True allows same-field-type converters like BBox format changes."""
+    source_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=BBoxField(dtype=pl.Float32(), format="xywh"),
+            ),
+        }
+    )
+
+    target_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=BBoxField(dtype=pl.Float32(), format="x1y1x2y2"),
+            ),
+        }
+    )
+
+    # With direct_only, same-type conversion (format change) should still work
+    path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+    assert "bbox" in path.converters
+    assert len(path.converters["bbox"]) >= 1
+
+
+def test_direct_only_convert_to_schema():
+    """Test direct_only parameter through Dataset.convert_to_schema."""
+
+    class SourceSample(Sample):
+        bbox: np.ndarray = BBoxField(dtype=pl.Float32(), format="xywh")
+
+    class TargetSampleDirect(Sample):
+        bbox: np.ndarray = BBoxField(dtype=pl.Float32(), format="x1y1x2y2")
+
+    class TargetSampleCrossField(Sample):
+        polygon: np.ndarray = PolygonField(dtype=pl.Float32())
+
+    ds = Dataset(SourceSample)
+    ds.append(SourceSample(bbox=np.array([10.0, 20.0, 30.0, 40.0], dtype=np.float32)))
+
+    # Same-type conversion should work with direct_only=True
+    converted = ds.convert_to_schema(TargetSampleDirect, direct_only=True)
+    assert len(converted) == 1
+
+    # Cross-type conversion should fail with direct_only=True
+    with pytest.raises(ConversionError):
+        ds.convert_to_schema(TargetSampleCrossField, direct_only=True)
+
+    # Cross-type conversion should work with direct_only=False (default)
+    converted = ds.convert_to_schema(TargetSampleCrossField, direct_only=False)
+    assert len(converted) == 1
+
+
+def test_direct_only_skips_unreachable_optional_cross_field():
+    """Test that direct_only skips optional cross-field-type targets that are unreachable."""
+    source_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=BBoxField(dtype=pl.Float32(), format="xywh"),
+            ),
+        }
+    )
+
+    target_schema = Schema(
+        attributes={
+            "bbox": AttributeInfo(
+                type=np.ndarray,
+                field=BBoxField(dtype=pl.Float32(), format="x1y1x2y2"),
+            ),
+            "polygon": AttributeInfo(
+                type=np.ndarray | None,  # Optional
+                field=PolygonField(dtype=pl.Float32()),
+            ),
+        }
+    )
+
+    # With direct_only=True, the optional PolygonField should be skipped (unreachable)
+    # and the BBox format conversion should still succeed
+    path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+    assert "bbox" in path.converters
+
+
+def test_direct_only_append_dataset():
+    """Test direct_only parameter through Dataset.append_dataset."""
+    from datumaro.experimental.categories import LabelCategories
+
+    class SampleA(Sample):
+        label: int = LabelField(dtype=pl.UInt8())
+
+    class SampleB(Sample):
+        label: int = LabelField(dtype=pl.UInt32())
+
+    categories = {"label": LabelCategories(labels=("cat", "dog", "bird"))}
+
+    ds_a = Dataset(SampleA, categories=categories)
+    ds_a.append(SampleA(label=1))
+
+    ds_b = Dataset(SampleB, categories=categories)
+    ds_b.append(SampleB(label=2))
+
+    # Same field type (LabelField→LabelField dtype change) should work with direct_only=True
+    ds_a.append_dataset(ds_b, direct_only=True)
+    assert len(ds_a) == 2
+
+
 def test_conversion_error_message_end_to_end():
     """End-to-end test: verify the error raised by find_conversion_path contains
     the right semantic group, attribute names, diagnosis sections, and that

@@ -42,9 +42,6 @@ from datumaro.experimental.format_detection import (
     METADATA_FILE,
     detect_dataset_format,
     find_dataset_root,
-    import_coco_dataset,
-    import_voc_dataset,
-    import_yolo_dataset,
 )
 from datumaro.experimental.schema import Schema
 
@@ -600,7 +597,7 @@ def _write_parquet_and_metadata(
     df_to_export: pl.DataFrame,
     work_dir: Path,
     dataset: Dataset[DType],
-    export_videos: ExportMode,
+    export_media: ExportMode,
     video_path_mapping: dict[str, str],
 ) -> None:
     """Write parquet file and metadata to the work directory."""
@@ -619,7 +616,7 @@ def _write_parquet_and_metadata(
         "object_columns": object_columns,
         "videos": {
             "fields": [name for name, _ in _get_video_fields(dataset)],
-            "export_mode": export_videos.value,
+            "export_mode": export_media.value,
             "original_paths": {v: k for k, v in video_path_mapping.items()},
         },
     }
@@ -639,29 +636,158 @@ def _create_zip_archive(output_path: Path, work_dir: Path) -> None:
                 zipf.write(file_path, arcname)
 
 
+def _save_format_to_dir(
+    dataset: Dataset[DType],
+    data_format: DataFormat,
+    output_dir: str,
+    direct_only: bool = False,
+) -> None:
+    """Save *dataset* in a format-specific layout to *output_dir*."""
+    import os
+
+    if data_format == DataFormat.COCO:
+        from datumaro.experimental.data_formats.coco.io import save_coco_dataset
+        from datumaro.experimental.data_formats.coco.sample import CocoSample
+
+        dataset = dataset.convert_to_schema(CocoSample.infer_schema(), direct_only=direct_only)
+        save_coco_dataset(
+            dataset,
+            images_dir_path=os.path.join(output_dir, "images"),
+            annotations_path=os.path.join(output_dir, "annotations.json"),
+        )
+    elif data_format == DataFormat.VOC:
+        from datumaro.experimental.data_formats.voc.io import save_voc_dataset
+        from datumaro.experimental.data_formats.voc.sample import VocSample
+
+        dataset = dataset.convert_to_schema(VocSample.infer_schema(), direct_only=direct_only)
+        save_voc_dataset(dataset, root_dir=output_dir)
+    elif data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
+        from datumaro.experimental.data_formats.yolo.io import save_yolo_dataset
+        from datumaro.experimental.data_formats.yolo.sample import YoloSample
+
+        dataset = dataset.convert_to_schema(YoloSample.infer_schema(), direct_only=direct_only)
+        save_yolo_dataset(dataset, root_dir=output_dir, format=data_format)
+    else:
+        raise ValueError(f"Unsupported data format for export: {data_format}")
+
+
+def _save_format_dataset(
+    dataset: Dataset[DType],
+    data_format: DataFormat,
+    output_path: str,
+    as_zip: bool = False,
+    direct_only: bool = False,
+) -> None:
+    """Export *dataset* in a non-Datumaro format, optionally as a ZIP archive.
+
+    Raises:
+        FileExistsError: If the target output (directory or ZIP archive) already exists.
+        ValueError: If *data_format* is not a supported export format.
+    """
+    _SUPPORTED_EXPORT_FORMATS = {
+        DataFormat.COCO,
+        DataFormat.VOC,
+        DataFormat.YOLO,
+        DataFormat.YOLO_ULTRALYTICS,
+    }
+    if data_format not in _SUPPORTED_EXPORT_FORMATS:
+        raise ValueError(f"Unsupported data format for export: {data_format}")
+
+    output_path_obj = Path(output_path)
+
+    if as_zip:
+        archive_path = output_path_obj.with_suffix(".zip")
+        base = str(archive_path.with_suffix(""))
+        if archive_path.exists():
+            raise FileExistsError(
+                f"Target ZIP archive already exists: '{archive_path}'. "
+                "Please remove it or specify a different output path."
+            )
+        archive_path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            _save_format_to_dir(dataset, data_format, tmp_dir, direct_only=direct_only)
+            shutil.make_archive(base_name=base, format="zip", root_dir=tmp_dir)
+    else:
+        if output_path_obj.exists():
+            raise FileExistsError(
+                f"Target output directory already exists: '{output_path_obj}'. "
+                "Please remove it or specify a different output path."
+            )
+        output_path_obj.mkdir(parents=True, exist_ok=True)
+        _save_format_to_dir(dataset, data_format, output_path, direct_only=direct_only)
+
+
+def _load_format_dataset(
+    data_format: DataFormat,
+    images_dir_path: str | dict[str, str] | None = None,
+    annotations_path: str | list[str] | dict[str, str | list[str]] | None = None,
+    root_dir: str | None = None,
+) -> Dataset:
+    """Load a dataset given an explicit *data_format* and format-specific paths."""
+    if data_format == DataFormat.COCO:
+        from datumaro.experimental.data_formats.coco.io import load_coco_dataset
+
+        if images_dir_path is None or annotations_path is None:
+            raise ValueError("images_dir_path and annotations_path are required for COCO format")
+
+        return load_coco_dataset(
+            images_dir_path=images_dir_path,
+            annotations_path=annotations_path,
+        )
+    if data_format == DataFormat.VOC:
+        from datumaro.experimental.data_formats.voc.io import load_voc_dataset
+
+        if root_dir is not None:
+            return load_voc_dataset(root_dir=root_dir)
+        if images_dir_path is not None:
+            annotations_dir = annotations_path if isinstance(annotations_path, str) else None
+            return load_voc_dataset(
+                images_dir_path=images_dir_path if isinstance(images_dir_path, str) else None,
+                annotations_dir_path=annotations_dir,
+            )
+        raise ValueError("root_dir or images_dir_path is required for VOC format")
+    if data_format in (DataFormat.YOLO, DataFormat.YOLO_ULTRALYTICS):
+        from datumaro.experimental.data_formats.yolo.io import load_yolo_dataset
+
+        if root_dir is None:
+            raise ValueError("root_dir is required for YOLO format")
+
+        format_hint = "ultralytics" if data_format == DataFormat.YOLO_ULTRALYTICS else "auto"
+        return load_yolo_dataset(root_dir=root_dir, format=format_hint)
+    raise ValueError(f"Unsupported data format: {data_format}")
+
+
 def export_dataset(
     dataset: Dataset[DType],
     output_path: str | Path,
-    export_images: ExportMode = ExportMode.COPY,
-    export_videos: ExportMode = ExportMode.COPY,
+    export_media: ExportMode = ExportMode.COPY,
     as_zip: bool = False,
     ignore_missing_media: bool = False,
+    direct_only: bool = False,
+    data_format: DataFormat | None = None,
 ) -> None:
     """
     Export a dataset to disk in a structured format.
 
-    The dataset is exported with the following structure:
+    By default the dataset is exported in native Datumaro format with the
+    following structure:
+
     - data.parquet: The DataFrame in Parquet format
     - metadata.json: Schema, categories, image paths, and video metadata
-    - images/: Directory containing exported images (if export_images is COPY)
-    - videos/: Directory containing exported videos (if export_videos is COPY)
+    - images/: Directory containing exported images (if export_media is COPY)
+    - videos/: Directory containing exported videos (if export_media is COPY)
+
+    When ``data_format`` is set to a non-Datumaro format (e.g.
+    ``DataFormat.COCO``, ``DataFormat.VOC``, ``DataFormat.YOLO``), the dataset
+    is first converted to the target format's schema and then saved using the
+    format-specific writer.
 
     Image format is automatically determined:
     - ImagePathField: Preserves original format (copied directly)
     - ImageCallableField: Saved as PNG (lossless)
     - InstanceMaskCallableField/MaskCallableField: Saved as PNG (best for masks)
 
-    Export modes:
+    Export modes (only apply to native Datumaro format):
     - ExportMode.SKIP: Don't export media files. Use this when you don't need
       the media files in the export (e.g., metadata-only export).
     - ExportMode.REFERENCE: Keep original absolute paths in the DataFrame. Use
@@ -675,14 +801,33 @@ def export_dataset(
     Args:
         dataset: The dataset to export
         output_path: Path to export to (directory or .zip file)
-        export_images: How to handle images. Default is ExportMode.COPY.
-        export_videos: How to handle videos. Default is ExportMode.COPY.
+        export_media: How to handle media (images and videos). Default is
+            ExportMode.COPY.
         as_zip: Whether to package everything as a ZIP file
         ignore_missing_media: If True, silently skip media files (images and videos)
             that cannot be found or generated, instead of raising an error.
-            Only has an effect when ``export_images`` or ``export_videos`` is
-            ``ExportMode.COPY``; otherwise, it is ignored.
+            Only has an effect when ``export_media`` is ``ExportMode.COPY``;
+            otherwise, it is ignored.
+        direct_only: If True, only apply converters where all output field types
+            match (are a subset of) the input field types. Cross-field-type
+            converters (e.g., BBoxField→PolygonField) are skipped. Only has an
+            effect when ``data_format`` is set to a non-Datumaro format that
+            requires schema conversion.
+        data_format: Target data format for export. When ``None`` (default),
+            exports in native Datumaro format (parquet + metadata).  Set to
+            ``DataFormat.COCO``, ``DataFormat.VOC``, ``DataFormat.YOLO``, etc.
+            to convert and save in that format.
     """
+    if data_format is not None and data_format != DataFormat.DATUMARO:
+        _save_format_dataset(
+            dataset,
+            data_format=data_format,
+            output_path=str(output_path),
+            as_zip=as_zip,
+            direct_only=direct_only,
+        )
+        return
+
     output_path, temp_dir, work_dir = _setup_work_directory(Path(output_path), as_zip)
 
     try:
@@ -690,22 +835,22 @@ def export_dataset(
         video_path_mapping: dict[str, str] = {}
 
         # Export images if requested
-        if export_images == ExportMode.COPY:
+        if export_media == ExportMode.COPY:
             images_dir = work_dir / IMAGES_DIR
             images_paths = _export_images_from_dataset(dataset, images_dir, ignore_missing_media)
             media_path_fields = {name for name, f in _get_image_fields(dataset) if isinstance(f, MediaPathField)}
             df_to_export = _update_df_with_image_paths(df_to_export, images_paths, media_path_fields)
 
         # Export videos
-        if export_videos == ExportMode.COPY:
+        if export_media == ExportMode.COPY:
             videos_dir = work_dir / VIDEOS_DIR
-            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_videos, ignore_missing_media)
+            video_path_mapping = _export_videos_from_dataset(dataset, videos_dir, export_media, ignore_missing_media)
             if video_path_mapping:
                 video_fields = _get_video_fields(dataset)
                 df_to_export = _update_df_with_video_paths(df_to_export, video_path_mapping, video_fields)
 
         # Write parquet and metadata
-        _write_parquet_and_metadata(df_to_export, work_dir, dataset, export_videos, video_path_mapping)
+        _write_parquet_and_metadata(df_to_export, work_dir, dataset, export_media, video_path_mapping)
 
         # Create ZIP if requested
         if as_zip:
@@ -721,9 +866,18 @@ def import_dataset(
     input_path: str | Path,
     dtype: type[DType] | None = None,
     extract_dir: str | Path | None = None,
+    *,
+    data_format: DataFormat | None = None,
+    images_dir_path: str | dict[str, str] | None = None,
+    annotations_path: str | list[str] | dict[str, str | list[str]] | None = None,
+    root_dir: str | None = None,
 ) -> Dataset[DType]:
     """
     Import a dataset from an exported format.
+
+    When ``data_format`` is ``None`` the format is auto-detected from the directory
+    contents.  Set ``data_format`` explicitly together with the format-specific path
+    arguments when auto-detection is not desired.
 
     All media paths (images and videos) are resolved relative to the export
     directory.  Images are stored under ``images/`` and videos under ``videos/``,
@@ -754,6 +908,15 @@ def import_dataset(
             the zip will be extracted to a directory next to the zip file with the
             same name (excluding the .zip extension). This parameter is ignored
             when input_path is a directory.
+        data_format: When set, skip auto-detection and load using this format
+            directly. Requires the appropriate format-specific keyword arguments
+            (``images_dir_path``, ``annotations_path``, ``root_dir``).
+        images_dir_path: Path to image directory (str) or dict mapping subset
+            names to paths. Only used when ``data_format`` is set explicitly.
+        annotations_path: Path to annotations file/directory. Only used when
+            ``data_format`` is set explicitly.
+        root_dir: Root directory for YOLO or VOC format datasets. Only used
+            when ``data_format`` is set explicitly.
 
     Returns:
         The imported Dataset instance
@@ -768,8 +931,28 @@ def import_dataset(
 
         Import a YOLO dataset (auto-detected)::
             dataset = import_dataset("/path/to/yolo_dataset")
+
+        Import a COCO dataset with explicit format::
+            dataset = import_dataset(
+                "/path/to/coco",
+                data_format=DataFormat.COCO,
+                images_dir_path="/path/to/images",
+                annotations_path="/path/to/annotations.json",
+            )
     """
     input_path = Path(input_path)
+
+    if data_format is not None:
+        # When an explicit format is provided, use input_path as the default
+        # root_dir so that the positional argument is not silently ignored.
+        if root_dir is None:
+            root_dir = str(input_path)
+        return _load_format_dataset(
+            data_format=data_format,
+            images_dir_path=images_dir_path,
+            annotations_path=annotations_path,
+            root_dir=root_dir,
+        )
 
     if is_zipfile(input_path):
         if extract_dir is not None:
@@ -1052,10 +1235,16 @@ def _import_dataset_from_dir(
     # Detect the dataset format and dispatch to appropriate loader
     match detect_dataset_format(input_dir):
         case DataFormat.COCO:
+            from datumaro.experimental.data_formats.coco.io import import_coco_dataset
+
             return import_coco_dataset(input_dir)
         case DataFormat.YOLO:
+            from datumaro.experimental.data_formats.yolo.io import import_yolo_dataset
+
             return import_yolo_dataset(input_dir)
         case DataFormat.VOC:
+            from datumaro.experimental.data_formats.voc.io import import_voc_dataset
+
             return import_voc_dataset(input_dir)
         case DataFormat.DATUMARO:
             return _import_datumaro_dataset(input_dir, dtype)

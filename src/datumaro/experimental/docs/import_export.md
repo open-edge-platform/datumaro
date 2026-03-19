@@ -32,7 +32,7 @@ dataset.append(MySample(
 ))
 
 # 2. Export to disk
-export_dataset(dataset, "/tmp/my_dataset", export_images=ExportMode.COPY)
+export_dataset(dataset, "/tmp/my_dataset", export_media=ExportMode.COPY)
 
 # 3. Re-import
 loaded = import_dataset("/tmp/my_dataset", dtype=MySample)
@@ -48,24 +48,16 @@ from datumaro.experimental import export_dataset, import_dataset
 from datumaro.experimental.export_import import ExportMode
 
 # Export to directory (copies images and videos to output)
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.COPY)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.COPY)
 
 # Export as ZIP archive
-export_dataset(dataset, "/path/to/output.zip", export_images=ExportMode.COPY, as_zip=True)
+export_dataset(dataset, "/path/to/output.zip", export_media=ExportMode.COPY, as_zip=True)
 
 # Export with references only (faster, but not portable)
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.REFERENCE)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.REFERENCE)
 
 # Skip media export entirely
-export_dataset(dataset, "/path/to/output", export_images=ExportMode.SKIP)
-
-# Control images and videos separately
-export_dataset(
-    dataset, 
-    "/path/to/output",
-    export_images=ExportMode.COPY,
-    export_videos=ExportMode.REFERENCE,
-)
+export_dataset(dataset, "/path/to/output", export_media=ExportMode.SKIP)
 
 # Import dataset
 loaded_dataset = import_dataset("/path/to/output")
@@ -108,11 +100,7 @@ dataset = import_dataset("/path/to/my_dataset")  # dtype inferred
 
 ## Data Formats
 
-Load and save datasets in common formats using the generic or format-specific APIs.
-
-```python
-from datumaro.experimental.data_formats.base import DataFormat, load_dataset, save_dataset
-```
+Load and save datasets in common formats using `import_dataset` and `export_dataset` with the `data_format` parameter, or use the format-specific APIs directly.
 
 ### COCO Format
 
@@ -205,37 +193,42 @@ dataset = load_yolo_dataset(root_dir="/path/to/yolo_dataset", format="ultralytic
 save_yolo_dataset(dataset, root_dir="/path/to/output", format=DataFormat.YOLO)
 ```
 
-### Generic Format Loader
+### Generic Format API
 
-Use the generic loader for format-agnostic code:
+Use the generic `import_dataset` / `export_dataset` functions with the `data_format`
+parameter for format-agnostic code:
 
 ```python
-from datumaro.experimental.data_formats.base import DataFormat, load_dataset, save_dataset
+from datumaro.experimental import import_dataset, export_dataset
+from datumaro.experimental.data_formats.base import DataFormat
 
 # Load COCO
-dataset = load_dataset(
+dataset = import_dataset(
+    "/path/to/coco",
     data_format=DataFormat.COCO,
     images_dir_path="/path/to/images",
     annotations_path="/path/to/annotations.json",
 )
 
 # Load VOC
-dataset = load_dataset(
+dataset = import_dataset(
+    "/path/to/voc",
     data_format=DataFormat.VOC,
     root_dir="/path/to/VOC2012",
 )
 
 # Load YOLO
-dataset = load_dataset(
+dataset = import_dataset(
+    "/path/to/yolo",
     data_format=DataFormat.YOLO,
     root_dir="/path/to/yolo_dataset",
 )
 
 # Save to any format
-save_dataset(dataset, DataFormat.COCO, "/path/to/output")
-save_dataset(dataset, DataFormat.VOC, "/path/to/output")
-save_dataset(dataset, DataFormat.YOLO, "/path/to/output")
+export_dataset(dataset, "/path/to/output", data_format=DataFormat.COCO)
+export_dataset(dataset, "/path/to/output", data_format=DataFormat.VOC)
+export_dataset(dataset, "/path/to/output", data_format=DataFormat.YOLO)
 
 # Save as ZIP archive
-save_dataset(dataset, DataFormat.COCO, "/path/to/output.zip", as_zip=True)
+export_dataset(dataset, "/path/to/output.zip", data_format=DataFormat.COCO, as_zip=True)
 ```

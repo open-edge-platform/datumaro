@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from .converters import Converter, ConverterRegistry, converter
+from .data_formats.base import DataFormat
 from .dataset import Dataset, Sample
 from .export_import import export_dataset, import_dataset, register_sample
 from .media import (

@@ -204,10 +204,51 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
     return cost
 
 
+def _resolve_output_attr_spec(
+    field_type: type[Field],
+    target_state: _SchemaState,
+    semantic: str,
+    iteration: int,
+) -> AttributeSpec[Field]:
+    """Resolve the output AttributeSpec for a converter output field type.
+
+    If the target state has a matching field type, use its name/field/categories.
+    Otherwise, create a temporary AttributeSpec with a generated name.
+    """
+    if field_type in target_state.field_to_attr_spec:
+        target_attr_spec = target_state.field_to_attr_spec[field_type]
+        return AttributeSpec(
+            name=target_attr_spec.name,
+            field=target_attr_spec.field,
+            categories=target_attr_spec.categories,
+        )
+
+    # The field does not exist, use a temporary name and create a new instance
+    output_name = f"{field_type.__name__.lower()}_temp_{iteration}"
+    return AttributeSpec(
+        name=output_name,
+        field=field_type(semantic=semantic),
+        categories=None,
+    )
+
+
 def _get_applicable_converters(
-    semantic: str, state: _SchemaState, target_state: _SchemaState, iteration: int = 0
+    semantic: str,
+    state: _SchemaState,
+    target_state: _SchemaState,
+    iteration: int = 0,
+    direct_only: bool = False,
 ) -> list[tuple[Converter, _SchemaState]]:
-    """Get all converters that can be applied to the current state along with their resulting states."""
+    """Get all converters that can be applied to the current state along with their resulting states.
+
+    Args:
+        semantic: The semantic tag being processed
+        state: Current schema state
+        target_state: Target schema state
+        iteration: Current iteration count for uniqueness
+        direct_only: If True, only consider converters where all output field types
+            are a subset of the input field types (no cross-field-type conversions).
+    """
     applicable: list[tuple[Converter, _SchemaState]] = []
 
     # Get available field types
@@ -221,6 +262,14 @@ def _get_applicable_converters(
         if not available_field_types.issuperset(from_types.values()):
             continue
 
+        # Skip cross-field-type converters when direct_only is True
+        if direct_only:
+            to_types = converter_class.get_to_types()
+            input_field_types = set(from_types.values())
+            output_field_types = set(to_types.values())
+            if not output_field_types.issubset(input_field_types):
+                continue
+
         # Collect available input AttributeSpec instances
         converter_kwargs = {
             attr_name: state.field_to_attr_spec[field_type] for attr_name, field_type in from_types.items()
@@ -228,32 +277,8 @@ def _get_applicable_converters(
 
         # Collect desired output AttributeSpec instances
         to_types = converter_class.get_to_types()
-        to_attr_specs: list[AttributeSpec[Field]] = []
-        for field_type in to_types.values():
-            if field_type in target_state.field_to_attr_spec:
-                attr_spec = target_state.field_to_attr_spec[field_type]
-                to_attr_specs.append(attr_spec)
-
         for attr_name, field_type in to_types.items():
-            # First, check if target state has a matching field type and use its name/field
-            if field_type in target_state.field_to_attr_spec:
-                target_attr_spec = target_state.field_to_attr_spec[field_type]
-                output_name = target_attr_spec.name
-                output_field = target_attr_spec.field
-                output_categories = target_attr_spec.categories
-            else:
-                # The field does not exist, use a temporary name
-                output_name = field_type.__name__.lower()
-                # and create a new instance of the field
-                output_field = field_type(semantic=semantic)
-                output_categories = None
-
-                # Add the iteration count at the end to ensure uniqueness
-                # and avoid any conflict with existing attribute names
-                output_name = f"{output_name}_temp_{iteration}"
-
-            output_attr_spec = AttributeSpec(name=output_name, field=output_field, categories=output_categories)
-            converter_kwargs[attr_name] = output_attr_spec
+            converter_kwargs[attr_name] = _resolve_output_attr_spec(field_type, target_state, semantic, iteration)
 
         # Create converter instance with all AttributeSpec instances as kwargs
         converter_instance = converter_class(**converter_kwargs)
@@ -534,6 +559,7 @@ def _find_conversion_path_for_semantic(
     target_state: _SchemaState,
     semantic: str,
     optional_field_types: set[type[Field]] | None = None,
+    direct_only: bool = False,
 ) -> tuple[list[Converter], _SchemaState]:
     """
     Find conversion path for fields with a specific semantic tag.
@@ -543,6 +569,8 @@ def _find_conversion_path_for_semantic(
         target_state: Target state for this semantic
         semantic: The semantic tag being processed
         optional_field_types: Set of optional field types for this semantic
+        direct_only: If True, only consider converters where all output field types
+            are a subset of the input field types (no cross-field-type conversions).
 
     Returns:
         Tuple of (list of converters needed for this semantic group, updated target state)
@@ -594,6 +622,7 @@ def _find_conversion_path_for_semantic(
             current_node.state,
             target_state,
             current_node.g_cost,
+            direct_only=direct_only,
         ):
             if new_state in closed_set:
                 continue
@@ -772,7 +801,11 @@ def converter(
     return decorator(cls)
 
 
-def _get_reachable_field_types(start_state: _SchemaState, semantic: str) -> set[type[Field]]:
+def _get_reachable_field_types(
+    start_state: _SchemaState,
+    semantic: str,
+    direct_only: bool = False,
+) -> set[type[Field]]:
     """
     Get all field types that can be reached from the start state through converters.
 
@@ -783,6 +816,8 @@ def _get_reachable_field_types(start_state: _SchemaState, semantic: str) -> set[
     Args:
         start_state: Starting state with available field types
         semantic: The semantic tag to filter by (only fields with matching semantic are considered)
+        direct_only: If True, only consider converters where all output field types
+            are a subset of the input field types (no cross-field-type conversions).
 
     Returns:
         Set of all reachable field types (including those already in start_state)
@@ -800,6 +835,13 @@ def _get_reachable_field_types(start_state: _SchemaState, semantic: str) -> set[
         for converter_class in ConverterRegistry.list_converters():
             from_types = converter_class.get_from_types()
             to_types = converter_class.get_to_types()
+
+            # Skip cross-field-type converters when direct_only is True
+            if direct_only:
+                input_field_types = set(from_types.values())
+                output_field_types = set(to_types.values())
+                if not output_field_types.issubset(input_field_types):
+                    continue
 
             # Check if all required input types are available
             if reachable.issuperset(from_types.values()):
@@ -843,7 +885,11 @@ def _filter_unreachable_optional_fields(
     return _SchemaState(filtered_field_to_attr_spec)
 
 
-def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[ConversionPaths, dict[str, Categories]]:
+def find_conversion_path(
+    from_schema: Schema,
+    to_schema: Schema,
+    direct_only: bool = False,
+) -> tuple[ConversionPaths, dict[str, Categories]]:
     """
     Find an optimal sequence of converters using A* search, grouped by semantic.
 
@@ -856,6 +902,10 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
     Args:
         from_schema: Source schema
         to_schema: Target schema
+        direct_only: If True, only consider converters where all output field types
+            are a subset of the input field types (no cross-field-type conversions).
+            For example, BBoxField→BBoxField format/dtype converters are allowed,
+            but BBoxField→PolygonField converters are skipped.
 
     Returns:
         Tuple of (ConversionPaths with separated batch and lazy converter lists,
@@ -880,7 +930,7 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
         start_state = start_groups.get(semantic, _SchemaState({}))
 
         # Determine which field types are reachable from the start state
-        reachable_types = _get_reachable_field_types(start_state, semantic)
+        reachable_types = _get_reachable_field_types(start_state, semantic, direct_only=direct_only)
 
         # Get optional field types for this specific semantic
         optional_field_types = optional_field_types_by_semantic.get(semantic, set())
@@ -890,7 +940,7 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
 
         # Find conversion path for this semantic group (with filtered target)
         semantic_converters, updated_target_state = _find_conversion_path_for_semantic(
-            start_state, filtered_target_state, semantic, optional_field_types
+            start_state, filtered_target_state, semantic, optional_field_types, direct_only=direct_only
         )
 
         # Update the target state with any inferred categories
