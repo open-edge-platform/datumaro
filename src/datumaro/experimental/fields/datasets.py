@@ -178,7 +178,7 @@ class SubsetField(Field):
                         return arg[value]  # type: ignore
                     except KeyError:
                         if issubclass(arg, Subset):
-                            return Subset.UNASSIGNED  # type: ignore
+                            return arg.UNASSIGNED  # type: ignore
                         raise
 
         # Handle direct Enum types
@@ -187,7 +187,7 @@ class SubsetField(Field):
                 return target_type[value]  # type: ignore
             except KeyError:
                 if issubclass(target_type, Subset):
-                    return Subset.UNASSIGNED  # type: ignore
+                    return target_type.UNASSIGNED  # type: ignore
                 raise
 
         return value  # type: ignore
