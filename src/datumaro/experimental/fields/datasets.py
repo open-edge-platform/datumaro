@@ -174,11 +174,21 @@ class SubsetField(Field):
             args = get_args(target_type)
             for arg in args:
                 if arg is not type(None) and isinstance(arg, type) and issubclass(arg, Enum):
-                    return arg[value]  # type: ignore
+                    try:
+                        return arg[value]  # type: ignore
+                    except KeyError:
+                        if issubclass(arg, Subset):
+                            return arg.UNASSIGNED  # type: ignore
+                        raise
 
         # Handle direct Enum types
         if isinstance(target_type, type) and issubclass(target_type, Enum):
-            return target_type[value]  # type: ignore
+            try:
+                return target_type[value]  # type: ignore
+            except KeyError:
+                if issubclass(target_type, Subset):
+                    return target_type.UNASSIGNED  # type: ignore
+                raise
 
         return value  # type: ignore
 
