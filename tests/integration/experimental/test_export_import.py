@@ -1992,7 +1992,7 @@ def test_mixed_media_dataset_export_import(tmp_path):
 
     # Create test image
     test_image_path = tmp_path / "test_image.jpg"
-    test_img = PILImage.new("RGB", (100, 100), color=(255, 0, 0))
+    test_img = PILImage.new("RGB", (100, 100), color="red")
     test_img.save(test_image_path)
 
     dataset = Dataset(MixedSample, categories={"label": LABEL_CATEGORIES})
@@ -2080,6 +2080,115 @@ def test_import_dataset_auto_detects_coco_format(tmp_path):
 
     # Verify the dataset was loaded correctly
     assert len(dataset) == 1
+
+
+def test_import_and_export_coco_with_subset_image_dirs(tmp_path):
+    """Test import and export of COCO datasets where images are in subset subdirectories."""
+    annotations_dir = tmp_path / "coco" / "annotations"
+    annotations_dir.mkdir(parents=True)
+    images_dir = tmp_path / "coco" / "images" / "default"
+    images_dir.mkdir(parents=True)
+
+    # Create test images
+    for i in range(3):
+        img = PILImage.new("RGB", (100, 80), color="red")
+        img.save(images_dir / f"image_{i:06d}.jpg")
+
+    # Create COCO annotation file named instances_default.json
+    coco_annotations = {
+        "images": [{"id": idx, "file_name": f"image_{idx:06d}.jpg", "width": 100, "height": 80} for idx in range(3)],
+        "annotations": [
+            {
+                "id": idx,
+                "image_id": idx,
+                "category_id": 1,
+                "bbox": [10, 20, 30, 40],
+                "area": 1200,
+                "iscrowd": 0,
+            }
+            for idx in range(3)
+        ],
+        "categories": [{"id": 1, "name": "cat", "supercategory": "animal"}],
+    }
+
+    with open(annotations_dir / "instances_default.json", "w") as f:
+        json.dump(coco_annotations, f)
+
+    # Import using auto-detection — this should find images under images/default/
+    dataset = import_dataset(tmp_path / "coco")
+    assert len(dataset) == 3
+
+    # Verify image data is accessible
+    image_data = dataset[0].image.data
+    assert image_data is not None
+    assert image_data.shape == (80, 100, 3)
+
+    # Export to a new directory — this should succeed (previously raised ValueError
+    # because the resolved image path was missing the subset subdirectory)
+    export_dir = tmp_path / "exported"
+    export_dataset(dataset, output_path=export_dir, as_zip=False)
+
+    # Verify the exported dataset has the expected structure
+    assert (export_dir / METADATA_FILE).exists()
+    assert (export_dir / DATAFRAME_FILE).exists()
+    assert (export_dir / IMAGES_DIR).is_dir()
+
+    # Verify exported images exist
+    exported_images = list((export_dir / IMAGES_DIR).glob("*.jpg"))
+    assert len(exported_images) == 3
+
+    # Verify the exported dataset can be re-imported
+    reimported = import_dataset(export_dir)
+    assert len(reimported) == 3
+
+
+def test_import_coco_with_multiple_subset_image_dirs(tmp_path):
+    """Test import of COCO datasets with multiple subset subdirectories under images/.
+
+    For example:
+        annotations/instances_train.json
+        annotations/instances_val.json
+        images/train/img1.jpg
+        images/val/img2.jpg
+    """
+    annotations_dir = tmp_path / "annotations"
+    annotations_dir.mkdir()
+    train_images_dir = tmp_path / "images" / "train"
+    train_images_dir.mkdir(parents=True)
+    val_images_dir = tmp_path / "images" / "val"
+    val_images_dir.mkdir(parents=True)
+
+    # Create images in each subset directory
+    img = PILImage.new("RGB", (50, 50), color="blue")
+    img.save(train_images_dir / "train_img.jpg")
+    img.save(val_images_dir / "val_img.jpg")
+
+    # Create annotation files for each subset
+    train_annotations = {
+        "images": [{"id": 1, "file_name": "train_img.jpg", "width": 50, "height": 50}],
+        "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "bbox": [5, 5, 10, 10], "area": 100, "iscrowd": 0}],
+        "categories": [{"id": 1, "name": "dog"}],
+    }
+    val_annotations = {
+        "images": [{"id": 1, "file_name": "val_img.jpg", "width": 50, "height": 50}],
+        "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "bbox": [5, 5, 10, 10], "area": 100, "iscrowd": 0}],
+        "categories": [{"id": 1, "name": "dog"}],
+    }
+
+    with open(annotations_dir / "instances_train.json", "w") as f:
+        json.dump(train_annotations, f)
+    with open(annotations_dir / "instances_val.json", "w") as f:
+        json.dump(val_annotations, f)
+
+    # Import using auto-detection — should detect subset-based layout
+    dataset = import_dataset(tmp_path)
+    assert len(dataset) == 2
+
+    # Verify image data is accessible for both samples
+    for i in range(len(dataset)):
+        image_data = dataset[i].image.data
+        assert image_data is not None
+        assert image_data.shape == (50, 50, 3)
 
 
 def test_import_dataset_auto_detects_yolo_ultralytics_format(tmp_path):
@@ -2170,7 +2279,7 @@ def test_import_zip_with_nested_coco_structure(tmp_path):
     annotations_dir = nested_folder / "annotations"
     annotations_dir.mkdir(parents=True)
     images_dir = nested_folder / "images"
-    images_dir.mkdir()
+    images_dir.mkdir(parents=True)
 
     # Create a test image
     img = PILImage.new("RGB", (100, 100), color="red")

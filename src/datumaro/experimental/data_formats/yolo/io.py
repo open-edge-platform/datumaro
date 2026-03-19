@@ -22,6 +22,45 @@ from datumaro.experimental.data_formats.yolo.sample import YoloSample
 logger = logging.getLogger(__name__)
 
 
+def is_yolo_format(input_dir: Path) -> bool:
+    """
+    Detect if a directory contains a YOLO-format dataset.
+
+    YOLO format is identified by:
+    - data.yaml file (Ultralytics format)
+    - OR obj.names/obj.data files (traditional format)
+    - OR images/ and labels/ directories (Ultralytics structure)
+
+    Args:
+        input_dir: Path to the directory to check
+
+    Returns:
+        True if the directory contains a YOLO-format dataset
+    """
+    if (input_dir / "data.yaml").exists():
+        return True
+
+    if (input_dir / "obj.names").exists() or (input_dir / "obj.data").exists():
+        return True
+
+    return (input_dir / "images").is_dir() and (input_dir / "labels").is_dir()
+
+
+def import_yolo_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a YOLO-format dataset from a directory.
+
+    Supports both Ultralytics and traditional YOLO formats.
+
+    Args:
+        input_dir: Path to the YOLO dataset directory
+
+    Returns:
+        Dataset containing YoloSample instances
+    """
+    return load_yolo_dataset(root_dir=str(input_dir))
+
+
 def load_yolo_dataset(root_dir: str, format: str = "auto") -> Dataset:
     """
     Load a YOLO dataset from its top-level directory.

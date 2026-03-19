@@ -118,7 +118,8 @@ class VocFormatDetectionTest:
         from pathlib import Path
 
         from datumaro.experimental.data_formats.base import DataFormat
-        from datumaro.experimental.format_detection import detect_dataset_format, is_voc_format
+        from datumaro.experimental.data_formats.voc.io import is_voc_format
+        from datumaro.experimental.format_detection import detect_dataset_format
 
         path = Path(voc_dataset_path)
         assert is_voc_format(path) is True

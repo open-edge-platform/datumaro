@@ -42,9 +42,6 @@ from datumaro.experimental.format_detection import (
     METADATA_FILE,
     detect_dataset_format,
     find_dataset_root,
-    import_coco_dataset,
-    import_voc_dataset,
-    import_yolo_dataset,
 )
 from datumaro.experimental.schema import Schema
 
@@ -1238,10 +1235,16 @@ def _import_dataset_from_dir(
     # Detect the dataset format and dispatch to appropriate loader
     match detect_dataset_format(input_dir):
         case DataFormat.COCO:
+            from datumaro.experimental.data_formats.coco.io import import_coco_dataset
+
             return import_coco_dataset(input_dir)
         case DataFormat.YOLO:
+            from datumaro.experimental.data_formats.yolo.io import import_yolo_dataset
+
             return import_yolo_dataset(input_dir)
         case DataFormat.VOC:
+            from datumaro.experimental.data_formats.voc.io import import_voc_dataset
+
             return import_voc_dataset(input_dir)
         case DataFormat.DATUMARO:
             return _import_datumaro_dataset(input_dir, dtype)

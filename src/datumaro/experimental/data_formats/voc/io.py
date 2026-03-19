@@ -35,6 +35,66 @@ from datumaro.experimental.data_formats.voc.sample import VocSample
 logger = logging.getLogger(__name__)
 
 
+def _is_voc_labelmap(labelmap_path: Path) -> bool:
+    """Check if a file has VOC labelmap structure (name:color:parts:actions)."""
+    try:
+        with open(labelmap_path) as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                # VOC labelmap has format: name:color:parts:actions
+                parts = line.split(":")
+                if len(parts) == 4:
+                    return True
+    except OSError:
+        pass
+    return False
+
+
+def is_voc_format(input_dir: Path) -> bool:
+    """
+    Detect if a directory contains a Pascal VOC-format dataset.
+
+    Pascal VOC format is identified by:
+    - JPEGImages/ directory AND (Annotations/ or ImageSets/ directory)
+    - OR labelmap.txt file with VOC structure
+
+    Args:
+        input_dir: Path to the directory to check
+
+    Returns:
+        True if the directory contains a VOC-format dataset
+    """
+    jpeg_images_dir = input_dir / "JPEGImages"
+    annotations_dir = input_dir / "Annotations"
+    imagesets_dir = input_dir / "ImageSets"
+
+    if jpeg_images_dir.is_dir() and (annotations_dir.is_dir() or imagesets_dir.is_dir()):
+        return True
+
+    labelmap_file = input_dir / "labelmap.txt"
+    return labelmap_file.exists() and _is_voc_labelmap(labelmap_file)
+
+
+def import_voc_dataset(input_dir: Path) -> Dataset:
+    """
+    Import a Pascal VOC-format dataset from a directory.
+
+    Supports standard VOC directory structure with:
+    - JPEGImages/ for images
+    - Annotations/ for XML annotations
+    - ImageSets/Main/ for train/val/test splits
+
+    Args:
+        input_dir: Path to the VOC dataset directory
+
+    Returns:
+        Dataset containing VocSample instances
+    """
+    return load_voc_dataset(root_dir=str(input_dir))
+
+
 def load_voc_dataset(
     root_dir: str | None = None,
     images_dir_path: str | None = None,
