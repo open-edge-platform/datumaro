@@ -516,7 +516,7 @@ def test_from_polars_data_returns_none_not_array_none():
 
     Regression test: previously, calling from_polars_data(None, np.ndarray) would produce
     np.array(None, dtype=object) instead of None because np.array(None) creates a
-    0-dimensional array wrapping None. This verifies the fix for all registered target types.
+    0-dimensional array wrapping None. This verifies the fix for numpy arrays and basic scalar target types.
     """
     # np.ndarray target must return None, not array(None, dtype=object)
     result = from_polars_data(None, np.ndarray)

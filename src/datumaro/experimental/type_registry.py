@@ -105,7 +105,7 @@ _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any] | None]] =
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
-    np.ndarray: lambda x: None if x is None else np.array(x),
+    np.ndarray: lambda x: np.array(x),
     int: lambda x: int(x),
     float: lambda x: float(x),
     str: lambda x: str(x),
@@ -246,10 +246,11 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         target_type: Target type to convert to
 
     Returns:
-        Value converted to target_type
+        Value converted to target_type, or None if polars_data is None
 
     Raises:
-        TypeError: If target_type is not registered for conversion
+        TypeError: If polars_data is not None and target_type is not registered
+            for conversion
 
     Example:
         >>> import torch
@@ -299,9 +300,6 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 
 
 def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type: type) -> Any:
-    if types.NoneType in union_args and polars_data is None:
-        return None
-
     non_none_args = tuple(arg for arg in union_args if arg is not types.NoneType)
 
     # Try each type in the union until one succeeds
