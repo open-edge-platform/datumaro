@@ -509,3 +509,22 @@ def test_typed_numpy_array_multidimensional():
     assert result.dtype == np.int32
     assert result.shape == (4,)
     np.testing.assert_array_equal(result, np.array([10, 15, 30, 35], dtype=np.int32))
+
+
+def test_from_polars_data_returns_none_not_array_none():
+    """Test that from_polars_data returns None (not array(None, dtype=object)) when data is None.
+
+    Regression test: previously, calling from_polars_data(None, np.ndarray) would produce
+    np.array(None, dtype=object) instead of None because np.array(None) creates a
+    0-dimensional array wrapping None. This verifies the fix for all registered target types.
+    """
+    # np.ndarray target must return None, not array(None, dtype=object)
+    result = from_polars_data(None, np.ndarray)
+    assert result is None
+
+    # Scalar target types must also return None
+    assert from_polars_data(None, int) is None
+    assert from_polars_data(None, float) is None
+    assert from_polars_data(None, str) is None
+    assert from_polars_data(None, bool) is None
+    assert from_polars_data(None, bytes) is None

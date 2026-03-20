@@ -105,7 +105,7 @@ _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any] | None]] =
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
-    np.ndarray: lambda x: np.array(x),
+    np.ndarray: lambda x: None if x is None else np.array(x),
     int: lambda x: int(x),
     float: lambda x: float(x),
     str: lambda x: str(x),
@@ -258,6 +258,10 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         >>> isinstance(tensor, torch.Tensor)
         True
     """
+    # Null polars data should always map to None regardless of target type
+    if polars_data is None:
+        return None
+
     # Handle direct type matches first
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
