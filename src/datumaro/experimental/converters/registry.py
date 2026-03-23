@@ -166,7 +166,7 @@ class _SearchNode:
         return self.f_cost < other.f_cost
 
 
-def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> int:
+def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> float:
     """
     Heuristic function for A* search.
     Returns the number of missing target fields plus field differences as a heuristic.
@@ -178,7 +178,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
     Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.
     """
-    cost = 0
+    cost = 0.0
 
     current_field_types = set(current_state.field_to_attr_spec.keys())
     target_field_types = set(target_state.field_to_attr_spec.keys())
