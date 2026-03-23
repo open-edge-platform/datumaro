@@ -465,11 +465,9 @@ def test_parse_voc_annotation_mixed_objects_with_and_without_bndbox(tmp_path: Pa
     categories = LabelCategories(labels=VOC_LABELS)
     result = _parse_voc_annotation(anno_path, categories)
 
-    # Both objects should be parsed
-    assert len(result["labels"]) == 2
+    # Only objects with a bounding box should be included in object-level data
+    assert len(result["labels"]) == 1
     assert result["labels"][0] == VOC_LABELS.index("person")
-    assert result["labels"][1] == VOC_LABELS.index("dog")
-    # Only the first object has a bounding box
     assert len(result["bboxes"]) == 1
     assert result["bboxes"][0] == [100.0, 100.0, 200.0, 200.0]
 
