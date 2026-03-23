@@ -154,11 +154,11 @@ class _SearchNode:
 
     state: _SchemaState
     path: list[Converter]  # Now stores Converter instances directly
-    g_cost: int  # Actual cost from start
-    h_cost: int  # Heuristic cost to goal
+    g_cost: float  # Actual cost from start
+    h_cost: float  # Heuristic cost to goal
 
     @property
-    def f_cost(self) -> int:
+    def f_cost(self) -> float:
         """Total cost (g + h)."""
         return self.g_cost + self.h_cost
 
@@ -166,7 +166,7 @@ class _SearchNode:
         return self.f_cost < other.f_cost
 
 
-def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> int:
+def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> float:
     """
     Heuristic function for A* search.
     Returns the number of missing target fields plus field differences as a heuristic.
@@ -178,7 +178,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
     Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.
     """
-    cost = 0
+    cost = 0.0
 
     current_field_types = set(current_state.field_to_attr_spec.keys())
     target_field_types = set(target_state.field_to_attr_spec.keys())
@@ -628,7 +628,16 @@ def _find_conversion_path_for_semantic(
                 continue
 
             new_path = [*current_node.path, converter]
-            new_g_cost = current_node.g_cost + 1  # Each converter has cost 1
+            # Base cost of 1 per converter, plus a small penalty for
+            # cross-field-type converters (those that derive an output field
+            # type from a different input field type).  This ensures that
+            # direct in-place transformations (e.g. BBoxField→BBoxField for
+            # format/dtype changes) are preferred over cross-type derivations
+            # (e.g. KeypointsField→BBoxField) when integer costs are equal.
+            input_field_types = {type(s.field) for s in converter.get_input_attr_specs()}
+            output_field_types = {type(s.field) for s in converter.get_output_attr_specs()}
+            is_cross_field_type = not output_field_types.issubset(input_field_types)
+            new_g_cost = current_node.g_cost + 1 + (0.1 if is_cross_field_type else 0)
             new_h_cost = _heuristic_cost(new_state, target_state)
 
             new_node = _SearchNode(state=new_state, path=new_path, g_cost=new_g_cost, h_cost=new_h_cost)
