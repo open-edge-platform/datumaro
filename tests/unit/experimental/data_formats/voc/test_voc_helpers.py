@@ -13,6 +13,7 @@ import numpy as np
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
 from datumaro.experimental.data_formats.voc.helpers import (
+    _create_object_element,
     _create_voc_xml_annotation,
     _detect_voc_subsets,
     _find_image_file,
@@ -393,3 +394,170 @@ def test_write_voc_xml_creates_file(tmp_path: Path):
     content = output_path.read_text()
     assert "<annotation>" in content
     assert "<filename>test.jpg</filename>" in content
+
+
+# ======================================
+# Classification-only (no bbox) Tests
+# ======================================
+
+
+def test_parse_voc_annotation_parses_objects_without_bndbox(tmp_path: Path):
+    """Test that objects without bounding boxes are still parsed for labels and attributes."""
+    anno_path = tmp_path / "test.xml"
+    anno_path.write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <difficult>1</difficult>
+        <truncated>0</truncated>
+        <occluded>1</occluded>
+        <pose>Frontal</pose>
+    </object>
+</annotation>
+    """)
+
+    categories = LabelCategories(labels=VOC_LABELS)
+    result = _parse_voc_annotation(anno_path, categories)
+
+    assert result["width"] == 640
+    assert result["height"] == 480
+    # Object should be parsed even without bndbox
+    assert len(result["labels"]) == 1
+    assert result["labels"][0] == VOC_LABELS.index("person")
+    # No bounding boxes should be present
+    assert len(result["bboxes"]) == 0
+    # Attributes should still be parsed
+    assert result["difficult"][0] is True
+    assert result["truncated"][0] is False
+    assert result["occluded"][0] is True
+    assert result["pose"][0] == "Frontal"
+
+
+def test_parse_voc_annotation_mixed_objects_with_and_without_bndbox(tmp_path: Path):
+    """Test parsing annotation with both bbox and non-bbox objects."""
+    anno_path = tmp_path / "test.xml"
+    anno_path.write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>100</xmin>
+            <ymin>100</ymin>
+            <xmax>200</xmax>
+            <ymax>200</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>dog</name>
+        <difficult>1</difficult>
+    </object>
+</annotation>
+    """)
+
+    categories = LabelCategories(labels=VOC_LABELS)
+    result = _parse_voc_annotation(anno_path, categories)
+
+    # Both objects should be parsed
+    assert len(result["labels"]) == 2
+    assert result["labels"][0] == VOC_LABELS.index("person")
+    assert result["labels"][1] == VOC_LABELS.index("dog")
+    # Only the first object has a bounding box
+    assert len(result["bboxes"]) == 1
+    assert result["bboxes"][0] == [100.0, 100.0, 200.0, 200.0]
+
+
+def test_create_voc_xml_annotation_classification_only():
+    """Test creating XML annotation for classification-only samples (labels but no bboxes)."""
+    sample = VocSample(
+        image="/path/to/image.jpg",
+        image_info=ImageInfo(height=480, width=640),
+        bboxes=None,
+        labels=np.array([0, 2], dtype=np.uint32),
+        difficult=np.array([False, True]),
+        truncated=np.array([False, False]),
+        occluded=np.array([False, False]),
+        pose=np.array(["Unspecified", "Unspecified"], dtype=object),
+        subset=Subset.TRAINING,
+    )
+    categories = LabelCategories(labels=VOC_LABELS)
+
+    root = _create_voc_xml_annotation(sample, "image.jpg", categories)
+
+    assert root.tag == "annotation"
+    objects = root.findall("object")
+    assert len(objects) == 2
+
+    # Check label names
+    assert objects[0].find("name").text == VOC_LABELS[0]
+    assert objects[1].find("name").text == VOC_LABELS[2]
+
+    # No bndbox elements should be present
+    assert objects[0].find("bndbox") is None
+    assert objects[1].find("bndbox") is None
+
+    # Attributes should still be set
+    assert objects[1].find("difficult").text == "1"
+
+
+def test_create_object_element_with_bbox():
+    """Test _create_object_element creates bndbox when bbox is provided."""
+    sample = VocSample(
+        image="/path/to/image.jpg",
+        image_info=ImageInfo(height=480, width=640),
+        bboxes=np.array([[10, 20, 30, 40]], dtype=np.float32),
+        labels=np.array([1], dtype=np.uint32),
+        difficult=np.array([True]),
+        truncated=np.array([False]),
+        occluded=np.array([True]),
+        pose=np.array(["Left"], dtype=object),
+        subset=Subset.TRAINING,
+    )
+    categories = LabelCategories(labels=VOC_LABELS)
+    bbox = np.array([10, 20, 30, 40], dtype=np.float32)
+
+    obj_elem = _create_object_element(sample, 0, bbox, categories)
+
+    assert obj_elem.find("name").text == VOC_LABELS[1]
+    assert obj_elem.find("difficult").text == "1"
+    assert obj_elem.find("occluded").text == "1"
+    assert obj_elem.find("pose").text == "Left"
+    # Bounding box should be present
+    bndbox = obj_elem.find("bndbox")
+    assert bndbox is not None
+    assert bndbox.find("xmin").text == "10"
+    assert bndbox.find("ymin").text == "20"
+    assert bndbox.find("xmax").text == "30"
+    assert bndbox.find("ymax").text == "40"
+
+
+def test_create_object_element_without_bbox():
+    """Test _create_object_element omits bndbox when bbox is None."""
+    sample = VocSample(
+        image="/path/to/image.jpg",
+        image_info=ImageInfo(height=480, width=640),
+        bboxes=None,
+        labels=np.array([0], dtype=np.uint32),
+        difficult=np.array([False]),
+        truncated=np.array([True]),
+        occluded=np.array([False]),
+        pose=np.array(["Frontal"], dtype=object),
+        subset=Subset.TRAINING,
+    )
+    categories = LabelCategories(labels=VOC_LABELS)
+
+    obj_elem = _create_object_element(sample, 0, None, categories)
+
+    assert obj_elem.find("name").text == VOC_LABELS[0]
+    assert obj_elem.find("truncated").text == "1"
+    assert obj_elem.find("difficult").text == "0"
+    assert obj_elem.find("pose").text == "Frontal"
+    # No bounding box should be present
+    assert obj_elem.find("bndbox") is None

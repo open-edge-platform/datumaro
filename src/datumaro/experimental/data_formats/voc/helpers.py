@@ -243,19 +243,18 @@ def _parse_object_element(obj_elem: Element, result: dict, categories: LabelCate
 
     # Parse bounding box
     bndbox = obj_elem.find("bndbox")
-    if bndbox is None:
-        return
+    if bndbox is not None:
+        try:
+            xmin = float(bndbox.find("xmin").text)
+            ymin = float(bndbox.find("ymin").text)
+            xmax = float(bndbox.find("xmax").text)
+            ymax = float(bndbox.find("ymax").text)
+        except (AttributeError, ValueError, TypeError) as e:
+            logger.warning("Invalid bounding box in VOC annotation: %s", e)
+            return
 
-    try:
-        xmin = float(bndbox.find("xmin").text)
-        ymin = float(bndbox.find("ymin").text)
-        xmax = float(bndbox.find("xmax").text)
-        ymax = float(bndbox.find("ymax").text)
-    except (AttributeError, ValueError, TypeError) as e:
-        logger.warning("Invalid bounding box in VOC annotation: %s", e)
-        return
+        result["bboxes"].append([xmin, ymin, xmax, ymax])
 
-    result["bboxes"].append([xmin, ymin, xmax, ymax])
     result["labels"].append(label_idx)
 
     # Parse attributes
@@ -545,6 +544,11 @@ def _create_voc_xml_annotation(
         for i, bbox in enumerate(sample.bboxes):
             obj_elem = _create_object_element(sample, i, bbox, categories)
             root.append(obj_elem)
+    elif sample.labels is not None and len(sample.labels) > 0:
+        # Classification-only: labels without bounding boxes
+        for i in range(len(sample.labels)):
+            obj_elem = _create_object_element(sample, i, None, categories)
+            root.append(obj_elem)
 
     return root
 
@@ -552,7 +556,7 @@ def _create_voc_xml_annotation(
 def _create_object_element(
     sample: VocSample,
     idx: int,
-    bbox: np.ndarray,
+    bbox: np.ndarray | None,
     categories: LabelCategories,
 ) -> Element:
     """Create a single object element for VOC XML."""
@@ -560,14 +564,7 @@ def _create_object_element(
 
     # Name (label)
     name_elem = Element("name")
-    if sample.labels is not None and idx < len(sample.labels):
-        label_idx = int(sample.labels[idx])
-        if label_idx < len(categories.labels):
-            name_elem.text = categories.labels[label_idx]
-        else:
-            name_elem.text = f"unknown_{label_idx}"
-    else:
-        name_elem.text = "unknown"
+    name_elem.text = _get_label_name(sample, idx, categories)
     obj_elem.append(name_elem)
 
     # Pose
@@ -578,47 +575,41 @@ def _create_object_element(
         pose_elem.text = "Unspecified"
     obj_elem.append(pose_elem)
 
-    # Truncated
-    truncated_elem = Element("truncated")
-    if sample.truncated is not None and idx < len(sample.truncated):
-        truncated_elem.text = "1" if sample.truncated[idx] else "0"
-    else:
-        truncated_elem.text = "0"
-    obj_elem.append(truncated_elem)
+    # Boolean attributes
+    for attr_name, attr_array in (
+        ("truncated", sample.truncated),
+        ("difficult", sample.difficult),
+        ("occluded", sample.occluded),
+    ):
+        elem = Element(attr_name)
+        elem.text = "1" if attr_array is not None and idx < len(attr_array) and attr_array[idx] else "0"
+        obj_elem.append(elem)
 
-    # Difficult
-    difficult_elem = Element("difficult")
-    if sample.difficult is not None and idx < len(sample.difficult):
-        difficult_elem.text = "1" if sample.difficult[idx] else "0"
-    else:
-        difficult_elem.text = "0"
-    obj_elem.append(difficult_elem)
-
-    # Occluded
-    occluded_elem = Element("occluded")
-    if sample.occluded is not None and idx < len(sample.occluded):
-        occluded_elem.text = "1" if sample.occluded[idx] else "0"
-    else:
-        occluded_elem.text = "0"
-    obj_elem.append(occluded_elem)
-
-    # Bounding box
-    bndbox_elem = Element("bndbox")
-    xmin_elem = Element("xmin")
-    xmin_elem.text = str(int(bbox[0]))
-    bndbox_elem.append(xmin_elem)
-    ymin_elem = Element("ymin")
-    ymin_elem.text = str(int(bbox[1]))
-    bndbox_elem.append(ymin_elem)
-    xmax_elem = Element("xmax")
-    xmax_elem.text = str(int(bbox[2]))
-    bndbox_elem.append(xmax_elem)
-    ymax_elem = Element("ymax")
-    ymax_elem.text = str(int(bbox[3]))
-    bndbox_elem.append(ymax_elem)
-    obj_elem.append(bndbox_elem)
+    # Bounding box (omitted for classification-only objects)
+    if bbox is not None:
+        obj_elem.append(_create_bndbox_element(bbox))
 
     return obj_elem
+
+
+def _get_label_name(sample: VocSample, idx: int, categories: LabelCategories) -> str:
+    """Get the label name for an object at the given index."""
+    if sample.labels is None or idx >= len(sample.labels):
+        return "unknown"
+    label_idx = int(sample.labels[idx])
+    if label_idx < len(categories.labels):
+        return categories.labels[label_idx]
+    return f"unknown_{label_idx}"
+
+
+def _create_bndbox_element(bbox: np.ndarray) -> Element:
+    """Create a bounding box XML element for VOC annotation."""
+    bndbox_elem = Element("bndbox")
+    for tag, value in zip(("xmin", "ymin", "xmax", "ymax"), bbox):
+        child = Element(tag)
+        child.text = str(int(value))
+        bndbox_elem.append(child)
+    return bndbox_elem
 
 
 def _write_voc_xml(root: Element, output_path: Path) -> None:
