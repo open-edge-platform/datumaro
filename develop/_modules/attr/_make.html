@@ -794,6 +794,15 @@
 
     <span class="n">attrs</span> <span class="o">=</span> <span class="n">base_attrs</span> <span class="o">+</span> <span class="n">own_attrs</span>
 
+    <span class="c1"># Resolve default field alias before executing field_transformer, so that</span>
+    <span class="c1"># the transformer receives fully populated Attribute objects with usable</span>
+    <span class="c1"># alias values.</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span>
+            <span class="c1"># Evolve is very slow, so we hold our nose and do it dirty.</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">a</span><span class="p">)(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">a</span><span class="p">)(</span><span class="s2">&quot;alias_is_default&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">field_transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">field_transformer</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">))</span>
 
@@ -811,13 +820,12 @@
         <span class="k">if</span> <span class="n">had_default</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NOTHING</span><span class="p">:</span>
             <span class="n">had_default</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="c1"># Resolve default field alias after executing field_transformer.</span>
-    <span class="c1"># This allows field_transformer to differentiate between explicit vs</span>
-    <span class="c1"># default aliases and supply their own defaults.</span>
+    <span class="c1"># Resolve default field alias for any new attributes that the</span>
+    <span class="c1"># field_transformer may have added without setting an alias.</span>
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span>
-            <span class="c1"># Evolve is very slow, so we hold our nose and do it dirty.</span>
             <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">a</span><span class="p">)(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">a</span><span class="p">)(</span><span class="s2">&quot;alias_is_default&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Create AttrsClass *after* applying the field_transformer since it may</span>
     <span class="c1"># add or remove attributes!</span>
@@ -900,7 +908,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attached to frozen classes as __delattr__.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;__notes__&quot;</span><span class="p">,):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;__notes__&quot;</span><span class="p">:</span>
         <span class="ne">BaseException</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span>
 
@@ -1427,9 +1435,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__replace__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes</span><span class="p">:</span> <span class="n">evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">changes</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__replace__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">evolve</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_match_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2218,16 +2224,16 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the tuple of *attrs* attributes for a class.</span>
+<span class="sd">    Return the tuple of *attrs* attributes for a class or instance.</span>
 
 <span class="sd">    The tuple also allows accessing the fields by their names (see below for</span>
 <span class="sd">    examples).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cls (type): Class to introspect.</span>
+<span class="sd">        cls (type): Class or instance to introspect.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        TypeError: If *cls* is not a class.</span>
+<span class="sd">        TypeError: If *cls* is neither a class nor an *attrs* instance.</span>
 
 <span class="sd">        attrs.exceptions.NotAnAttrsClassError:</span>
 <span class="sd">            If *cls* is not an *attrs* class.</span>
@@ -2238,12 +2244,17 @@
 <span class="sd">    .. versionchanged:: 16.2.0 Returned tuple allows accessing the fields</span>
 <span class="sd">       by name.</span>
 <span class="sd">    .. versionchanged:: 23.1.0 Add support for generic classes.</span>
+<span class="sd">    .. versionchanged:: 26.1.0 Add support for instances.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">generic_base</span> <span class="o">=</span> <span class="n">get_generic_base</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">generic_base</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Passed object must be a class.&quot;</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="s2">&quot;__attrs_attrs__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Passed object must be a class or attrs instance.&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fields</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span>
 
     <span class="n">attrs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__attrs_attrs__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -2350,7 +2361,7 @@
         <span class="n">attr_dict</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
 
         <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">on_setattr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">frozen</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frozen</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">on_setattr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">setters</span><span class="o">.</span><span class="n">NO_OP</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Frozen classes can&#39;t use on_setattr.&quot;</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -2763,6 +2774,8 @@
 <span class="sd">    - ``name`` (`str`): The name of the attribute.</span>
 <span class="sd">    - ``alias`` (`str`): The __init__ parameter name of the attribute, after</span>
 <span class="sd">      any explicit overrides and default private-attribute-name handling.</span>
+<span class="sd">    - ``alias_is_default`` (`bool`): Whether the ``alias`` was automatically</span>
+<span class="sd">      generated (``True``) or explicitly provided by the user (``False``).</span>
 <span class="sd">    - ``inherited`` (`bool`): Whether or not that attribute has been inherited</span>
 <span class="sd">      from a base class.</span>
 <span class="sd">    - ``eq_key`` and ``order_key`` (`typing.Callable` or `None`): The</span>
@@ -2788,6 +2801,7 @@
 <span class="sd">        equality checks and hashing anymore.</span>
 <span class="sd">    .. versionadded:: 21.1.0 *eq_key* and *order_key*</span>
 <span class="sd">    .. versionadded:: 22.2.0 *alias*</span>
+<span class="sd">    .. versionadded:: 26.1.0 *alias_is_default*</span>
 
 <span class="sd">    For the full version history of the fields, see `attr.ib`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2812,6 +2826,7 @@
         <span class="s2">&quot;inherited&quot;</span><span class="p">,</span>
         <span class="s2">&quot;on_setattr&quot;</span><span class="p">,</span>
         <span class="s2">&quot;alias&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;alias_is_default&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -2834,6 +2849,7 @@
         <span class="n">order_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">on_setattr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">alias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">alias_is_default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">eq</span><span class="p">,</span> <span class="n">eq_key</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">order_key</span> <span class="o">=</span> <span class="n">_determine_attrib_eq_order</span><span class="p">(</span>
             <span class="n">cmp</span><span class="p">,</span> <span class="n">eq_key</span> <span class="ow">or</span> <span class="n">eq</span><span class="p">,</span> <span class="n">order_key</span> <span class="ow">or</span> <span class="n">order</span><span class="p">,</span> <span class="kc">True</span>
@@ -2868,6 +2884,10 @@
         <span class="n">bound_setattr</span><span class="p">(</span><span class="s2">&quot;inherited&quot;</span><span class="p">,</span> <span class="n">inherited</span><span class="p">)</span>
         <span class="n">bound_setattr</span><span class="p">(</span><span class="s2">&quot;on_setattr&quot;</span><span class="p">,</span> <span class="n">on_setattr</span><span class="p">)</span>
         <span class="n">bound_setattr</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="p">)</span>
+        <span class="n">bound_setattr</span><span class="p">(</span>
+            <span class="s2">&quot;alias_is_default&quot;</span><span class="p">,</span>
+            <span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">alias_is_default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">alias_is_default</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">FrozenInstanceError</span>
@@ -2903,6 +2923,7 @@
             <span class="n">ca</span><span class="o">.</span><span class="n">order_key</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">on_setattr</span><span class="p">,</span>
             <span class="n">ca</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># Don&#39;t use attrs.evolve since fields(Attribute) doesn&#39;t work</span>
@@ -2921,6 +2942,20 @@
 
         <span class="n">new</span><span class="o">.</span><span class="n">_setattrs</span><span class="p">(</span><span class="n">changes</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
+        <span class="k">if</span> <span class="s2">&quot;alias&quot;</span> <span class="ow">in</span> <span class="n">changes</span> <span class="ow">and</span> <span class="s2">&quot;alias_is_default&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+            <span class="c1"># Explicit alias provided -- no longer the default.</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">new</span><span class="p">)(</span><span class="s2">&quot;alias_is_default&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">changes</span>
+            <span class="ow">and</span> <span class="s2">&quot;alias&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">changes</span>
+            <span class="c1"># Don&#39;t auto-generate alias if the user picked picked the old one.</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">alias_is_default</span>
+        <span class="p">):</span>
+            <span class="c1"># Name changed, alias was auto-generated -- update it.</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">new</span><span class="p">)(</span>
+                <span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">new</span>
 
     <span class="c1"># Don&#39;t use _add_pickle since fields(Attribute) doesn&#39;t work</span>
@@ -2937,6 +2972,17 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Play nice with pickle.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">):</span>
+            <span class="c1"># Pre-26.1.0 pickle without alias_is_default -- infer it</span>
+            <span class="c1"># heuristically.</span>
+            <span class="n">state_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
+            <span class="n">alias_is_default</span> <span class="o">=</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;alias&quot;</span>
+            <span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">_default_init_alias_for</span><span class="p">(</span>
+                <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">state</span><span class="p">,</span> <span class="n">alias_is_default</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_setattrs</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setattrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_values_pairs</span><span class="p">):</span>
@@ -2960,7 +3006,7 @@
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">NOTHING</span><span class="p">,</span>
         <span class="n">validator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="nb">repr</span><span class="o">=</span><span class="p">(</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;alias_is_default&quot;</span><span class="p">),</span>
         <span class="n">cmp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -3421,9 +3467,7 @@
                 <span class="n">value</span><span class="p">,</span> <span class="n">field</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">value</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span>
-                <span class="n">value</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">field</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span>
 
         <span class="n">rt</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">get_return_type</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">rt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
