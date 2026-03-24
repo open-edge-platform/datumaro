@@ -116,10 +116,10 @@ def analyze_legacy_dataset(
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
-            if is_multi_label or is_hierarchical:
+            if (is_multi_label or is_hierarchical) and AnnotationType.label.name in ann_attributes:
                 ann_attributes[AnnotationType.label.name].field = label_field(multi_label=True)
                 ann_attributes[AnnotationType.label.name].type = np.ndarray
-            if is_hierarchical:
+            if is_hierarchical and AnnotationType.label.name in ann_attributes:
                 categories = legacy_dataset.categories()[AnnotationType.label].items
                 label_categories = tuple(
                     HierarchicalLabelCategory(
