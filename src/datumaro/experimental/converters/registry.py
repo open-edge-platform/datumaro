@@ -438,11 +438,10 @@ def _format_field_sections(
     source_section = ("Source fields:\n" + "\n".join(source_lines)) if source_lines else "Source fields: (none)"
 
     target_lines = [
-        f"  {asp.name}: {asp.field}"
+        f"  {asp.name}: {asp.field}{' (optional)' if ft in optional_field_types else ''}"
         for ft, asp in target_state.field_to_attr_spec.items()
-        if ft not in optional_field_types
     ]
-    target_section = "Required target fields:\n" + "\n".join(target_lines)
+    target_section = ("Target fields:\n" + "\n".join(target_lines)) if target_lines else "Target fields: (none)"
 
     return source_section, target_section
 
@@ -463,8 +462,7 @@ def _diagnose_conversion_issues(
     truly_missing_fields: list[str] = []
 
     for target_field_type, target_attr_spec in target_state.field_to_attr_spec.items():
-        if target_field_type in optional_field_types:
-            continue
+        optional_tag = " (optional)" if target_field_type in optional_field_types else ""
 
         if target_field_type in source_field_types:
             src_attr_spec = effective_start_state.field_to_attr_spec[target_field_type]
@@ -473,12 +471,12 @@ def _diagnose_conversion_issues(
                 type(target_attr_spec.field),
             ):
                 type_conversion_issues.append(
-                    f"  - '{target_attr_spec.name}' ({target_field_type.__name__}): "
+                    f"  - '{target_attr_spec.name}' ({target_field_type.__name__}){optional_tag}: "
                     f"source has {src_attr_spec.field}, target needs {target_attr_spec.field}"
                 )
         elif target_field_type not in reachable_types:
             truly_missing_fields.append(
-                f"  - '{target_attr_spec.name}' ({target_field_type.__name__}): "
+                f"  - '{target_attr_spec.name}' ({target_field_type.__name__}){optional_tag}: "
                 f"no registered converter can produce this field type from the available source fields"
             )
 
