@@ -9,7 +9,12 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.experimental.categories import LabelCategories, MaskCategories
+from datumaro.experimental.categories import (
+    HierarchicalLabelCategories,
+    HierarchicalLabelCategory,
+    LabelCategories,
+    MaskCategories,
+)
 from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -1944,3 +1949,108 @@ def test_filter_by_labels_empty_labels_raises_error():
 
     with pytest.raises(ValueError, match="No labels provided to filter"):
         ds.filter_by_labels([])
+
+
+# ── label_categories property tests ─────────────────────────────────────────
+
+
+def test_label_categories_returns_label_categories():
+    """label_categories returns the LabelCategories from the schema."""
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=categories)})
+    ds = Dataset(schema)
+
+    result = ds.label_categories
+    assert result is categories
+    assert isinstance(result, LabelCategories)
+    assert len(result) == 3
+    assert "cat" in result
+
+
+def test_label_categories_returns_none_without_label_categories():
+    """label_categories returns None when no BaseLabelCategories exist in the schema."""
+
+    class SimpleSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+
+    ds = Dataset(SimpleSample)
+    assert ds.label_categories is None
+
+
+def test_label_categories_returns_none_with_only_mask_categories():
+    """label_categories returns None when only non-label categories exist."""
+    mask_cats = MaskCategories(colormap={0: (0, 0, 0), 1: (255, 0, 0)})
+    schema = Schema(
+        attributes={
+            "image": AttributeInfo(
+                type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB"), categories=mask_cats
+            )
+        }
+    )
+    ds = Dataset(schema)
+    assert ds.label_categories is None
+
+
+def test_label_categories_returns_first_label_categories():
+    """When multiple attributes have LabelCategories, the first one is returned."""
+    cats_a = LabelCategories(labels=("a", "b"))
+    cats_b = LabelCategories(labels=("x", "y", "z"))
+    schema = Schema(
+        attributes={
+            "label_a": AttributeInfo(type=int, field=label_field(semantic="a"), categories=cats_a),
+            "label_b": AttributeInfo(type=int, field=label_field(semantic="b"), categories=cats_b),
+        }
+    )
+    ds = Dataset(schema)
+
+    result = ds.label_categories
+    # Should return the first one found (label_a)
+    assert result is cats_a
+
+
+def test_label_categories_with_hierarchical_label_categories():
+    """label_categories returns HierarchicalLabelCategories (subclass of BaseLabelCategories)."""
+    items = (
+        HierarchicalLabelCategory(name="animal"),
+        HierarchicalLabelCategory(name="cat", parent="animal"),
+        HierarchicalLabelCategory(name="dog", parent="animal"),
+    )
+    hier_cats = HierarchicalLabelCategories(items=items)
+    schema = Schema(attributes={"label": AttributeInfo(type=int, field=label_field(), categories=hier_cats)})
+    ds = Dataset(schema)
+
+    result = ds.label_categories
+    assert result is hier_cats
+    assert isinstance(result, HierarchicalLabelCategories)
+
+
+def test_label_categories_with_categories_passed_to_dataset():
+    """label_categories works when categories are passed via Dataset constructor."""
+
+    class TestSample(Sample):
+        label: int = label_field()
+
+    cats = LabelCategories(labels=("person", "car"))
+    ds = Dataset(TestSample, categories={"label": cats})
+
+    result = ds.label_categories
+    assert result is cats
+    assert len(result) == 2
+
+
+def test_label_categories_ignores_non_label_categories():
+    """label_categories skips attributes with non-label categories and finds the right one."""
+    mask_cats = MaskCategories(colormap={0: (0, 0, 0)})
+    label_cats = LabelCategories(labels=("yes", "no"))
+    schema = Schema(
+        attributes={
+            "image": AttributeInfo(
+                type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB"), categories=mask_cats
+            ),
+            "label": AttributeInfo(type=int, field=label_field(), categories=label_cats),
+        }
+    )
+    ds = Dataset(schema)
+
+    result = ds.label_categories
+    assert result is label_cats
