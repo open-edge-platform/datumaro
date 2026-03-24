@@ -193,8 +193,18 @@ def _detect_classification_label_files(
         label_part, subset_part = stem.rsplit("_", 1)
 
         if label_part not in valid_labels:
+            logger.warning(
+                "Skipping classification file %s: label '%s' not in known categories",
+                txt_file,
+                label_part,
+            )
             continue
         if subset_part not in subset_names:
+            logger.warning(
+                "Skipping classification file %s: subset '%s' not in known subsets",
+                txt_file,
+                subset_part,
+            )
             continue
 
         result.setdefault(subset_part, {})[label_part] = txt_file
@@ -221,6 +231,10 @@ def _parse_classification_labels(
         try:
             label_idx = categories.labels.index(label_name)
         except ValueError:
+            logger.warning(
+                "Skipping classification label '%s': not found in categories",
+                label_name,
+            )
             continue
 
         with open(file_path, encoding="utf-8") as f:
@@ -230,11 +244,21 @@ def _parse_classification_labels(
                     continue
                 parts = line.split()
                 if len(parts) < 2:
+                    logger.warning(
+                        "Skipping malformed line in %s: expected at least 2 fields, got '%s'",
+                        file_path,
+                        line,
+                    )
                     continue
                 image_id = parts[0]
                 try:
                     flag = int(parts[1])
                 except ValueError:
+                    logger.warning(
+                        "Skipping line in %s: cannot parse flag as integer: '%s'",
+                        file_path,
+                        parts[1],
+                    )
                     continue
                 if flag == 1:
                     image_labels[image_id].append(label_idx)
