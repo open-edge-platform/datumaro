@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+import numpy as np
 import polars as pl
 
 from datumaro import Annotation, AnnotationType, CategoriesInfo, DatasetItem, MediaElement
@@ -115,10 +116,10 @@ def analyze_legacy_dataset(
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
-            if is_multi_label:
+            if is_multi_label or is_hierarchical:
                 ann_attributes[AnnotationType.label.name].field = label_field(multi_label=True)
+                ann_attributes[AnnotationType.label.name].type = np.ndarray
             if is_hierarchical:
-                ann_attributes[AnnotationType.label.name].field = label_field(is_list=True)
                 categories = legacy_dataset.categories()[AnnotationType.label].items
                 label_categories = tuple(
                     HierarchicalLabelCategory(

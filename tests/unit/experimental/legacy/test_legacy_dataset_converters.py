@@ -693,6 +693,29 @@ class HelperFunctionsTest:
 class HierarchicalLegacyDatasetTest:
     """Tests for hierarchical legacy dataset analysis."""
 
+    def test_convert_hierarchical_dataset_getitem(self):
+        """Test that __getitem__ works on a converted hierarchical dataset.
+
+        Regression test: multi_label label fields were stored with type=int,
+        causing int(Series) to fail when reading back from Polars.
+        """
+        from datumaro.components.annotation import Label
+        from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
+
+        legacy_categories = LegacyLabelCategories()
+        legacy_categories.add("animal")
+        legacy_categories.add("animal__dog")
+        legacy_categories.add("animal__cat")
+
+        item = DatasetItem(id="test", annotations=[Label(label=1)])
+        legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
+
+        dataset = convert_from_legacy(legacy_dataset)
+
+        sample = dataset[0]
+        assert isinstance(sample.label, np.ndarray)
+        assert 1 in sample.label
+
     def test_analyze_legacy_dataset_hierarchical(self):
         """Test analyze_legacy_dataset with hierarchical labels."""
         from datumaro.components.annotation import Label
@@ -722,7 +745,7 @@ class HierarchicalLegacyDatasetTest:
         # Check that hierarchical categories were created
         label_attr = analysis_result.schema.attributes[AnnotationType.label.name]
         assert isinstance(label_attr.categories, HierarchicalLabelCategories)
-        assert label_attr.field.is_list is True
+        assert label_attr.field.multi_label is True
 
     def test_analyze_legacy_dataset_non_hierarchical(self):
         """Test analyze_legacy_dataset with non-hierarchical labels."""
