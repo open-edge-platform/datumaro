@@ -15,9 +15,11 @@ from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
 from datumaro.experimental.data_formats.voc.helpers import (
     _create_object_element,
     _create_voc_xml_annotation,
+    _detect_classification_label_files,
     _detect_voc_subsets,
     _find_image_file,
     _load_voc_categories,
+    _parse_classification_labels,
     _parse_subset_list,
     _parse_voc_annotation,
     _parse_voc_labelmap,
@@ -559,3 +561,202 @@ def test_create_object_element_without_bbox():
     assert obj_elem.find("pose").text == "Frontal"
     # No bounding box should be present
     assert obj_elem.find("bndbox") is None
+
+
+# ==============================
+# _detect_classification_label_files Tests
+# ==============================
+
+
+def test_detect_classification_label_files_finds_label_files(tmp_path: Path):
+    """Test detecting label-specific classification files in ImageSets/Main."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\nimg2\n")
+    (imagesets_main / "dog_train.txt").write_text("img1  1\nimg2 -1\n")
+    (imagesets_main / "cat_train.txt").write_text("img1 -1\nimg2  1\n")
+
+    categories = LabelCategories(labels=("background", "dog", "cat"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    assert "train" in result
+    assert "dog" in result["train"]
+    assert "cat" in result["train"]
+    assert result["train"]["dog"] == imagesets_main / "dog_train.txt"
+    assert result["train"]["cat"] == imagesets_main / "cat_train.txt"
+
+
+def test_detect_classification_label_files_skips_unknown_labels(tmp_path: Path):
+    """Test that files with unknown label names are ignored."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\n")
+    (imagesets_main / "unknown_train.txt").write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    assert result == {} or "unknown" not in result.get("train", {})
+
+
+def test_detect_classification_label_files_skips_background(tmp_path: Path):
+    """Test that background label files are excluded."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\n")
+    (imagesets_main / "background_train.txt").write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    assert "background" not in result.get("train", {})
+
+
+def test_detect_classification_label_files_skips_wrong_subset(tmp_path: Path):
+    """Test that files for non-matching subsets are ignored."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\n")
+    (imagesets_main / "dog_val.txt").write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    # dog_val.txt should be ignored because subset_names only contains "train"
+    assert result == {} or "val" not in result
+
+
+def test_detect_classification_label_files_multiple_subsets(tmp_path: Path):
+    """Test detecting label files across multiple subsets."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\n")
+    (imagesets_main / "val.txt").write_text("img2\n")
+    (imagesets_main / "dog_train.txt").write_text("img1  1\n")
+    (imagesets_main / "dog_val.txt").write_text("img2  1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    result = _detect_classification_label_files(tmp_path, {"train", "val"}, categories)
+
+    assert "train" in result
+    assert "val" in result
+    assert "dog" in result["train"]
+    assert "dog" in result["val"]
+
+
+def test_detect_classification_label_files_returns_empty_when_no_imagesets(tmp_path: Path):
+    """Test that empty dict is returned when ImageSets/Main doesn't exist."""
+    categories = LabelCategories(labels=("background", "dog"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    assert result == {}
+
+
+def test_detect_classification_label_files_handles_label_with_underscore(tmp_path: Path):
+    """Test detecting label files where the label name itself contains an underscore."""
+    imagesets_main = tmp_path / "ImageSets" / "Main"
+    imagesets_main.mkdir(parents=True)
+    (imagesets_main / "train.txt").write_text("img1\n")
+    (imagesets_main / "potted_plant_train.txt").write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "potted_plant"))
+    result = _detect_classification_label_files(tmp_path, {"train"}, categories)
+
+    assert "train" in result
+    assert "potted_plant" in result["train"]
+
+
+# ==============================
+# _parse_classification_labels Tests
+# ==============================
+
+
+def test_parse_classification_labels_returns_positive_labels(tmp_path: Path):
+    """Test parsing classification files returns correct positive label indices."""
+    dog_file = tmp_path / "dog_train.txt"
+    cat_file = tmp_path / "cat_train.txt"
+    dog_file.write_text("img1  1\nimg2 -1\nimg3  1\n")
+    cat_file.write_text("img1 -1\nimg2  1\nimg3  1\n")
+
+    categories = LabelCategories(labels=("background", "dog", "cat"))
+    label_files = {"dog": dog_file, "cat": cat_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    assert result["img1"] == [1]  # dog only
+    assert result["img2"] == [2]  # cat only
+    assert result["img3"] == [1, 2]  # both dog and cat
+
+
+def test_parse_classification_labels_excludes_negative_labels(tmp_path: Path):
+    """Test that images with only -1 entries do not appear in results."""
+    dog_file = tmp_path / "dog_train.txt"
+    dog_file.write_text("img1 -1\nimg2 -1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    label_files = {"dog": dog_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    assert "img1" not in result
+    assert "img2" not in result
+
+
+def test_parse_classification_labels_handles_empty_file(tmp_path: Path):
+    """Test that an empty label file produces no entries."""
+    empty_file = tmp_path / "dog_train.txt"
+    empty_file.write_text("")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    label_files = {"dog": empty_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    assert result == {}
+
+
+def test_parse_classification_labels_skips_unknown_labels(tmp_path: Path):
+    """Test that labels not in categories are ignored."""
+    unknown_file = tmp_path / "unknown_train.txt"
+    unknown_file.write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    label_files = {"unknown": unknown_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    assert result == {}
+
+
+def test_parse_classification_labels_sorts_indices(tmp_path: Path):
+    """Test that label indices are sorted for determinism."""
+    # Create files so that cat (index 2) is parsed before dog (index 1)
+    cat_file = tmp_path / "cat_train.txt"
+    dog_file = tmp_path / "dog_train.txt"
+    cat_file.write_text("img1  1\n")
+    dog_file.write_text("img1  1\n")
+
+    categories = LabelCategories(labels=("background", "dog", "cat"))
+    # Pass cat first to test sorting
+    label_files = {"cat": cat_file, "dog": dog_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    # Should be sorted: [1 (dog), 2 (cat)]
+    assert result["img1"] == [1, 2]
+
+
+def test_parse_classification_labels_skips_malformed_lines(tmp_path: Path):
+    """Test that lines without a valid flag are skipped."""
+    label_file = tmp_path / "dog_train.txt"
+    label_file.write_text("img1  1\nimg2\nimg3 abc\nimg4  1\n# comment\n\n")
+
+    categories = LabelCategories(labels=("background", "dog"))
+    label_files = {"dog": label_file}
+
+    result = _parse_classification_labels(label_files, categories)
+
+    assert "img1" in result
+    assert "img2" not in result
+    assert "img3" not in result
+    assert "img4" in result

@@ -379,3 +379,180 @@ def test_roundtrip_preserves_bbox_data(tmp_path: Path):
         if orig.bboxes is not None:
             assert reload.bboxes is not None
             np.testing.assert_array_almost_equal(orig.bboxes, reload.bboxes, decimal=0)
+
+
+# ==============================
+# Classification Label Loading Tests
+# ==============================
+
+
+def _create_classification_voc_structure(root: Path) -> None:
+    """Create a VOC directory structure for a classification-only dataset (no XML annotations)."""
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    # Create test images
+    _create_test_image(root / "JPEGImages" / "dog01.jpg")
+    _create_test_image(root / "JPEGImages" / "dog02.jpg")
+    _create_test_image(root / "JPEGImages" / "cat01.jpg")
+    _create_test_image(root / "JPEGImages" / "cat02.jpg")
+    _create_test_image(root / "JPEGImages" / "unlabeled01.jpg")
+
+    # Main subset listing
+    (root / "ImageSets" / "Main" / "train.txt").write_text("dog01\ndog02\ncat01\ncat02\nunlabeled01\n")
+
+    # Label-specific classification files
+    (root / "ImageSets" / "Main" / "dog_train.txt").write_text("dog01  1\ndog02  1\ncat01 -1\ncat02 -1\n")
+    (root / "ImageSets" / "Main" / "cat_train.txt").write_text("dog01 -1\ndog02 -1\ncat01  1\ncat02  1\n")
+
+    # Labelmap
+    (root / "labelmap.txt").write_text(
+        "# label:color_rgb:parts:actions\nbackground:0,0,0::\ndog:128,0,0::\ncat:0,128,0::\n"
+    )
+
+
+def test_load_classification_dataset_assigns_labels(tmp_path: Path):
+    """Test that classification labels from ImageSets/Main are loaded when no XML annotations exist."""
+    _create_classification_voc_structure(tmp_path)
+
+    dataset = load_voc_dataset(root_dir=str(tmp_path))
+
+    assert len(dataset) == 5
+
+    labels_by_image = {}
+    for sample in dataset:
+        stem = Path(sample.image.path).stem
+        labels_by_image[stem] = sample.labels
+
+    # dog images should have label index 1 (dog)
+    assert labels_by_image["dog01"] is not None
+    np.testing.assert_array_equal(labels_by_image["dog01"], [1])
+    assert labels_by_image["dog02"] is not None
+    np.testing.assert_array_equal(labels_by_image["dog02"], [1])
+
+    # cat images should have label index 2 (cat)
+    assert labels_by_image["cat01"] is not None
+    np.testing.assert_array_equal(labels_by_image["cat01"], [2])
+    assert labels_by_image["cat02"] is not None
+    np.testing.assert_array_equal(labels_by_image["cat02"], [2])
+
+    # unlabeled image should have no labels
+    assert labels_by_image["unlabeled01"] is None
+
+
+def test_load_classification_dataset_no_bboxes(tmp_path: Path):
+    """Test that classification-only samples have no bounding boxes."""
+    _create_classification_voc_structure(tmp_path)
+
+    dataset = load_voc_dataset(root_dir=str(tmp_path))
+
+    for sample in dataset:
+        assert sample.bboxes is None
+
+
+def test_load_classification_dataset_label_dtype(tmp_path: Path):
+    """Test that classification labels are uint32 arrays."""
+    _create_classification_voc_structure(tmp_path)
+
+    dataset = load_voc_dataset(root_dir=str(tmp_path))
+
+    for sample in dataset:
+        if sample.labels is not None:
+            assert sample.labels.dtype == np.uint32
+
+
+def test_load_classification_dataset_multi_label(tmp_path: Path):
+    """Test that an image can receive multiple classification labels."""
+    root = tmp_path / "multi"
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    _create_test_image(root / "JPEGImages" / "both.jpg")
+
+    (root / "ImageSets" / "Main" / "train.txt").write_text("both\n")
+    (root / "ImageSets" / "Main" / "dog_train.txt").write_text("both  1\n")
+    (root / "ImageSets" / "Main" / "cat_train.txt").write_text("both  1\n")
+    (root / "labelmap.txt").write_text(
+        "# label:color_rgb:parts:actions\nbackground:0,0,0::\ndog:128,0,0::\ncat:0,128,0::\n"
+    )
+
+    dataset = load_voc_dataset(root_dir=str(root))
+
+    assert len(dataset) == 1
+    sample = dataset[0]
+    assert sample.labels is not None
+    # Both labels present and sorted
+    np.testing.assert_array_equal(sample.labels, [1, 2])
+
+
+def test_xml_annotations_take_precedence_over_classification_labels(tmp_path: Path):
+    """Test that XML annotation labels are used when present, even if classification files exist."""
+    root = tmp_path / "mixed"
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    _create_test_image(root / "JPEGImages" / "img.jpg", width=640, height=480)
+
+    # XML annotation with a person bbox
+    (root / "Annotations" / "img.xml").write_text("""
+<annotation>
+    <size><width>640</width><height>480</height></size>
+    <object>
+        <name>person</name>
+        <bndbox><xmin>10</xmin><ymin>20</ymin><xmax>100</xmax><ymax>200</ymax></bndbox>
+    </object>
+</annotation>
+    """)
+
+    (root / "ImageSets" / "Main" / "train.txt").write_text("img\n")
+    (root / "ImageSets" / "Main" / "person_train.txt").write_text("img  1\n")
+    (root / "ImageSets" / "Main" / "car_train.txt").write_text("img  1\n")
+    (root / "labelmap.txt").write_text(
+        "# label:color_rgb:parts:actions\nbackground:0,0,0::\nperson:128,0,0::\ncar:0,128,0::\n"
+    )
+
+    dataset = load_voc_dataset(root_dir=str(root))
+
+    sample = dataset[0]
+    # Should have the XML-based label (person=1), not the classification labels
+    assert sample.bboxes is not None
+    assert sample.bboxes.shape == (1, 4)
+    np.testing.assert_array_equal(sample.labels, [1])  # person only from XML
+
+
+def test_load_classification_with_multiple_subsets(tmp_path: Path):
+    """Test classification labels across train and val subsets."""
+    root = tmp_path / "subsets"
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    _create_test_image(root / "JPEGImages" / "train_img.jpg")
+    _create_test_image(root / "JPEGImages" / "val_img.jpg")
+
+    (root / "ImageSets" / "Main" / "train.txt").write_text("train_img\n")
+    (root / "ImageSets" / "Main" / "val.txt").write_text("val_img\n")
+    (root / "ImageSets" / "Main" / "dog_train.txt").write_text("train_img  1\n")
+    (root / "ImageSets" / "Main" / "cat_val.txt").write_text("val_img  1\n")
+    (root / "labelmap.txt").write_text(
+        "# label:color_rgb:parts:actions\nbackground:0,0,0::\ndog:128,0,0::\ncat:0,128,0::\n"
+    )
+
+    dataset = load_voc_dataset(root_dir=str(root))
+
+    assert len(dataset) == 2
+
+    labels_by_image = {}
+    subset_by_image = {}
+    for sample in dataset:
+        stem = Path(sample.image.path).stem
+        labels_by_image[stem] = sample.labels
+        subset_by_image[stem] = sample.subset
+
+    np.testing.assert_array_equal(labels_by_image["train_img"], [1])  # dog
+    np.testing.assert_array_equal(labels_by_image["val_img"], [2])  # cat
+    assert subset_by_image["train_img"] == Subset.TRAINING
+    assert subset_by_image["val_img"] == Subset.VALIDATION
