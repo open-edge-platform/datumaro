@@ -1,12 +1,11 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-import logging
 
 import polars as pl
 
 from datumaro.experimental.categories import LabelCategories
-from datumaro.experimental.converters.base import Converter, list_eval_ref
+from datumaro.experimental.converters.base import ConversionError, Converter, list_eval_ref
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.annotations import (
     BBoxField,
@@ -18,8 +17,6 @@ from datumaro.experimental.fields.annotations import (
 )
 from datumaro.experimental.fields.images import ImageField
 from datumaro.experimental.schema import AttributeSpec
-
-log = logging.getLogger(__name__)
 
 
 @converter
@@ -326,20 +323,17 @@ class LabelShapeConverter(Converter):
 
     multi_label changes (is_list unchanged):
       - ``dtype → List(dtype)``: wrap scalar in a list
-      - ``List(dtype) → dtype``: take first element (with warning)
       - ``List(dtype) → List(List(dtype))``: wrap each element (is_list=True)
-      - ``List(List(dtype)) → List(dtype)``: unwrap inner lists (is_list=True)
 
     is_list changes (multi_label unchanged):
       - ``dtype → List(dtype)``: wrap scalar in a list
-      - ``List(dtype) → dtype``: take first element (with warning)
       - ``List(dtype) → List(List(dtype))``: wrap whole list (multi_label=True)
-      - ``List(List(dtype)) → List(dtype)``: take first outer element (multi_label=True)
 
     Both change simultaneously:
       - ``dtype → List(List(dtype))``: wrap scalar twice
-      - ``List(List(dtype)) → dtype``: unwrap both layers
-      - etc.
+
+    Unsupported (lossy) conversions:
+      - ``List(dtype) → dtype`` (multi_label or is_list reduction): rejected to prevent silent data loss
     """
 
     input_label: AttributeSpec[LabelField]
@@ -358,6 +352,7 @@ class LabelShapeConverter(Converter):
         )
         input_field = self.input_label.field
         output_field = self.output_label.field
+
         return input_field.multi_label != output_field.multi_label or input_field.is_list != output_field.is_list
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
@@ -372,18 +367,12 @@ class LabelShapeConverter(Converter):
 
         # Step 1: handle multi_label conversion (inner dimension)
         if input_multi and not output_multi:
-            log.warning(
-                "Converting multi-label to single-label for field '%s': "
-                "only the first label per sample is kept, all other labels are discarded.",
-                input_col,
+            raise ConversionError(
+                f"Cannot convert multi-label to single-label for field '{input_col}': "
+                "this would discard all labels except the first. "
+                "Please apply an explicit aggregation transform before converting."
             )
-            if input_is_list:
-                # List(List(dtype)) → List(dtype): take first element from each inner list
-                df = df.with_columns(pl.col(input_col).list.eval(pl.element().list.first()).alias(output_col))
-            else:
-                # List(dtype) → dtype: take first element
-                df = df.with_columns(pl.col(input_col).list.first().alias(output_col))
-        elif not input_multi and output_multi:
+        if not input_multi and output_multi:
             if input_is_list:
                 # List(dtype) → List(List(dtype)): wrap each element in the list
                 df = df.with_columns(pl.col(input_col).list.eval(pl.concat_list(pl.element())).alias(output_col))
@@ -404,14 +393,12 @@ class LabelShapeConverter(Converter):
         step2_col = output_col if input_multi != output_multi else input_col
 
         if input_is_list and not output_is_list:
-            log.warning(
-                "Converting list to non-list for field '%s': "
-                "only the first element per sample is kept, all other elements are discarded.",
-                input_col,
+            raise ConversionError(
+                f"Cannot convert list to non-list for field '{input_col}': "
+                "this would discard all elements except the first. "
+                "Please apply an explicit aggregation transform before converting."
             )
-            # List(X) → X: take first element from outer list
-            df = df.with_columns(pl.col(step2_col).list.first().alias(output_col))
-        elif not input_is_list and output_is_list:
+        if not input_is_list and output_is_list:
             # X → List(X): wrap each sample's value in a 1-element list, preserving nulls
             if not output_multi:
                 # Scalar → List(scalar): use native concat_list (fast path)

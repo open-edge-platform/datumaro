@@ -2,8 +2,6 @@
 Unit tests for type converter implementations (NumericField, BoolField, StringField).
 """
 
-import logging
-
 import polars as pl
 import pytest
 
@@ -25,12 +23,10 @@ from datumaro.experimental.schema import AttributeSpec
     "input_is_list, output_is_list, data, schema_type, expected_dtype, expected_value",
     [
         pytest.param(False, True, {"score": [0.5]}, pl.Float32(), pl.List(pl.Float32), [0.5], id="scalar_to_list"),
-        pytest.param(True, False, {"score": [[0.5, 0.9]]}, pl.List(pl.Float32()), pl.Float32, 0.5, id="list_to_scalar"),
         pytest.param(False, True, {"score": [42]}, pl.Int64(), pl.List(pl.Int64), [42], id="int_scalar_to_list"),
     ],
 )
 def test_numeric_shape_converter_conversions(
-    caplog: pytest.LogCaptureFixture,
     input_is_list,
     output_is_list,
     data,
@@ -56,11 +52,7 @@ def test_numeric_shape_converter_conversions(
 
     assert converter_instance.filter_output_spec() is True
 
-    with caplog.at_level(logging.WARNING):
-        result_df = converter_instance.convert(df)
-
-    if input_is_list and not output_is_list:
-        assert any("only the first element" in msg for msg in caplog.messages)
+    result_df = converter_instance.convert(df)
 
     assert result_df[col_name].dtype == expected_dtype
     result_val = result_df[col_name][0]
@@ -68,6 +60,25 @@ def test_numeric_shape_converter_conversions(
         assert result_val.to_list() == expected_value
     else:
         assert result_val == expected_value
+
+
+def test_numeric_shape_converter_rejects_list_to_scalar():
+    """convert() raises ConversionError for lossy list → scalar conversion."""
+    from datumaro.experimental.converters.base import ConversionError
+
+    converter_instance = NumericFieldShapeConverter()
+
+    input_field = NumericField(semantic="s", dtype=pl.Float32(), is_list=True)
+    output_field = NumericField(semantic="s", dtype=pl.Float32(), is_list=False)
+
+    setattr(converter_instance, "input_numeric", AttributeSpec(name="score", field=input_field))
+    setattr(converter_instance, "output_numeric", AttributeSpec(name="score", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    df = pl.DataFrame({"score": [[0.5, 0.9]]}, schema=pl.Schema({"score": pl.List(pl.Float32())}))
+    with pytest.raises(ConversionError, match="Cannot convert list to scalar"):
+        converter_instance.convert(df)
 
 
 def test_numeric_shape_converter_filter_returns_false():
@@ -213,13 +224,9 @@ def test_numeric_dtype_converter_preserves_is_list():
         pytest.param(
             False, True, {"flag": [False]}, pl.Boolean(), pl.List(pl.Boolean), [False], id="scalar_false_to_list"
         ),
-        pytest.param(
-            True, False, {"flag": [[True, False]]}, pl.List(pl.Boolean()), pl.Boolean, True, id="list_to_scalar"
-        ),
     ],
 )
 def test_bool_shape_converter_conversions(
-    caplog: pytest.LogCaptureFixture,
     input_is_list,
     output_is_list,
     data,
@@ -241,11 +248,7 @@ def test_bool_shape_converter_conversions(
 
     assert converter_instance.filter_output_spec() is True
 
-    with caplog.at_level(logging.WARNING):
-        result_df = converter_instance.convert(df)
-
-    if input_is_list and not output_is_list:
-        assert any("only the first element" in msg for msg in caplog.messages)
+    result_df = converter_instance.convert(df)
 
     assert result_df[col_name].dtype == expected_dtype
     result_val = result_df[col_name][0]
@@ -253,6 +256,25 @@ def test_bool_shape_converter_conversions(
         assert result_val.to_list() == expected_value
     else:
         assert result_val == expected_value
+
+
+def test_bool_shape_converter_rejects_list_to_scalar():
+    """convert() raises ConversionError for lossy list → scalar conversion."""
+    from datumaro.experimental.converters.base import ConversionError
+
+    converter_instance = BoolFieldShapeConverter()
+
+    input_field = BoolField(semantic="s", is_list=True)
+    output_field = BoolField(semantic="s", is_list=False)
+
+    setattr(converter_instance, "input_bool", AttributeSpec(name="flag", field=input_field))
+    setattr(converter_instance, "output_bool", AttributeSpec(name="flag", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    df = pl.DataFrame({"flag": [[True, False]]}, schema=pl.Schema({"flag": pl.List(pl.Boolean())}))
+    with pytest.raises(ConversionError, match="Cannot convert list to scalar"):
+        converter_instance.convert(df)
 
 
 def test_bool_shape_converter_filter_returns_false():
@@ -295,15 +317,11 @@ def test_bool_shape_converter_with_nulls():
     [
         pytest.param(False, True, {"tag": ["cat"]}, pl.String(), pl.List(pl.String), ["cat"], id="scalar_to_list"),
         pytest.param(
-            True, False, {"tag": [["cat", "dog"]]}, pl.List(pl.String()), pl.String, "cat", id="list_to_scalar"
-        ),
-        pytest.param(
             False, True, {"tag": [""]}, pl.String(), pl.List(pl.String), [""], id="empty_string_scalar_to_list"
         ),
     ],
 )
 def test_string_shape_converter_conversions(
-    caplog: pytest.LogCaptureFixture,
     input_is_list,
     output_is_list,
     data,
@@ -325,11 +343,7 @@ def test_string_shape_converter_conversions(
 
     assert converter_instance.filter_output_spec() is True
 
-    with caplog.at_level(logging.WARNING):
-        result_df = converter_instance.convert(df)
-
-    if input_is_list and not output_is_list:
-        assert any("only the first element" in msg for msg in caplog.messages)
+    result_df = converter_instance.convert(df)
 
     assert result_df[col_name].dtype == expected_dtype
     result_val = result_df[col_name][0]
@@ -337,6 +351,25 @@ def test_string_shape_converter_conversions(
         assert result_val.to_list() == expected_value
     else:
         assert result_val == expected_value
+
+
+def test_string_shape_converter_rejects_list_to_scalar():
+    """convert() raises ConversionError for lossy list → scalar conversion."""
+    from datumaro.experimental.converters.base import ConversionError
+
+    converter_instance = StringFieldShapeConverter()
+
+    input_field = StringField(semantic="s", is_list=True)
+    output_field = StringField(semantic="s", is_list=False)
+
+    setattr(converter_instance, "input_string", AttributeSpec(name="tag", field=input_field))
+    setattr(converter_instance, "output_string", AttributeSpec(name="tag", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    df = pl.DataFrame({"tag": [["cat", "dog"]]}, schema=pl.Schema({"tag": pl.List(pl.String())}))
+    with pytest.raises(ConversionError, match="Cannot convert list to scalar"):
+        converter_instance.convert(df)
 
 
 def test_string_shape_converter_filter_returns_false():
