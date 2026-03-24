@@ -1246,7 +1246,7 @@ def test_conversion_error_message_end_to_end():
     the right semantic group, attribute names, diagnosis sections, and that
     reachable field types are not incorrectly reported as missing.
     """
-    from datumaro.experimental.fields import image_info_field, image_path_field, numeric_field, string_field
+    from datumaro.experimental.fields import image_info_field, image_path_field, string_field
     from datumaro.experimental.fields.masks import MaskField
     from datumaro.experimental.fields.videos import media_info_field, media_path_field
 
@@ -1299,27 +1299,6 @@ def test_conversion_error_message_end_to_end():
     after_missing = msg.split("Missing field types:")[1]
     assert "ImagePathField" not in after_missing
     assert "ImageInfoField" not in after_missing
-
-    # 4) Incompatible field properties (NumericField is_list mismatch)
-    with pytest.raises(ConversionError, match=r"Incompatible field properties"):
-        find_conversion_path(
-            Schema(
-                attributes={
-                    "img": AttributeInfo(type=str, field=image_path_field()),
-                    "score": AttributeInfo(
-                        type=float, field=numeric_field(semantic="default", dtype=pl.Float32(), is_list=False)
-                    ),
-                }
-            ),
-            Schema(
-                attributes={
-                    "img": AttributeInfo(type=str, field=image_path_field()),
-                    "score": AttributeInfo(
-                        type=float, field=numeric_field(semantic="default", dtype=pl.Float32(), is_list=True)
-                    ),
-                }
-            ),
-        )
 
 
 def test_find_conversion_path_prefers_direct_over_cross_field_type():

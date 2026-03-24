@@ -65,6 +65,12 @@ from datumaro.experimental.converters.registry import (
     converter,
     find_conversion_path,
 )
+from datumaro.experimental.converters.type_converters import (
+    BoolFieldShapeConverter,
+    NumericFieldDtypeConverter,
+    NumericFieldShapeConverter,
+    StringFieldShapeConverter,
+)
 from datumaro.experimental.converters.video_converters import (
     ImageInfoToMediaInfoConverter,
     ImagePathToMediaPathConverter,
@@ -83,6 +89,7 @@ __all__ = [
     "BBoxDtypeConverter",
     "BBoxFormatConverter",
     "BBoxToPolygonConverter",
+    "BoolFieldShapeConverter",
     "ChannelsFirstConverter",
     "ConversionError",
     "ConversionPaths",
@@ -114,6 +121,8 @@ __all__ = [
     "MediaPathToImageCallableConverter",
     "MediaPathToImageConverter",
     "MediaPathToImagePathConverter",
+    "NumericFieldDtypeConverter",
+    "NumericFieldShapeConverter",
     "PolygonCoordinateConverter",
     "PolygonDtypeConverter",
     "PolygonToBBoxConverter",
@@ -124,6 +133,7 @@ __all__ = [
     "RotatedBBoxDtypeConverter",
     "RotatedBBoxToBBoxConverter",
     "RotatedBBoxToPolygonConverter",
+    "StringFieldShapeConverter",
     "VideoFrameCallableToImageCallableConverter",
     "VideoFramePathToImageConverter",
     "VideoFrameToImageCallableConverter",
