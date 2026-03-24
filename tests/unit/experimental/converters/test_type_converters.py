@@ -393,6 +393,44 @@ def test_numeric_shape_conversion_path_found():
     assert len(conversion_paths.converters) > 0
 
 
+def test_numeric_dtype_conversion_path_found():
+    """find_conversion_path discovers NumericFieldDtypeConverter for dtype change."""
+    from datumaro.experimental.converters.registry import find_conversion_path
+    from datumaro.experimental.dataset import Sample
+    from datumaro.experimental.fields.types import numeric_field
+
+    class SourceSample(Sample):
+        score: float = numeric_field(semantic="default", dtype=pl.Float32(), is_list=False)
+
+    class TargetSample(Sample):
+        score: float = numeric_field(semantic="default", dtype=pl.Float64(), is_list=False)
+
+    source_schema = SourceSample.infer_schema()
+    target_schema = TargetSample.infer_schema()
+
+    conversion_paths, _categories = find_conversion_path(source_schema, target_schema)
+    assert len(conversion_paths.converters) > 0
+
+
+def test_numeric_dtype_conversion_path_found_list_mode():
+    """find_conversion_path discovers NumericFieldDtypeConverter for dtype change in list mode."""
+    from datumaro.experimental.converters.registry import find_conversion_path
+    from datumaro.experimental.dataset import Sample
+    from datumaro.experimental.fields.types import numeric_field
+
+    class SourceSample(Sample):
+        scores: list[float] = numeric_field(semantic="default", dtype=pl.Int32(), is_list=True)
+
+    class TargetSample(Sample):
+        scores: list[float] = numeric_field(semantic="default", dtype=pl.Float32(), is_list=True)
+
+    source_schema = SourceSample.infer_schema()
+    target_schema = TargetSample.infer_schema()
+
+    conversion_paths, _categories = find_conversion_path(source_schema, target_schema)
+    assert len(conversion_paths.converters) > 0
+
+
 def test_bool_shape_conversion_path_found():
     """find_conversion_path discovers BoolFieldShapeConverter for is_list change."""
     from datumaro.experimental.converters.registry import find_conversion_path

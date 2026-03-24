@@ -41,15 +41,21 @@ class NumericFieldShapeConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output specification with target is_list setting."""
+        input_is_list = self.input_numeric.field.is_list
+        target_is_list = self.output_numeric.field.is_list
+
+        if input_is_list == target_is_list:
+            return False
+
         self.output_numeric = AttributeSpec(
             name=self.output_numeric.name,
             field=NumericField(
                 semantic=self.input_numeric.field.semantic,
                 dtype=self.input_numeric.field.dtype,
-                is_list=self.output_numeric.field.is_list,
+                is_list=target_is_list,
             ),
         )
-        return self.input_numeric.field.is_list != self.output_numeric.field.is_list
+        return True
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert numeric data between scalar and list configurations."""
@@ -88,15 +94,21 @@ class NumericFieldDtypeConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output specification with target dtype."""
+        input_dtype = self.input_numeric.field.dtype
+        target_dtype = self.output_numeric.field.dtype
+
+        if input_dtype == target_dtype:
+            return False
+
         self.output_numeric = AttributeSpec(
             name=self.output_numeric.name,
             field=NumericField(
                 semantic=self.input_numeric.field.semantic,
-                dtype=self.output_numeric.field.dtype,
+                dtype=target_dtype,
                 is_list=self.input_numeric.field.is_list,
             ),
         )
-        return self.input_numeric.field.dtype != self.output_numeric.field.dtype
+        return True
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert numeric data to target dtype."""
@@ -131,14 +143,20 @@ class BoolFieldShapeConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output specification with target is_list setting."""
+        input_is_list = self.input_bool.field.is_list
+        target_is_list = self.output_bool.field.is_list
+
+        if input_is_list == target_is_list:
+            return False
+
         self.output_bool = AttributeSpec(
             name=self.output_bool.name,
             field=BoolField(
                 semantic=self.input_bool.field.semantic,
-                is_list=self.output_bool.field.is_list,
+                is_list=target_is_list,
             ),
         )
-        return self.input_bool.field.is_list != self.output_bool.field.is_list
+        return True
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert boolean data between scalar and list configurations."""
@@ -190,14 +208,20 @@ class StringFieldShapeConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """Configure output specification with target is_list setting."""
+        input_is_list = self.input_string.field.is_list
+        target_is_list = self.output_string.field.is_list
+
+        if input_is_list == target_is_list:
+            return False
+
         self.output_string = AttributeSpec(
             name=self.output_string.name,
             field=StringField(
                 semantic=self.input_string.field.semantic,
-                is_list=self.output_string.field.is_list,
+                is_list=target_is_list,
             ),
         )
-        return self.input_string.field.is_list != self.output_string.field.is_list
+        return True
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert string data between scalar and list configurations."""
