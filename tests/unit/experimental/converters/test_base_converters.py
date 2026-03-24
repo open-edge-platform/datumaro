@@ -29,6 +29,7 @@ from datumaro.experimental.fields import (
     Field,
     ImageField,
     ImageInfoField,
+    KeypointsField,
     LabelField,
     MaskField,
     PolygonField,
@@ -1298,3 +1299,63 @@ def test_conversion_error_message_end_to_end():
     after_missing = msg.split("Missing field types:")[1]
     assert "ImagePathField" not in after_missing
     assert "ImageInfoField" not in after_missing
+
+
+def test_find_conversion_path_prefers_direct_over_cross_field_type():
+    """Test that find_conversion_path prefers direct same-field-type converters over cross-field-type converters.
+
+    When the source schema has both BBoxField (xywh) and KeypointsField, and the
+    target needs BBoxField (x1y1x2y2), the A* search should prefer:
+      BBoxFormatConverter (BBoxField → BBoxField, format change)
+    over:
+      KeypointsToBBoxConverter (KeypointsField → BBoxField, cross-field-type)
+
+    Both paths have the same integer step count, but the direct path preserves the
+    original data while the cross-field-type path would derive bboxes from keypoints
+    (which may be null, producing incorrect results).
+    """
+    from datumaro.experimental.converters import BBoxDtypeConverter, BBoxFormatConverter
+
+    source_schema = Schema(
+        attributes={
+            "bboxes": AttributeInfo(
+                type=np.ndarray | None,
+                field=BBoxField(semantic="default", dtype=pl.Float32(), format="xywh"),
+            ),
+            "keypoints": AttributeInfo(
+                type=np.ndarray | None,
+                field=KeypointsField(semantic="default", dtype=pl.Float32()),
+            ),
+        }
+    )
+
+    target_schema = Schema(
+        attributes={
+            "bboxes": AttributeInfo(
+                type=np.ndarray | None,
+                field=BBoxField(semantic="default", dtype=pl.Int32(), format="x1y1x2y2"),
+            ),
+        }
+    )
+
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # The bboxes conversion chain must use the direct BBoxField→BBoxField path
+    bbox_converters = conversion_paths.converters["bboxes"]
+    bbox_converter_types = [type(c) for c in bbox_converters]
+
+    assert BBoxFormatConverter in bbox_converter_types, (
+        f"Expected BBoxFormatConverter in the conversion chain, got {bbox_converter_types}. "
+        "The A* search should prefer direct same-field-type converters over cross-field-type ones."
+    )
+    assert BBoxDtypeConverter in bbox_converter_types, (
+        f"Expected BBoxDtypeConverter in the conversion chain, got {bbox_converter_types}."
+    )
+
+    # Verify KeypointsToBBoxConverter is NOT in the chain
+    from datumaro.experimental.converters import KeypointsToBBoxConverter
+
+    assert KeypointsToBBoxConverter not in bbox_converter_types, (
+        "KeypointsToBBoxConverter should NOT be used when BBoxField data is already available. "
+        "Direct BBoxField→BBoxField conversion should be preferred."
+    )

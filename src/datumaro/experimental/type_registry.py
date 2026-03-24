@@ -246,10 +246,11 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         target_type: Target type to convert to
 
     Returns:
-        Value converted to target_type
+        Value converted to target_type, or None if polars_data is None
 
     Raises:
-        TypeError: If target_type is not registered for conversion
+        TypeError: If polars_data is not None and target_type is not registered
+            for conversion
 
     Example:
         >>> import torch
@@ -258,6 +259,10 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         >>> isinstance(tensor, torch.Tensor)
         True
     """
+    # Null polars data should always map to None regardless of target type
+    if polars_data is None:
+        return None
+
     # Handle direct type matches first
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
@@ -295,9 +300,6 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 
 
 def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type: type) -> Any:
-    if types.NoneType in union_args and polars_data is None:
-        return None
-
     non_none_args = tuple(arg for arg in union_args if arg is not types.NoneType)
 
     # Try each type in the union until one succeeds
