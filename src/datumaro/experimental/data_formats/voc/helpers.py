@@ -159,6 +159,117 @@ def _detect_voc_subsets(root_path: Path) -> dict[str, Path]:
     return subsets
 
 
+def _detect_classification_label_files(
+    root_path: Path,
+    subset_names: set[str],
+    categories: LabelCategories,
+) -> dict[str, dict[str, Path]]:
+    """Detect label-specific classification files in ImageSets/Main/.
+
+    VOC classification datasets store per-label files with the naming
+    convention ``<label>_<subset>.txt``.  Each line has the format
+    ``image_id  1`` (present) or ``image_id -1`` (absent).
+
+    Only files whose label part matches a known category label (excluding
+    ``background``) are returned so that arbitrary files are not misinterpreted.
+
+    Returns:
+        Nested dict ``{subset_name: {label_name: path}}``.
+    """
+    imagesets_main = root_path / VOC_IMAGESETS_DIR / VOC_MAIN_DIR
+    if not imagesets_main.exists():
+        return {}
+
+    # Build a set of valid foreground label names for fast lookup
+    valid_labels = {lbl for lbl in categories.labels if lbl != "background"}
+
+    result: dict[str, dict[str, Path]] = {}
+    for txt_file in sorted(imagesets_main.glob("*.txt")):
+        stem = txt_file.stem
+        if "_" not in stem:
+            continue  # not a label-specific file
+
+        # Split on the last underscore so labels with underscores work
+        label_part, subset_part = stem.rsplit("_", 1)
+
+        if label_part not in valid_labels:
+            logger.warning(
+                "Skipping classification file %s: label '%s' not in known categories",
+                txt_file,
+                label_part,
+            )
+            continue
+        if subset_part not in subset_names:
+            logger.warning(
+                "Skipping classification file %s: subset '%s' not in known subsets",
+                txt_file,
+                subset_part,
+            )
+            continue
+
+        result.setdefault(subset_part, {})[label_part] = txt_file
+
+    return result
+
+
+def _parse_classification_labels(
+    label_files: dict[str, Path],
+    categories: LabelCategories,
+) -> dict[str, list[int]]:
+    """Parse label-specific classification files and return per-image label indices.
+
+    Args:
+        label_files: Mapping ``{label_name: file_path}`` for one subset.
+        categories: The label categories (used to resolve indices).
+
+    Returns:
+        Mapping ``{image_id: sorted list of label indices with positive flag}``.
+    """
+    image_labels: dict[str, list[int]] = defaultdict(list)
+
+    for label_name, file_path in label_files.items():
+        try:
+            label_idx = categories.labels.index(label_name)
+        except ValueError:
+            logger.warning(
+                "Skipping classification label '%s': not found in categories",
+                label_name,
+            )
+            continue
+
+        with open(file_path, encoding="utf-8") as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                parts = line.split()
+                if len(parts) < 2:
+                    logger.warning(
+                        "Skipping malformed line in %s: expected at least 2 fields, got '%s'",
+                        file_path,
+                        line,
+                    )
+                    continue
+                image_id = parts[0]
+                try:
+                    flag = int(parts[1])
+                except ValueError:
+                    logger.warning(
+                        "Skipping line in %s: cannot parse flag as integer: '%s'",
+                        file_path,
+                        parts[1],
+                    )
+                    continue
+                if flag == 1:
+                    image_labels[image_id].append(label_idx)
+
+    # Sort each label list for determinism
+    for image_id, labels in image_labels.items():
+        labels.sort()
+
+    return dict(image_labels)
+
+
 def _parse_subset_list(subset_file: Path) -> list[str]:
     """
     Parse a VOC ImageSets subset file.
@@ -345,8 +456,18 @@ def _create_sample_from_annotation(
     image_id: str,
     ctx: VocLoadContext,
     subset_enum: Subset,
+    classification_labels: list[int] | None = None,
 ) -> VocSample | None:
-    """Create a VocSample from image ID and annotation."""
+    """Create a VocSample from image ID and annotation.
+
+    Args:
+        image_id: Image stem identifier.
+        ctx: Load context with paths and categories.
+        subset_enum: Subset assignment for this sample.
+        classification_labels: Optional list of label indices obtained from
+            ImageSets/Main classification files. When the XML annotation does
+            not contain any objects these are used as image-level labels.
+    """
     # Find image file
     image_path = _find_image_file(ctx.images_dir, image_id)
     if image_path is None:
@@ -363,13 +484,18 @@ def _create_sample_from_annotation(
     if height == 0 or width == 0:
         height, width = _get_image_size(image_path)
 
-    # Create arrays
+    # Create arrays from XML annotations
     bboxes = np.array(annotation["bboxes"], dtype=np.float32) if annotation["bboxes"] else None
     labels = np.array(annotation["labels"], dtype=np.uint32) if annotation["labels"] else None
     difficult = np.array(annotation["difficult"], dtype=bool) if annotation["difficult"] else None
     truncated = np.array(annotation["truncated"], dtype=bool) if annotation["truncated"] else None
     occluded = np.array(annotation["occluded"], dtype=bool) if annotation["occluded"] else None
     pose = np.array(annotation["pose"], dtype=object) if annotation["pose"] else None
+
+    # If no labels from XML annotations, use classification labels from
+    # ImageSets/Main/<label>_<subset>.txt files (image-level classification).
+    if labels is None and classification_labels:
+        labels = np.array(classification_labels, dtype=np.uint32)
 
     # Create lazy mask loaders for segmentation masks
     class_mask_loader = _get_mask_loader(ctx.segmentation_class_dir, image_id, ctx.colormap)
@@ -445,17 +571,39 @@ def _load_samples_from_images(ctx: VocLoadContext) -> list[VocSample]:
 def _load_samples_from_subsets(
     ctx: VocLoadContext,
     subsets: dict[str, Path],
+    classification_label_files: dict[str, dict[str, Path]] | None = None,
 ) -> list[VocSample]:
-    """Load samples from ImageSets subset files."""
+    """Load samples from ImageSets subset files.
+
+    Args:
+        ctx: Load context with paths and categories.
+        subsets: Mapping ``{subset_name: path}`` for each subset txt file.
+        classification_label_files: Optional nested dict
+            ``{subset_name: {label_name: path}}`` from
+            :func:`_detect_classification_label_files`.
+    """
     samples = []
     for subset_name, subset_file in subsets.items():
         subset_enum = VOC_SUBSET_NAME_TO_ENUM.get(subset_name, Subset.UNASSIGNED)
         image_ids = _parse_subset_list(subset_file)
 
+        # Parse classification labels for this subset (if available)
+        cls_labels_map: dict[str, list[int]] = {}
+        if classification_label_files and subset_name in classification_label_files:
+            cls_labels_map = _parse_classification_labels(
+                classification_label_files[subset_name],
+                ctx.categories,
+            )
+
         logger.info("[VOC] Loading subset '%s' with %d images", subset_name, len(image_ids))
 
         for image_id in image_ids:
-            sample = _create_sample_from_annotation(image_id, ctx, subset_enum)
+            sample = _create_sample_from_annotation(
+                image_id,
+                ctx,
+                subset_enum,
+                classification_labels=cls_labels_map.get(image_id),
+            )
             if sample:
                 samples.append(sample)
     return samples
@@ -490,7 +638,9 @@ def _load_voc_from_imagesets(root_path: Path, categories: LabelCategories) -> li
     subsets = _detect_voc_subsets(root_path)
 
     if subsets:
-        return _load_samples_from_subsets(ctx, subsets)
+        # Detect classification label files
+        cls_label_files = _detect_classification_label_files(root_path, set(subsets.keys()), categories)
+        return _load_samples_from_subsets(ctx, subsets, cls_label_files)
     return _load_samples_from_images(ctx)
 
 
