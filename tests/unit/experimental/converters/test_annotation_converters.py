@@ -778,6 +778,9 @@ def test_label_dtype_converter_multi_label_and_list():
         pytest.param(True,  False, True,  True,  {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),         pl.List(pl.List(pl.UInt32)),      [[1, 2, 3]], id="multi_label_scalar_to_list"),  # noqa: E501
         # --- both flags change (non-lossy: both expanding) ---
         pytest.param(False, False, True,  True,  {"label": [5]},                      pl.UInt32(),                  pl.List(pl.List(pl.UInt32)),      [[5]],       id="both_scalar_to_list_list"),  # noqa: E501
+        # --- flag swap (no-op semantic reinterpretation) ---
+        pytest.param(False, True,  True,  False, {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),         pl.List(pl.UInt32),               [1, 2, 3],   id="swap_is_list_to_multi_label"),  # noqa: E501
+        pytest.param(True,  False, False, True,  {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),         pl.List(pl.UInt32),               [1, 2, 3],   id="swap_multi_label_to_is_list"),  # noqa: E501
     ],
 )  # fmt: on  noqa: RUF028
 def test_label_shape_converter_conversions(
@@ -827,7 +830,6 @@ def test_label_shape_converter_conversions(
         pytest.param(False, True,  False, False, {"label": [[10, 20, 30]]},           pl.List(pl.UInt32()),          "Cannot convert list to non-list",             id="list_to_scalar"),  # noqa: E501
         pytest.param(True,  True,  True,  False, {"label": [[[1, 2], [3, 4], [5]]]},  pl.List(pl.List(pl.UInt32())), "Cannot convert list to non-list",             id="multi_label_list_to_scalar"),  # noqa: E501
         pytest.param(True,  True,  False, False, {"label": [[[5, 10], [15, 20]]]},    pl.List(pl.List(pl.UInt32())), "Cannot convert multi-label to single-label", id="both_list_list_to_scalar"),  # noqa: E501
-        pytest.param(False, True,  True,  False, {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),          "Cannot convert list to non-list",             id="both_swap_flags"),  # noqa: E501
     ],
 )  # fmt: on  noqa: RUF028
 def test_label_shape_converter_rejects_lossy_conversions(
@@ -899,6 +901,8 @@ def test_label_shape_converter_preserves_dtype():
         pytest.param(False, True,  True, True, {"labels": [[1, 2], None, [3]]}, pl.List(pl.UInt32()), pl.List(pl.List(pl.UInt32)), {0: [[1], [2]], 2: [[3]]}, 1, id="multi_label_with_nulls"),  # noqa: E501
         pytest.param(False, False, True, False, {"labels": [5, None, 3]},      pl.UInt32(),          pl.List(pl.UInt32),          {0: [5], 2: [3]},          1, id="scalar_to_multi_label_with_nulls"),  # noqa: E501
         pytest.param(False, False, False, True, {"labels": [5, None, 3]},       pl.UInt32(),          pl.List(pl.UInt32),          {0: [5], 2: [3]},          1, id="is_list_with_nulls"),  # noqa: E501
+        pytest.param(False, True,  True, False, {"labels": [[1, 2], None, [3]]}, pl.List(pl.UInt32()), pl.List(pl.UInt32),          {0: [1, 2], 2: [3]},       1, id="swap_is_list_to_multi_label_with_nulls"),  # noqa: E501
+        pytest.param(True,  False, False, True, {"labels": [[1, 2], None, [3]]}, pl.List(pl.UInt32()), pl.List(pl.UInt32),          {0: [1, 2], 2: [3]},       1, id="swap_multi_label_to_is_list_with_nulls"),  # noqa: E501
     ],
 )  # fmt: on noqa: RUF028
 def test_label_shape_converter_with_nulls(
