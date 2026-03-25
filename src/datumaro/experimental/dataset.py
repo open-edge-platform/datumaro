@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
-from datumaro.experimental.categories import HierarchicalLabelCategories
+from datumaro.experimental.categories import BaseLabelCategories, HierarchicalLabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.annotations import LabelField
 from datumaro.experimental.fields.datasets import Subset, SubsetField
@@ -302,6 +302,24 @@ class Dataset(Generic[DType]):
     def dtype(self) -> type[DType]:
         """Get the sample type of this dataset."""
         return self._dtype
+
+    @property
+    def label_categories(self) -> BaseLabelCategories | None:
+        """Get the label categories from the dataset schema, if any.
+
+        Searches the schema attributes for the first field whose categories
+        are an instance of :class:`BaseLabelCategories` (which covers both
+        :class:`LabelCategories` and :class:`HierarchicalLabelCategories`).
+
+        Returns:
+            The :class:`BaseLabelCategories` instance, or ``None`` if no
+            label categories are defined in the schema.
+        """
+        for attr_name, attr_info in self._schema.attributes.items():
+            categories = self._schema.get_categories_for_field(attr_name)
+            if isinstance(categories, BaseLabelCategories):
+                return categories
+        return None
 
     def _generate_polars_schema(self) -> pl.Schema:
         """Generate a Polars schema from the dataset's field definitions."""
