@@ -995,7 +995,7 @@ def test_export_import_different_field_types(tmp_path):
     # Verify images were exported
     images_dir = export_dir / IMAGES_DIR
     assert (images_dir / "image_callable_000000.png").exists()
-    assert (images_dir / "image_path_000000.png").exists()
+    assert (images_dir / "source_image.png").exists()  # ImagePathField preserves original filename
     assert (images_dir / "mask_callable_000000.png").exists()
     assert (images_dir / "instance_mask_callable_000000.png").exists()
 
@@ -1092,11 +1092,10 @@ def test_export_dataset_export_media_copy_and_skip(tmp_path):
 
     assert exported_path is not None
     assert exported_path != str(source_img_path)
-    # Verify the exported file exists at the path relative to images/
-    # Note: rel_path in _export_image_path_field is 'img/000000.jpg'
-    assert "000000.jpg" in exported_path
+    # ImagePathField preserves the original filename
+    assert exported_path == "cat1.jpg"
 
-    # Check if the file exists on disk (handling the replacement of / with _ in filename)
+    # Check if the file exists on disk
     exported_file_on_disk = export_dir_true / IMAGES_DIR / exported_path
     assert exported_file_on_disk.exists()
 
@@ -2377,3 +2376,147 @@ def test_export_dataset_raises_error_if_output_already_exists(tmp_path):
     file_path.touch()
     with pytest.raises(FileExistsError, match="Output path already exists as a file"):
         export_dataset(dataset, file_path, export_media=ExportMode.SKIP, as_zip=True)
+
+
+def test_export_import_preserves_original_filenames(tmp_path):
+    """Test that original filenames are preserved through export/import roundtrip.
+
+    When exporting an ImagePathField, the original filename should be kept
+    (not replaced with an index-based name). On import, the path should
+    resolve to the exported file with the original name.
+    """
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+        label: int = label_field()
+
+    # Create source images with distinct, meaningful filenames
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+
+    filenames = ["cat_photo.jpg", "dog_running.png", "bird in flight.jpeg"]
+    source_paths = []
+    for fname in filenames:
+        img_path = source_dir / fname
+        img = np.random.randint(0, 255, (20, 30, 3), dtype=np.uint8)
+        pil_img = PILImage.fromarray(img)
+        fmt = "JPEG" if fname.endswith((".jpg", ".jpeg")) else "PNG"
+        pil_img.save(img_path, fmt)
+        source_paths.append(str(img_path))
+
+    dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
+    for idx, path in enumerate(source_paths):
+        dataset.append(PathSample(image_path=path, label=idx))
+
+    # ---- Export ----
+    export_dir = tmp_path / "export"
+    export_dataset(dataset, export_dir, export_media=ExportMode.COPY, as_zip=False)
+
+    # Verify that the images directory contains files with the original names
+    images_dir = export_dir / IMAGES_DIR
+    for fname in filenames:
+        assert (images_dir / fname).exists(), f"Expected {fname} in images directory"
+
+    # Verify the parquet stores the original filenames (not index-based names)
+    df_exported = pl.read_parquet(export_dir / DATAFRAME_FILE)
+    for idx, fname in enumerate(filenames):
+        assert df_exported["image_path"][idx] == fname
+
+    # ---- Import ----
+    imported_dataset = import_dataset(export_dir, dtype=PathSample)
+
+    assert len(imported_dataset) == len(filenames)
+    for idx, fname in enumerate(filenames):
+        sample = imported_dataset[idx]
+        path = Path(sample.image_path)
+
+        # The path should exist and point to the original-named file
+        assert path.exists(), f"Imported path {path} does not exist"
+        assert path.name == fname, f"Expected filename {fname}, got {path.name}"
+
+        # The image content should be loadable
+        loaded_img = np.array(PILImage.open(path))
+        assert loaded_img.shape[0] == 20
+        assert loaded_img.shape[1] == 30
+
+
+def test_export_import_preserves_filenames_with_collisions(tmp_path):
+    """Test that filename collisions are handled when multiple source files share the same name."""
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+
+    # Create two images with the same filename but in different directories
+    dir_a = tmp_path / "source_a"
+    dir_b = tmp_path / "source_b"
+    dir_a.mkdir()
+    dir_b.mkdir()
+
+    img_a = np.full((10, 10, 3), 100, dtype=np.uint8)
+    img_b = np.full((10, 10, 3), 200, dtype=np.uint8)
+    PILImage.fromarray(img_a).save(dir_a / "photo.png")
+    PILImage.fromarray(img_b).save(dir_b / "photo.png")
+
+    dataset = Dataset(PathSample)
+    dataset.append(PathSample(image_path=str(dir_a / "photo.png")))
+    dataset.append(PathSample(image_path=str(dir_b / "photo.png")))
+
+    # ---- Export ----
+    export_dir = tmp_path / "export"
+    export_dataset(dataset, export_dir, export_media=ExportMode.COPY, as_zip=False)
+
+    images_dir = export_dir / IMAGES_DIR
+    # One file keeps the original name, the other gets a numeric suffix
+    assert (images_dir / "photo.png").exists()
+    assert (images_dir / "photo_1.png").exists()
+
+    # ---- Import ----
+    imported_dataset = import_dataset(export_dir, dtype=PathSample)
+    assert len(imported_dataset) == 2
+
+    # Both paths should exist and be distinct
+    path_0 = Path(imported_dataset[0].image_path)
+    path_1 = Path(imported_dataset[1].image_path)
+    assert path_0.exists()
+    assert path_1.exists()
+    assert path_0 != path_1
+
+    # Verify image content is preserved (pixel values distinguish the two)
+    loaded_0 = np.array(PILImage.open(path_0))
+    loaded_1 = np.array(PILImage.open(path_1))
+    assert loaded_0[0, 0, 0] == 100
+    assert loaded_1[0, 0, 0] == 200
+
+
+def test_export_import_preserves_filenames_via_zip(tmp_path):
+    """Test that original filenames survive a ZIP export/import roundtrip."""
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+        label: int = label_field()
+
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    img_path = source_dir / "my_image.png"
+    PILImage.fromarray(np.zeros((15, 20, 3), dtype=np.uint8)).save(img_path)
+
+    dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
+    dataset.append(PathSample(image_path=str(img_path), label=0))
+
+    # ---- Export as ZIP ----
+    export_zip = tmp_path / "export.zip"
+    export_dataset(dataset, export_zip, export_media=ExportMode.COPY, as_zip=True)
+
+    # Verify the ZIP contains the original filename
+    with zipfile.ZipFile(export_zip) as zf:
+        image_entries = [n for n in zf.namelist() if n.startswith(IMAGES_DIR + "/")]
+        assert any("my_image.png" in entry for entry in image_entries)
+
+    # ---- Import from ZIP ----
+    imported_dataset = import_dataset(export_zip, dtype=PathSample)
+    assert len(imported_dataset) == 1
+
+    sample = imported_dataset[0]
+    path = Path(sample.image_path)
+    assert path.exists()
+    assert path.name == "my_image.png"
