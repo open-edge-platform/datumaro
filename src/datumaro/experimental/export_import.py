@@ -148,17 +148,32 @@ def _export_image_path_field(
     idx: int,
     output_dir: Path,
 ) -> str | None:
-    """Export an ImagePathField by copying the file from the filesystem."""
+    """Export an ImagePathField by copying the file from the filesystem.
+
+    The original filename is preserved.  When a name collision occurs
+    (e.g. two source images from different directories share the same
+    filename) a numeric suffix is appended to disambiguate.
+    """
     try:
         source_path = Path(str(value))
         if not source_path.exists():
             log.warning("Image file not found: %s", value)
             return None
 
-        extension = source_path.suffix if source_path.suffix else ".png"
-        rel_path = f"{field_name}_{idx:06d}{extension}"
-        abs_path = output_dir / rel_path
+        # Preserve the original filename; fall back to index-based naming
+        # only when the source has no name at all.
+        dest_name = source_path.name if source_path.name else f"{field_name}_{idx:06d}.png"
+        abs_path = output_dir / dest_name
 
+        # Handle name collisions with a numeric suffix
+        counter = 1
+        while abs_path.exists():
+            stem = source_path.stem if source_path.stem else f"{field_name}_{idx:06d}"
+            suffix = source_path.suffix if source_path.suffix else ".png"
+            abs_path = output_dir / f"{stem}_{counter}{suffix}"
+            counter += 1
+
+        rel_path = abs_path.name
         shutil.copy2(source_path, abs_path)
         return str(rel_path)
     except Exception as e:
@@ -1016,11 +1031,41 @@ def _make_image_loader(path: Path):
     return load_image
 
 
+def _resolve_image_file(
+    field_name: str,
+    idx: int,
+    images_base_dir: Path,
+    df_path: str | None = None,
+) -> Path | None:
+    """Find the exported image file for a given field and row index.
+
+    Resolution order:
+    1. Index-based pattern ``{field_name}_{idx:06d}.*`` (used by callable fields)
+    2. The relative path stored in the parquet DataFrame (used by path fields
+       that preserve the original filename)
+    """
+    # 1. Try index-based naming (callable fields always use this)
+    pattern = f"{field_name}_{idx:06d}.*"
+    matches = sorted(images_base_dir.glob(pattern))
+    if matches:
+        return matches[0]
+
+    # 2. Try the path stored in parquet (original filename preserved by
+    #    _export_image_path_field)
+    if df_path is not None:
+        candidate = images_base_dir / df_path
+        if candidate.exists():
+            return candidate
+
+    return None
+
+
 def _reconstruct_field_values(
     field_name: str,
     field: object,
     images_base_dir: Path,
     num_rows: int,
+    df: pl.DataFrame | None = None,
 ) -> tuple[list[object | None], bool, bool]:
     """
     Reconstruct values for a single image-related field.
@@ -1040,9 +1085,14 @@ def _reconstruct_field_values(
 
     values: list[object | None] = []
     for idx in range(num_rows):
-        pattern = f"{field_name}_{idx:06d}.*"
-        matches = sorted(images_base_dir.glob(pattern))
-        file_path = matches[0] if matches else None
+        # Get the path stored in parquet (if available) for fallback resolution
+        df_path: str | None = None
+        if df is not None and field_name in df.columns:
+            raw = df[field_name][idx]
+            if raw is not None:
+                df_path = str(raw)
+
+        file_path = _resolve_image_file(field_name, idx, images_base_dir, df_path)
 
         if is_path_field:
             values.append(str(file_path) if file_path is not None else None)
@@ -1097,7 +1147,7 @@ def _reconstruct_image_fields(
             continue
 
         values, is_path_field, is_callable_field = _reconstruct_field_values(
-            field_name, field, images_base_dir, len(df)
+            field_name, field, images_base_dir, len(df), df=df
         )
 
         if is_path_field or is_callable_field:
