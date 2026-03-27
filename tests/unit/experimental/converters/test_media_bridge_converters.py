@@ -512,13 +512,13 @@ class ImagePathToMediaPathConverterTest:
             "output_media",
             AttributeSpec(
                 name="media",
-                field=MediaPathField(format="BGR"),
+                field=MediaPathField(format="RGB"),
             ),
         )
 
         assert conv.filter_output_spec() is True
         assert conv.output_media.field.semantic == "left"
-        assert conv.output_media.field.format == "BGR"
+        assert conv.output_media.field.format == "RGB"
 
     def test_convert_creates_categorical_path_and_null_frame_index(self, test_image_path):
         """Test that convert creates a Categorical path and null frame_index."""
@@ -715,13 +715,13 @@ class MediaPathToImagePathConverterTest:
             "output_path",
             AttributeSpec(
                 name="image",
-                field=ImagePathField(format="BGR"),
+                field=ImagePathField(format="RGB"),
             ),
         )
 
         assert conv.filter_output_spec() is True
         assert conv.output_path.field.semantic == "left"
-        assert conv.output_path.field.format == "BGR"
+        assert conv.output_path.field.format == "RGB"
 
     def test_convert_image_only_data(self, test_image_path):
         """Test that image-only data (null frame_index) converts successfully."""
