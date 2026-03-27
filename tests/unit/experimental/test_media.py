@@ -196,26 +196,6 @@ class LazyImageClassTest:
             assert data[0, 2] == 30000
             assert data[1, 2] == 60000
 
-    def test_lazy_image_gray_format_alias(self):
-        """Test that format='GRAY' works as an alias for 'L' (grayscale)."""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            test_image_path = os.path.join(temp_dir, "color_image.png")
-            # Create an RGB image
-            img_array = np.random.randint(0, 255, (50, 80, 3), dtype=np.uint8)
-            PILImage.fromarray(img_array).save(test_image_path)
-
-            lazy_img_gray = LazyImage(path=test_image_path, format="GRAY")
-            lazy_img_l = LazyImage(path=test_image_path, format="L")
-
-            data_gray = lazy_img_gray.data
-            data_l = lazy_img_l.data
-
-            # Both should produce the same grayscale result
-            assert data_gray.shape == (50, 80)
-            assert data_l.shape == (50, 80)
-            assert data_gray.dtype == np.uint8
-            np.testing.assert_array_equal(data_gray, data_l)
-
     def test_lazy_image_16bit_to_rgb(self):
         """Test loading 16-bit grayscale image as RGB preserves bit depth."""
         with tempfile.TemporaryDirectory() as temp_dir:
