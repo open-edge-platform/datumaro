@@ -49,6 +49,16 @@ from datumaro.experimental.converters.mask_converters import (
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
 )
+from datumaro.experimental.converters.media_converters import (
+    ImageInfoToMediaInfoConverter,
+    ImagePathToMediaPathConverter,
+    MediaInfoToImageInfoConverter,
+    MediaInfoToVideoInfoConverter,
+    MediaPathToImageCallableConverter,
+    MediaPathToImageConverter,
+    MediaPathToImagePathConverter,
+    VideoInfoToMediaInfoConverter,
+)
 from datumaro.experimental.converters.registry import (
     ConversionPaths,
     ConverterRegistry,
@@ -72,12 +82,6 @@ from datumaro.experimental.converters.type_converters import (
     StringFieldShapeConverter,
 )
 from datumaro.experimental.converters.video_converters import (
-    ImageInfoToMediaInfoConverter,
-    ImagePathToMediaPathConverter,
-    MediaInfoToImageInfoConverter,
-    MediaPathToImageCallableConverter,
-    MediaPathToImageConverter,
-    MediaPathToImagePathConverter,
     VideoFrameCallableToImageCallableConverter,
     VideoFramePathToImageConverter,
     VideoFrameToImageCallableConverter,
@@ -118,6 +122,7 @@ __all__ = [
     "MaskCallableToMaskConverter",
     "MaskChannelsFirstConverter",
     "MediaInfoToImageInfoConverter",
+    "MediaInfoToVideoInfoConverter",
     "MediaPathToImageCallableConverter",
     "MediaPathToImageConverter",
     "MediaPathToImagePathConverter",
@@ -137,6 +142,7 @@ __all__ = [
     "VideoFrameCallableToImageCallableConverter",
     "VideoFramePathToImageConverter",
     "VideoFrameToImageCallableConverter",
+    "VideoInfoToMediaInfoConverter",
     "_can_lazy_converter_handle_conversion",
     "_create_conversion_error_message",
     "_create_initial_renaming_converter",
