@@ -24,7 +24,7 @@ class YoloSample(Sample):
     Sample class for YOLO format datasets.
 
     YOLO format stores object detection annotations with bounding boxes
-    in normalized cxcywh format (center_x, center_y, width, height) relative
+    in cxcywh format (center_x, center_y, width, height) relative
     to image dimensions, with each box having a class label.
     """
 
