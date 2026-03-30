@@ -24,7 +24,7 @@ class YoloSample(Sample):
     Sample class for YOLO format datasets.
 
     YOLO format stores object detection annotations with bounding boxes
-    in normalized xywh format (center_x, center_y, width, height) relative
+    in cxcywh format (center_x, center_y, width, height) relative
     to image dimensions, with each box having a class label.
     """
 
@@ -33,7 +33,7 @@ class YoloSample(Sample):
     image_info: ImageInfo = image_info_field()
 
     # Object detection annotations
-    bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="xywh")
+    bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="cxcywh")
     labels: np.ndarray | None = label_field(dtype=pl.UInt8(), is_list=True)
 
     # Dataset organization
