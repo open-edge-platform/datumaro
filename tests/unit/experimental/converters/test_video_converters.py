@@ -17,9 +17,11 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.experimental.converters.video_converters import (
+from datumaro.experimental.converters.media_converters import (
     MediaPathToImageCallableConverter,
     MediaPathToImageConverter,
+)
+from datumaro.experimental.converters.video_converters import (
     VideoFramePathToImageConverter,
     VideoFrameToImageCallableConverter,
 )

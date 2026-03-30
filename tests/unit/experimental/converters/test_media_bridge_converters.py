@@ -23,15 +23,17 @@ from datumaro.experimental.converters.image_converters import (
     ImagePathToImageCallableConverter,
     ImagePathToImageInfoConverter,
 )
-from datumaro.experimental.converters.video_converters import (
+from datumaro.experimental.converters.media_converters import (
     ImageInfoToMediaInfoConverter,
     ImagePathToMediaPathConverter,
     MediaInfoToImageInfoConverter,
+    MediaInfoToVideoInfoConverter,
     MediaPathToImagePathConverter,
-    VideoFrameCallableToImageCallableConverter,
+    VideoInfoToMediaInfoConverter,
 )
+from datumaro.experimental.converters.video_converters import VideoFrameCallableToImageCallableConverter
 from datumaro.experimental.fields.images import ImageCallableField, ImageInfoField, ImagePathField
-from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoFrameCallableField
+from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoFrameCallableField, VideoInfoField
 from datumaro.experimental.schema import AttributeSpec
 
 # ===== Fixtures =====
@@ -494,7 +496,7 @@ class ImagePathToMediaPathConverterTest:
     """Tests for ImagePathToMediaPathConverter."""
 
     def test_filter_output_spec_sets_semantic_and_format(self):
-        """Test that filter_output_spec copies semantic and format."""
+        """Test that filter_output_spec copies semantic from input but preserves output format."""
         conv = ImagePathToMediaPathConverter()
 
         setattr(
@@ -510,13 +512,13 @@ class ImagePathToMediaPathConverterTest:
             "output_media",
             AttributeSpec(
                 name="media",
-                field=MediaPathField(),
+                field=MediaPathField(format="RGB"),
             ),
         )
 
         assert conv.filter_output_spec() is True
         assert conv.output_media.field.semantic == "left"
-        assert conv.output_media.field.format == "BGR"
+        assert conv.output_media.field.format == "RGB"
 
     def test_convert_creates_categorical_path_and_null_frame_index(self, test_image_path):
         """Test that convert creates a Categorical path and null frame_index."""
@@ -697,7 +699,7 @@ class MediaPathToImagePathConverterTest:
     """Tests for MediaPathToImagePathConverter."""
 
     def test_filter_output_spec_sets_semantic_and_format(self):
-        """Test that filter_output_spec copies semantic and format from input."""
+        """Test that filter_output_spec copies semantic from input but preserves output format."""
         conv = MediaPathToImagePathConverter()
 
         setattr(
@@ -713,13 +715,13 @@ class MediaPathToImagePathConverterTest:
             "output_path",
             AttributeSpec(
                 name="image",
-                field=ImagePathField(),
+                field=ImagePathField(format="RGB"),
             ),
         )
 
         assert conv.filter_output_spec() is True
         assert conv.output_path.field.semantic == "left"
-        assert conv.output_path.field.format == "BGR"
+        assert conv.output_path.field.format == "RGB"
 
     def test_convert_image_only_data(self, test_image_path):
         """Test that image-only data (null frame_index) converts successfully."""
@@ -1138,3 +1140,296 @@ class MediaInfoToImageInfoConverterTest:
         info = result["image_info"][0]
         assert info["width"] == 1920
         assert info["height"] == 1080
+
+
+# ===== VideoInfoToMediaInfoConverter =====
+
+
+class VideoInfoToMediaInfoConverterTest:
+    """Tests for VideoInfoToMediaInfoConverter."""
+
+    def test_filter_output_spec_sets_semantic(self):
+        """Test that filter_output_spec copies semantic from input."""
+        conv = VideoInfoToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(semantic="cam1"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+
+        assert conv.filter_output_spec() is True
+        assert conv.output_info.field.semantic == "cam1"
+
+    def test_convert_promotes_video_info(self):
+        """Test that convert creates MediaInfo struct from VideoInfo with correct casts."""
+        conv = VideoInfoToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        video_info_struct = pl.Struct(
+            {
+                "path": pl.String,
+                "total_frames": pl.UInt32,
+                "fps": pl.Float64,
+                "width": pl.Int32,
+                "height": pl.Int32,
+                "duration": pl.Float64,
+                "codec": pl.String,
+            }
+        )
+        df = pl.DataFrame(
+            {
+                "video_info": [
+                    {
+                        "path": "/path/to/video.mp4",
+                        "total_frames": 1000,
+                        "fps": 29.97,
+                        "width": 1920,
+                        "height": 1080,
+                        "duration": 33.37,
+                        "codec": "h264",
+                    }
+                ],
+            }
+        ).cast({"video_info": video_info_struct})
+
+        result = conv.convert(df)
+
+        info = result["media_info"][0]
+        assert info["width"] == 1920
+        assert info["height"] == 1080
+        assert info["total_frames"] == 1000
+        assert info["codec"] == "h264"
+        assert info["frame_index"] is None
+        # fps/duration cast from Float64 → Float32, check approximate
+        assert abs(info["fps"] - 29.97) < 0.01
+        assert abs(info["duration"] - 33.37) < 0.01
+
+    def test_convert_null_codec(self):
+        """Test that null codec in VideoInfo is preserved."""
+        conv = VideoInfoToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        video_info_struct = pl.Struct(
+            {
+                "path": pl.String,
+                "total_frames": pl.UInt32,
+                "fps": pl.Float64,
+                "width": pl.Int32,
+                "height": pl.Int32,
+                "duration": pl.Float64,
+                "codec": pl.String,
+            }
+        )
+        df = pl.DataFrame(
+            {
+                "video_info": [
+                    {
+                        "path": "/video.mp4",
+                        "total_frames": 100,
+                        "fps": 30.0,
+                        "width": 640,
+                        "height": 480,
+                        "duration": 3.33,
+                        "codec": None,
+                    }
+                ],
+            }
+        ).cast({"video_info": video_info_struct})
+
+        result = conv.convert(df)
+        assert result["media_info"][0]["codec"] is None
+
+
+# ===== MediaInfoToVideoInfoConverter =====
+
+
+class MediaInfoToVideoInfoConverterTest:
+    """Tests for MediaInfoToVideoInfoConverter."""
+
+    def test_filter_output_spec_sets_semantic(self):
+        """Test that filter_output_spec copies semantic from input."""
+        conv = MediaInfoToVideoInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(semantic="cam2"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(),
+            ),
+        )
+
+        assert conv.filter_output_spec() is True
+        assert conv.output_info.field.semantic == "cam2"
+
+    def test_convert_demotes_media_info(self):
+        """Test that convert creates VideoInfo struct from MediaInfo with correct casts."""
+        conv = MediaInfoToVideoInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        media_info_struct = pl.Struct(
+            {
+                "width": pl.Int32,
+                "height": pl.Int32,
+                "fps": pl.Float32,
+                "total_frames": pl.UInt32,
+                "duration": pl.Float32,
+                "codec": pl.String,
+                "frame_index": pl.UInt32,
+            }
+        )
+        df = pl.DataFrame(
+            {
+                "media_info": [
+                    {
+                        "width": 1280,
+                        "height": 720,
+                        "fps": 24.0,
+                        "total_frames": 500,
+                        "duration": 20.83,
+                        "codec": "vp9",
+                        "frame_index": 10,
+                    }
+                ],
+            }
+        ).cast({"media_info": media_info_struct})
+
+        result = conv.convert(df)
+
+        info = result["video_info"][0]
+        assert info["width"] == 1280
+        assert info["height"] == 720
+        assert info["total_frames"] == 500
+        assert info["codec"] == "vp9"
+        assert info["path"] is None
+        # fps/duration cast from Float32 → Float64
+        assert abs(info["fps"] - 24.0) < 0.01
+        assert abs(info["duration"] - 20.83) < 0.01
+
+    def test_convert_drops_frame_index(self):
+        """Test that frame_index from MediaInfo is dropped (not in VideoInfo)."""
+        conv = MediaInfoToVideoInfoConverter()
+
+        setattr(
+            conv,
+            "input_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="video_info",
+                field=VideoInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        media_info_struct = pl.Struct(
+            {
+                "width": pl.Int32,
+                "height": pl.Int32,
+                "fps": pl.Float32,
+                "total_frames": pl.UInt32,
+                "duration": pl.Float32,
+                "codec": pl.String,
+                "frame_index": pl.UInt32,
+            }
+        )
+        df = pl.DataFrame(
+            {
+                "media_info": [
+                    {
+                        "width": 640,
+                        "height": 480,
+                        "fps": 30.0,
+                        "total_frames": 100,
+                        "duration": 3.33,
+                        "codec": None,
+                        "frame_index": 42,
+                    }
+                ],
+            }
+        ).cast({"media_info": media_info_struct})
+
+        result = conv.convert(df)
+        info = result["video_info"][0]
+
+        # VideoInfoField struct should not have frame_index
+        assert "frame_index" not in info
+        # But should have path (filled with null)
+        assert info["path"] is None

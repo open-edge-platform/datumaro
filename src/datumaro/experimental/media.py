@@ -212,7 +212,7 @@ class LazyImage:
             - BGR: OpenCV-compatible format (Blue, Green, Red)
             - RGBA: RGB with alpha channel
             - BGRA: BGR with alpha channel (OpenCV-compatible)
-            - L: Grayscale
+            - L / GRAY: Grayscale
         """
         is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
 
@@ -224,7 +224,7 @@ class LazyImage:
             return self._convert_to_rgba(img, is_16bit)
         if target_format == "BGRA":
             return self._convert_to_bgra(img, is_16bit)
-        if target_format == "L":
+        if target_format in ("L", "GRAY"):
             return self._convert_to_grayscale(img, is_16bit)
         return np.array(img)
 
