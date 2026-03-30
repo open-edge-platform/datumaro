@@ -193,6 +193,30 @@ def test_load_yolo_dataset_missing_images_dir_raises(tmp_path: Path):
         load_yolo_dataset(str(tmp_path), format="ultralytics")
 
 
+def test_load_yolo_dataset_traditional_obj_data_directory(tmp_path: Path):
+    """Test loading a traditional YOLO dataset that uses the obj_data directory (unassigned subset)."""
+    obj_data_dir = tmp_path / "obj_data"
+    obj_data_dir.mkdir(parents=True)
+
+    # Create images and annotations
+    _create_test_image(obj_data_dir / "img1.jpg", 640, 480)
+    _create_test_image(obj_data_dir / "img2.jpg", 800, 600)
+    (obj_data_dir / "img1.txt").write_text("0 0.5 0.5 0.2 0.3\n")
+    (obj_data_dir / "img2.txt").write_text("0 0.3 0.4 0.15 0.25\n")
+
+    # Create obj.names
+    (tmp_path / "obj.names").write_text("cat\n")
+
+    ds = load_yolo_dataset(str(tmp_path))
+
+    assert len(ds) == 2
+    # All samples should have Subset.UNASSIGNED
+    for sample in ds:
+        assert sample.subset == Subset.UNASSIGNED
+        assert sample.bboxes is not None
+        assert sample.labels is not None
+
+
 # ==========================
 # save_yolo_dataset Tests
 # ==========================
