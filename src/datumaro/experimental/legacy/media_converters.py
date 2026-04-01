@@ -10,16 +10,21 @@ from PIL import Image as PILImage
 
 from datumaro import Dataset as LegacyDataset
 from datumaro import DatasetItem, Image, MediaElement
-from datumaro.components.media import FromDataMixin, FromFileMixin, ImageFromBytes
+from datumaro.components.media import FromDataMixin, FromFileMixin, ImageFromBytes, Video, VideoFrame
 from datumaro.experimental import AttributeInfo, Sample, Schema
 from datumaro.experimental.fields import (
     ImageInfo,
     ImagePathField,
+    MediaPathField,
+    VideoFramePathField,
     image_bytes_field,
     image_callable_field,
     image_info_field,
     image_path_field,
+    media_path_field,
+    video_frame_path_field,
 )
+from datumaro.experimental.media import LazyImage, LazyVideoFrame
 
 
 class ForwardMediaConverter(ABC):
@@ -196,6 +201,169 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         return result
 
 
+class ForwardVideoMediaConverter(ForwardMediaConverter):
+    """Forward converter for VideoFrame media type.
+
+    Converts legacy VideoFrame media to the new dataset format using
+    video_frame_path_field, storing the video file path and frame index.
+    """
+
+    def __init__(self, semantic: str = "default", name_prefix: str = ""):
+        """Initialize converter.
+
+        Args:
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        self.semantic = semantic
+        self.name_prefix = name_prefix
+
+    @classmethod
+    def get_supported_media_types(cls) -> list[type[MediaElement[Any]]]:
+        """Return list of media types this converter can handle."""
+        return [VideoFrame]
+
+    @classmethod
+    def create(
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
+    ) -> ForwardVideoMediaConverter | None:
+        """Create converter instance if dataset contains VideoFrame media.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        has_video_frame = False
+
+        for item in dataset:
+            if isinstance(item.media, VideoFrame):
+                has_video_frame = True
+                break
+
+        if not has_video_frame:
+            return None
+
+        return cls(semantic=semantic, name_prefix=name_prefix)
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        """Return schema attributes for video frame media.
+
+        Generates a video_frame_path field that stores both the video file
+        path and the frame index.
+        """
+        attributes: dict[str, AttributeInfo] = {}
+        attributes[self.name_prefix + "video_frame"] = AttributeInfo(
+            type=LazyVideoFrame, field=video_frame_path_field(semantic=self.semantic)
+        )
+        return attributes
+
+    def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
+        """Convert VideoFrame media to video_frame_path field values.
+
+        Extracts the video file path and frame index from the legacy VideoFrame.
+        """
+        result: dict[str, Any] = {}
+
+        if isinstance(item.media, VideoFrame):
+            video_path = item.media.video.path
+            frame_index = item.media.index
+            result[self.name_prefix + "video_frame"] = LazyVideoFrame(
+                video_path=video_path,
+                frame_index=frame_index,
+            )
+
+        return result
+
+
+class ForwardMixedMediaConverter(ForwardMediaConverter):
+    """Forward converter for datasets containing VideoFrame media (with or without images).
+
+    When a legacy dataset has video frames (either alone or mixed with images),
+    this converter uses a unified media_path_field (MediaPathField) to store
+    either type.  Images are converted to LazyImage and video frames to
+    LazyVideoFrame.
+
+    For datasets containing *only* plain images (no VideoFrame items),
+    :class:`ForwardImageMediaConverter` should be used instead.
+
+    This converter is only used for file-path-based images; byte/numpy images
+    in mixed datasets are not supported (they should not normally occur in
+    practice since video frames are always file-based).
+    """
+
+    def __init__(self, semantic: str = "default", name_prefix: str = ""):
+        """Initialize converter.
+
+        Args:
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        self.semantic = semantic
+        self.name_prefix = name_prefix
+
+    @classmethod
+    def get_supported_media_types(cls) -> list[type[MediaElement[Any]]]:
+        """Return an empty list — this converter is not registered by media type.
+
+        It is selected explicitly by get_forward_media_converter when any
+        VideoFrame items are detected in the dataset.
+        """
+        return []
+
+    @classmethod
+    def create(
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
+    ) -> ForwardMixedMediaConverter | None:
+        """Create converter if dataset contains any non-pure-image media.
+
+        This converter is used whenever the dataset has video frames (with or
+        without images).  If the dataset contains *only* plain images (no
+        VideoFrame items at all), this converter returns ``None`` so that the
+        more specific :class:`ForwardImageMediaConverter` can be used instead.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        has_video_frame = False
+
+        for item in dataset:
+            if isinstance(item.media, VideoFrame):
+                has_video_frame = True
+                break
+
+        if has_video_frame:
+            return cls(semantic=semantic, name_prefix=name_prefix)
+
+        return None
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        """Return schema attributes using a unified media_path field."""
+        return {
+            self.name_prefix + "media": AttributeInfo(
+                type=LazyImage,  # base type; actual values may also be LazyVideoFrame
+                field=media_path_field(semantic=self.semantic),
+            )
+        }
+
+    def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
+        """Convert Image or VideoFrame media to a unified media_path value."""
+        result: dict[str, Any] = {}
+        key = self.name_prefix + "media"
+
+        if isinstance(item.media, VideoFrame):
+            result[key] = LazyVideoFrame(
+                video_path=item.media.video.path,
+                frame_index=item.media.index,
+            )
+        elif isinstance(item.media, Image) and isinstance(item.media, FromFileMixin):
+            result[key] = LazyImage(path=item.media.path)
+
+        return result
+
+
 class BackwardMediaConverter(ABC):
     """Base class for backward media type converters."""
 
@@ -235,3 +403,104 @@ class BackwardImageMediaConverter(BackwardMediaConverter):
         """Convert image_path back to Image MediaElement."""
         image_path = getattr(sample, self.image_path_attr)
         return Image.from_file(path=image_path)  # pyright: ignore[reportUnknownMemberType]
+
+
+class BackwardVideoMediaConverter(BackwardMediaConverter):
+    """Backward converter for VideoFrame media type.
+
+    Converts new dataset video frame references back to legacy VideoFrame objects.
+    Caches Video objects so that multiple frames from the same video share the
+    same Video instance.
+    """
+
+    def __init__(self, video_frame_attr: str):
+        """Initialize with the name of the video frame attribute.
+
+        Args:
+            video_frame_attr: Name of the schema attribute containing LazyVideoFrame data
+        """
+        self.video_frame_attr = video_frame_attr
+        self._video_cache: dict[str, Video] = {}
+
+    @classmethod
+    def create_from_schema(cls, schema: Schema) -> BackwardVideoMediaConverter | None:
+        """Create converter instance if schema contains video_frame_path field."""
+        for attr_name, attr_info in schema.attributes.items():
+            if isinstance(attr_info.field, VideoFramePathField):
+                return cls(video_frame_attr=attr_name)
+        return None
+
+    def get_media_type(self) -> type[MediaElement[Any]]:
+        return VideoFrame
+
+    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
+        """Convert LazyVideoFrame back to legacy VideoFrame.
+
+        Caches Video objects so that frames from the same video share a single
+        Video instance, matching the legacy format's structure.
+        """
+        lazy_frame: LazyVideoFrame = getattr(sample, self.video_frame_attr)
+        video_path = str(lazy_frame.video_path)
+
+        if video_path not in self._video_cache:
+            self._video_cache[video_path] = Video(path=video_path)
+
+        video = self._video_cache[video_path]
+        return VideoFrame(video=video, index=lazy_frame.frame_index)
+
+
+class BackwardMixedMediaConverter(BackwardMediaConverter):
+    """Backward converter for datasets using a unified MediaPathField.
+
+    Handles schemas that use a single media_path_field to store both image
+    and video frame references. Each sample is inspected at conversion time
+    to determine whether it contains a LazyImage or LazyVideoFrame, and the
+    appropriate legacy media type is returned.
+
+    Because a mixed dataset can contain both Image and VideoFrame items, this
+    converter reports MediaElement as the legacy media type (the common base).
+    Video objects are cached to ensure frames from the same video share one
+    Video instance.
+    """
+
+    def __init__(self, media_attr: str):
+        """Initialize with the name of the unified media attribute.
+
+        Args:
+            media_attr: Name of the schema attribute containing the MediaPathField data
+        """
+        self.media_attr = media_attr
+        self._video_cache: dict[str, Video] = {}
+
+    @classmethod
+    def create_from_schema(cls, schema: Schema) -> BackwardMixedMediaConverter | None:
+        """Create converter instance if schema contains a MediaPathField."""
+        for attr_name, attr_info in schema.attributes.items():
+            if isinstance(attr_info.field, MediaPathField):
+                return cls(media_attr=attr_name)
+        return None
+
+    def get_media_type(self) -> type[MediaElement[Any]]:
+        # Mixed datasets can hold both Image and VideoFrame items.
+        # Return MediaElement (the common base) so the legacy dataset
+        # does not restrict the media type.
+        return MediaElement
+
+    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
+        """Convert a LazyImage or LazyVideoFrame back to the appropriate legacy media.
+
+        Returns Image for LazyImage values and VideoFrame for LazyVideoFrame values.
+        """
+        value = getattr(sample, self.media_attr)
+
+        if isinstance(value, LazyVideoFrame):
+            video_path = str(value.video_path)
+            if video_path not in self._video_cache:
+                self._video_cache[video_path] = Video(path=video_path)
+            video = self._video_cache[video_path]
+            return VideoFrame(video=video, index=value.frame_index)
+
+        if isinstance(value, LazyImage):
+            return Image.from_file(path=str(value.path))  # pyright: ignore[reportUnknownMemberType]
+
+        raise TypeError(f"Expected LazyImage or LazyVideoFrame, got {type(value)}")

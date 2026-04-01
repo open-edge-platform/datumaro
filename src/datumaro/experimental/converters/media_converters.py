@@ -19,8 +19,8 @@ import polars as pl
 from datumaro.experimental.converters.base import Converter
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
-from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoInfoField
-from datumaro.experimental.media import LazyImage, LazyVideoFrame
+from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoFramePathField, VideoInfoField
+from datumaro.experimental.media import LazyImage, LazyVideoFrame, extract_video_info
 from datumaro.experimental.schema import AttributeSpec
 
 if TYPE_CHECKING:
@@ -415,6 +415,57 @@ class ImagePathToMediaPathConverter(Converter):
 
 
 @converter
+class VideoFramePathToMediaPathConverter(Converter):
+    """
+    Converter that promotes VideoFramePathField to MediaPathField.
+
+    VideoFramePathField stores a Categorical video path and a UInt32 frame_index.
+    MediaPathField stores a Categorical path and a nullable UInt32 frame_index.
+
+    Because both field types share the same columnar layout (Categorical path +
+    UInt32 frame_index) the conversion is a simple column rename/alias.
+
+    Input: VideoFramePathField (video path as Categorical + frame_index as UInt32)
+    Output: MediaPathField (path as Categorical + frame_index as UInt32)
+    """
+
+    input_frame: AttributeSpec[VideoFramePathField]
+    output_media: AttributeSpec[MediaPathField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output media path specification based on input."""
+        self.output_media = AttributeSpec(
+            name=self.output_media.name,
+            field=MediaPathField(
+                semantic=self.input_frame.field.semantic,
+                format=self.output_media.field.format,
+                channels_first=self.output_media.field.channels_first,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Promote video frame path columns to media path columns.
+
+        Args:
+            df: DataFrame containing VideoFramePathField columns
+
+        Returns:
+            DataFrame with MediaPathField columns (Categorical path + frame_index)
+        """
+        input_col = self.input_frame.name
+        input_frame_idx_col = f"{input_col}_frame_index"
+        output_col = self.output_media.name
+        output_frame_idx_col = f"{output_col}_frame_index"
+
+        return df.with_columns(
+            pl.col(input_col).alias(output_col),
+            pl.col(input_frame_idx_col).alias(output_frame_idx_col),
+        )
+
+
+@converter
 class ImageInfoToMediaInfoConverter(Converter):
     """
     Converter that promotes ImageInfoField to MediaInfoField.
@@ -584,4 +635,121 @@ class MediaInfoToVideoInfoConverter(Converter):
                 pl.col(input_col).struct.field("duration").cast(pl.Float64()).alias("duration"),
                 pl.col(input_col).struct.field("codec").alias("codec"),
             ).alias(output_col),
+        )
+
+
+@converter
+class MediaPathToMediaInfoConverter(Converter):
+    """
+    Converter that extracts media metadata from MediaPathField to MediaInfoField.
+
+    Handles both standalone images and video frames uniformly:
+    - For images (frame_index is None): reads image dimensions using PIL header-only
+    - For video frames (frame_index is set): extracts video metadata (fps, total_frames,
+      dimensions, duration, codec) using OpenCV
+
+    This is analogous to ImagePathToImageInfoConverter but works with the unified
+    MediaPathField and produces the richer MediaInfoField.
+
+    Input: MediaPathField (path as Categorical + nullable frame_index)
+    Output: MediaInfoField (struct with width, height, fps, total_frames, duration, codec, frame_index)
+    """
+
+    input_media: AttributeSpec[MediaPathField]
+    output_info: AttributeSpec[MediaInfoField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output info specification based on input."""
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=MediaInfoField(
+                semantic=self.input_media.field.semantic,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Extract media metadata from file paths and optional frame indices.
+
+        For images: reads width and height from the image header.
+        For video frames: extracts video metadata (dimensions, fps, etc.)
+        and includes the frame_index.
+
+        Args:
+            df: DataFrame containing MediaPathField columns
+
+        Returns:
+            DataFrame with MediaInfoField column
+        """
+        from pathlib import Path as _Path
+
+        from PIL import Image as _PILImage
+
+        input_col = self.input_media.name
+        frame_idx_col = f"{input_col}_frame_index"
+        output_col = self.output_info.name
+
+        rows: list[dict[str, Any] | None] = []
+
+        for i in range(len(df)):
+            path = df[input_col][i]
+            frame_idx = df[frame_idx_col][i] if frame_idx_col in df.columns else None
+
+            if path is None:
+                rows.append(None)
+                continue
+
+            path_str = str(path)
+
+            if frame_idx is not None:
+                # Video frame — extract video metadata
+                video_info = extract_video_info(path_str)
+                rows.append(
+                    {
+                        "width": video_info.width,
+                        "height": video_info.height,
+                        "fps": float(video_info.fps) if video_info.fps else None,
+                        "total_frames": video_info.total_frames,
+                        "duration": float(video_info.duration) if video_info.duration else None,
+                        "codec": video_info.codec,
+                        "frame_index": int(frame_idx),
+                    }
+                )
+            else:
+                # Standalone image — read dimensions only
+                p = _Path(path_str)
+                if not p.exists():
+                    rows.append(None)
+                    continue
+
+                with _PILImage.open(path_str) as img:
+                    w, h = img.size
+
+                rows.append(
+                    {
+                        "width": w,
+                        "height": h,
+                        "fps": None,
+                        "total_frames": None,
+                        "duration": None,
+                        "codec": None,
+                        "frame_index": None,
+                    }
+                )
+
+        schema = pl.Struct(
+            [
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+                pl.Field("fps", pl.Float32()),
+                pl.Field("total_frames", pl.UInt32()),
+                pl.Field("duration", pl.Float32()),
+                pl.Field("codec", pl.String()),
+                pl.Field("frame_index", pl.UInt32()),
+            ]
+        )
+
+        return df.with_columns(
+            pl.Series(output_col, rows, dtype=schema),
         )

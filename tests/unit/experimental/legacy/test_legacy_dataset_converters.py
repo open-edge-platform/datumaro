@@ -15,14 +15,24 @@ import datumaro.experimental.categories as exp_categories
 from datumaro.components.annotation import AnnotationType, Bbox, ExtractedMask, LabelCategories
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, MediaElement, Video, VideoFrame
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import bbox_field, image_path_field, label_field, rotated_bbox_field, tensor_field
+from datumaro.experimental.fields import (
+    bbox_field,
+    image_path_field,
+    label_field,
+    media_path_field,
+    rotated_bbox_field,
+    tensor_field,
+    video_frame_path_field,
+)
 from datumaro.experimental.legacy import (
     BackwardBboxAnnotationConverter,
     BackwardImageMediaConverter,
+    BackwardMixedMediaConverter,
     ForwardBboxAnnotationConverter,
     ForwardImageMediaConverter,
+    ForwardMixedMediaConverter,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
@@ -33,6 +43,7 @@ from datumaro.experimental.legacy import (
 from datumaro.experimental.legacy.annotation_converters import get_forward_annotation_converter
 from datumaro.experimental.legacy.dataset_converters import _attributes_to_dict, _has_derived_labels
 from datumaro.experimental.legacy.register_legacy_converters import get_forward_media_converter
+from datumaro.experimental.media import LazyImage, LazyVideoFrame
 from datumaro.util.image import encode_image
 
 
@@ -800,3 +811,508 @@ class ConvertFromLegacyPickleTest:
 
         # Verify the restored dataset works
         assert len(restored_dataset) == 1
+
+
+class GetForwardMediaConverterStrategyTest:
+    """Tests for the get_forward_media_converter selection strategy.
+
+    Strategy:
+    - Image-only datasets → ForwardImageMediaConverter (image_path_field)
+    - Video-only datasets → ForwardMixedMediaConverter (media_path_field)
+    - Mixed image+video datasets → ForwardMixedMediaConverter (media_path_field)
+    - Empty datasets → None
+    - Whole Video media (not VideoFrame) → None
+    """
+
+    def test_image_only_dataset_selects_image_converter(self):
+        """Image-only datasets should use ForwardImageMediaConverter."""
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image1.jpg")),
+            DatasetItem(id="img2", media=Image.from_file("/path/to/image2.jpg")),
+        ]
+        dataset = LegacyDataset.from_iterable(items)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is not None
+        assert isinstance(converter, ForwardImageMediaConverter)
+
+    def test_video_only_dataset_selects_mixed_converter(self):
+        """Video-only (VideoFrame) datasets should use ForwardMixedMediaConverter."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="frame_1", media=VideoFrame(video=video, index=1)),
+            DatasetItem(id="frame_5", media=VideoFrame(video=video, index=5)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is not None
+        assert isinstance(converter, ForwardMixedMediaConverter)
+
+    def test_mixed_image_and_video_dataset_selects_mixed_converter(self):
+        """Mixed (Image + VideoFrame) datasets should use ForwardMixedMediaConverter."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image1.jpg")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="img2", media=Image.from_file("/path/to/image2.jpg")),
+            DatasetItem(id="frame_5", media=VideoFrame(video=video, index=5)),
+        ]
+        dataset = LegacyDataset.from_iterable(items)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is not None
+        assert isinstance(converter, ForwardMixedMediaConverter)
+
+    def test_empty_dataset_returns_none(self):
+        """Empty datasets should return None."""
+        dataset = LegacyDataset.from_iterable([])
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is None
+
+    def test_whole_video_media_returns_none(self):
+        """Datasets with whole Video media (not VideoFrame) should return None."""
+        items = [DatasetItem(id="vid", media=Video("/path/to/video.mp4"))]
+        dataset = LegacyDataset.from_iterable(items, media_type=Video)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is None
+
+    def test_video_only_converter_produces_media_path_field(self):
+        """Verify that the converter for video datasets produces media_path_field schema."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is not None
+
+        attributes = converter.get_schema_attributes()
+        assert "media" in attributes
+        from datumaro.experimental.fields import MediaPathField
+
+        assert isinstance(attributes["media"].field, MediaPathField)
+
+    def test_mixed_converter_produces_media_path_field(self):
+        """Verify that the converter for mixed datasets produces media_path_field schema."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image.jpg")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+        ]
+        dataset = LegacyDataset.from_iterable(items)
+
+        converter = get_forward_media_converter(dataset)
+        assert converter is not None
+
+        attributes = converter.get_schema_attributes()
+        assert "media" in attributes
+        from datumaro.experimental.fields import MediaPathField
+
+        assert isinstance(attributes["media"].field, MediaPathField)
+
+
+class AnalyzeLegacyVideoDatasetTest:
+    """Tests for analyze_legacy_dataset with video and mixed media."""
+
+    def test_analyze_video_only_dataset(self):
+        """Test analysis of dataset with only VideoFrame media."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="frame_1", media=VideoFrame(video=video, index=1)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        analysis_result = analyze_legacy_dataset(dataset)
+
+        # Should use media_path_field (via ForwardMixedMediaConverter)
+        assert "media" in analysis_result.schema.attributes
+        assert analysis_result.media_converter is not None
+        assert isinstance(analysis_result.media_converter, ForwardMixedMediaConverter)
+
+    def test_analyze_mixed_image_and_video_dataset(self):
+        """Test analysis of dataset with both Image and VideoFrame media."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image.jpg")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+        ]
+        dataset = LegacyDataset.from_iterable(items)
+
+        analysis_result = analyze_legacy_dataset(dataset)
+
+        assert "media" in analysis_result.schema.attributes
+        # Should NOT have image_path (not image-only)
+        assert "image_path" not in analysis_result.schema.attributes
+        assert isinstance(analysis_result.media_converter, ForwardMixedMediaConverter)
+
+    def test_analyze_video_dataset_with_bboxes(self):
+        """Test analysis of video dataset with bbox annotations."""
+        label_categories = LabelCategories()
+        label_categories.add("car")
+        label_categories.add("person")
+
+        video = Video(path="/path/to/video.mp4")
+        bbox = Bbox(10, 20, 30, 40, label=0)
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0), annotations=[bbox]),
+        ]
+        dataset = LegacyDataset.from_iterable(
+            items,
+            media_type=VideoFrame,
+            ann_types={AnnotationType.bbox},
+            categories={AnnotationType.label: label_categories},
+        )
+
+        analysis_result = analyze_legacy_dataset(dataset)
+
+        # Should have media and bbox attributes
+        assert "media" in analysis_result.schema.attributes
+        assert "bboxes" in analysis_result.schema.attributes
+        assert "labels" in analysis_result.schema.attributes
+
+
+class ConvertFromLegacyVideoTest:
+    """Tests for convert_from_legacy with video and mixed media datasets."""
+
+    def test_convert_video_only_dataset(self):
+        """Test conversion of dataset with only VideoFrame items."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="frame_10", media=VideoFrame(video=video, index=10)),
+            DatasetItem(id="frame_20", media=VideoFrame(video=video, index=20)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 3
+
+        # Check first sample
+        sample0 = experimental_ds[0]
+        assert hasattr(sample0, "media")
+        media0 = getattr(sample0, "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert str(media0.video_path) == "/path/to/video.mp4"
+        assert media0.frame_index == 0
+
+        # Check second sample
+        sample1 = experimental_ds[1]
+        media1 = getattr(sample1, "media")
+        assert isinstance(media1, LazyVideoFrame)
+        assert media1.frame_index == 10
+
+        # Check third sample
+        sample2 = experimental_ds[2]
+        media2 = getattr(sample2, "media")
+        assert isinstance(media2, LazyVideoFrame)
+        assert media2.frame_index == 20
+
+    def test_convert_mixed_image_and_video_dataset(self):
+        """Test conversion of dataset with both Image and VideoFrame items."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image1.jpg")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="img2", media=Image.from_file("/path/to/image2.jpg")),
+            DatasetItem(id="frame_5", media=VideoFrame(video=video, index=5)),
+        ]
+        dataset = LegacyDataset.from_iterable(items)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 4
+
+        # Check image sample
+        sample0 = experimental_ds[0]
+        assert hasattr(sample0, "media")
+        media0 = getattr(sample0, "media")
+        assert isinstance(media0, LazyImage)
+        assert str(media0.path) == "/path/to/image1.jpg"
+
+        # Check video frame sample
+        sample1 = experimental_ds[1]
+        media1 = getattr(sample1, "media")
+        assert isinstance(media1, LazyVideoFrame)
+        assert str(media1.video_path) == "/path/to/video.mp4"
+        assert media1.frame_index == 0
+
+        # Check second image sample
+        sample2 = experimental_ds[2]
+        media2 = getattr(sample2, "media")
+        assert isinstance(media2, LazyImage)
+        assert str(media2.path) == "/path/to/image2.jpg"
+
+        # Check second video frame sample
+        sample3 = experimental_ds[3]
+        media3 = getattr(sample3, "media")
+        assert isinstance(media3, LazyVideoFrame)
+        assert media3.frame_index == 5
+
+    def test_convert_video_dataset_with_annotations(self):
+        """Test conversion of video dataset that also has bbox annotations."""
+        label_categories = LabelCategories()
+        label_categories.add("car")
+        label_categories.add("person")
+
+        video = Video(path="/path/to/video.mp4")
+        bbox1 = Bbox(10, 20, 30, 40, label=0)
+        bbox2 = Bbox(50, 60, 70, 80, label=1)
+
+        items = [
+            DatasetItem(
+                id="frame_0",
+                media=VideoFrame(video=video, index=0),
+                annotations=[bbox1],
+            ),
+            DatasetItem(
+                id="frame_10",
+                media=VideoFrame(video=video, index=10),
+                annotations=[bbox2],
+            ),
+        ]
+        dataset = LegacyDataset.from_iterable(
+            items,
+            media_type=VideoFrame,
+            ann_types={AnnotationType.bbox},
+            categories={AnnotationType.label: label_categories},
+        )
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 2
+
+        # Check media
+        sample0 = experimental_ds[0]
+        assert hasattr(sample0, "media")
+        media0 = getattr(sample0, "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert media0.frame_index == 0
+
+        # Check annotations
+        assert hasattr(sample0, "bboxes")
+        assert hasattr(sample0, "labels")
+
+    def test_convert_multiple_videos(self):
+        """Test conversion with frames from multiple different videos."""
+        video1 = Video(path="/path/to/video1.mp4")
+        video2 = Video(path="/path/to/video2.mp4")
+        items = [
+            DatasetItem(id="v1_frame_0", media=VideoFrame(video=video1, index=0)),
+            DatasetItem(id="v2_frame_0", media=VideoFrame(video=video2, index=0)),
+            DatasetItem(id="v1_frame_5", media=VideoFrame(video=video1, index=5)),
+            DatasetItem(id="v2_frame_10", media=VideoFrame(video=video2, index=10)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 4
+
+        # Check that different video paths are preserved
+        media0 = getattr(experimental_ds[0], "media")
+        media1 = getattr(experimental_ds[1], "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert isinstance(media1, LazyVideoFrame)
+        assert str(media0.video_path) == "/path/to/video1.mp4"
+        assert str(media1.video_path) == "/path/to/video2.mp4"
+
+    def test_convert_single_video_frame_dataset(self):
+        """Test conversion with just one video frame."""
+        video = Video(path="/path/to/video.mp4")
+        items = [DatasetItem(id="frame_42", media=VideoFrame(video=video, index=42))]
+        dataset = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 1
+        sample = experimental_ds[0]
+        media = getattr(sample, "media")
+        assert isinstance(media, LazyVideoFrame)
+        assert media.frame_index == 42
+
+
+class ConvertToLegacyVideoTest:
+    """Tests for convert_to_legacy with mixed/video media datasets."""
+
+    def test_convert_to_legacy_mixed_media_dataset(self):
+        """Test converting a dataset with MediaPathField back to legacy format."""
+
+        class MixedMediaSample(Sample):
+            media: Annotated[LazyImage | LazyVideoFrame, media_path_field()]
+
+        experimental_dataset = Dataset(MixedMediaSample)
+
+        # Add an image sample
+        experimental_dataset.append(MixedMediaSample(media=LazyImage(path="/path/to/image.jpg")))
+        # Add a video frame sample
+        experimental_dataset.append(
+            MixedMediaSample(media=LazyVideoFrame(video_path="/path/to/video.mp4", frame_index=10))
+        )
+
+        legacy_dataset = convert_to_legacy(experimental_dataset)  # type: ignore
+
+        assert len(legacy_dataset) == 2
+
+        items = list(legacy_dataset)
+
+        # First item should be an Image
+        first_media = items[0].media
+        assert isinstance(first_media, Image)
+        assert getattr(first_media, "path", None) == "/path/to/image.jpg"
+
+        # Second item should be a VideoFrame
+        second_media = items[1].media
+        assert isinstance(second_media, VideoFrame)
+        assert second_media.video.path == "/path/to/video.mp4"
+        assert second_media.index == 10
+
+    def test_convert_to_legacy_video_only_media_dataset(self):
+        """Test converting a video-only dataset with MediaPathField back to legacy."""
+
+        class VideoMediaSample(Sample):
+            media: Annotated[LazyImage | LazyVideoFrame, media_path_field()]
+
+        experimental_dataset = Dataset(VideoMediaSample)
+        experimental_dataset.append(
+            VideoMediaSample(media=LazyVideoFrame(video_path="/path/to/video.mp4", frame_index=0))
+        )
+        experimental_dataset.append(
+            VideoMediaSample(media=LazyVideoFrame(video_path="/path/to/video.mp4", frame_index=5))
+        )
+
+        legacy_dataset = convert_to_legacy(experimental_dataset)  # type: ignore
+
+        assert len(legacy_dataset) == 2
+
+        items = list(legacy_dataset)
+        for item in items:
+            assert isinstance(item.media, VideoFrame)
+
+        assert items[0].media.index == 0
+        assert items[1].media.index == 5
+        # Should share same Video object (caching)
+        assert items[0].media.video.path == items[1].media.video.path
+
+    def test_convert_to_legacy_video_frame_path_field(self):
+        """Test converting a dataset with VideoFramePathField back to legacy."""
+
+        class VideoFrameSample(Sample):
+            video_frame: Annotated[LazyVideoFrame, video_frame_path_field()]
+
+        experimental_dataset = Dataset(VideoFrameSample)
+        experimental_dataset.append(
+            VideoFrameSample(
+                video_frame=LazyVideoFrame(video_path="/path/to/video.mp4", frame_index=42),
+            )
+        )
+
+        legacy_dataset = convert_to_legacy(experimental_dataset)  # type: ignore
+
+        assert len(legacy_dataset) == 1
+        item = next(iter(legacy_dataset))
+        assert isinstance(item.media, VideoFrame)
+        assert item.media.video.path == "/path/to/video.mp4"
+        assert item.media.index == 42
+
+
+class AnalyzeExperimentalVideoDatasetTest:
+    """Tests for analyze_experimental_dataset with video/mixed media schemas."""
+
+    def test_analyze_mixed_media_dataset(self):
+        """Test analysis of dataset with MediaPathField schema."""
+
+        class MixedMediaSample(Sample):
+            media: Annotated[LazyImage | LazyVideoFrame, media_path_field()]
+
+        experimental_dataset = Dataset(MixedMediaSample)
+        experimental_dataset.append(MixedMediaSample(media=LazyImage(path="/path/to/image.jpg")))
+
+        analysis_result = analyze_experimental_dataset(experimental_dataset)  # type: ignore
+
+        assert analysis_result.media_type == MediaElement
+        assert analysis_result.media_converter is not None
+        assert isinstance(analysis_result.media_converter, BackwardMixedMediaConverter)
+
+    def test_analyze_video_frame_path_dataset(self):
+        """Test analysis of dataset with VideoFramePathField schema."""
+
+        class VideoFrameSample(Sample):
+            video_frame: Annotated[LazyVideoFrame, video_frame_path_field()]
+
+        experimental_dataset = Dataset(VideoFrameSample)
+        experimental_dataset.append(
+            VideoFrameSample(
+                video_frame=LazyVideoFrame(video_path="/path/to/video.mp4", frame_index=0),
+            )
+        )
+
+        from datumaro.experimental.legacy import BackwardVideoMediaConverter
+
+        analysis_result = analyze_experimental_dataset(experimental_dataset)  # type: ignore
+
+        assert analysis_result.media_type == VideoFrame
+        assert analysis_result.media_converter is not None
+        assert isinstance(analysis_result.media_converter, BackwardVideoMediaConverter)
+
+
+class ConvertVideoRoundTripTest:
+    """Round-trip tests: legacy → experimental → legacy for video datasets."""
+
+    def test_video_only_round_trip(self):
+        """Test round-trip conversion for a video-only dataset."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="frame_10", media=VideoFrame(video=video, index=10)),
+        ]
+        legacy_ds = LegacyDataset.from_iterable(items, media_type=VideoFrame)
+
+        # Forward: legacy → experimental
+        experimental_ds = convert_from_legacy(legacy_ds)
+        assert len(experimental_ds.df) == 2
+
+        # Backward: experimental → legacy
+        restored_ds = convert_to_legacy(experimental_ds)
+        assert len(restored_ds) == 2
+
+        restored_items = list(restored_ds)
+        for item in restored_items:
+            assert isinstance(item.media, (VideoFrame, Image))
+
+    def test_mixed_media_round_trip(self):
+        """Test round-trip conversion for a mixed image+video dataset."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="img1", media=Image.from_file("/path/to/image.jpg")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+        ]
+        legacy_ds = LegacyDataset.from_iterable(items)
+
+        # Forward: legacy → experimental
+        experimental_ds = convert_from_legacy(legacy_ds)
+        assert len(experimental_ds.df) == 2
+
+        # Check that experimental dataset has both types
+        sample0 = experimental_ds[0]
+        sample1 = experimental_ds[1]
+        assert isinstance(getattr(sample0, "media"), LazyImage)
+        assert isinstance(getattr(sample1, "media"), LazyVideoFrame)
+
+        # Backward: experimental → legacy
+        restored_ds = convert_to_legacy(experimental_ds)
+        assert len(restored_ds) == 2
+
+        restored_items = list(restored_ds)
+        # First should be Image, second should be VideoFrame
+        assert isinstance(restored_items[0].media, Image)
+        assert isinstance(restored_items[1].media, VideoFrame)
+        assert getattr(restored_items[0].media, "path", None) == "/path/to/image.jpg"
+        assert restored_items[1].media.video.path == "/path/to/video.mp4"
+        assert restored_items[1].media.index == 0
