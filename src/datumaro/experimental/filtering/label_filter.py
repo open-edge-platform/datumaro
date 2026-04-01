@@ -181,7 +181,7 @@ def _filter_associated_fields(
         if field_name in df.columns:
 
             def filter_by_mask(s: dict[str, Any], fname: str = field_name) -> list[Any] | None:
-                if s[fname] is None:
+                if s[fname] is None or s["__mask__"] is None:
                     return None
                 return [v for v, m in zip(s[fname], s["__mask__"]) if m]
 

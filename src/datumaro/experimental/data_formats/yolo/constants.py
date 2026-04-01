@@ -42,4 +42,5 @@ TRADITIONAL_DIR_NAME_TO_SUBSET = {
     "val": Subset.VALIDATION,
     "obj_test_data": Subset.TESTING,
     "test": Subset.TESTING,
+    "obj_data": Subset.UNASSIGNED,
 }
