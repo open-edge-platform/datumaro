@@ -115,10 +115,11 @@ def get_forward_media_converter(
     """Get forward converter for a dataset by trying registered converters.
 
     Strategy:
-    - If the dataset contains *any* video frames (mixed or video-only),
-      the :class:`ForwardMixedMediaConverter` is used with a unified
+    - If the dataset contains *any* video-related media (VideoFrame or
+      whole Video items, possibly mixed with images), the
+      :class:`ForwardMixedMediaConverter` is used with a unified
       ``media_path_field``.
-    - If the dataset contains *only* images (no video frames at all),
+    - If the dataset contains *only* images (no video at all),
       the :class:`ForwardImageMediaConverter` is used with an
       ``image_path_field``.
 
@@ -128,10 +129,10 @@ def get_forward_media_converter(
         name_prefix: Prefix to prepend to all field names
     """
     # Try mixed-media converter first — it activates when any VideoFrame
-    # items are present (mixed or video-only datasets).
+    # or whole Video items are present (mixed or video-only datasets).
     mixed = ForwardMixedMediaConverter.create(dataset, semantic, name_prefix)
     if mixed is not None:
         return mixed
 
-    # No video frames found — try the image-only converter.
+    # No video-related items found — try the image-only converter.
     return ForwardImageMediaConverter.create(dataset, semantic, name_prefix)

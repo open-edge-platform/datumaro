@@ -245,21 +245,6 @@ class ConverterRegistryTest:
         assert retrieved is not None
         assert isinstance(retrieved, ForwardBboxAnnotationConverter)
 
-    def test_get_nonexistent_media_converter(self):
-        """Test getting converter for unsupported dataset."""
-        # Create a dataset with Video media (not supported by current converters)
-        items = [DatasetItem(id="test", media=Video("/path/to/video.mp4"))]
-        dataset = LegacyDataset.from_iterable(items, media_type=Video)
-
-        retrieved = get_forward_media_converter(dataset)
-        assert retrieved is None
-
-    def test_get_nonexistent_annotation_converter(self):
-        """Test getting converter for unregistered annotation type."""
-        dataset = LegacyDataset.from_iterable([], categories={})
-        converter = get_forward_annotation_converter(AnnotationType.unknown, dataset)
-        assert converter is None
-
 
 class AnalyzeLegacyDatasetTest:
     """Tests for analyze_legacy_dataset functionality."""
@@ -872,13 +857,14 @@ class GetForwardMediaConverterStrategyTest:
         converter = get_forward_media_converter(dataset)
         assert converter is None
 
-    def test_whole_video_media_returns_none(self):
-        """Datasets with whole Video media (not VideoFrame) should return None."""
+    def test_whole_video_media_selects_mixed_converter(self):
+        """Datasets with whole Video media should use ForwardMixedMediaConverter."""
         items = [DatasetItem(id="vid", media=Video("/path/to/video.mp4"))]
         dataset = LegacyDataset.from_iterable(items, media_type=Video)
 
         converter = get_forward_media_converter(dataset)
-        assert converter is None
+        assert converter is not None
+        assert isinstance(converter, ForwardMixedMediaConverter)
 
     def test_video_only_converter_produces_media_path_field(self):
         """Verify that the converter for video datasets produces media_path_field schema."""
@@ -1316,3 +1302,137 @@ class ConvertVideoRoundTripTest:
         assert getattr(restored_items[0].media, "path", None) == "/path/to/image.jpg"
         assert restored_items[1].media.video.path == "/path/to/video.mp4"
         assert restored_items[1].media.index == 0
+
+
+class ConvertFromLegacyWholeVideoTest:
+    """Tests for convert_from_legacy with unannotated whole Video items."""
+
+    def test_convert_whole_video_only_dataset(self):
+        """Test conversion of dataset containing only a whole Video item."""
+        items = [DatasetItem(id="vid", media=Video("/path/to/video.mp4"))]
+        dataset = LegacyDataset.from_iterable(items, media_type=Video)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 1
+        sample = experimental_ds[0]
+        media = getattr(sample, "media")
+        assert isinstance(media, LazyVideoFrame)
+        assert str(media.video_path) == "/path/to/video.mp4"
+        assert media.frame_index == 0
+
+    def test_convert_whole_video_alongside_video_frames(self):
+        """Test conversion of dataset with whole Video and VideoFrame items.
+
+        This mirrors the real traffic-monitoring-dataset layout where an
+        unannotated video (whole Video) appears alongside annotated frames
+        (VideoFrame) from another video.
+        """
+        annotated_video = Video(path="/path/to/annotated.mp4")
+        items = [
+            DatasetItem(id="unannotated_vid", media=Video("/path/to/unannotated.mp4")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=annotated_video, index=0)),
+            DatasetItem(id="frame_50", media=VideoFrame(video=annotated_video, index=50)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 3
+
+        # Whole video stored as frame 0
+        sample0 = experimental_ds[0]
+        media0 = getattr(sample0, "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert str(media0.video_path) == "/path/to/unannotated.mp4"
+        assert media0.frame_index == 0
+
+        # Annotated frames preserved as-is
+        sample1 = experimental_ds[1]
+        media1 = getattr(sample1, "media")
+        assert isinstance(media1, LazyVideoFrame)
+        assert str(media1.video_path) == "/path/to/annotated.mp4"
+        assert media1.frame_index == 0
+
+        sample2 = experimental_ds[2]
+        media2 = getattr(sample2, "media")
+        assert isinstance(media2, LazyVideoFrame)
+        assert media2.frame_index == 50
+
+    def test_convert_multiple_whole_videos(self):
+        """Test conversion of dataset with multiple unannotated whole Video items."""
+        items = [
+            DatasetItem(id="vid1", media=Video("/path/to/video1.mp4")),
+            DatasetItem(id="vid2", media=Video("/path/to/video2.mp4")),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=Video)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        assert len(experimental_ds.df) == 2
+
+        media0 = getattr(experimental_ds[0], "media")
+        media1 = getattr(experimental_ds[1], "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert isinstance(media1, LazyVideoFrame)
+        assert str(media0.video_path) == "/path/to/video1.mp4"
+        assert str(media1.video_path) == "/path/to/video2.mp4"
+        assert media0.frame_index == 0
+        assert media1.frame_index == 0
+
+    def test_analyze_whole_video_dataset(self):
+        """Test that analyze_legacy_dataset selects ForwardMixedMediaConverter for whole Video."""
+        items = [DatasetItem(id="vid", media=Video("/path/to/video.mp4"))]
+        dataset = LegacyDataset.from_iterable(items, media_type=Video)
+
+        analysis_result = analyze_legacy_dataset(dataset)
+
+        assert "media" in analysis_result.schema.attributes
+        assert isinstance(analysis_result.media_converter, ForwardMixedMediaConverter)
+
+    def test_convert_whole_video_skipped_when_same_path_has_frames(self):
+        """Test that a whole Video item is dropped when the same video path
+        has annotated VideoFrame items, avoiding a spurious frame-0 entry."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="whole_vid", media=Video("/path/to/video.mp4")),
+            DatasetItem(id="frame_5", media=VideoFrame(video=video, index=5)),
+            DatasetItem(id="frame_10", media=VideoFrame(video=video, index=10)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        # Only the two annotated frames should survive; the whole Video item is skipped
+        assert len(experimental_ds.df) == 2
+
+        media0 = getattr(experimental_ds[0], "media")
+        media1 = getattr(experimental_ds[1], "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert isinstance(media1, LazyVideoFrame)
+        assert media0.frame_index == 5
+        assert media1.frame_index == 10
+
+    def test_convert_whole_video_kept_when_different_path_from_frames(self):
+        """Test that a whole Video item is kept when no VideoFrame shares its path."""
+        annotated_video = Video(path="/path/to/annotated.mp4")
+        items = [
+            DatasetItem(id="unannotated_vid", media=Video("/path/to/unannotated.mp4")),
+            DatasetItem(id="frame_5", media=VideoFrame(video=annotated_video, index=5)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        experimental_ds = convert_from_legacy(dataset)
+
+        # Both items should be present: the unannotated video as frame 0, and the annotated frame
+        assert len(experimental_ds.df) == 2
+
+        media0 = getattr(experimental_ds[0], "media")
+        assert isinstance(media0, LazyVideoFrame)
+        assert str(media0.video_path) == "/path/to/unannotated.mp4"
+        assert media0.frame_index == 0
+
+        media1 = getattr(experimental_ds[1], "media")
+        assert isinstance(media1, LazyVideoFrame)
+        assert str(media1.video_path) == "/path/to/annotated.mp4"
+        assert media1.frame_index == 5

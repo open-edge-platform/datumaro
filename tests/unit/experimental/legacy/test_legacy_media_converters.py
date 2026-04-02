@@ -7,7 +7,7 @@ import polars as pl
 
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.media import Image, Video, VideoFrame
+from datumaro.components.media import Image, MediaElement, Video, VideoFrame
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -576,6 +576,135 @@ class ForwardMixedMediaConverterTest:
 
         result = converter.convert_item_media(item)
         assert result == {}
+
+    def test_mixed_media_converter_create_with_whole_video(self):
+        """Test that create activates when dataset has a whole Video item."""
+        items = [DatasetItem(id="vid", media=Video(path="/path/to/video.mp4"))]
+        dataset = LegacyDataset.from_iterable(items, media_type=Video)
+
+        converter = ForwardMixedMediaConverter.create(dataset)
+        assert converter is not None
+        assert isinstance(converter, ForwardMixedMediaConverter)
+
+    def test_mixed_media_converter_create_with_video_and_video_frames(self):
+        """Test that create activates with a mix of whole Video and VideoFrame items."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="vid", media=Video(path="/path/to/other_video.mp4")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        converter = ForwardMixedMediaConverter.create(dataset)
+        assert converter is not None
+        assert isinstance(converter, ForwardMixedMediaConverter)
+
+    def test_mixed_media_converter_create_tracks_annotated_video_paths(self):
+        """Test that create tracks video paths that have VideoFrame items."""
+        video = Video(path="/path/to/annotated_video.mp4")
+        items = [
+            DatasetItem(id="vid", media=Video(path="/path/to/unannotated_video.mp4")),
+            DatasetItem(id="frame_0", media=VideoFrame(video=video, index=0)),
+            DatasetItem(id="frame_10", media=VideoFrame(video=video, index=10)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        converter = ForwardMixedMediaConverter.create(dataset)
+        assert converter is not None
+        assert converter._annotated_video_paths == {"/path/to/annotated_video.mp4"}
+
+    def test_mixed_media_converter_convert_unannotated_whole_video_item(self):
+        """Test converting a whole Video item (unannotated) stores it as frame 0."""
+        converter = ForwardMixedMediaConverter(semantic="default")
+        item = DatasetItem(id="vid", media=Video(path="/path/to/video.mp4"))
+
+        result = converter.convert_item_media(item)
+        assert "media" in result
+        assert isinstance(result["media"], LazyVideoFrame)
+        assert str(result["media"].video_path) == "/path/to/video.mp4"
+        assert result["media"].frame_index == 0
+
+    def test_mixed_media_converter_skips_annotated_whole_video_item(self):
+        """Test that a whole Video item is skipped when its path has annotated VideoFrame items."""
+        converter = ForwardMixedMediaConverter(
+            semantic="default",
+            annotated_video_paths={"/path/to/video.mp4"},
+        )
+        item = DatasetItem(id="vid", media=Video(path="/path/to/video.mp4"))
+
+        result = converter.convert_item_media(item)
+        assert result == {}
+
+    def test_mixed_media_converter_does_not_skip_different_video_path(self):
+        """Test that a whole Video item is NOT skipped when its path differs from annotated videos."""
+        converter = ForwardMixedMediaConverter(
+            semantic="default",
+            annotated_video_paths={"/path/to/annotated.mp4"},
+        )
+        item = DatasetItem(id="vid", media=Video(path="/path/to/unannotated.mp4"))
+
+        result = converter.convert_item_media(item)
+        assert "media" in result
+        assert isinstance(result["media"], LazyVideoFrame)
+        assert str(result["media"].video_path) == "/path/to/unannotated.mp4"
+        assert result["media"].frame_index == 0
+
+    def test_mixed_media_converter_convert_mixed_video_and_frames(self):
+        """Test converting items from a dataset with whole Video, VideoFrame, and Image.
+
+        The whole Video here uses a path not in annotated_video_paths,
+        so it is treated as unannotated and stored as frame 0.
+        """
+        converter = ForwardMixedMediaConverter(semantic="default")
+
+        # Whole Video (unannotated, no annotated_video_paths set) → frame 0
+        video_item = DatasetItem(id="vid", media=Video(path="/path/to/video1.mp4"))
+        result_video = converter.convert_item_media(video_item)
+        assert isinstance(result_video["media"], LazyVideoFrame)
+        assert str(result_video["media"].video_path) == "/path/to/video1.mp4"
+        assert result_video["media"].frame_index == 0
+
+        # VideoFrame → frame N
+        video2 = Video(path="/path/to/video2.mp4")
+        frame_item = DatasetItem(id="frame_42", media=VideoFrame(video=video2, index=42))
+        result_frame = converter.convert_item_media(frame_item)
+        assert isinstance(result_frame["media"], LazyVideoFrame)
+        assert str(result_frame["media"].video_path) == "/path/to/video2.mp4"
+        assert result_frame["media"].frame_index == 42
+
+        # Image → LazyImage
+        img_item = DatasetItem(id="img", media=Image.from_file("/path/to/image.jpg"))
+        result_img = converter.convert_item_media(img_item)
+        assert isinstance(result_img["media"], LazyImage)
+        assert str(result_img["media"].path) == "/path/to/image.jpg"
+
+    def test_mixed_media_converter_same_video_as_whole_and_frames(self):
+        """Test that when the same video path has both a Video item and VideoFrame items,
+        the Video item is skipped and only the annotated frames are preserved."""
+        video = Video(path="/path/to/video.mp4")
+        items = [
+            DatasetItem(id="vid", media=Video(path="/path/to/video.mp4")),
+            DatasetItem(id="frame_5", media=VideoFrame(video=video, index=5)),
+            DatasetItem(id="frame_10", media=VideoFrame(video=video, index=10)),
+        ]
+        dataset = LegacyDataset.from_iterable(items, media_type=MediaElement)
+
+        converter = ForwardMixedMediaConverter.create(dataset)
+        assert converter is not None
+
+        # The whole Video item should be skipped because its path has annotated frames
+        vid_item = items[0]
+        result_vid = converter.convert_item_media(vid_item)
+        assert result_vid == {}
+
+        # The annotated frames should still be converted
+        result_frame5 = converter.convert_item_media(items[1])
+        assert isinstance(result_frame5["media"], LazyVideoFrame)
+        assert result_frame5["media"].frame_index == 5
+
+        result_frame10 = converter.convert_item_media(items[2])
+        assert isinstance(result_frame10["media"], LazyVideoFrame)
+        assert result_frame10["media"].frame_index == 10
 
 
 class BackwardMixedMediaConverterTest:

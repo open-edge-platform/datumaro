@@ -277,37 +277,55 @@ class ForwardVideoMediaConverter(ForwardMediaConverter):
 
 
 class ForwardMixedMediaConverter(ForwardMediaConverter):
-    """Forward converter for datasets containing VideoFrame media (with or without images).
+    """Forward converter for datasets containing video-related media (with or without images).
 
-    When a legacy dataset has video frames (either alone or mixed with images),
-    this converter uses a unified media_path_field (MediaPathField) to store
-    either type.  Images are converted to LazyImage and video frames to
-    LazyVideoFrame.
+    When a legacy dataset has video frames, whole videos, or a mix of those
+    with images, this converter uses a unified media_path_field
+    (MediaPathField) to store any of them.  Images are converted to
+    LazyImage and video frames to LazyVideoFrame.
 
-    For datasets containing *only* plain images (no VideoFrame items),
-    :class:`ForwardImageMediaConverter` should be used instead.
+    Whole Video items are handled as follows:
+
+    * If the video path has **no** corresponding VideoFrame items in the
+      dataset, the Video is treated as unannotated and stored as frame 0.
+    * If the video path **does** have VideoFrame items (i.e. annotated
+      frames), the whole Video item is **skipped** to avoid creating a
+      spurious frame-0 entry that duplicates or conflicts with the actual
+      annotated frames.
+
+    For datasets containing *only* plain images (no VideoFrame or Video
+    items), :class:`ForwardImageMediaConverter` should be used instead.
 
     This converter is only used for file-path-based images; byte/numpy images
     in mixed datasets are not supported (they should not normally occur in
     practice since video frames are always file-based).
     """
 
-    def __init__(self, semantic: str = "default", name_prefix: str = ""):
+    def __init__(
+        self,
+        semantic: str = "default",
+        name_prefix: str = "",
+        annotated_video_paths: set[str] | None = None,
+    ):
         """Initialize converter.
 
         Args:
             semantic: The semantic type for the converted fields
             name_prefix: Prefix to prepend to all field names
+            annotated_video_paths: Set of video paths that have explicit
+                VideoFrame items. Whole Video items whose path appears in this
+                set are skipped (the annotated frames already cover them).
         """
         self.semantic = semantic
         self.name_prefix = name_prefix
+        self._annotated_video_paths: set[str] = annotated_video_paths or set()
 
     @classmethod
     def get_supported_media_types(cls) -> list[type[MediaElement[Any]]]:
         """Return an empty list — this converter is not registered by media type.
 
         It is selected explicitly by get_forward_media_converter when any
-        VideoFrame items are detected in the dataset.
+        VideoFrame or Video items are detected in the dataset.
         """
         return []
 
@@ -315,27 +333,40 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
     def create(
         cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardMixedMediaConverter | None:
-        """Create converter if dataset contains any non-pure-image media.
+        """Create converter if dataset contains any video-related media.
 
-        This converter is used whenever the dataset has video frames (with or
-        without images).  If the dataset contains *only* plain images (no
-        VideoFrame items at all), this converter returns ``None`` so that the
-        more specific :class:`ForwardImageMediaConverter` can be used instead.
+        This converter is used whenever the dataset has video frames or whole
+        videos (with or without images).  If the dataset contains *only* plain
+        images (no VideoFrame or Video items at all), this converter returns
+        ``None`` so that the more specific :class:`ForwardImageMediaConverter`
+        can be used instead.
+
+        During creation the dataset is scanned to collect video paths that have
+        explicit VideoFrame items.  When a whole Video item shares its path
+        with annotated frames, it will be skipped during conversion to avoid
+        creating a spurious frame-0 entry.
 
         Args:
             dataset: Legacy dataset to create converter from
             semantic: The semantic type for the converted fields
             name_prefix: Prefix to prepend to all field names
         """
-        has_video_frame = False
+        has_video = False
+        annotated_video_paths: set[str] = set()
 
         for item in dataset:
             if isinstance(item.media, VideoFrame):
-                has_video_frame = True
-                break
+                has_video = True
+                annotated_video_paths.add(item.media.video.path)
+            elif isinstance(item.media, Video):
+                has_video = True
 
-        if has_video_frame:
-            return cls(semantic=semantic, name_prefix=name_prefix)
+        if has_video:
+            return cls(
+                semantic=semantic,
+                name_prefix=name_prefix,
+                annotated_video_paths=annotated_video_paths,
+            )
 
         return None
 
@@ -349,7 +380,13 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
         }
 
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
-        """Convert Image or VideoFrame media to a unified media_path value."""
+        """Convert Image, VideoFrame, or Video media to a unified media_path value.
+
+        Whole Video items whose video path does **not** appear as an annotated
+        VideoFrame elsewhere in the dataset are stored as frame 0.  If the
+        video already has explicit VideoFrame items the whole Video entry is
+        skipped to avoid creating a spurious frame-0 sample.
+        """
         result: dict[str, Any] = {}
         key = self.name_prefix + "media"
 
@@ -357,6 +394,16 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
             result[key] = LazyVideoFrame(
                 video_path=item.media.video.path,
                 frame_index=item.media.index,
+            )
+        elif isinstance(item.media, Video):
+            if item.media.path in self._annotated_video_paths:
+                # This video already has explicit VideoFrame items, skip the
+                # whole-video entry to avoid a spurious frame-0 sample.
+                return result
+            # Truly unannotated whole video, represent as frame 0
+            result[key] = LazyVideoFrame(
+                video_path=item.media.path,
+                frame_index=0,
             )
         elif isinstance(item.media, Image) and isinstance(item.media, FromFileMixin):
             result[key] = LazyImage(path=item.media.path)
