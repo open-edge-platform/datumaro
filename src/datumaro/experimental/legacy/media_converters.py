@@ -374,7 +374,7 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
         """Return schema attributes using a unified media_path field."""
         return {
             self.name_prefix + "media": AttributeInfo(
-                type=LazyImage,  # base type; actual values may also be LazyVideoFrame
+                type=LazyImage | LazyVideoFrame,
                 field=media_path_field(semantic=self.semantic),
             )
         }
