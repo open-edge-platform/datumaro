@@ -7,12 +7,16 @@ These converters handle shape (is_list) and dtype conversions for the
 simple value field types defined in :mod:`datumaro.experimental.fields.types`.
 """
 
+import logging
+
 import polars as pl
 
-from datumaro.experimental.converters.base import ConversionError, Converter
+from datumaro.experimental.converters.base import Converter
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.types import BoolField, NumericField, StringField
 from datumaro.experimental.schema import AttributeSpec
+
+log = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # NumericField converters
@@ -28,9 +32,7 @@ class NumericFieldShapeConverter(Converter):
 
     Supported conversions:
       - ``dtype → List(dtype)``: wrap scalar in a one-element list
-
-    Unsupported (lossy) conversions:
-      - ``List(dtype) → dtype``: rejected to prevent silent data loss
+      - ``List(dtype) → dtype``: keep the first element only (lossy, logs a warning)
     """
 
     input_numeric: AttributeSpec[NumericField]
@@ -63,11 +65,11 @@ class NumericFieldShapeConverter(Converter):
         output_is_list = self.output_numeric.field.is_list
 
         if input_is_list and not output_is_list:
-            raise ConversionError(
-                f"Cannot convert list to scalar for numeric field '{input_col}': "
-                "this would discard all elements except the first. "
-                "Please apply an explicit aggregation transform before converting."
+            log.warning(
+                "Converting list to scalar for numeric field '%s': keeping the first element only. Data may be lost.",
+                input_col,
             )
+            df = df.with_columns(pl.col(input_col).list.first().alias(output_col))
         if not input_is_list and output_is_list:
             # dtype → List(dtype): wrap the scalar value in a list, preserving nulls
             df = df.with_columns(
@@ -130,9 +132,7 @@ class BoolFieldShapeConverter(Converter):
 
     Supported conversions:
       - ``Boolean → List(Boolean)``: wrap scalar in a one-element list
-
-    Unsupported (lossy) conversions:
-      - ``List(Boolean) → Boolean``: rejected to prevent silent data loss
+      - ``List(Boolean) → Boolean``: keep the first element only (lossy, logs a warning)
     """
 
     input_bool: AttributeSpec[BoolField]
@@ -164,11 +164,11 @@ class BoolFieldShapeConverter(Converter):
         output_is_list = self.output_bool.field.is_list
 
         if input_is_list and not output_is_list:
-            raise ConversionError(
-                f"Cannot convert list to scalar for boolean field '{input_col}': "
-                "this would discard all elements except the first. "
-                "Please apply an explicit aggregation transform before converting."
+            log.warning(
+                "Converting list to scalar for boolean field '%s': keeping the first element only. Data may be lost.",
+                input_col,
             )
+            df = df.with_columns(pl.col(input_col).list.first().alias(output_col))
         if not input_is_list and output_is_list:
             # Boolean → List(Boolean): wrap the scalar value in a list, preserving nulls
             df = df.with_columns(
@@ -195,9 +195,7 @@ class StringFieldShapeConverter(Converter):
 
     Supported conversions:
       - ``String → List(String)``: wrap scalar in a one-element list
-
-    Unsupported (lossy) conversions:
-      - ``List(String) → String``: rejected to prevent silent data loss
+      - ``List(String) → String``: keep the first element only (lossy, logs a warning)
     """
 
     input_string: AttributeSpec[StringField]
@@ -229,11 +227,11 @@ class StringFieldShapeConverter(Converter):
         output_is_list = self.output_string.field.is_list
 
         if input_is_list and not output_is_list:
-            raise ConversionError(
-                f"Cannot convert list to scalar for string field '{input_col}': "
-                "this would discard all elements except the first. "
-                "Please apply an explicit aggregation transform before converting."
+            log.warning(
+                "Converting list to scalar for string field '%s': keeping the first element only. Data may be lost.",
+                input_col,
             )
+            df = df.with_columns(pl.col(input_col).list.first().alias(output_col))
         if not input_is_list and output_is_list:
             # String → List(String): wrap the scalar value in a list, preserving nulls
             df = df.with_columns(
