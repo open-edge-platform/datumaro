@@ -226,15 +226,16 @@ def convert_from_legacy(
 
     # Step 3: Convert all items
     for legacy_item in legacy_dataset:
-        # Convert legacy item to new sample format
-        sample_data = _convert_legacy_item(legacy_item, analysis_result)
-
-        # Skip items whose media was intentionally omitted (e.g. a whole Video
-        # item whose frames are already represented by VideoFrame items).
-        if analysis_result.media_converter is not None and not any(
-            k in sample_data for k in analysis_result.media_converter.get_schema_attributes()
+        # Skip items only when the media converter explicitly marks them as
+        # omitted (e.g. a whole Video item whose frames are already represented
+        # by VideoFrame items).
+        if analysis_result.media_converter is not None and analysis_result.media_converter.should_skip_item(
+            legacy_item
         ):
             continue
+
+        # Convert legacy item to new sample format
+        sample_data = _convert_legacy_item(legacy_item, analysis_result)
 
         if analysis_result.is_hierarchical and isinstance(sample_data["label"], int):
             # Convert single labels in hierarchical project to be a list

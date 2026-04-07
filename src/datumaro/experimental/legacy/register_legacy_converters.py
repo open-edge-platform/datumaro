@@ -10,7 +10,7 @@ dataset format with automatic schema inference and type conversion.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from datumaro import Dataset as LegacyDataset
 from datumaro.components.media import MediaElement
@@ -122,6 +122,8 @@ def get_forward_media_converter(
     - If the dataset contains *only* images (no video at all),
       the :class:`ForwardImageMediaConverter` is used with an
       ``image_path_field``.
+    - Otherwise, fall back to the forward media-converter registry so that
+      custom or future media types are still supported.
 
     Args:
         dataset: Legacy dataset to create converter from
@@ -135,4 +137,14 @@ def get_forward_media_converter(
         return mixed
 
     # No video-related items found — try the image-only converter.
-    return ForwardImageMediaConverter.create(dataset, semantic, name_prefix)
+    image = ForwardImageMediaConverter.create(dataset, semantic, name_prefix)
+    if image is not None:
+        return image
+
+    # Fall back to the registry for custom / future media types.
+    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
+    if media_type in _media_converter_classes:
+        converter_class = _media_converter_classes[media_type]
+        return converter_class.create(dataset, semantic, name_prefix)
+
+    return None

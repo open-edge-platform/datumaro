@@ -632,8 +632,7 @@ class ForwardMixedMediaConverterTest:
         )
         item = DatasetItem(id="vid", media=Video(path="/path/to/video.mp4"))
 
-        result = converter.convert_item_media(item)
-        assert result == {}
+        assert converter.should_skip_item(item) is True
 
     def test_mixed_media_converter_does_not_skip_different_video_path(self):
         """Test that a whole Video item is NOT skipped when its path differs from annotated videos."""
@@ -643,6 +642,7 @@ class ForwardMixedMediaConverterTest:
         )
         item = DatasetItem(id="vid", media=Video(path="/path/to/unannotated.mp4"))
 
+        assert converter.should_skip_item(item) is False
         result = converter.convert_item_media(item)
         assert "media" in result
         assert isinstance(result["media"], LazyVideoFrame)
@@ -694,8 +694,7 @@ class ForwardMixedMediaConverterTest:
 
         # The whole Video item should be skipped because its path has annotated frames
         vid_item = items[0]
-        result_vid = converter.convert_item_media(vid_item)
-        assert result_vid == {}
+        assert converter.should_skip_item(vid_item) is True
 
         # The annotated frames should still be converted
         result_frame5 = converter.convert_item_media(items[1])

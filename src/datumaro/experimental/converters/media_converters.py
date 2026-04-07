@@ -691,6 +691,9 @@ class MediaPathToMediaInfoConverter(Converter):
         output_col = self.output_info.name
 
         rows: list[dict[str, Any] | None] = []
+        # Cache video metadata by path to avoid redundant I/O for frames
+        # from the same video file.
+        _video_info_cache: dict[str, Any] = {}
 
         for i in range(len(df)):
             path = df[input_col][i]
@@ -703,8 +706,16 @@ class MediaPathToMediaInfoConverter(Converter):
             path_str = str(path)
 
             if frame_idx is not None:
-                # Video frame — extract video metadata
-                video_info = extract_video_info(path_str)
+                # Video frame — extract video metadata (cached per path)
+                if path_str not in _video_info_cache:
+                    try:
+                        _video_info_cache[path_str] = extract_video_info(path_str)
+                    except (FileNotFoundError, ValueError):
+                        _video_info_cache[path_str] = None
+                video_info = _video_info_cache[path_str]
+                if video_info is None:
+                    rows.append(None)
+                    continue
                 rows.append(
                     {
                         "width": video_info.width,

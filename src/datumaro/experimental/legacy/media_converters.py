@@ -56,6 +56,15 @@ class ForwardMediaConverter(ABC):
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         """Convert media from a DatasetItem to new dataset format."""
 
+    def should_skip_item(self, item: DatasetItem) -> bool:  # noqa: ARG002
+        """Return True if this item should be skipped during conversion.
+
+        The default implementation never skips. Subclasses may override to
+        skip specific items (e.g. whole Video items whose frames are already
+        represented by VideoFrame items).
+        """
+        return False
+
 
 def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
     """Convert image bytes (or bytes provider) to a numpy array.
@@ -206,6 +215,15 @@ class ForwardVideoMediaConverter(ForwardMediaConverter):
 
     Converts legacy VideoFrame media to the new dataset format using
     video_frame_path_field, storing the video file path and frame index.
+
+    .. note::
+
+        This converter is **not** used by the default
+        :func:`get_forward_media_converter` selection strategy, which routes
+        all video-containing datasets (pure video or mixed) through
+        :class:`ForwardMixedMediaConverter` instead.  It is available for
+        direct use when a dedicated ``video_frame_path`` schema is preferred
+        over the unified ``media_path`` schema.
     """
 
     def __init__(self, semantic: str = "default", name_prefix: str = ""):
@@ -379,13 +397,26 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
             )
         }
 
+    def should_skip_item(self, item: DatasetItem) -> bool:
+        """Skip whole Video items whose frames are already represented by VideoFrame items.
+
+        Only the specific case of a whole Video item whose path appears in the
+        annotated-video-paths set is skipped.  Items with ``media=None`` or
+        unsupported media are **not** skipped.
+        """
+        return (
+            isinstance(item.media, Video)
+            and not isinstance(item.media, VideoFrame)
+            and item.media.path in self._annotated_video_paths
+        )
+
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         """Convert Image, VideoFrame, or Video media to a unified media_path value.
 
         Whole Video items whose video path does **not** appear as an annotated
         VideoFrame elsewhere in the dataset are stored as frame 0.  If the
-        video already has explicit VideoFrame items the whole Video entry is
-        skipped to avoid creating a spurious frame-0 sample.
+        video already has explicit VideoFrame items, the caller should use
+        :meth:`should_skip_item` to skip them before calling this method.
         """
         result: dict[str, Any] = {}
         key = self.name_prefix + "media"
@@ -396,17 +427,21 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
                 frame_index=item.media.index,
             )
         elif isinstance(item.media, Video):
-            if item.media.path in self._annotated_video_paths:
-                # This video already has explicit VideoFrame items, skip the
-                # whole-video entry to avoid a spurious frame-0 sample.
-                return result
             # Truly unannotated whole video, represent as frame 0
             result[key] = LazyVideoFrame(
                 video_path=item.media.path,
                 frame_index=0,
             )
-        elif isinstance(item.media, Image) and isinstance(item.media, FromFileMixin):
-            result[key] = LazyImage(path=item.media.path)
+        elif isinstance(item.media, Image):
+            if isinstance(item.media, FromFileMixin):
+                result[key] = LazyImage(path=item.media.path)
+            else:
+                raise TypeError(
+                    "ForwardMixedMediaConverter does not support non-file-based "
+                    "images (e.g., byte/numpy-backed Image instances) in mixed "
+                    "datasets. Use ForwardImageMediaConverter for in-memory images "
+                    "or ensure all images are file-based when mixing with video frames."
+                )
 
         return result
 
@@ -424,8 +459,8 @@ class BackwardMediaConverter(ABC):
         """Get the legacy media type this converter produces."""
 
     @abstractmethod
-    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
-        """Convert sample media to legacy MediaElement."""
+    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any] | None:
+        """Convert sample media to legacy MediaElement, or None if media is missing."""
 
 
 class BackwardImageMediaConverter(BackwardMediaConverter):
@@ -533,12 +568,16 @@ class BackwardMixedMediaConverter(BackwardMediaConverter):
         # does not restrict the media type.
         return MediaElement
 
-    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
+    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any] | None:
         """Convert a LazyImage or LazyVideoFrame back to the appropriate legacy media.
 
-        Returns Image for LazyImage values and VideoFrame for LazyVideoFrame values.
+        Returns Image for LazyImage values, VideoFrame for LazyVideoFrame values,
+        and None when the media value is missing.
         """
         value = getattr(sample, self.media_attr)
+
+        if value is None:
+            return None
 
         if isinstance(value, LazyVideoFrame):
             video_path = str(value.video_path)

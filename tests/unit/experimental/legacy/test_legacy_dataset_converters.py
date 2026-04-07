@@ -806,7 +806,7 @@ class GetForwardMediaConverterStrategyTest:
     - Video-only datasets → ForwardMixedMediaConverter (media_path_field)
     - Mixed image+video datasets → ForwardMixedMediaConverter (media_path_field)
     - Empty datasets → None
-    - Whole Video media (not VideoFrame) → None
+    - Whole Video media (not VideoFrame) → ForwardMixedMediaConverter (media_path_field)
     """
 
     def test_image_only_dataset_selects_image_converter(self):
