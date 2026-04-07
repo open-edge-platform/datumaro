@@ -404,11 +404,7 @@ class ForwardMixedMediaConverter(ForwardMediaConverter):
         annotated-video-paths set is skipped.  Items with ``media=None`` or
         unsupported media are **not** skipped.
         """
-        return (
-            isinstance(item.media, Video)
-            and not isinstance(item.media, VideoFrame)
-            and item.media.path in self._annotated_video_paths
-        )
+        return isinstance(item.media, Video) and item.media.path in self._annotated_video_paths
 
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         """Convert Image, VideoFrame, or Video media to a unified media_path value.
@@ -515,13 +511,16 @@ class BackwardVideoMediaConverter(BackwardMediaConverter):
     def get_media_type(self) -> type[MediaElement[Any]]:
         return VideoFrame
 
-    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
+    def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any] | None:
         """Convert LazyVideoFrame back to legacy VideoFrame.
 
         Caches Video objects so that frames from the same video share a single
         Video instance, matching the legacy format's structure.
+        Returns None when the video frame value is missing.
         """
-        lazy_frame: LazyVideoFrame = getattr(sample, self.video_frame_attr)
+        lazy_frame: LazyVideoFrame | None = getattr(sample, self.video_frame_attr)
+        if lazy_frame is None:
+            return None
         video_path = str(lazy_frame.video_path)
 
         if video_path not in self._video_cache:

@@ -720,9 +720,9 @@ class MediaPathToMediaInfoConverter(Converter):
                     {
                         "width": video_info.width,
                         "height": video_info.height,
-                        "fps": float(video_info.fps) if video_info.fps else None,
+                        "fps": float(video_info.fps) if video_info.fps is not None else None,
                         "total_frames": video_info.total_frames,
-                        "duration": float(video_info.duration) if video_info.duration else None,
+                        "duration": float(video_info.duration) if video_info.duration is not None else None,
                         "codec": video_info.codec,
                         "frame_index": int(frame_idx),
                     }
