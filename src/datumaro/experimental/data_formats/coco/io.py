@@ -454,11 +454,21 @@ def _load_subset_into_dataset(
 
 
 def _find_primary_annotations_data(all_annotations_data: list[dict]) -> dict:
-    """Find the first annotations dict that contains categories."""
+    """Find the annotations dict that contains the most categories.
+
+    When multiple annotation files are loaded (e.g., instances, keypoints,
+    captions), the file with the most categories should be used as the
+    primary source for building the category-to-index mapping.  For example,
+    ``person_keypoints_*.json`` typically contains only one category
+    ("person"), while ``instances_*.json`` contains all 80 COCO categories.
+    """
     primary_data = all_annotations_data[0]
+    max_categories = 0
     for data in all_annotations_data:
-        if data.get("categories"):
-            return data
+        cats = data.get("categories")
+        if cats and len(cats) > max_categories:
+            max_categories = len(cats)
+            primary_data = data
     return primary_data
 
 

@@ -98,6 +98,9 @@ def _detect_coco_label_categories_from_paths(
     Returns:
         CocoCategories instance with either discovered labels or defaults.
     """
+    best_label_names: tuple[str, ...] | None = None
+    best_count = 0
+
     for _subset, cfg in subset_config.items():
         annotations_paths = cfg.get("annotations")
         if annotations_paths is None:
@@ -113,13 +116,17 @@ def _detect_coco_label_categories_from_paths(
             annotations_data = _load_json_or_none(annotations_path)
             if annotations_data and isinstance(annotations_data, dict):
                 cats = annotations_data.get("categories") or []
-                if isinstance(cats, list) and len(cats) > 0:
+                if isinstance(cats, list) and len(cats) > best_count:
                     try:
                         cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
                         label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
-                        return CocoCategories(labels=label_names)
+                        best_label_names = label_names
+                        best_count = len(cats)
                     except Exception:  # noqa: S110
                         pass
+
+    if best_label_names is not None:
+        return CocoCategories(labels=best_label_names)
 
     logger.warning("Unable to extract labels from COCO annotations, falling back to defaults")
     return CocoCategories()
