@@ -22,7 +22,7 @@
     schedule: ["* * * * 0"], // weekly
   },
 
-  extends: ["config:base", ":gitSignOff", "helpers:pinGitHubActionDigests"],
+  extends: ["config:recommended", ":gitSignOff", "helpers:pinGitHubActionDigests"],
   // https://docs.renovatebot.com/presets-default/#gitsignoff
   // https://docs.renovatebot.com/presets-helpers/#helperspingithubactiondigests
 
@@ -73,7 +73,7 @@
       separateMajorMinor: false,
       groupName: "GitHub Actions",
       matchManagers: ["github-actions"],
-      matchPackagePatterns: ["*"],
+      matchPackageNames: ["*"],
       schedule: ["* * 1 * *"], // every month
     },
 
@@ -100,17 +100,26 @@
       matchDepTypes: ["requires-python"],
       matchDepNames: ["python"],
     },
+
+    // Auto-merge non-major updates
+    {
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+    },
+
+    // Require manual merge for major updates
+    {
+      automerge: false,
+      matchUpdateTypes: ["major"],
+    },
   ],
 
-  // Auto-merge patch and minor updates
-  automerge: true,
-  automergeType: "pr",
-  matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+  // Use GitHub's native auto-merge feature, which queues the PR to merge
+  // once all branch protection requirements (status checks, reviews, CODEOWNERS)
+  // are satisfied.
+  platformAutomerge: true,
 
-  // Require manual merge for major updates
-  major: {
-    automerge: false,
-  },
 
   // Enable security upgrades
   vulnerabilityAlerts: {
