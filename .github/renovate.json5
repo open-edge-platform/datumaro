@@ -61,6 +61,14 @@
       matchDepTypes: ["project.optional-dependencies"],
     },
 
+    // Disable pandas major upgrades
+    {
+      enabled: false,
+      matchManagers: ["pep621"],
+      matchPackageNames: ["pandas"],
+      matchUpdateTypes: ["major"],
+    },
+
     {
       enabled: true,
       matchManagers: ["cargo"],
@@ -74,6 +82,13 @@
       matchDatasources: ["crate"],
       matchPackageNames: ["derive_more"],
       matchUpdateTypes: ["major"],
+    },
+
+    // Disable pyo3 upgrades to prevent regressions
+    {
+      enabled: false,
+      matchDatasources: ["crate"],
+      matchPackageNames: ["pyo3"],
     },
 
     // Group GitHub Actions updates including Renovate version upgrade
