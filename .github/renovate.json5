@@ -31,7 +31,7 @@
   // `matchBaseBranches` in specific rule
   baseBranches: ["develop"],
 
-  // enabledManagers: ["github-actions", "pep621", "cargo", "dockerfile"],
+  enabledManagers: ["github-actions", "pep621", "cargo", "custom.regex"],
 
   // Set limit to 5
   ignorePresets: [":prHourlyLimit2"],
@@ -99,6 +99,26 @@
       matchDatasources: ["python-version"],
       matchDepTypes: ["requires-python"],
       matchDepNames: ["python"],
+    },
+
+    // Renovate version upgrade
+    {
+      enabled: true,
+      groupName: "GitHub Actions",
+      matchManagers: ["custom.regex"],
+      matchDepNames: ["renovatebot/renovate", "ghcr.io/renovatebot/renovate"],
+      schedule: ["* * 1 * *"], // every month
+    },
+  ],
+
+  // Is used to upgrade Renovate version
+  customManagers: [
+    {
+      customType: "regex",
+      fileMatch: ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      matchStrings: [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+version: (?<currentValue>.*)",
+      ],
     },
   ],
 
