@@ -72,12 +72,12 @@
       matchUpdateTypes: ["major"],
     },
 
-    // Group GitHub Actions updates
+    // Group GitHub Actions updates including Renovate version upgrade
     {
       enabled: true,
       separateMajorMinor: false,
       groupName: "GitHub Actions",
-      matchManagers: ["github-actions"],
+      matchManagers: ["github-actions", "custom.regex"],
       matchPackagePatterns: ["*"],
       schedule: ["* * 1 * *"], // every month
     },
@@ -104,15 +104,6 @@
       matchDatasources: ["python-version"],
       matchDepTypes: ["requires-python"],
       matchDepNames: ["python"],
-    },
-
-    // Renovate version upgrade
-    {
-      enabled: true,
-      groupName: "GitHub Actions",
-      matchManagers: ["custom.regex"],
-      matchDepNames: ["renovatebot/renovate", "ghcr.io/renovatebot/renovate"],
-      schedule: ["* * 1 * *"], // every month
     },
   ],
 
