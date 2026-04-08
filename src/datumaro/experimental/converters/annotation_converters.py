@@ -399,7 +399,7 @@ class LabelShapeConverter(Converter):
         if input_is_list:
             log.warning(
                 "Converting list to non-list for field '%s': keeping the first element only. Data may be lost.",
-                self.input_label.name,
+                src_col,
             )
             # List(X) → X: take the first element
             return df.with_columns(pl.col(src_col).list.first().alias(output_col))
