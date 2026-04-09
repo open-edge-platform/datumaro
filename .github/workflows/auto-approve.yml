@@ -3,9 +3,7 @@ name: Approve Renovate PR
 on:
   pull_request:
     types:
-      - assigned
-      - opened
-      - synchronize
+      - review_requested
 
 # No permissions by default, no specific permissions are required for this workflow
 permissions: {}
@@ -15,17 +13,26 @@ jobs:
     # Avoid running the 'auto-approve' environment if we don't need to.
     name: Pre-Approve
     runs-on: ubuntu-latest
+    outputs:
+      commit_sha: ${{ steps.capture_sha.outputs.sha }}
     if: ${{
       github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-      contains(github.event.pull_request.assignees.*.login, 'AlexanderBarabvanov') &&
+      github.event.requested_reviewer.login == 'AlexanderBarabvanov' &&
       github.triggering_actor == 'test-renovate-bot-12345[bot]'
       }}
     steps:
+      - name: Capture Commit SHA
+        id: capture_sha
+        run: |
+          echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "Captured commit SHA: ${{ github.event.pull_request.head.sha }}"
+          
       - name: Debug
         run: |
           echo "PR Author: ${{ github.event.pull_request.user.login }}"
           echo "Triggering Actor: ${{ github.triggering_actor }}"
-          echo "Assignees: ${{ join(github.event.pull_request.assignees.*.login, ', ') }}"
+          echo "Requested Reviewer: ${{ github.event.requested_reviewer.login }}"
+          echo "PR Head SHA: ${{ github.event.pull_request.head.sha }}"
 
   approve:
     name: Approve
@@ -39,43 +46,58 @@ jobs:
         run: |
           echo "PR Author: ${{ github.event.pull_request.user.login }}"
           echo "Triggering Actor: ${{ github.triggering_actor }}"
-          echo "Assignees: ${{ join(github.event.pull_request.assignees.*.login, ', ') }}"
+          echo "Requested Reviewer: ${{ github.event.requested_reviewer.login }}"
+          echo "Original Commit SHA: ${{ needs.pre-approve.outputs.commit_sha }}"
 
       - name: Validate and Approve PR
         # Approve the PR if all the following conditions are true:
         # - the PR was created by test-renovate-bot-12345[bot]
-        # - the PR is assigned to AlexanderBarabvanov
-        # - the workflow was triggered by the bot (prevents unauthorized assignment)
+        # - review was requested from AlexanderBarabvanov
+        # - the workflow was triggered by the bot (prevents unauthorized review requests)
         if: ${{
           github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-          contains(github.event.pull_request.assignees.*.login, 'AlexanderBarabvanov') &&
+          github.event.requested_reviewer.login == 'AlexanderBarabvanov' &&
           github.triggering_actor == 'test-renovate-bot-12345[bot]'
           }}
         env:
-          TOKEN: ${{ secrets.AUTO_APPROVE_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ secrets.AUTO_APPROVE_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          ORIGINAL_SHA: ${{ needs.pre-approve.outputs.commit_sha }}
         run: |
-          echo ${TOKEN} | gh auth login --with-token
-
-          # Verify PR author is test-renovate-bot-12345[bot]
+          # Defense-in-depth: Re-validate PR state at approval time
           echo "Verifying PR author..."
-          pr_author=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}" --jq '.user.login')
+          pr_author=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '.user.login')
           
           if [ "$pr_author" != "test-renovate-bot-12345[bot]" ]; then
-            echo "Error: PR author is not test-renovate-bot-12345[bot], actual: $pr_author"
+            echo "Error: PR author is not test-renovate-bot-12345[bot], actual: ${pr_author}"
             exit 1
           fi
-
-          # Verify AlexanderBarabvanov is assigned to the PR
-          echo "Verifying AlexanderBarabvanov is assigned..."
-          is_assigned=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}" --jq '[.assignees[].login] | contains(["AlexanderBarabvanov"])')
-
-          if [ "$is_assigned" != "true" ]; then
-            echo "Error: AlexanderBarabvanov is not assigned to this PR"
+          
+          echo "Verifying AlexanderBarabvanov is a requested reviewer..."
+          is_reviewer=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.requested_reviewers[].login] | contains(["AlexanderBarabvanov"])')
+          
+          if [ "$is_reviewer" != "true" ]; then
+            echo "Error: AlexanderBarabvanov is not a requested reviewer"
             exit 1
           fi
-
-          # All checks passed, approve the PR
-          echo "All security checks passed. Approving PR #${PULL_REQUEST_NUMBER}..."
-          # gh -R ${GITHUB_REPOSITORY} pr review ${PULL_REQUEST_NUMBER} --approve --body "Auto-approved: Renovate PR assigned to AlexanderBarabvanov"
+          
+          # Verify commit SHA has not changed (no new commits added)
+          echo "Verifying commit SHA has not changed..."
+          current_sha=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '.head.sha')
+          
+          if [ "$current_sha" != "$ORIGINAL_SHA" ]; then
+            echo "Error: PR has been modified since review request"
+            echo "Original SHA: ${ORIGINAL_SHA}"
+            echo "Current SHA:  ${current_sha}"
+            exit 1
+          fi
+          
+          echo "Commit SHA verified: ${current_sha}"
+          
+          # All security checks passed, approve the PR
+          echo "All security checks passed. Approving PR #${PR_NUMBER}..."
+          gh pr review "${PR_NUMBER}" \
+            --repo "${REPO}" \
+            --approve \
+            --body "Auto-approved: Renovate PR with AlexanderBarabvanov as reviewer"
