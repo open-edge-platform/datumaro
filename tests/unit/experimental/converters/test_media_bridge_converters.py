@@ -29,11 +29,19 @@ from datumaro.experimental.converters.media_converters import (
     MediaInfoToImageInfoConverter,
     MediaInfoToVideoInfoConverter,
     MediaPathToImagePathConverter,
+    MediaPathToMediaInfoConverter,
+    VideoFramePathToMediaPathConverter,
     VideoInfoToMediaInfoConverter,
 )
 from datumaro.experimental.converters.video_converters import VideoFrameCallableToImageCallableConverter
 from datumaro.experimental.fields.images import ImageCallableField, ImageInfoField, ImagePathField
-from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoFrameCallableField, VideoInfoField
+from datumaro.experimental.fields.videos import (
+    MediaInfoField,
+    MediaPathField,
+    VideoFrameCallableField,
+    VideoFramePathField,
+    VideoInfoField,
+)
 from datumaro.experimental.schema import AttributeSpec
 
 # ===== Fixtures =====
@@ -1433,3 +1441,449 @@ class MediaInfoToVideoInfoConverterTest:
         assert "frame_index" not in info
         # But should have path (filled with null)
         assert info["path"] is None
+
+
+# ===== VideoFramePathToMediaPathConverter =====
+
+
+class VideoFramePathToMediaPathConverterTest:
+    """Tests for VideoFramePathToMediaPathConverter."""
+
+    def test_filter_output_spec_sets_semantic(self):
+        """Test that filter_output_spec copies semantic from input."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="video_frame",
+                field=VideoFramePathField(semantic="surveillance"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(),
+            ),
+        )
+
+        assert conv.filter_output_spec() is True
+        assert conv.output_media.field.semantic == "surveillance"
+
+    def test_filter_output_spec_preserves_format(self):
+        """Test that filter_output_spec preserves the output format."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="video_frame",
+                field=VideoFramePathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(format="BGR"),
+            ),
+        )
+
+        assert conv.filter_output_spec() is True
+        assert conv.output_media.field.format == "BGR"
+
+    def test_convert_renames_columns(self):
+        """Test that convert properly aliases video frame path columns to media path columns."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="video_frame",
+                field=VideoFramePathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "video_frame": pl.Series(
+                    ["/path/to/video1.mp4", "/path/to/video2.mp4"],
+                    dtype=pl.Categorical(),
+                ),
+                "video_frame_frame_index": pl.Series([0, 10], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert "media" in result.columns
+        assert "media_frame_index" in result.columns
+        assert result["media"][0] == "/path/to/video1.mp4"
+        assert result["media"][1] == "/path/to/video2.mp4"
+        assert result["media_frame_index"][0] == 0
+        assert result["media_frame_index"][1] == 10
+
+    def test_convert_single_frame(self):
+        """Test conversion with a single video frame."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="frame",
+                field=VideoFramePathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="media_path",
+                field=MediaPathField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "frame": pl.Series(["/video.mp4"], dtype=pl.Categorical()),
+                "frame_frame_index": pl.Series([42], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert result["media_path"][0] == "/video.mp4"
+        assert result["media_path_frame_index"][0] == 42
+
+    def test_convert_preserves_original_columns(self):
+        """Test that convert preserves the original input columns."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="vf",
+                field=VideoFramePathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="mp",
+                field=MediaPathField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "vf": pl.Series(["/vid.mp4"], dtype=pl.Categorical()),
+                "vf_frame_index": pl.Series([5], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        # Original columns should still be present (with_columns doesn't drop)
+        assert "vf" in result.columns
+        assert "vf_frame_index" in result.columns
+        # New columns should also be present
+        assert "mp" in result.columns
+        assert "mp_frame_index" in result.columns
+
+    def test_convert_multiple_frames_same_video(self):
+        """Test conversion with multiple frames from the same video."""
+        conv = VideoFramePathToMediaPathConverter()
+
+        setattr(
+            conv,
+            "input_frame",
+            AttributeSpec(
+                name="video_frame",
+                field=VideoFramePathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "video_frame": pl.Series(
+                    ["/path/to/video.mp4"] * 5,
+                    dtype=pl.Categorical(),
+                ),
+                "video_frame_frame_index": pl.Series([0, 10, 20, 30, 40], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert len(result) == 5
+        # All paths should be the same
+        for i in range(5):
+            assert result["media"][i] == "/path/to/video.mp4"
+        # Frame indices should be preserved
+        assert result["media_frame_index"].to_list() == [0, 10, 20, 30, 40]
+
+
+# ===== MediaPathToMediaInfoConverter =====
+
+
+class MediaPathToMediaInfoConverterTest:
+    """Tests for MediaPathToMediaInfoConverter."""
+
+    def test_filter_output_spec_sets_semantic(self):
+        """Test that filter_output_spec copies semantic from input."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="traffic"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="info",
+                field=MediaInfoField(),
+            ),
+        )
+
+        assert conv.filter_output_spec() is True
+        assert conv.output_info.field.semantic == "traffic"
+
+    def test_convert_image_path(self, test_image_path):
+        """Test that convert extracts image dimensions for image paths (null frame_index)."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "media": pl.Series([str(test_image_path)], dtype=pl.Categorical()),
+                "media_frame_index": pl.Series([None], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert "media_info" in result.columns
+        info = result["media_info"][0]
+        # test_image_path is 64x48 (from fixture)
+        assert info["width"] == 64
+        assert info["height"] == 48
+        # Image-specific: video fields should be null
+        assert info["fps"] is None
+        assert info["total_frames"] is None
+        assert info["duration"] is None
+        assert info["codec"] is None
+        assert info["frame_index"] is None
+
+    def test_convert_null_path_returns_null(self):
+        """Test that null paths produce null info."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "media": pl.Series([None], dtype=pl.Categorical()),
+                "media_frame_index": pl.Series([None], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert "media_info" in result.columns
+        info = result["media_info"][0]
+        assert info is None
+
+    def test_convert_nonexistent_image_path_returns_null(self, tmp_path):
+        """Test that non-existent image paths produce null info."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        nonexistent_path = str(tmp_path / "nonexistent.jpg")
+        df = pl.DataFrame(
+            {
+                "media": pl.Series([nonexistent_path], dtype=pl.Categorical()),
+                "media_frame_index": pl.Series([None], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert "media_info" in result.columns
+        info = result["media_info"][0]
+        assert info is None
+
+    def test_convert_multiple_images(self, tmp_path):
+        """Test conversion with multiple image paths."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        # Create two test images with different dimensions
+        img1_path = tmp_path / "img1.png"
+        img2_path = tmp_path / "img2.png"
+
+        img1 = PILImage.fromarray(np.random.randint(0, 255, (100, 200, 3), dtype=np.uint8))
+        img2 = PILImage.fromarray(np.random.randint(0, 255, (50, 75, 3), dtype=np.uint8))
+        img1.save(img1_path)
+        img2.save(img2_path)
+
+        df = pl.DataFrame(
+            {
+                "media": pl.Series([str(img1_path), str(img2_path)], dtype=pl.Categorical()),
+                "media_frame_index": pl.Series([None, None], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        assert len(result) == 2
+        info1 = result["media_info"][0]
+        info2 = result["media_info"][1]
+
+        assert info1["width"] == 200
+        assert info1["height"] == 100
+        assert info2["width"] == 75
+        assert info2["height"] == 50
+
+    def test_convert_output_schema_structure(self, test_image_path):
+        """Test that the output has the correct MediaInfoField struct schema."""
+        conv = MediaPathToMediaInfoConverter()
+
+        setattr(
+            conv,
+            "input_media",
+            AttributeSpec(
+                name="media",
+                field=MediaPathField(semantic="default"),
+            ),
+        )
+        setattr(
+            conv,
+            "output_info",
+            AttributeSpec(
+                name="media_info",
+                field=MediaInfoField(),
+            ),
+        )
+        conv.filter_output_spec()
+
+        df = pl.DataFrame(
+            {
+                "media": pl.Series([str(test_image_path)], dtype=pl.Categorical()),
+                "media_frame_index": pl.Series([None], dtype=pl.UInt32()),
+            }
+        )
+
+        result = conv.convert(df)
+
+        # Verify the struct has all expected fields
+        media_info_dtype = result["media_info"].dtype
+        assert isinstance(media_info_dtype, pl.Struct)
+        field_names = [f.name for f in media_info_dtype.fields]
+        assert "width" in field_names
+        assert "height" in field_names
+        assert "fps" in field_names
+        assert "total_frames" in field_names
+        assert "duration" in field_names
+        assert "codec" in field_names
+        assert "frame_index" in field_names

@@ -32,8 +32,11 @@ from datumaro.experimental.legacy.annotation_converters import (
 from datumaro.experimental.legacy.media_converters import (
     BackwardImageMediaConverter,
     BackwardMediaConverter,
+    BackwardMixedMediaConverter,
+    BackwardVideoMediaConverter,
     ForwardImageMediaConverter,
     ForwardMediaConverter,
+    ForwardMixedMediaConverter,
 )
 
 # Global registries
@@ -92,6 +95,8 @@ def register_builtin_backward_converters() -> None:
 
     # Register backward media converters
     register_backward_media_converter(BackwardImageMediaConverter)
+    register_backward_media_converter(BackwardVideoMediaConverter)
+    register_backward_media_converter(BackwardMixedMediaConverter)
 
     # Register backward annotation converters
     register_backward_annotation_converter(BackwardBboxAnnotationConverter)
@@ -109,15 +114,35 @@ def get_forward_media_converter(
 ) -> ForwardMediaConverter | None:
     """Get forward converter for a dataset by trying registered converters.
 
+    Strategy:
+    - If the dataset contains *any* video-related media (VideoFrame or
+      whole Video items, possibly mixed with images), the
+      :class:`ForwardMixedMediaConverter` is used with a unified
+      ``media_path_field``.
+    - If the dataset contains *only* images (no video at all),
+      the :class:`ForwardImageMediaConverter` is used with an
+      ``image_path_field``.
+    - Otherwise, fall back to the forward media-converter registry so that
+      custom or future media types are still supported.
+
     Args:
         dataset: Legacy dataset to create converter from
         semantic: The semantic type for the converted fields
         name_prefix: Prefix to prepend to all field names
     """
-    # Get the dataset's media type
-    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
+    # Try mixed-media converter first — it activates when any VideoFrame
+    # or whole Video items are present (mixed or video-only datasets).
+    mixed = ForwardMixedMediaConverter.create(dataset, semantic, name_prefix)
+    if mixed is not None:
+        return mixed
 
-    # Try converter registered for this specific media type
+    # No video-related items found — try the image-only converter.
+    image = ForwardImageMediaConverter.create(dataset, semantic, name_prefix)
+    if image is not None:
+        return image
+
+    # Fall back to the registry for custom / future media types.
+    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
     if media_type in _media_converter_classes:
         converter_class = _media_converter_classes[media_type]
         return converter_class.create(dataset, semantic, name_prefix)

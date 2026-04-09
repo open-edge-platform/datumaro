@@ -57,6 +57,8 @@ from datumaro.experimental.converters.media_converters import (
     MediaPathToImageCallableConverter,
     MediaPathToImageConverter,
     MediaPathToImagePathConverter,
+    MediaPathToMediaInfoConverter,
+    VideoFramePathToMediaPathConverter,
     VideoInfoToMediaInfoConverter,
 )
 from datumaro.experimental.converters.registry import (
@@ -126,6 +128,7 @@ __all__ = [
     "MediaPathToImageCallableConverter",
     "MediaPathToImageConverter",
     "MediaPathToImagePathConverter",
+    "MediaPathToMediaInfoConverter",
     "NumericFieldDtypeConverter",
     "NumericFieldShapeConverter",
     "PolygonCoordinateConverter",
@@ -141,6 +144,7 @@ __all__ = [
     "StringFieldShapeConverter",
     "VideoFrameCallableToImageCallableConverter",
     "VideoFramePathToImageConverter",
+    "VideoFramePathToMediaPathConverter",
     "VideoFrameToImageCallableConverter",
     "VideoInfoToMediaInfoConverter",
     "_can_lazy_converter_handle_conversion",

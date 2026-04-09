@@ -351,7 +351,7 @@ class Dataset(Generic[DType]):
             sample: The sample instance to add to the dataset
         """
         if self._transforms is not None:
-            raise RuntimeError("Transformed dataset are immutable.")
+            raise RuntimeError("Transformed dataset is immutable.")
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
@@ -393,7 +393,7 @@ class Dataset(Generic[DType]):
             return
 
         if self._transforms is not None:
-            raise RuntimeError("Transformed datasets are immutable.")
+            raise RuntimeError("Transformed dataset is immutable.")
 
         # Build all rows in a column-wise fashion to avoid per-sample DataFrame overhead
         column_data: dict[str, list[pl.Series]] = {}
@@ -574,7 +574,7 @@ class Dataset(Generic[DType]):
             IndexError: If the row index is out of bounds
         """
         if self._transforms is not None:
-            raise RuntimeError("Transformed dataset are immutable.")
+            raise RuntimeError("Transformed dataset is immutable.")
 
         if row_idx < 0 or row_idx >= len(self.df):
             raise IndexError("Row index out of bounds.")
@@ -594,7 +594,7 @@ class Dataset(Generic[DType]):
             IndexError: If the row index is out of bounds
         """
         if self._transforms is not None:
-            raise RuntimeError("Transformed dataset are immutable.")
+            raise RuntimeError("Transformed dataset is immutable.")
 
         if row_idx < 0 or row_idx >= len(self.df):
             raise IndexError("Row index out of bounds.")
