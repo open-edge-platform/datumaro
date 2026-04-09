@@ -10,15 +10,17 @@ permissions: {}
 
 jobs:
   pre-approve:
-    # Avoid running the 'auto-approve' environment if we don't need to.
+    # Only run in the upstream repository, not in forks
     name: Pre-Approve
     runs-on: ubuntu-latest
     outputs:
       commit_sha: ${{ steps.capture_sha.outputs.sha }}
     if: ${{
+      github.repository_owner == 'AlexanderBarabanov' &&
+      github.repository == github.event.pull_request.head.repo.full_name &&
       github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
       github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
-      github.triggering_actor == 'test-renovate-bot-12345[bot]'
+      github.event.sender.login == 'test-renovate-bot-12345[bot]'
       }}
     steps:
       - name: Capture Commit SHA
@@ -28,11 +30,16 @@ jobs:
           echo "Captured commit SHA: ${{ github.event.pull_request.head.sha }}"
           
       - name: Debug
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          REQUESTED_REVIEWER: ${{ github.event.requested_reviewer.login }}
+          SENDER_LOGIN: ${{ github.event.sender.login }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "Triggering Actor: ${{ github.triggering_actor }}"
-          echo "Requested Reviewer: ${{ github.event.requested_reviewer.login }}"
-          echo "PR Head SHA: ${{ github.event.pull_request.head.sha }}"
+          echo "PR Author: $PR_AUTHOR"
+          echo "Requested Reviewer: $REQUESTED_REVIEWER"
+          echo "Review Requested By (sender): $SENDER_LOGIN"
+          echo "PR Head SHA: $PR_HEAD_SHA"
 
   approve:
     name: Approve
@@ -43,21 +50,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Debug
+        env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          REQUESTED_REVIEWER: ${{ github.event.requested_reviewer.login }}
+          SENDER_LOGIN: ${{ github.event.sender.login }}
+          ORIGINAL_COMMIT_SHA: ${{ needs.pre-approve.outputs.commit_sha }}
         run: |
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-          echo "Triggering Actor: ${{ github.triggering_actor }}"
-          echo "Requested Reviewer: ${{ github.event.requested_reviewer.login }}"
-          echo "Original Commit SHA: ${{ needs.pre-approve.outputs.commit_sha }}"
+          echo "PR Author: $PR_AUTHOR"
+          echo "Requested Reviewer: $REQUESTED_REVIEWER"
+          echo "Review Requested By (sender): $SENDER_LOGIN"
+          echo "Original Commit SHA: $ORIGINAL_COMMIT_SHA"
 
       - name: Validate and Approve PR
         # Approve the PR if all the following conditions are true:
+        # - running in AlexanderBarabanov's repository (not a fork)
+        # - the PR is not from a fork (same repository)
         # - the PR was created by test-renovate-bot-12345[bot]
         # - review was requested from AlexanderBarabanov
-        # - the workflow was triggered by the bot (prevents unauthorized review requests)
+        # - review was requested BY test-renovate-bot-12345[bot]
         if: ${{
+          github.repository_owner == 'AlexanderBarabanov' &&
+          github.repository == github.event.pull_request.head.repo.full_name &&
           github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
           github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
-          github.triggering_actor == 'test-renovate-bot-12345[bot]'
+          github.event.sender.login == 'test-renovate-bot-12345[bot]'
           }}
         env:
           GH_TOKEN: ${{ secrets.AUTO_APPROVE_TOKEN }}
@@ -65,7 +81,7 @@ jobs:
           REPO: ${{ github.repository }}
           ORIGINAL_SHA: ${{ needs.pre-approve.outputs.commit_sha }}
         run: |
-          # Defense-in-depth: Re-validate PR state at approval time
+          # Defense-in-depth: re-validate PR state at approval time
           echo "Verifying PR author..."
           pr_author=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '.user.login')
           
@@ -99,5 +115,4 @@ jobs:
           echo "All security checks passed. Approving PR #${PR_NUMBER}..."
           gh pr review "${PR_NUMBER}" \
             --repo "${REPO}" \
-            --approve \
-            --body "Auto-approved: Renovate PR with AlexanderBarabanov as reviewer"
+            --approve
