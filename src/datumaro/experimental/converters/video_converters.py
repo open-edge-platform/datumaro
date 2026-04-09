@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 import polars as pl
 
-from datumaro.experimental.converters.base import Converter
+from datumaro.experimental.converters.base import MediaBridgeConverter
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.images import ImageCallableField, ImageField
 from datumaro.experimental.fields.videos import VideoFrameCallableField, VideoFramePathField
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 @converter(lazy=True)
-class VideoFramePathToImageConverter(Converter):
+class VideoFramePathToImageConverter(MediaBridgeConverter):
     """
     Lazy converter that loads video frames from VideoFramePathField to ImageField.
 
@@ -120,7 +120,7 @@ class VideoFramePathToImageConverter(Converter):
 
 
 @converter
-class VideoFrameToImageCallableConverter(Converter):
+class VideoFrameToImageCallableConverter(MediaBridgeConverter):
     """
     Converter that wraps VideoFramePathField as ImageCallableField.
 
@@ -184,7 +184,7 @@ class VideoFrameToImageCallableConverter(Converter):
 
 
 @converter
-class VideoFrameCallableToImageCallableConverter(Converter):
+class VideoFrameCallableToImageCallableConverter(MediaBridgeConverter):
     """
     Converter that adapts VideoFrameCallableField to ImageCallableField.
 

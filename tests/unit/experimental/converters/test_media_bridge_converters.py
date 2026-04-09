@@ -1887,3 +1887,149 @@ class MediaPathToMediaInfoConverterTest:
         assert "duration" in field_names
         assert "codec" in field_names
         assert "frame_index" in field_names
+
+
+class DirectOnlyAllowsMediaBridgeConversionsTest:
+    """Tests that direct_only=True allows media bridge converters.
+
+    Media bridge converters (MediaPath→ImagePath, MediaInfo→ImageInfo, etc.)
+    should always be allowed, even with direct_only=True, because they
+    represent format-level narrowing/widening of media representations
+    rather than semantic cross-field-type transformations.
+    """
+
+    def test_direct_only_allows_media_path_to_image_path(self):
+        """Test that MediaPathField→ImagePathField works with direct_only=True."""
+        from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.schema import AttributeInfo, Schema
+
+        source_schema = Schema(
+            attributes={
+                "media": AttributeInfo(
+                    type=str,
+                    field=MediaPathField(),
+                ),
+            }
+        )
+        target_schema = Schema(
+            attributes={
+                "image": AttributeInfo(
+                    type=str,
+                    field=ImagePathField(),
+                ),
+            }
+        )
+
+        # Should succeed with direct_only=True since media→image is a media bridge
+        path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+        assert "image" in path.converters
+
+    def test_direct_only_allows_media_info_to_image_info(self):
+        """Test that MediaInfoField→ImageInfoField works with direct_only=True."""
+        from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.schema import AttributeInfo, Schema
+
+        source_schema = Schema(
+            attributes={
+                "info": AttributeInfo(
+                    type=str,
+                    field=MediaInfoField(),
+                ),
+            }
+        )
+        target_schema = Schema(
+            attributes={
+                "info": AttributeInfo(
+                    type=str,
+                    field=ImageInfoField(),
+                ),
+            }
+        )
+
+        path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+        assert "info" in path.converters
+
+    def test_direct_only_allows_image_path_to_media_path(self):
+        """Test that ImagePathField→MediaPathField works with direct_only=True."""
+        from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.schema import AttributeInfo, Schema
+
+        source_schema = Schema(
+            attributes={
+                "image": AttributeInfo(
+                    type=str,
+                    field=ImagePathField(),
+                ),
+            }
+        )
+        target_schema = Schema(
+            attributes={
+                "media": AttributeInfo(
+                    type=str,
+                    field=MediaPathField(),
+                ),
+            }
+        )
+
+        path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+        assert "media" in path.converters
+
+    def test_direct_only_allows_video_frame_path_to_media_path(self):
+        """Test that VideoFramePathField→MediaPathField works with direct_only=True."""
+        from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.schema import AttributeInfo, Schema
+
+        source_schema = Schema(
+            attributes={
+                "frame": AttributeInfo(
+                    type=str,
+                    field=VideoFramePathField(),
+                ),
+            }
+        )
+        target_schema = Schema(
+            attributes={
+                "media": AttributeInfo(
+                    type=str,
+                    field=MediaPathField(),
+                ),
+            }
+        )
+
+        path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+        assert "media" in path.converters
+
+    def test_direct_only_allows_combined_media_to_image_conversion(self):
+        """Test that a schema with both MediaPath and MediaInfo converts to
+        ImagePath and ImageInfo with direct_only=True."""
+        from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.schema import AttributeInfo, Schema
+
+        source_schema = Schema(
+            attributes={
+                "media": AttributeInfo(
+                    type=str,
+                    field=MediaPathField(),
+                ),
+                "info": AttributeInfo(
+                    type=str,
+                    field=MediaInfoField(),
+                ),
+            }
+        )
+        target_schema = Schema(
+            attributes={
+                "image": AttributeInfo(
+                    type=str,
+                    field=ImagePathField(),
+                ),
+                "image_info": AttributeInfo(
+                    type=str,
+                    field=ImageInfoField(),
+                ),
+            }
+        )
+
+        path, _ = find_conversion_path(source_schema, target_schema, direct_only=True)
+        assert "image" in path.converters
+        assert "image_info" in path.converters

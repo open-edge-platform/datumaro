@@ -8,7 +8,7 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
-from datumaro.experimental.converters.base import Converter, copy_columns_with_shape
+from datumaro.experimental.converters.base import Converter, MediaBridgeConverter, copy_columns_with_shape
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields import ImageBytesField
 from datumaro.experimental.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
@@ -193,7 +193,7 @@ class ImageDtypeConverter(Converter):
 
 
 @converter(lazy=True)
-class ImagePathToImageConverter(Converter):
+class ImagePathToImageConverter(MediaBridgeConverter):
     """
     Lazy converter that loads images from file paths.
 
@@ -397,7 +397,7 @@ class ImagePathToImageConverter(Converter):
 
 
 @converter
-class ImageToImageInfo(Converter):
+class ImageToImageInfo(MediaBridgeConverter):
     """
     Lazy converter that loads images from file paths using Pillow.
 
@@ -443,7 +443,7 @@ class ImageToImageInfo(Converter):
 
 
 @converter(lazy=True)
-class ImageBytesToImageConverter(Converter):
+class ImageBytesToImageConverter(MediaBridgeConverter):
     """
     Lazy converter that decodes images from byte data.
 
@@ -569,7 +569,7 @@ class ImageBytesToImageConverter(Converter):
 
 
 @converter(lazy=True)
-class ImageCallableToImageConverter(Converter):
+class ImageCallableToImageConverter(MediaBridgeConverter):
     """
     Lazy converter that executes callables to generate image data.
 
@@ -724,7 +724,7 @@ class ChannelsFirstConverter(Converter):
 
 
 @converter
-class ImagePathToImageInfoConverter(Converter):
+class ImagePathToImageInfoConverter(MediaBridgeConverter):
     """
     Converter that reads image dimensions from file paths without loading pixel data.
 
@@ -786,7 +786,7 @@ class ImagePathToImageInfoConverter(Converter):
 
 
 @converter
-class ImagePathToImageCallableConverter(Converter):
+class ImagePathToImageCallableConverter(MediaBridgeConverter):
     """
     Converter that wraps ImagePathField as ImageCallableField.
 

@@ -212,6 +212,22 @@ class ConversionError(Exception):
     """Exception raised when conversion fails."""
 
 
+class MediaBridgeConverter(Converter, ABC):
+    """Base class for media bridge converters.
+
+    Media bridge converters handle conversions between related media field
+    types (e.g., MediaPathField ↔ ImagePathField, MediaInfoField ↔
+    ImageInfoField, ImageCallableField → ImageField, etc.).
+
+    These converters are always allowed even when ``direct_only=True``
+    because they represent format-level narrowing or widening of media
+    representations rather than semantic cross-field-type transformations.
+
+    Subclass this instead of :class:`Converter` when the converter bridges
+    between different representations of the same media content.
+    """
+
+
 class AttributeRemapperConverter(Converter):
     """
     Special converter for renaming/selecting attributes and dropping others.

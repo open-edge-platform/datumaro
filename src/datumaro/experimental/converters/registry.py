@@ -13,7 +13,12 @@ from typing import TYPE_CHECKING, NamedTuple, get_type_hints, overload
 import polars as pl
 
 from datumaro.experimental.categories import Categories
-from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter
+from datumaro.experimental.converters.base import (
+    AttributeRemapperConverter,
+    ConversionError,
+    Converter,
+    MediaBridgeConverter,
+)
 from datumaro.experimental.fields.base import Field
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeSpec, Schema
@@ -262,8 +267,9 @@ def _get_applicable_converters(
         if not available_field_types.issuperset(from_types.values()):
             continue
 
-        # Skip cross-field-type converters when direct_only is True
-        if direct_only:
+        # Skip cross-field-type converters when direct_only is True,
+        # but always allow media bridge converters (e.g. MediaPath→ImagePath).
+        if direct_only and not issubclass(converter_class, MediaBridgeConverter):
             to_types = converter_class.get_to_types()
             input_field_types = set(from_types.values())
             output_field_types = set(to_types.values())
@@ -773,7 +779,7 @@ def converter(
                 return df
 
         @converter(lazy=True)
-        class ImagePathToImageConverter(Converter):
+        class ImagePathToImageConverter(MediaBridgeConverter):
             input_path: AttributeSpec
             output_image: AttributeSpec
 
@@ -843,8 +849,9 @@ def _get_reachable_field_types(
             from_types = converter_class.get_from_types()
             to_types = converter_class.get_to_types()
 
-            # Skip cross-field-type converters when direct_only is True
-            if direct_only:
+            # Skip cross-field-type converters when direct_only is True,
+            # but always allow media bridge converters.
+            if direct_only and not issubclass(converter_class, MediaBridgeConverter):
                 input_field_types = set(from_types.values())
                 output_field_types = set(to_types.values())
                 if not output_field_types.issubset(input_field_types):
