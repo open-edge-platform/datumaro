@@ -17,7 +17,7 @@ on:
 permissions: {}
 jobs:
   pre-commit:
-    runs-on: overflow
+    runs-on: ${{ github.repository_owner == 'open-edge-platform' && 'overflow' || 'ubuntu-latest' }}
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1

@@ -35,7 +35,8 @@ jobs:
     # Use more descriptive job name for better visibility in CI results
     # Overflow labeled runner is equivalent to ubuntu-latest in terms of resources
     name: pr test (${{ matrix.os == 'overflow' && 'ubuntu-24.04' || matrix.os }}, Python ${{ matrix.python-version }})
-    runs-on: ${{ matrix.os }}
+    # Use overflow runner for open-edge-platform repos, fall back to ubuntu-latest for forks
+    runs-on: ${{ (matrix.os == 'overflow' && github.repository_owner != 'open-edge-platform') && 'ubuntu-latest' || matrix.os }}
     steps:
       - name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1

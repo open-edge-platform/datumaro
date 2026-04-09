@@ -11,7 +11,7 @@ permissions: {}
 
 jobs:
   Build-Docs:
-    runs-on: overflow
+    runs-on: ${{ github.repository_owner == 'open-edge-platform' && 'overflow' || 'ubuntu-latest' }}
     permissions:
       contents: write
     steps:
