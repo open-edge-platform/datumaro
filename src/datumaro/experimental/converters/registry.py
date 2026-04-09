@@ -992,7 +992,7 @@ class ConverterTransform(Transform):
         self._conversion_paths = conversion_paths
         self._df_input_columns = set()
         self._df = pl.DataFrame()
-        self._applied_converters = set()
+        self._applied_converters: set[Converter] = set()
 
         self.apply(batch_outputs)
 
@@ -1031,14 +1031,14 @@ class ConverterTransform(Transform):
 
             if converters is not None:
                 for converter in converters:
-                    if id(converter) not in self._applied_converters:
+                    if converter not in self._applied_converters:
                         if not self._can_apply_converter(converter):
                             # Defer this converter; it will be attempted again on future apply() calls
                             # once the necessary input columns have been materialized.
                             continue
 
                         self._df = converter.convert(self._df)
-                        self._applied_converters.add(id(converter))
+                        self._applied_converters.add(converter)
 
         return self._df
 

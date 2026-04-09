@@ -1359,3 +1359,112 @@ def test_find_conversion_path_prefers_direct_over_cross_field_type():
         "KeypointsToBBoxConverter should NOT be used when BBoxField data is already available. "
         "Direct BBoxField→BBoxField conversion should be preferred."
     )
+
+
+class _StubParent:
+    """Minimal parent transform that returns an empty DataFrame for pickle tests.
+
+    Defined at module level so it can be pickled (local classes cannot).
+    """
+
+    def __init__(self, schema: Schema):
+        self._schema = schema
+        self._df = pl.DataFrame()
+
+    def apply(self, fields) -> pl.DataFrame:
+        return self._df
+
+    def get_lazy_attributes(self) -> set[str]:
+        return set()
+
+    def get_batch_attributes(self) -> list[str]:
+        return []
+
+    def slice(self, offset, length=None):
+        return self
+
+    def __len__(self):
+        return 0
+
+
+def test_converter_transform_pickle_roundtrip_preserves_applied_converters():
+    """Test that _applied_converters survives a pickle round-trip.
+
+    When a ConverterTransform is pickled (e.g., for DataLoader workers) and
+    then unpickled, the _applied_converters set must correctly track which
+    converters have already been run so they are not re-executed.
+
+    Regression test for: previously _applied_converters stored id() ints which
+    became stale after unpickling, causing converters (e.g., BBoxFormatConverter
+    XYWH→XYXY) to re-execute and silently corrupt data.  The fix stores
+    Converter object references directly; pickle preserves object identity
+    within a single stream, so the set naturally stays consistent.
+    """
+    import pickle
+
+    from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
+
+    # Set up a schema pair that requires BBoxFormatConverter (xywh → x1y1x2y2).
+    source_schema = Schema(
+        attributes={
+            "bboxes": AttributeInfo(
+                type=np.ndarray | None,
+                field=BBoxField(semantic="default", dtype=pl.Float32(), format="xywh"),
+            ),
+        }
+    )
+    target_schema = Schema(
+        attributes={
+            "bboxes": AttributeInfo(
+                type=np.ndarray | None,
+                field=BBoxField(semantic="default", dtype=pl.Float32(), format="x1y1x2y2"),
+            ),
+        }
+    )
+
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
+
+    # Collect all unique converter objects that exist in the conversion paths.
+    all_converters: set[Converter] = set()
+    for convs in conversion_paths.converters.values():
+        all_converters.update(convs)
+    assert len(all_converters) > 0, "Expected at least one converter in the conversion path"
+
+    # Build a minimal ConverterTransform with a trivial parent.
+    parent = _StubParent(source_schema)
+    ct = ConverterTransform(parent, target_schema, conversion_paths)
+
+    # Mark all converters as applied to simulate the common post-init state.
+    ct._applied_converters = set(all_converters)
+    applied_before = len(ct._applied_converters)
+
+    # Pickle round-trip — this is what happens when a DataLoader sends the
+    # dataset to a worker process.
+    data = pickle.dumps(ct)
+    ct2 = pickle.loads(data)
+
+    # Collect the converter objects that live in the deserialized _conversion_paths.
+    new_converters: set[Converter] = set()
+    for convs in ct2._conversion_paths.converters.values():
+        new_converters.update(convs)
+
+    # The restored _applied_converters must contain the same (deserialized)
+    # converter objects that appear in _conversion_paths, not stale references.
+    assert len(ct2._applied_converters) == applied_before, (
+        f"Expected {applied_before} applied converters after unpickling, got {len(ct2._applied_converters)}"
+    )
+
+    # Every converter in _applied_converters must be one of the converter
+    # objects living in the deserialized _conversion_paths.
+    for conv in ct2._applied_converters:
+        assert conv in new_converters, (
+            "After unpickling, _applied_converters should reference the same "
+            "converter objects as _conversion_paths. Found a stale reference."
+        )
+
+    # Conversely, every converter in the paths should already be marked applied.
+    for conv in new_converters:
+        assert conv in ct2._applied_converters, (
+            "A converter from _conversion_paths is missing from _applied_converters "
+            "after unpickling — it would be incorrectly re-executed in a worker."
+        )
