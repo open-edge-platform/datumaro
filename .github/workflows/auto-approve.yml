@@ -16,11 +16,11 @@ jobs:
     outputs:
       commit_sha: ${{ steps.capture_sha.outputs.sha }}
     if: ${{
-      github.repository_owner == 'AlexanderBarabanov' &&
+      github.repository_owner == 'open-edge-platform' &&
       github.repository == github.event.pull_request.head.repo.full_name &&
-      github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-      github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
-      github.event.sender.login == 'test-renovate-bot-12345[bot]'
+      github.event.pull_request.user.login == 'oep-renovate[bot]' &&
+      github.event.requested_reviewer.login == 'sys-geti' &&
+      github.event.sender.login == 'oep-renovate[bot]'
       }}
     steps:
       - name: Capture Commit SHA
@@ -63,17 +63,17 @@ jobs:
 
       - name: Validate and Approve PR
         # Approve the PR if all the following conditions are true:
-        # - running in AlexanderBarabanov's repository (not a fork)
+        # - running in open-edge-platform repository (not a fork)
         # - the PR is not from a fork (same repository)
-        # - the PR was created by test-renovate-bot-12345[bot]
-        # - review was requested from AlexanderBarabanov
-        # - review was requested BY test-renovate-bot-12345[bot]
+        # - the PR was created by oep-renovate[bot]
+        # - review was requested from sys-geti
+        # - review was requested by oep-renovate[bot]
         if: ${{
-          github.repository_owner == 'AlexanderBarabanov' &&
+          github.repository_owner == 'open-edge-platform' &&
           github.repository == github.event.pull_request.head.repo.full_name &&
-          github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-          github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
-          github.event.sender.login == 'test-renovate-bot-12345[bot]'
+          github.event.pull_request.user.login == 'oep-renovate[bot]' &&
+          github.event.requested_reviewer.login == 'sys-geti' &&
+          github.event.sender.login == 'oep-renovate[bot]'
           }}
         env:
           GH_TOKEN: ${{ secrets.AUTO_APPROVE_TOKEN }}
@@ -85,16 +85,16 @@ jobs:
           echo "Verifying PR author..."
           pr_author=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '.user.login')
           
-          if [ "$pr_author" != "test-renovate-bot-12345[bot]" ]; then
-            echo "Error: PR author is not test-renovate-bot-12345[bot], actual: ${pr_author}"
+          if [ "$pr_author" != "oep-renovate[bot]" ]; then
+            echo "Error: PR author is not oep-renovate[bot], actual: ${pr_author}"
             exit 1
           fi
           
-          echo "Verifying AlexanderBarabanov is a requested reviewer..."
-          is_reviewer=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.requested_reviewers[].login] | contains(["AlexanderBarabanov"])')
+          echo "Verifying sys-geti is a requested reviewer..."
+          is_reviewer=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.requested_reviewers[].login] | contains(["sys-geti"])')
           
           if [ "$is_reviewer" != "true" ]; then
-            echo "Error: AlexanderBarabanov is not a requested reviewer"
+            echo "Error: sys-geti is not a requested reviewer"
             exit 1
           fi
           
