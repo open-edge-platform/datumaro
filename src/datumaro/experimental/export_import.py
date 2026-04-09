@@ -825,7 +825,10 @@ def export_dataset(
             otherwise, it is ignored.
         direct_only: If True, only apply converters where all output field types
             match (are a subset of) the input field types. Cross-field-type
-            converters (e.g., BBoxField→PolygonField) are skipped. Only has an
+            converters (e.g., BBoxField→PolygonField) are skipped.
+            :class:`~datumaro.experimental.converters.base.MediaBridgeConverter`
+            subclasses (e.g., MediaPathField→ImagePathField) are always
+            allowed regardless of this flag. Only has an
             effect when ``data_format`` is set to a non-Datumaro format that
             requires schema conversion.
         data_format: Target data format for export. When ``None`` (default),

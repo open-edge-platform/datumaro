@@ -253,6 +253,9 @@ def _get_applicable_converters(
         iteration: Current iteration count for uniqueness
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction
+            because they represent format-level narrowing/widening of media
+            representations rather than semantic transformations.
     """
     applicable: list[tuple[Converter, _SchemaState]] = []
 
@@ -575,6 +578,7 @@ def _find_conversion_path_for_semantic(
         optional_field_types: Set of optional field types for this semantic
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction.
 
     Returns:
         Tuple of (list of converters needed for this semantic group, updated target state)
@@ -831,6 +835,7 @@ def _get_reachable_field_types(
         semantic: The semantic tag to filter by (only fields with matching semantic are considered)
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction.
 
     Returns:
         Set of all reachable field types (including those already in start_state)
@@ -920,6 +925,8 @@ def find_conversion_path(
             are a subset of the input field types (no cross-field-type conversions).
             For example, BBoxField→BBoxField format/dtype converters are allowed,
             but BBoxField→PolygonField converters are skipped.
+            :class:`MediaBridgeConverter` subclasses (e.g., MediaPathField→ImagePathField)
+            are always allowed regardless of this flag.
 
     Returns:
         Tuple of (ConversionPaths with separated batch and lazy converter lists,

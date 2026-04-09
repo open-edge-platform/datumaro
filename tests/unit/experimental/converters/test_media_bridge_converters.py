@@ -1927,12 +1927,14 @@ class DirectOnlyAllowsMediaBridgeConversionsTest:
     def test_direct_only_allows_media_info_to_image_info(self):
         """Test that MediaInfoField→ImageInfoField works with direct_only=True."""
         from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.fields.images import ImageInfo
+        from datumaro.experimental.media import MediaInfo
         from datumaro.experimental.schema import AttributeInfo, Schema
 
         source_schema = Schema(
             attributes={
                 "info": AttributeInfo(
-                    type=str,
+                    type=MediaInfo,
                     field=MediaInfoField(),
                 ),
             }
@@ -1940,7 +1942,7 @@ class DirectOnlyAllowsMediaBridgeConversionsTest:
         target_schema = Schema(
             attributes={
                 "info": AttributeInfo(
-                    type=str,
+                    type=ImageInfo,
                     field=ImageInfoField(),
                 ),
             }
@@ -2003,6 +2005,8 @@ class DirectOnlyAllowsMediaBridgeConversionsTest:
         """Test that a schema with both MediaPath and MediaInfo converts to
         ImagePath and ImageInfo with direct_only=True."""
         from datumaro.experimental.converters.registry import find_conversion_path
+        from datumaro.experimental.fields.images import ImageInfo
+        from datumaro.experimental.media import MediaInfo
         from datumaro.experimental.schema import AttributeInfo, Schema
 
         source_schema = Schema(
@@ -2012,7 +2016,7 @@ class DirectOnlyAllowsMediaBridgeConversionsTest:
                     field=MediaPathField(),
                 ),
                 "info": AttributeInfo(
-                    type=str,
+                    type=MediaInfo,
                     field=MediaInfoField(),
                 ),
             }
@@ -2024,7 +2028,7 @@ class DirectOnlyAllowsMediaBridgeConversionsTest:
                     field=ImagePathField(),
                 ),
                 "image_info": AttributeInfo(
-                    type=str,
+                    type=ImageInfo,
                     field=ImageInfoField(),
                 ),
             }
