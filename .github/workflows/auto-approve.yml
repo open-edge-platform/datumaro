@@ -1,0 +1,81 @@
+name: Approve Renovate PR
+
+on:
+  pull_request:
+    types:
+      - assigned
+      - opened
+      - synchronize
+
+# No permissions by default, no specific permissions are required for this workflow
+permissions: {}
+
+jobs:
+  pre-approve:
+    # Avoid running the 'auto-approve' environment if we don't need to.
+    name: Pre-Approve
+    runs-on: ubuntu-latest
+    if: ${{
+      github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
+      contains(github.event.pull_request.assignees.*.login, 'AlexanderBarabvanov') &&
+      github.triggering_actor == 'test-renovate-bot-12345[bot]'
+      }}
+    steps:
+      - name: Debug
+        run: |
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Triggering Actor: ${{ github.triggering_actor }}"
+          echo "Assignees: ${{ join(github.event.pull_request.assignees.*.login, ', ') }}"
+
+  approve:
+    name: Approve
+    needs: pre-approve
+    environment:
+      name: auto-approve
+      deployment: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug
+        run: |
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Triggering Actor: ${{ github.triggering_actor }}"
+          echo "Assignees: ${{ join(github.event.pull_request.assignees.*.login, ', ') }}"
+
+      - name: Validate and Approve PR
+        # Approve the PR if all the following conditions are true:
+        # - the PR was created by test-renovate-bot-12345[bot]
+        # - the PR is assigned to AlexanderBarabvanov
+        # - the workflow was triggered by the bot (prevents unauthorized assignment)
+        if: ${{
+          github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
+          contains(github.event.pull_request.assignees.*.login, 'AlexanderBarabvanov') &&
+          github.triggering_actor == 'test-renovate-bot-12345[bot]'
+          }}
+        env:
+          TOKEN: ${{ secrets.AUTO_APPROVE_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          echo ${TOKEN} | gh auth login --with-token
+
+          # Verify PR author is test-renovate-bot-12345[bot]
+          echo "Verifying PR author..."
+          pr_author=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}" --jq '.user.login')
+          
+          if [ "$pr_author" != "test-renovate-bot-12345[bot]" ]; then
+            echo "Error: PR author is not test-renovate-bot-12345[bot], actual: $pr_author"
+            exit 1
+          fi
+
+          # Verify AlexanderBarabvanov is assigned to the PR
+          echo "Verifying AlexanderBarabvanov is assigned..."
+          is_assigned=$(gh api "/repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}" --jq '[.assignees[].login] | contains(["AlexanderBarabvanov"])')
+
+          if [ "$is_assigned" != "true" ]; then
+            echo "Error: AlexanderBarabvanov is not assigned to this PR"
+            exit 1
+          fi
+
+          # All checks passed, approve the PR
+          echo "All security checks passed. Approving PR #${PULL_REQUEST_NUMBER}..."
+          # gh -R ${GITHUB_REPOSITORY} pr review ${PULL_REQUEST_NUMBER} --approve --body "Auto-approved: Renovate PR assigned to AlexanderBarabvanov"
