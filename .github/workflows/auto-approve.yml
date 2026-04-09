@@ -17,7 +17,7 @@ jobs:
       commit_sha: ${{ steps.capture_sha.outputs.sha }}
     if: ${{
       github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-      github.event.requested_reviewer.login == 'AlexanderBarabvanov' &&
+      github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
       github.triggering_actor == 'test-renovate-bot-12345[bot]'
       }}
     steps:
@@ -52,11 +52,11 @@ jobs:
       - name: Validate and Approve PR
         # Approve the PR if all the following conditions are true:
         # - the PR was created by test-renovate-bot-12345[bot]
-        # - review was requested from AlexanderBarabvanov
+        # - review was requested from AlexanderBarabanov
         # - the workflow was triggered by the bot (prevents unauthorized review requests)
         if: ${{
           github.event.pull_request.user.login == 'test-renovate-bot-12345[bot]' &&
-          github.event.requested_reviewer.login == 'AlexanderBarabvanov' &&
+          github.event.requested_reviewer.login == 'AlexanderBarabanov' &&
           github.triggering_actor == 'test-renovate-bot-12345[bot]'
           }}
         env:
@@ -74,11 +74,11 @@ jobs:
             exit 1
           fi
           
-          echo "Verifying AlexanderBarabvanov is a requested reviewer..."
-          is_reviewer=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.requested_reviewers[].login] | contains(["AlexanderBarabvanov"])')
+          echo "Verifying AlexanderBarabanov is a requested reviewer..."
+          is_reviewer=$(gh api "/repos/${REPO}/pulls/${PR_NUMBER}" --jq '[.requested_reviewers[].login] | contains(["AlexanderBarabanov"])')
           
           if [ "$is_reviewer" != "true" ]; then
-            echo "Error: AlexanderBarabvanov is not a requested reviewer"
+            echo "Error: AlexanderBarabanov is not a requested reviewer"
             exit 1
           fi
           
@@ -100,4 +100,4 @@ jobs:
           gh pr review "${PR_NUMBER}" \
             --repo "${REPO}" \
             --approve \
-            --body "Auto-approved: Renovate PR with AlexanderBarabvanov as reviewer"
+            --body "Auto-approved: Renovate PR with AlexanderBarabanov as reviewer"
