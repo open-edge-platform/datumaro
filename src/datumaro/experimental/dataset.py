@@ -652,6 +652,9 @@ class Dataset(Generic[DType]):
                 converters (e.g., BBoxField→PolygonField) are skipped. Converters
                 that operate within the same field type (e.g., BBoxField→BBoxField
                 for format or dtype changes) are still allowed.
+                :class:`~datumaro.experimental.converters.base.MediaBridgeConverter`
+                subclasses (e.g., MediaPathField→ImagePathField) are always
+                allowed regardless of this flag.
 
         Returns:
             A new Dataset instance with the converted schema
@@ -858,6 +861,8 @@ class Dataset(Generic[DType]):
             direct_only: If True, only apply converters where all output field types
                 match (are a subset of) the input field types. Cross-field-type
                 converters (e.g., BBoxField→PolygonField) are skipped.
+                :class:`~datumaro.experimental.converters.base.MediaBridgeConverter`
+                subclasses are always allowed regardless of this flag.
         """
         converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema, direct_only=direct_only)
         self.df = self.df.vstack(converted_dataset.df)
@@ -882,6 +887,8 @@ def convert_sample_to_schema(
         target_dtype_or_schema: The target schema to convert to
         direct_only: If True, only apply converters where all output field types
             match (are a subset of) the input field types.
+            :class:`~datumaro.experimental.converters.base.MediaBridgeConverter`
+            subclasses are always allowed regardless of this flag.
 
     Returns:
         A new Sample instance with the converted schema

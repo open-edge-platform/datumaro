@@ -28,6 +28,7 @@ from datumaro.experimental.converters.base import (
     AttributeRemapperConverter,
     ConversionError,
     Converter,
+    MediaBridgeConverter,
     copy_columns_with_shape,
     list_eval_ref,
 )
@@ -123,6 +124,7 @@ __all__ = [
     "LabelShapeConverter",
     "MaskCallableToMaskConverter",
     "MaskChannelsFirstConverter",
+    "MediaBridgeConverter",
     "MediaInfoToImageInfoConverter",
     "MediaInfoToVideoInfoConverter",
     "MediaPathToImageCallableConverter",

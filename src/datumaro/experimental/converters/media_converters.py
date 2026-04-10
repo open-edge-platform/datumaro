@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 
 import polars as pl
 
-from datumaro.experimental.converters.base import Converter
+from datumaro.experimental.converters.base import MediaBridgeConverter
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
 from datumaro.experimental.fields.videos import MediaInfoField, MediaPathField, VideoFramePathField, VideoInfoField
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 
 @converter(lazy=True)
-class MediaPathToImageConverter(Converter):
+class MediaPathToImageConverter(MediaBridgeConverter):
     """
     Lazy converter that loads images/video frames from MediaPathField to ImageField.
 
@@ -130,7 +130,7 @@ class MediaPathToImageConverter(Converter):
 
 
 @converter
-class MediaPathToImageCallableConverter(Converter):
+class MediaPathToImageCallableConverter(MediaBridgeConverter):
     """
     Converter that wraps MediaPathField as ImageCallableField.
 
@@ -193,7 +193,7 @@ class MediaPathToImageCallableConverter(Converter):
 
 
 @converter
-class MediaPathToImagePathConverter(Converter):
+class MediaPathToImagePathConverter(MediaBridgeConverter):
     """
     Converter that converts MediaPathField to ImagePathField.
 
@@ -316,7 +316,7 @@ class MediaPathToImagePathConverter(Converter):
 
 
 @converter
-class MediaInfoToImageInfoConverter(Converter):
+class MediaInfoToImageInfoConverter(MediaBridgeConverter):
     """
     Converter that extracts image info from MediaInfoField to ImageInfoField.
 
@@ -366,7 +366,7 @@ class MediaInfoToImageInfoConverter(Converter):
 
 
 @converter
-class ImagePathToMediaPathConverter(Converter):
+class ImagePathToMediaPathConverter(MediaBridgeConverter):
     """
     Converter that promotes ImagePathField to MediaPathField.
 
@@ -415,7 +415,7 @@ class ImagePathToMediaPathConverter(Converter):
 
 
 @converter
-class VideoFramePathToMediaPathConverter(Converter):
+class VideoFramePathToMediaPathConverter(MediaBridgeConverter):
     """
     Converter that promotes VideoFramePathField to MediaPathField.
 
@@ -466,7 +466,7 @@ class VideoFramePathToMediaPathConverter(Converter):
 
 
 @converter
-class ImageInfoToMediaInfoConverter(Converter):
+class ImageInfoToMediaInfoConverter(MediaBridgeConverter):
     """
     Converter that promotes ImageInfoField to MediaInfoField.
 
@@ -519,7 +519,7 @@ class ImageInfoToMediaInfoConverter(Converter):
 
 
 @converter
-class VideoInfoToMediaInfoConverter(Converter):
+class VideoInfoToMediaInfoConverter(MediaBridgeConverter):
     """
     Converter that promotes VideoInfoField to MediaInfoField.
 
@@ -579,7 +579,7 @@ class VideoInfoToMediaInfoConverter(Converter):
 
 
 @converter
-class MediaInfoToVideoInfoConverter(Converter):
+class MediaInfoToVideoInfoConverter(MediaBridgeConverter):
     """
     Converter that demotes MediaInfoField to VideoInfoField.
 
@@ -639,7 +639,7 @@ class MediaInfoToVideoInfoConverter(Converter):
 
 
 @converter
-class MediaPathToMediaInfoConverter(Converter):
+class MediaPathToMediaInfoConverter(MediaBridgeConverter):
     """
     Converter that extracts media metadata from MediaPathField to MediaInfoField.
 

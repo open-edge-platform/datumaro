@@ -13,7 +13,12 @@ from typing import TYPE_CHECKING, NamedTuple, get_type_hints, overload
 import polars as pl
 
 from datumaro.experimental.categories import Categories
-from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter
+from datumaro.experimental.converters.base import (
+    AttributeRemapperConverter,
+    ConversionError,
+    Converter,
+    MediaBridgeConverter,
+)
 from datumaro.experimental.fields.base import Field
 from datumaro.experimental.polars_utils import prepare_dataframe_for_pickle, restore_dataframe_from_pickle
 from datumaro.experimental.schema import AttributeSpec, Schema
@@ -248,6 +253,9 @@ def _get_applicable_converters(
         iteration: Current iteration count for uniqueness
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction
+            because they represent format-level narrowing/widening of media
+            representations rather than semantic transformations.
     """
     applicable: list[tuple[Converter, _SchemaState]] = []
 
@@ -262,8 +270,9 @@ def _get_applicable_converters(
         if not available_field_types.issuperset(from_types.values()):
             continue
 
-        # Skip cross-field-type converters when direct_only is True
-        if direct_only:
+        # Skip cross-field-type converters when direct_only is True,
+        # but always allow media bridge converters (e.g. MediaPath→ImagePath).
+        if direct_only and not issubclass(converter_class, MediaBridgeConverter):
             to_types = converter_class.get_to_types()
             input_field_types = set(from_types.values())
             output_field_types = set(to_types.values())
@@ -569,6 +578,7 @@ def _find_conversion_path_for_semantic(
         optional_field_types: Set of optional field types for this semantic
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction.
 
     Returns:
         Tuple of (list of converters needed for this semantic group, updated target state)
@@ -773,7 +783,7 @@ def converter(
                 return df
 
         @converter(lazy=True)
-        class ImagePathToImageConverter(Converter):
+        class ImagePathToImageConverter(MediaBridgeConverter):
             input_path: AttributeSpec
             output_image: AttributeSpec
 
@@ -825,6 +835,7 @@ def _get_reachable_field_types(
         semantic: The semantic tag to filter by (only fields with matching semantic are considered)
         direct_only: If True, only consider converters where all output field types
             are a subset of the input field types (no cross-field-type conversions).
+            :class:`MediaBridgeConverter` subclasses are exempt from this restriction.
 
     Returns:
         Set of all reachable field types (including those already in start_state)
@@ -843,8 +854,9 @@ def _get_reachable_field_types(
             from_types = converter_class.get_from_types()
             to_types = converter_class.get_to_types()
 
-            # Skip cross-field-type converters when direct_only is True
-            if direct_only:
+            # Skip cross-field-type converters when direct_only is True,
+            # but always allow media bridge converters.
+            if direct_only and not issubclass(converter_class, MediaBridgeConverter):
                 input_field_types = set(from_types.values())
                 output_field_types = set(to_types.values())
                 if not output_field_types.issubset(input_field_types):
@@ -913,6 +925,8 @@ def find_conversion_path(
             are a subset of the input field types (no cross-field-type conversions).
             For example, BBoxField→BBoxField format/dtype converters are allowed,
             but BBoxField→PolygonField converters are skipped.
+            :class:`MediaBridgeConverter` subclasses (e.g., MediaPathField→ImagePathField)
+            are always allowed regardless of this flag.
 
     Returns:
         Tuple of (ConversionPaths with separated batch and lazy converter lists,
