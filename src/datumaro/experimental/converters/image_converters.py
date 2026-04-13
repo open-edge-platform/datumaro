@@ -479,7 +479,7 @@ class ImageBytesToImageConverter(Converter):
         """
         Decode image bytes into a numpy array in the requested format.
 
-        Handles 8-bit and 16-bit images, preserving bit depth.
+        Handles 8-bit, 16-bit, and 32-bit images, preserving bit depth.
 
         Args:
             image_bytes: Raw image bytes (PNG, JPEG, etc.)
@@ -491,16 +491,17 @@ class ImageBytesToImageConverter(Converter):
         from io import BytesIO
 
         with Image.open(BytesIO(image_bytes)) as img:
-            is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
+            is_high_depth = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
 
-            if is_16bit and output_format in ("RGB", "BGR"):
-                # For 16-bit grayscale, stack into 3-channel uint16.
+            if is_high_depth and output_format in ("RGB", "BGR"):
+                # For high bit-depth grayscale, stack into 3-channel preserving native dtype.
+                # "I" mode -> int32, "I;16*" modes -> uint16.
                 # All channels are identical, so no channel reordering is needed
                 # even when the requested format is BGR.
-                gray = np.array(img, dtype=np.uint16)
+                gray = np.array(img)
                 img_array = np.stack([gray, gray, gray], axis=-1)
-            elif is_16bit and output_format == "GRAY":
-                img_array = np.array(img, dtype=np.uint16)
+            elif is_high_depth and output_format == "GRAY":
+                img_array = np.array(img)
                 if img_array.ndim == 2:
                     img_array = img_array[:, :, np.newaxis]
             else:

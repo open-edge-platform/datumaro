@@ -204,8 +204,13 @@ class LazyImage:
     def _convert_to_format(self, img: Image.Image, target_format: str) -> np.ndarray:
         """Convert PIL image to numpy array in the target format.
 
-        Supports 8-bit and 16-bit images. The bit depth is preserved from the
-        original image file - 16-bit images will return uint16 arrays.
+        Supports 8-bit, 16-bit, and 32-bit images. The bit depth is preserved
+        from the original image file - 16-bit images return uint16 arrays and
+        32-bit images return int32 arrays.
+
+        PIL mode reference:
+            - "I": 32-bit signed integer pixels (int32)
+            - "I;16", "I;16B", "I;16L", "I;16N": 16-bit unsigned integer pixels (uint16)
 
         Supported formats:
             - RGB: Standard RGB format (Red, Green, Blue)
@@ -214,19 +219,21 @@ class LazyImage:
             - BGRA: BGR with alpha channel (OpenCV-compatible)
             - L / GRAY: Grayscale
         """
-        is_16bit = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
+        is_high_depth = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
 
         if target_format == "RGB":
-            return self._convert_to_rgb(img, is_16bit)
+            return self._convert_to_rgb(img, is_high_depth)
         if target_format == "BGR":
-            return self._convert_to_bgr(img, is_16bit)
+            return self._convert_to_bgr(img, is_high_depth)
         if target_format == "RGBA":
-            return self._convert_to_rgba(img, is_16bit)
+            return self._convert_to_rgba(img, is_high_depth)
         if target_format == "BGRA":
-            return self._convert_to_bgra(img, is_16bit)
+            return self._convert_to_bgra(img, is_high_depth)
         if target_format in ("L", "GRAY"):
-            return self._convert_to_grayscale(img, is_16bit)
-        return np.array(img)
+            return self._convert_to_grayscale(img, is_high_depth)
+        raise ValueError(
+            f"Unsupported image format: {target_format!r}. Supported formats are: RGB, BGR, RGBA, BGRA, L, GRAY."
+        )
 
     @staticmethod
     def _swap_rb_channels(img_array: np.ndarray) -> np.ndarray:
@@ -253,26 +260,26 @@ class LazyImage:
                 return swapped
         return img_array.copy()
 
-    def _convert_to_rgb(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+    def _convert_to_rgb(self, img: Image.Image, is_high_depth: bool) -> np.ndarray:
         """Convert image to RGB format (Red, Green, Blue)."""
-        if is_16bit:
+        if is_high_depth:
             img_array = np.array(img)
             if img_array.ndim == 2:
                 return np.stack([img_array] * 3, axis=-1)
             return img_array
         return np.array(img.convert("RGB"))
 
-    def _convert_to_bgr(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+    def _convert_to_bgr(self, img: Image.Image, is_high_depth: bool) -> np.ndarray:
         """Convert image to BGR format (Blue, Green, Red).
 
         BGR is the default format used by OpenCV and some other libraries.
         """
-        rgb_array = self._convert_to_rgb(img, is_16bit)
+        rgb_array = self._convert_to_rgb(img, is_high_depth)
         return self._swap_rb_channels(rgb_array)
 
-    def _convert_to_rgba(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+    def _convert_to_rgba(self, img: Image.Image, is_high_depth: bool) -> np.ndarray:
         """Convert image to RGBA format (Red, Green, Blue, Alpha)."""
-        if is_16bit:
+        if is_high_depth:
             img_array = np.array(img)
             if img_array.ndim == 2:
                 img_array = np.stack([img_array] * 3, axis=-1)
@@ -280,17 +287,17 @@ class LazyImage:
             return np.concatenate([img_array, alpha[..., np.newaxis]], axis=-1)
         return np.array(img.convert("RGBA"))
 
-    def _convert_to_bgra(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+    def _convert_to_bgra(self, img: Image.Image, is_high_depth: bool) -> np.ndarray:
         """Convert image to BGRA format (Blue, Green, Red, Alpha).
 
         BGRA is used by OpenCV and some other libraries when alpha is needed.
         """
-        rgba_array = self._convert_to_rgba(img, is_16bit)
+        rgba_array = self._convert_to_rgba(img, is_high_depth)
         return self._swap_rb_channels(rgba_array)
 
-    def _convert_to_grayscale(self, img: Image.Image, is_16bit: bool) -> np.ndarray:
+    def _convert_to_grayscale(self, img: Image.Image, is_high_depth: bool) -> np.ndarray:
         """Convert image to grayscale format (single channel)."""
-        if is_16bit:
+        if is_high_depth:
             return np.array(img)
         return np.array(img.convert("L"))
 
