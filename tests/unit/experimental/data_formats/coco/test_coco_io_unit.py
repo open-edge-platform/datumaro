@@ -400,8 +400,8 @@ def _make_roboflow_coco_annotations(categories=None, num_images=2, num_annotatio
     """Helper to create a minimal Roboflow-style COCO annotation dict."""
     if categories is None:
         categories = [
-            {"id": 0, "name": "cat", "supercategory": "none"},
-            {"id": 1, "name": "dog", "supercategory": "none"},
+            {"id": 1, "name": "cat", "supercategory": "none"},
+            {"id": 2, "name": "dog", "supercategory": "none"},
         ]
     images = [{"id": i, "file_name": f"img_{i}.jpg", "height": 100, "width": 200} for i in range(num_images)]
     annotations = [
@@ -515,4 +515,4 @@ def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
     # Add extra file like Roboflow's README
     (root / "README.roboflow.txt").write_text("metadata")
     # find_dataset_root should return root since format is detectable there
-    assert find_dataset_root(root) == root
+    assert find_dataset_root(root) == root.resolve()
