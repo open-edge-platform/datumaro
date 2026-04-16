@@ -6,9 +6,18 @@ import pytest
 
 from datumaro.experimental import Dataset
 from datumaro.experimental.categories import KeypointCategories
-from datumaro.experimental.data_formats.coco.io import load_coco_dataset, save_coco_dataset
+from datumaro.experimental.data_formats.base import DataFormat
+from datumaro.experimental.data_formats.coco.io import (
+    _detect_roboflow_coco_layout,
+    _is_roboflow_coco_layout,
+    import_coco_dataset,
+    is_coco_format,
+    load_coco_dataset,
+    save_coco_dataset,
+)
 from datumaro.experimental.data_formats.coco.sample import CocoCategories, CocoSample
 from datumaro.experimental.fields import ImageInfo, Subset
+from datumaro.experimental.format_detection import detect_dataset_format, find_dataset_root
 
 
 def _write_json(path: Path, data: dict) -> None:
@@ -380,3 +389,130 @@ def test_load_coco_dataset_keypoint_categories_from_second_file(tmp_path: Path):
     kp_categories = ds.schema.get_categories_for_field("keypoints")
     assert isinstance(kp_categories, KeypointCategories)
     assert kp_categories.labels == ("left_hip", "right_hip")
+
+
+# ---------------------------------------------------------------------------
+# Roboflow COCO layout tests
+# ---------------------------------------------------------------------------
+
+
+def _make_roboflow_coco_annotations(categories=None, num_images=2, num_annotations=3):
+    """Helper to create a minimal Roboflow-style COCO annotation dict."""
+    if categories is None:
+        categories = [
+            {"id": 0, "name": "cat", "supercategory": "none"},
+            {"id": 1, "name": "dog", "supercategory": "none"},
+        ]
+    images = [{"id": i, "file_name": f"img_{i}.jpg", "height": 100, "width": 200} for i in range(num_images)]
+    annotations = [
+        {
+            "id": a,
+            "image_id": a % num_images,
+            "category_id": categories[0]["id"],
+            "bbox": [10, 20, 30, 40],
+            "area": 1200,
+            "segmentation": [],
+            "iscrowd": 0,
+        }
+        for a in range(num_annotations)
+    ]
+    return {
+        "info": {"description": "Exported from roboflow.com"},
+        "licenses": [{"id": 1, "url": "", "name": "Unknown"}],
+        "categories": categories,
+        "images": images,
+        "annotations": annotations,
+    }
+
+
+def _setup_roboflow_layout(root: Path, subsets=("train",)):
+    """Create a Roboflow-style directory layout under *root*."""
+    for subset_name in subsets:
+        subset_dir = root / subset_name
+        subset_dir.mkdir(parents=True, exist_ok=True)
+        ann_data = _make_roboflow_coco_annotations()
+        _write_json(subset_dir / "_annotations.coco.json", ann_data)
+        for img in ann_data["images"]:
+            (subset_dir / img["file_name"]).write_bytes(b"fake-img")
+
+
+def test_is_roboflow_coco_layout_detected(tmp_path: Path):
+    """_is_roboflow_coco_layout returns True for Roboflow directories."""
+    _setup_roboflow_layout(tmp_path, subsets=("train",))
+    assert _is_roboflow_coco_layout(tmp_path) is True
+
+
+def test_is_roboflow_coco_layout_not_detected(tmp_path: Path):
+    """_is_roboflow_coco_layout returns False for empty or non-Roboflow dirs."""
+    assert _is_roboflow_coco_layout(tmp_path) is False
+
+
+def test_is_coco_format_roboflow(tmp_path: Path):
+    """is_coco_format recognises Roboflow layout."""
+    _setup_roboflow_layout(tmp_path, subsets=("train", "valid"))
+    assert is_coco_format(tmp_path) is True
+
+
+def test_detect_dataset_format_roboflow(tmp_path: Path):
+    """detect_dataset_format returns COCO for Roboflow layout."""
+    _setup_roboflow_layout(tmp_path, subsets=("train",))
+    assert detect_dataset_format(tmp_path) == DataFormat.COCO
+
+
+def test_detect_roboflow_coco_layout_single_subset(tmp_path: Path):
+    """_detect_roboflow_coco_layout returns correct config for train only."""
+    _setup_roboflow_layout(tmp_path, subsets=("train",))
+    result = _detect_roboflow_coco_layout(tmp_path)
+    assert result is not None
+    images_config, annotations_config = result
+    assert set(images_config.keys()) == {"train"}
+    assert str(tmp_path / "train") == images_config["train"]
+    assert len(annotations_config["train"]) == 1
+
+
+def test_detect_roboflow_coco_layout_multiple_subsets(tmp_path: Path):
+    """_detect_roboflow_coco_layout picks up train, valid, and test."""
+    _setup_roboflow_layout(tmp_path, subsets=("train", "valid", "test"))
+    result = _detect_roboflow_coco_layout(tmp_path)
+    assert result is not None
+    images_config, _ = result
+    assert set(images_config.keys()) == {"train", "valid", "test"}
+
+
+def test_import_coco_dataset_roboflow_layout(tmp_path: Path):
+    """import_coco_dataset loads a Roboflow-style dataset correctly."""
+    _setup_roboflow_layout(tmp_path, subsets=("train", "valid"))
+    ds = import_coco_dataset(tmp_path)
+    # 2 images per subset * 2 subsets = 4
+    assert len(ds) == 4
+    subsets = {s.subset for s in ds}
+    assert Subset.TRAINING in subsets
+    assert Subset.VALIDATION in subsets
+
+
+def test_import_coco_dataset_roboflow_train_only(tmp_path: Path):
+    """import_coco_dataset works with a single Roboflow subset."""
+    _setup_roboflow_layout(tmp_path, subsets=("train",))
+    ds = import_coco_dataset(tmp_path)
+    assert len(ds) == 2
+    assert all(s.subset == Subset.TRAINING for s in ds)
+
+
+def test_import_coco_dataset_roboflow_annotations(tmp_path: Path):
+    """Annotations are loaded correctly from Roboflow layout."""
+    _setup_roboflow_layout(tmp_path, subsets=("train",))
+    ds = import_coco_dataset(tmp_path)
+    sample = ds[0]
+    assert sample.bboxes is not None
+    assert sample.labels is not None
+
+
+def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
+    """find_dataset_root detects Roboflow layout even with extra files like README."""
+    root = tmp_path / "dataset"
+    root.mkdir()
+    _setup_roboflow_layout(root, subsets=("train",))
+    # Add extra file like Roboflow's README
+    (root / "README.roboflow.txt").write_text("metadata")
+    # find_dataset_root should return root since format is detectable there
+    assert find_dataset_root(root) == root
