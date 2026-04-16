@@ -38,11 +38,15 @@ _SUBSET_NAME_TO_ENUM: dict[str, Subset] = {
     "train": Subset.TRAINING,
     "training": Subset.TRAINING,
     "val": Subset.VALIDATION,
+    "valid": Subset.VALIDATION,
     "validation": Subset.VALIDATION,
     "test": Subset.TESTING,
     "testing": Subset.TESTING,
     _DEFAULT_SUBSET_KEY: Subset.UNASSIGNED,
 }
+
+# Roboflow exports use these subset directory names
+ROBOFLOW_SUBSETS = ("train", "valid", "test")
 
 
 def is_coco_json_file(json_path: Path) -> bool:
@@ -72,6 +76,8 @@ def is_coco_format(input_dir: Path) -> bool:
     COCO format is identified by:
     - An 'annotations' subdirectory containing JSON files with COCO structure
     - OR JSON files in the root containing 'images' and 'annotations' keys
+    - OR Roboflow-style layout with subset folders (train/, valid/, test/)
+      each containing _annotations.coco.json
 
     Args:
         input_dir: Path to the directory to check
@@ -91,6 +97,35 @@ def is_coco_format(input_dir: Path) -> bool:
         if is_coco_json_file(json_file):
             return True
 
+    # Check for Roboflow-style layout: subset folders with _annotations.coco.json
+    return _is_roboflow_coco_layout(input_dir)
+
+
+def _is_roboflow_coco_layout(input_dir: Path) -> bool:
+    """Check if directory has Roboflow COCO layout (subset dirs with _annotations.coco.json)."""
+    for subset_name in ROBOFLOW_SUBSETS:
+        subset_dir = input_dir / subset_name
+        ann_file = subset_dir / "_annotations.coco.json"
+        if ann_file.exists() and _is_roboflow_annotation_file(ann_file):
+            return True
+    return False
+
+
+def _is_roboflow_annotation_file(json_path: Path) -> bool:
+    """Check if a JSON file is a valid Roboflow COCO annotation file.
+
+    Stricter than ``is_coco_json_file``: requires both ``images`` and
+    ``annotations`` keys to be present and be lists.
+    """
+    try:
+        with open(json_path) as f:
+            data = json.load(f)
+            if isinstance(data, dict):
+                images = data.get("images")
+                annotations = data.get("annotations")
+                return isinstance(images, list) and isinstance(annotations, list)
+    except (json.JSONDecodeError, OSError):
+        pass
     return False
 
 
@@ -195,9 +230,11 @@ def import_coco_dataset(input_dir: Path) -> Dataset:
     Import a COCO-format dataset from a directory.
 
     Automatically discovers annotation files and image directories.
-    Supports both flat image directories and subset-based layouts
-    (e.g., CVAT exports where images are in ``images/<subset>/`` and
-    annotations are named ``instances_<subset>.json``).
+    Supports:
+    - Flat image directories with annotation files
+    - Subset-based layouts (e.g., CVAT exports with ``images/<subset>/``)
+    - Roboflow-style layouts with subset folders containing
+      ``_annotations.coco.json`` and images in the same directory
 
     Args:
         input_dir: Path to the COCO dataset directory
@@ -208,18 +245,54 @@ def import_coco_dataset(input_dir: Path) -> Dataset:
     Raises:
         FileNotFoundError: If no COCO annotation files are found
     """
+    # Check for standard COCO layout first
     annotation_files = _find_coco_annotations(input_dir)
-    if not annotation_files:
-        raise FileNotFoundError(f"No COCO annotation files found in {input_dir}")
 
-    subset_layout = _detect_subset_image_layout(input_dir, annotation_files)
-    if subset_layout is not None:
-        images_config, annotations_config = subset_layout
+    if annotation_files:
+        subset_layout = _detect_subset_image_layout(input_dir, annotation_files)
+        if subset_layout is not None:
+            images_config, annotations_config = subset_layout
+            return load_coco_dataset(images_dir_path=images_config, annotations_path=annotations_config)
+
+        images_dir = _find_coco_images_dir(input_dir)
+        annotations_path = annotation_files if len(annotation_files) > 1 else annotation_files[0]
+        return load_coco_dataset(images_dir_path=images_dir, annotations_path=annotations_path)
+
+    # Fall back to Roboflow-style layout
+    roboflow_layout = _detect_roboflow_coco_layout(input_dir)
+    if roboflow_layout is not None:
+        images_config, annotations_config = roboflow_layout
         return load_coco_dataset(images_dir_path=images_config, annotations_path=annotations_config)
 
-    images_dir = _find_coco_images_dir(input_dir)
-    annotations_path = annotation_files if len(annotation_files) > 1 else annotation_files[0]
-    return load_coco_dataset(images_dir_path=images_dir, annotations_path=annotations_path)
+    raise FileNotFoundError(f"No COCO annotation files found in {input_dir}")
+
+
+def _detect_roboflow_coco_layout(
+    input_dir: Path,
+) -> tuple[dict[str, str], dict[str, list[str]]] | None:
+    """
+    Detect Roboflow COCO layout where each subset folder (train/, valid/, test/)
+    contains _annotations.coco.json and images in the same directory.
+
+    Returns:
+        A tuple of (images_config, annotations_config) dicts if Roboflow layout
+        is detected, or None otherwise.
+    """
+    roboflow_subsets = ROBOFLOW_SUBSETS
+    images_config: dict[str, str] = {}
+    annotations_config: dict[str, list[str]] = {}
+
+    for subset_name in roboflow_subsets:
+        subset_dir = input_dir / subset_name
+        ann_file = subset_dir / "_annotations.coco.json"
+        if ann_file.exists() and _is_roboflow_annotation_file(ann_file):
+            images_config[subset_name] = str(subset_dir)
+            annotations_config[subset_name] = [str(ann_file)]
+
+    if not images_config:
+        return None
+
+    return images_config, annotations_config
 
 
 # ---------------------------------------------------------------------------
