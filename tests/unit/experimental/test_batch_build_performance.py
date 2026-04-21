@@ -30,8 +30,6 @@ from datumaro.experimental.fields import (
 from datumaro.experimental.fields.annotations import BBoxField, PolygonField
 from datumaro.experimental.fields.types import NumericField, StringField
 from datumaro.experimental.legacy import convert_from_legacy
-from datumaro.experimental.legacy.dataset_converters import _batch_build_dataset
-from datumaro.experimental.schema import AttributeInfo, Schema
 
 # ---------------------------------------------------------------------------
 # Helper sample types
@@ -410,43 +408,6 @@ class AppendBatchBulkTest:
         ]
         dataset.append_batch(samples)
         assert len(dataset) == 1
-
-
-# ---------------------------------------------------------------------------
-# _batch_build_dataset
-# ---------------------------------------------------------------------------
-
-
-class BatchBuildDatasetTest:
-    """Tests for _batch_build_dataset."""
-
-    def test_empty_list_returns_empty_dataset(self):
-        from datumaro.experimental.fields.types import StringField
-
-        schema = Schema(attributes={"name": AttributeInfo(type=str, field=StringField(semantic="id"))})
-        ds = _batch_build_dataset([], schema)
-        assert len(ds) == 0
-
-    def test_builds_from_simple_dicts(self):
-        from datumaro.experimental.fields.types import StringField
-
-        schema = Schema(attributes={"name": AttributeInfo(type=str, field=StringField(semantic="id"))})
-        dicts = [{"name": "hello"}, {"name": "world"}]
-        ds = _batch_build_dataset(dicts, schema)
-        assert len(ds) == 2
-
-    def test_builds_with_polygon_field(self):
-        """Polygon data should go through the fast collect path."""
-        pf = PolygonField(dtype=pl.Float32())
-        schema = Schema(attributes={"polygons": AttributeInfo(type=np.ndarray, field=pf)})
-
-        inner1 = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
-        outer1 = np.empty(1, dtype=object)
-        outer1[0] = inner1
-
-        dicts = [{"polygons": outer1}, {"polygons": None}]
-        ds = _batch_build_dataset(dicts, schema)
-        assert len(ds) == 2
 
 
 # ---------------------------------------------------------------------------

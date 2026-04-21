@@ -8,7 +8,6 @@ import polars as pl
 
 from datumaro import Annotation, AnnotationType, CategoriesInfo, DatasetItem, MediaElement
 from datumaro import Dataset as LegacyDataset
-from datumaro.experimental.arrow_utils import build_series_bulk
 from datumaro.experimental.categories import (
     GroupType,
     HierarchicalLabelCategories,
@@ -196,59 +195,6 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     return attributes
 
 
-def _batch_build_dataset(
-    all_sample_dicts: list[dict[str, Any]],
-    schema: Schema,
-) -> Dataset[Sample]:
-    """Build a Dataset from a list of raw sample dicts in one shot.
-
-    Instead of creating N single-row DataFrames and vstacking them one by one,
-    this function collects all values per (attribute, column) pair into Python
-    lists and constructs each Polars Series once with N elements. This reduces
-    O(N**2) DataFrame operations to O(N) list appends + O(C) Series creations
-    (roughly 100x faster for large datasets).
-
-    Fields drive the per-value extraction via ``Field.to_python_scalars``,
-    which fast-path implementations (e.g. ``PolygonField``, ``BBoxField``) use
-    to return nested Python lists directly, bypassing slow per-item Polars
-    Series construction. Nested columns are then bulk-built via PyArrow in
-    :func:`~datumaro.experimental.arrow_utils.build_series_bulk`.
-    """
-    if not all_sample_dicts:
-        return Dataset(schema)
-
-    # Pre-compute dtype per column from the schema.
-    column_dtypes: dict[str, pl.DataType] = {}
-    for attr_name, attr_info in schema.attributes.items():
-        column_dtypes.update(attr_info.field.to_polars_schema(attr_name))
-
-    column_values: dict[str, list[Any]] = {col: [] for col in column_dtypes}
-
-    # Collect raw Python values per column via to_python_scalars.
-    for sample_data in all_sample_dicts:
-        for attr_name, attr_info in schema.attributes.items():
-            value = sample_data.get(attr_name)
-            scalars_map = attr_info.field.to_python_scalars(attr_name, value)
-            for col_name, scalar_val in scalars_map.items():
-                if col_name not in column_values:
-                    # Auxiliary column (e.g. "<bbox>_canvas_size") not part of
-                    # the required schema. Initialise the list and infer dtype
-                    # from to_polars on the first encounter.
-                    column_values[col_name] = []
-                    if col_name not in column_dtypes:
-                        series_map = attr_info.field.to_polars(attr_name, value)
-                        if col_name in series_map:
-                            column_dtypes[col_name] = series_map[col_name].dtype
-                column_values[col_name].append(scalar_val)
-
-    # Build each Series once from the full list of values.
-    series_list: list[pl.Series] = [
-        build_series_bulk(col_name, values, column_dtypes[col_name]) for col_name, values in column_values.items()
-    ]
-    df = pl.DataFrame(series_list)
-    return Dataset.from_dataframe(df, schema)
-
-
 def convert_from_legacy(
     legacy_dataset: LegacyDataset, hierarchical: bool = False, multi_label: bool = False, anomaly: bool = False
 ) -> Dataset[Sample]:
@@ -275,8 +221,8 @@ def convert_from_legacy(
         legacy_dataset, hierarchical=hierarchical, multi_label=multi_label, anomaly=anomaly
     )
 
-    # Step 2: Collect all converted items as raw dicts (fast Python loop)
-    all_sample_dicts: list[dict[str, Any]] = []
+    # Step 2: Build samples from the legacy items.
+    samples: list[Sample] = []
     for legacy_item in legacy_dataset:
         if analysis_result.media_converter is not None and analysis_result.media_converter.should_skip_item(
             legacy_item
@@ -288,10 +234,11 @@ def convert_from_legacy(
         if analysis_result.is_hierarchical and isinstance(sample_data.get("label"), int):
             sample_data["label"] = [sample_data["label"]]
 
-        all_sample_dicts.append(sample_data)
+        samples.append(Sample(**sample_data))
 
-    # Step 3: Batch-build the DataFrame from all items at once
-    experimental_dataset = _batch_build_dataset(all_sample_dicts, analysis_result.schema)
+    # Step 3: Create the dataset and bulk-append the samples.
+    experimental_dataset: Dataset[Sample] = Dataset(analysis_result.schema)
+    experimental_dataset.append_batch(samples)
 
     if analysis_result.is_anomaly:
         categories = experimental_dataset.schema.attributes["label"].categories
