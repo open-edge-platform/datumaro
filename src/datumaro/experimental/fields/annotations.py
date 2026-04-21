@@ -6,6 +6,7 @@ from typing import Any
 
 import polars as pl
 
+from datumaro.experimental.arrow_utils import numpy_to_nested_lists
 from datumaro.experimental.categories import BaseLabelCategories, Categories
 from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import (
@@ -79,6 +80,19 @@ class BBoxField(Field):
                 dtype=pl.List(pl.Int32()),
             ),
         }
+
+    def to_python_scalars(self, name: str, value: Any) -> dict[str, Any]:
+        """Fast path: return nested Python lists + canvas_size for batch construction.
+
+        Avoids constructing per-item ``pl.Series`` with nested dtypes, which is
+        expensive. Values collected this way can be bulk-converted via PyArrow
+        downstream.
+        """
+        canvas_size = get_tv_tensors_canvas_size(value)
+        numpy_value = to_numpy(value, self.dtype)
+        bbox_value: Any = numpy_value.reshape(-1, 4).tolist() if numpy_value is not None else None
+        canvas_value: Any = list(canvas_size) if canvas_size is not None else None
+        return {name: bbox_value, f"{name}_canvas_size": canvas_value}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct bounding box tensor from Polars data.
@@ -309,6 +323,13 @@ class PolygonField(Field):
         series = convert_numpy_object_array_to_series(numpy_value)
 
         return {name: pl.Series(name, [series], dtype=pl.List(pl.List(pl.Array(self.dtype, 2))))}
+
+    def to_python_scalars(self, name: str, value: Any) -> dict[str, Any]:
+        """Convert polygon value to nested Python lists (fast path for batch construction)."""
+        numpy_value = to_numpy(value, self.dtype)
+        if numpy_value is None:
+            return {name: None}
+        return {name: numpy_to_nested_lists(numpy_value)}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct polygon tensor from Polars data."""

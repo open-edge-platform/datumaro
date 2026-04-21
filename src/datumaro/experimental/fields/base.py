@@ -80,6 +80,25 @@ class Field:
         """
         return {name: pl.Series(name, [value])}
 
+    def to_python_scalars(self, name: str, value: Any) -> dict[str, Any]:
+        """
+        Convert the field value to Python scalars suitable for batch Series construction.
+
+        This method returns raw Python values (not wrapped in pl.Series) that can be
+        collected into lists and then efficiently converted to pl.Series in bulk.
+        The default implementation calls to_polars and extracts s[0] from each Series.
+        Subclasses with expensive to_polars implementations should override this.
+
+        Args:
+            name: The column name for this field
+            value: The value to convert
+
+        Returns:
+            Dictionary mapping column names to Python scalar values
+        """
+        series_map = self.to_polars(name, value)
+        return {col_name: series[0] for col_name, series in series_map.items()}
+
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Any:
         """
         Convert from Polars-compatible format back to the field's value.

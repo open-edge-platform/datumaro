@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
+from datumaro.experimental.arrow_utils import build_series_bulk
 from datumaro.experimental.categories import BaseLabelCategories, HierarchicalLabelCategories
 from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields.annotations import LabelField
@@ -374,6 +375,41 @@ class Dataset(Generic[DType]):
         else:
             self.df.extend(new_row)
 
+    def _collect_batch_column_values(
+        self, samples: Sequence[DType]
+    ) -> tuple[dict[str, list[Any]], dict[str, pl.DataType]]:
+        """Collect raw Python values and dtypes per column for a batch of samples.
+
+        Uses :meth:`Field.to_python_scalars` for fast extraction, avoiding
+        per-sample ``pl.Series`` construction. Auxiliary columns that are not
+        part of the required schema get their dtype inferred from a one-off
+        call to :meth:`Field.to_polars` on their first occurrence.
+        """
+        column_raw_values: dict[str, list[Any]] = {}
+        column_dtypes: dict[str, pl.DataType] = {}
+
+        # Pre-compute schema dtypes for all known columns
+        for key, attr_info in self._schema.attributes.items():
+            for col_name, col_dtype in attr_info.field.to_polars_schema(key).items():
+                column_dtypes[col_name] = col_dtype
+
+        for sample in samples:
+            for key, attr_info in self._schema.attributes.items():
+                value = getattr(sample, key)
+                scalars_map = attr_info.field.to_python_scalars(key, value)
+                for col_name, scalar_val in scalars_map.items():
+                    if col_name not in column_raw_values:
+                        column_raw_values[col_name] = []
+                        if col_name not in column_dtypes:
+                            # Auxiliary column (e.g. "<bbox>_canvas_size"); infer dtype
+                            # from to_polars on the first encounter.
+                            series_map = attr_info.field.to_polars(key, value)
+                            if col_name in series_map:
+                                column_dtypes[col_name] = series_map[col_name].dtype
+                    column_raw_values[col_name].append(scalar_val)
+
+        return column_raw_values, column_dtypes
+
     def append_batch(self, samples: Sequence[DType]) -> None:
         """
         Add multiple samples to the dataset at once.
@@ -395,28 +431,17 @@ class Dataset(Generic[DType]):
         if self._transforms is not None:
             raise RuntimeError("Transformed dataset is immutable.")
 
-        # Build all rows in a column-wise fashion to avoid per-sample DataFrame overhead
-        column_data: dict[str, list[pl.Series]] = {}
-        for sample in samples:
-            for key, attr_info in self._schema.attributes.items():
-                value = getattr(sample, key)
-                field_series_map = attr_info.field.to_polars(key, value)
-                for col_name, series in field_series_map.items():
-                    if col_name not in column_data:
-                        column_data[col_name] = [series]
-                    else:
-                        column_data[col_name].append(series)
+        # Collect raw Python values per column, then build Series in bulk.
+        # This avoids creating N single-element Series and concatenating them,
+        # which is extremely slow for deeply nested types (e.g., polygons).
+        column_raw_values, column_dtypes = self._collect_batch_column_values(samples)
 
-        # Concatenate series per column and build a single DataFrame, then cast once
-        combined_series: dict[str, pl.Series] = {}
-        for col_name, series_list in column_data.items():
-            if len(series_list) == 1:
-                combined_series[col_name] = series_list[0]
-            else:
-                # Use vstack via single-column DataFrames to handle type relaxation
-                # (e.g., Array[u32, N] vs List[u32] for variable-length labels)
-                col_dfs = [s.to_frame() for s in series_list]
-                combined_series[col_name] = pl.concat(col_dfs, how="vertical_relaxed").to_series()
+        # Build Series in bulk, using PyArrow for nested types (much faster)
+        combined_series: dict[str, pl.Series] = {
+            col_name: build_series_bulk(col_name, values, column_dtypes[col_name])
+            for col_name, values in column_raw_values.items()
+        }
+
         new_rows = pl.DataFrame(combined_series)
 
         # Add any auxiliary columns from new_rows that are missing in the main DataFrame
