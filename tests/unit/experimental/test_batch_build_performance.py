@@ -18,15 +18,7 @@ from datumaro.components.media import Image
 from datumaro.experimental.arrow_utils import build_series_bulk, numpy_to_nested_lists, polars_dtype_to_pyarrow
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import (
-    Subset,
-    bbox_field,
-    image_path_field,
-    label_field,
-    numeric_field,
-    polygon_field,
-    subset_field,
-)
+from datumaro.experimental.fields import Subset, bbox_field, image_path_field, label_field, polygon_field, subset_field
 from datumaro.experimental.fields.annotations import BBoxField, PolygonField
 from datumaro.experimental.fields.types import NumericField, StringField
 from datumaro.experimental.legacy import convert_from_legacy
@@ -47,10 +39,6 @@ class PolygonSample(Sample):
     image: str = image_path_field()
     polygons: np.ndarray | None = polygon_field(dtype=pl.Float32())
     labels: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True)
-
-
-class SimpleSample(Sample):
-    name: str | None = numeric_field(dtype=pl.Float32(), semantic="score")
 
 
 # ---------------------------------------------------------------------------
@@ -560,7 +548,7 @@ class ConvertFromLegacyBatchTest:
         assert result[49].bboxes.shape[0] == 50
 
     def test_none_annotations_handled(self):
-        """Items with no annotations should have None for annotation fields."""
+        """Items with no annotations should produce an empty (shape[0]==0) bbox tensor, not None."""
         label_categories = LegacyLabelCategories()
         label_categories.add("obj")
 

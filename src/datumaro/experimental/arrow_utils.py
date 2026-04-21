@@ -41,7 +41,9 @@ def polars_dtype_to_pyarrow(dtype: pl.DataType) -> Any:
         pl.String(): pa.string(),
         pl.Utf8(): pa.string(),
     }
-    return _MAP.get(dtype, pa.string())
+    if dtype in _MAP:
+        return _MAP[dtype]
+    raise NotImplementedError(f"Unsupported Polars dtype for PyArrow conversion: {dtype!r}")
 
 
 def numpy_to_nested_lists(value: Any) -> Any:
