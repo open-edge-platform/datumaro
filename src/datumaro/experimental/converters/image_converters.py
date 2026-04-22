@@ -10,6 +10,7 @@ from PIL import Image, ImageOps
 
 from datumaro.experimental.converters.base import Converter, MediaBridgeConverter, copy_columns_with_shape
 from datumaro.experimental.converters.registry import converter
+from datumaro.experimental.exif_utils import get_exif_orientation, get_oriented_size, has_nontrivial_exif_orientation
 from datumaro.experimental.fields import ImageBytesField
 from datumaro.experimental.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
 from datumaro.experimental.schema import AttributeSpec
@@ -29,9 +30,8 @@ _NUMPY_TO_POLARS_DTYPE: dict[np.dtype, pl.DataType] = {
 }
 
 
-# EXIF Orientation tag id. Values 5, 6, 7, 8 imply a 90°/270° rotation
-# (which swaps width and height); 2, 3, 4 are flips / 180° rotations.
-_EXIF_ORIENTATION_TAG = 0x0112
+# EXIF Orientation tag id is re-exported from ``datumaro.experimental.exif_utils``
+# (see ``EXIF_ORIENTATION_TAG``). No local constant is needed.
 
 
 @converter
@@ -303,8 +303,10 @@ class ImagePathToImageConverter(MediaBridgeConverter):
         elif output_format == "GRAY" and len(img_array.shape) == 2:
             img_array = img_array[:, :, np.newaxis]
 
-        # Note: cv2.imread auto-applies EXIF orientation for JPEG images
-        # (since OpenCV 3.4), so no additional transform is needed here.
+        # Note: EXIF orientation is handled deterministically by the caller
+        # (``convert``), which routes EXIF-rotated images through the PIL path
+        # (``ImageOps.exif_transpose``) regardless of OpenCV's build-time
+        # auto-orientation behavior.
         return img_array
 
     def _load_image_pil(self, path: str, output_format: str) -> np.ndarray:
@@ -367,12 +369,20 @@ class ImagePathToImageConverter(MediaBridgeConverter):
         for path in df[input_col]:
             path_str = str(path)
 
-            # Try OpenCV first (faster)
-            img_array = self._load_image_opencv(path_str, output_format)
-
-            if img_array is None:
-                # Fallback to PIL for unsupported formats
+            # For deterministic behavior across OpenCV builds (some builds
+            # auto-apply EXIF orientation on JPEG, others don't), skip the
+            # OpenCV fast path when the image has a non-identity EXIF
+            # orientation and defer to the PIL path, which always applies
+            # ``ImageOps.exif_transpose``.
+            if has_nontrivial_exif_orientation(path_str):
                 img_array = self._load_image_pil(path_str, output_format)
+            else:
+                # Try OpenCV first (faster)
+                img_array = self._load_image_opencv(path_str, output_format)
+
+                if img_array is None:
+                    # Fallback to PIL for unsupported formats
+                    img_array = self._load_image_pil(path_str, output_format)
 
             image_data.append(img_array.flatten())
             image_shapes.append(list(img_array.shape))
@@ -790,9 +800,7 @@ class ImagePathToImageInfoConverter(MediaBridgeConverter):
                 # Respect EXIF orientation so reported dimensions match the
                 # image as displayed (and as loaded via LazyImage).
                 w, h = img.size
-                orientation = int(img.getexif().get(_EXIF_ORIENTATION_TAG, 1) or 1)
-                if orientation in (5, 6, 7, 8):
-                    w, h = h, w
+                w, h = get_oriented_size(w, h, get_exif_orientation(img))
                 widths.append(w)
                 heights.append(h)
 

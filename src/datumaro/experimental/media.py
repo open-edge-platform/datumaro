@@ -365,13 +365,10 @@ class LazyImage:
         the image's displayed orientation.
         """
         with Image.open(self.path) as img:
+            from datumaro.experimental.exif_utils import get_exif_orientation, get_oriented_size
+
             w, h = img.size
-            # EXIF Orientation values 5,6,7,8 correspond to a 90/270 degree
-            # rotation, which swaps width and height.
-            orientation = img.getexif().get(0x0112)  # 0x0112 = Orientation tag
-            if orientation in (5, 6, 7, 8):
-                w, h = h, w
-            return w, h
+            return get_oriented_size(w, h, get_exif_orientation(img))
 
     @property
     def shape(self) -> tuple[int, ...]:
