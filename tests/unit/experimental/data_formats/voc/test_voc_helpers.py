@@ -9,6 +9,7 @@ from pathlib import Path
 from xml.etree.ElementTree import Element
 
 import numpy as np
+import pytest
 
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.voc.constants import VOC_LABELS
@@ -18,6 +19,7 @@ from datumaro.experimental.data_formats.voc.helpers import (
     _detect_classification_label_files,
     _detect_voc_subsets,
     _find_image_file,
+    _get_image_size,
     _load_voc_categories,
     _parse_classification_labels,
     _parse_subset_list,
@@ -760,3 +762,33 @@ def test_parse_classification_labels_skips_malformed_lines(tmp_path: Path):
     assert "img2" not in result
     assert "img3" not in result
     assert "img4" in result
+
+
+@pytest.mark.parametrize(
+    ("orientation", "expected_height", "expected_width"),
+    [
+        (1, 40, 80),
+        (2, 40, 80),
+        (3, 40, 80),
+        (4, 40, 80),
+        (5, 80, 40),
+        (6, 80, 40),
+        (7, 80, 40),
+        (8, 80, 40),
+    ],
+)
+def test_get_image_size_respects_exif_orientation(tmp_path, orientation, expected_height, expected_width):
+    """VOC _get_image_size must honor EXIF orientation so the dimensions written
+    into VOC XML annotations match the image as displayed and loaded.
+    """
+    from PIL import Image as PILImage
+
+    # Raw pixels: landscape H=40, W=80.
+    img = PILImage.fromarray(np.zeros((40, 80, 3), dtype=np.uint8))
+    exif = img.getexif()
+    exif[0x0112] = orientation
+    path = tmp_path / f"orient_{orientation}.jpg"
+    img.save(path, format="JPEG", exif=exif.tobytes())
+
+    height, width = _get_image_size(path)
+    assert (height, width) == (expected_height, expected_width)

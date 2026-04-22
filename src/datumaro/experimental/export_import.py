@@ -30,7 +30,7 @@ from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
 import numpy as np
 import polars as pl
-from PIL import Image
+from PIL import Image, ImageOps
 
 from datumaro.experimental.data_formats.base import DataFormat
 from datumaro.experimental.dataset import Dataset, Sample
@@ -1029,7 +1029,10 @@ def _make_image_loader(path: Path):
     """Create a closure that loads an image from a path."""
 
     def load_image():
-        return np.array(Image.open(path))
+        # Apply EXIF orientation so the loaded array matches the image as
+        # displayed (consistent with LazyImage).
+        with Image.open(path) as img:
+            return np.array(ImageOps.exif_transpose(img))
 
     return load_image
 

@@ -18,6 +18,7 @@ from datumaro.experimental.converters import (
     RedBlueColorConverter,
     find_conversion_path,
 )
+from datumaro.experimental.converters.image_converters import ImagePathToImageInfoConverter
 from datumaro.experimental.fields import ImageBytesField, ImageCallableField, ImageField, ImageInfoField, ImagePathField
 from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema
 
@@ -720,3 +721,169 @@ def test_image_dtype_converter_schema_conversion_uint16_to_float32():
     path, _ = find_conversion_path(source_schema, target_schema)
     assert len(path.converters["image"]) == 1
     assert type(path.converters["image"][0]) is ImageDtypeConverter
+
+
+# ============================================================================
+# EXIF orientation handling
+# ============================================================================
+
+
+_EXIF_ORIENTATION_TAG = 0x0112
+
+
+def _save_jpeg_with_orientation(path: str, img_array: np.ndarray, orientation: int) -> None:
+    """Save a JPEG with a given EXIF Orientation tag.
+
+    JPEG is required to round-trip the EXIF orientation tag reliably.
+    """
+    from PIL import Image as PILImage
+
+    img = PILImage.fromarray(img_array)
+    exif = img.getexif()
+    exif[_EXIF_ORIENTATION_TAG] = orientation
+    img.save(path, format="JPEG", exif=exif.tobytes())
+
+
+def _run_image_path_to_image(path: str) -> pl.DataFrame:
+    """Run ImagePathToImageConverter on a single-path DataFrame."""
+    converter_instance = ImagePathToImageConverter()  # type: ignore[call-arg]
+    df = pl.DataFrame({"image_path": [path]})
+
+    setattr(
+        converter_instance,
+        "input_path",
+        AttributeSpec(name="image_path", field=ImagePathField()),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="image", field=ImageField(dtype=pl.UInt8(), format="RGB")),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="image_info", field=ImageInfoField()),
+    )
+    assert converter_instance.filter_output_spec() is True
+    return converter_instance.convert(df)
+
+
+@pytest.mark.parametrize("orientation", [5, 6, 7, 8])
+def test_image_path_to_image_converter_respects_exif_orientation(orientation):
+    """ImagePathToImageConverter must honor EXIF orientation for rotating tags.
+
+    Orientations 5-8 imply a 90°/270° rotation; the loaded pixel data must
+    reflect the oriented dimensions so it stays consistent with LazyImage
+    and with ``image_info`` (which is computed separately by a dedicated
+    converter that also honors EXIF).
+    """
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Raw pixels: landscape H=40, W=80.
+        img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+        path = os.path.join(temp_dir, f"orient_{orientation}.jpg")
+        _save_jpeg_with_orientation(path, img_array, orientation)
+
+        result_df = _run_image_path_to_image(path)
+
+        # After orientation, the image is portrait: H=80, W=40.
+        assert list(result_df["image_shape"][0]) == [80, 40, 3]
+
+
+@pytest.mark.parametrize("orientation", [1, 2, 3, 4])
+def test_image_path_to_image_converter_keeps_dimensions_for_non_rotating_orientation(orientation):
+    """Orientations 1-4 do not swap width/height."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+        path = os.path.join(temp_dir, f"orient_{orientation}.jpg")
+        _save_jpeg_with_orientation(path, img_array, orientation)
+
+        result_df = _run_image_path_to_image(path)
+
+        assert list(result_df["image_shape"][0]) == [40, 80, 3]
+
+
+def test_image_bytes_to_image_converter_respects_exif_orientation():
+    """ImageBytesToImageConverter must honor EXIF orientation embedded in bytes."""
+    import io
+
+    from PIL import Image as PILImage
+
+    # Raw pixels: landscape H=40, W=80. Save with orientation=6 (90° CW).
+    img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+    pil_img = PILImage.fromarray(img_array)
+    exif = pil_img.getexif()
+    exif[_EXIF_ORIENTATION_TAG] = 6
+    buf = io.BytesIO()
+    pil_img.save(buf, format="JPEG", exif=exif.tobytes())
+    image_bytes = buf.getvalue()
+
+    converter_instance = ImageBytesToImageConverter()  # type: ignore[call-arg]
+    df = pl.DataFrame({"image_bytes": [image_bytes]})
+
+    setattr(
+        converter_instance,
+        "input_bytes",
+        AttributeSpec(name="image_bytes", field=ImageBytesField()),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="image", field=ImageField(dtype=pl.UInt8(), format="RGB")),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="image_info", field=ImageInfoField()),
+    )
+    assert converter_instance.filter_output_spec() is True
+    result_df = converter_instance.convert(df)
+
+    # After orientation, image is portrait: H=80, W=40.
+    assert list(result_df["image_shape"][0]) == [80, 40, 3]
+
+
+@pytest.mark.parametrize(
+    ("orientation", "expected_width", "expected_height"),
+    [
+        (1, 80, 40),
+        (2, 80, 40),
+        (3, 80, 40),
+        (4, 80, 40),
+        (5, 40, 80),
+        (6, 40, 80),
+        (7, 40, 80),
+        (8, 40, 80),
+    ],
+)
+def test_image_path_to_image_info_converter_respects_exif_orientation(orientation, expected_width, expected_height):
+    """ImagePathToImageInfoConverter must honor EXIF orientation.
+
+    This converter is used when only dimensions are needed (no pixel load),
+    so it's crucial that it reports the oriented dimensions consistently
+    with the full image loader.
+    """
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Raw pixels: landscape H=40, W=80.
+        img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+        path = os.path.join(temp_dir, f"orient_{orientation}.jpg")
+        _save_jpeg_with_orientation(path, img_array, orientation)
+
+        converter_instance = ImagePathToImageInfoConverter()  # type: ignore[call-arg]
+        df = pl.DataFrame({"image_path": [path]})
+
+        setattr(
+            converter_instance,
+            "input_path",
+            AttributeSpec(name="image_path", field=ImagePathField()),
+        )
+        setattr(
+            converter_instance,
+            "output_info",
+            AttributeSpec(name="image_info", field=ImageInfoField()),
+        )
+        assert converter_instance.filter_output_spec() is True
+        result_df = converter_instance.convert(df)
+
+        info = result_df["image_info"][0]
+        assert info["width"] == expected_width
+        assert info["height"] == expected_height

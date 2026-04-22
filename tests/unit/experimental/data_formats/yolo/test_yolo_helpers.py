@@ -18,6 +18,7 @@ from datumaro.experimental.data_formats.yolo.helpers import (
     _create_sample_from_traditional_image,
     _detect_yolo_format,
     _find_image_file,
+    _get_image_size,
     _get_label_names_from_dataset,
     _group_samples_by_subset,
     _load_categories_from_names,
@@ -505,3 +506,33 @@ def test_get_label_names_from_dataset_returns_empty_when_no_categories():
     result = _get_label_names_from_dataset(dataset)
 
     assert result == []
+
+
+@pytest.mark.parametrize(
+    ("orientation", "expected_height", "expected_width"),
+    [
+        (1, 40, 80),
+        (2, 40, 80),
+        (3, 40, 80),
+        (4, 40, 80),
+        (5, 80, 40),
+        (6, 80, 40),
+        (7, 80, 40),
+        (8, 80, 40),
+    ],
+)
+def test_get_image_size_respects_exif_orientation(tmp_path, orientation, expected_height, expected_width):
+    """YOLO _get_image_size must honor EXIF orientation so image dimensions
+    match the displayed image and the annotations derived from it.
+    """
+    from PIL import Image as PILImage
+
+    # Raw pixels: landscape H=40, W=80.
+    img = PILImage.fromarray(np.zeros((40, 80, 3), dtype=np.uint8))
+    exif = img.getexif()
+    exif[0x0112] = orientation
+    path = tmp_path / f"orient_{orientation}.jpg"
+    img.save(path, format="JPEG", exif=exif.tobytes())
+
+    height, width = _get_image_size(path)
+    assert (height, width) == (expected_height, expected_width)

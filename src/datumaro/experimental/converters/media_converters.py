@@ -735,7 +735,12 @@ class MediaPathToMediaInfoConverter(MediaBridgeConverter):
                     continue
 
                 with _PILImage.open(path_str) as img:
+                    from datumaro.experimental.exif_utils import get_exif_orientation, get_oriented_size
+
                     w, h = img.size
+                    # Respect EXIF orientation so reported dimensions match
+                    # the image as displayed (and as loaded via LazyImage).
+                    w, h = get_oriented_size(w, h, get_exif_orientation(img))
 
                 rows.append(
                     {

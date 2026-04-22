@@ -19,7 +19,7 @@ from typing import Any
 
 import numpy as np
 from cachetools import LRUCache, cachedmethod
-from PIL import Image
+from PIL import Image, ImageOps
 
 # Default cache size: 256 MB
 _DEFAULT_CACHE_SIZE_BYTES = 256 * 1024 * 1024
@@ -309,8 +309,11 @@ class LazyImage:
     def _load_data(self) -> np.ndarray:
         """Load the image from disk (cached via @cachedmethod)."""
         with Image.open(self.path) as img:
+            # Apply EXIF orientation so the returned array matches the
+            # image's displayed orientation (and matches ``width``/``height``).
+            oriented_img = ImageOps.exif_transpose(img)
             target_format = self.format.upper()
-            img_array = self._convert_to_format(img, target_format)
+            img_array = self._convert_to_format(oriented_img, target_format)
 
             # Handle channels-first format
             if self.channels_first and img_array.ndim == 3:
@@ -347,20 +350,25 @@ class LazyImage:
     @cached_property
     def width(self) -> int:
         """Get the image width without fully loading the image data."""
-        with Image.open(self.path) as img:
-            return img.width
+        return self.size[0]
 
     @cached_property
     def height(self) -> int:
         """Get the image height without fully loading the image data."""
-        with Image.open(self.path) as img:
-            return img.height
+        return self.size[1]
 
     @cached_property
     def size(self) -> tuple[int, int]:
-        """Get the image size (width, height) without fully loading the image data."""
+        """Get the image size (width, height) without fully loading the image data.
+
+        Accounts for the EXIF orientation so that the reported dimensions match
+        the image's displayed orientation.
+        """
         with Image.open(self.path) as img:
-            return img.size
+            from datumaro.experimental.exif_utils import get_exif_orientation, get_oriented_size
+
+            w, h = img.size
+            return get_oriented_size(w, h, get_exif_orientation(img))
 
     @property
     def shape(self) -> tuple[int, ...]:

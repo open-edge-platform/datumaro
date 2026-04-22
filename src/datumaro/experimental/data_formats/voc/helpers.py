@@ -39,12 +39,16 @@ logger = logging.getLogger(__name__)
 
 
 def _get_image_size(image_path: Path) -> tuple[int, int]:
-    """Get image dimensions (height, width) using PIL."""
+    """Get image dimensions (height, width) using PIL, honoring EXIF orientation."""
     try:
         from PIL import Image
 
+        from datumaro.experimental.exif_utils import get_exif_orientation, get_oriented_size
+
         with Image.open(image_path) as img:
-            return img.size[1], img.size[0]  # height, width
+            w, h = img.size
+            w, h = get_oriented_size(w, h, get_exif_orientation(img))
+            return h, w  # height, width
     except Exception as e:
         logger.warning("Failed to read image size from %s: %s", image_path, e)
         return 0, 0
