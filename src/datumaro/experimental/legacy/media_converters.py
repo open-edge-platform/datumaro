@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 from PIL import Image as PILImage
+from PIL import ImageOps as PILImageOps
 
 from datumaro import Dataset as LegacyDataset
 from datumaro import DatasetItem, Image, MediaElement
@@ -78,7 +79,10 @@ def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
         raise TypeError(f"Expected bytes data, got {type(bytes_data)}")
     # Convert bytes to image array using PIL
     with PILImage.open(io.BytesIO(bytes_data)) as pil_image:
-        processed_image = pil_image if pil_image.mode == "RGB" else pil_image.convert("RGB")
+        # Apply EXIF orientation so the decoded array matches the image as
+        # displayed (consistent with LazyImage).
+        oriented = PILImageOps.exif_transpose(pil_image)
+        processed_image = oriented if oriented.mode == "RGB" else oriented.convert("RGB")
         return np.array(processed_image, dtype=np.uint8)
 
 

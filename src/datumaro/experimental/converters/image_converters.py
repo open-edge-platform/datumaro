@@ -6,7 +6,7 @@ from typing import Any
 import cv2
 import numpy as np
 import polars as pl
-from PIL import Image
+from PIL import Image, ImageOps
 
 from datumaro.experimental.converters.base import Converter, MediaBridgeConverter, copy_columns_with_shape
 from datumaro.experimental.converters.registry import converter
@@ -27,6 +27,11 @@ _NUMPY_TO_POLARS_DTYPE: dict[np.dtype, pl.DataType] = {
     np.dtype(np.float32): pl.Float32(),
     np.dtype(np.float64): pl.Float64(),
 }
+
+
+# EXIF Orientation tag id. Values 5, 6, 7, 8 imply a 90°/270° rotation
+# (which swaps width and height); 2, 3, 4 are flips / 180° rotations.
+_EXIF_ORIENTATION_TAG = 0x0112
 
 
 @converter
@@ -298,6 +303,8 @@ class ImagePathToImageConverter(MediaBridgeConverter):
         elif output_format == "GRAY" and len(img_array.shape) == 2:
             img_array = img_array[:, :, np.newaxis]
 
+        # Note: cv2.imread auto-applies EXIF orientation for JPEG images
+        # (since OpenCV 3.4), so no additional transform is needed here.
         return img_array
 
     def _load_image_pil(self, path: str, output_format: str) -> np.ndarray:
@@ -313,7 +320,10 @@ class ImagePathToImageConverter(MediaBridgeConverter):
         """
         target_mode = self._PIL_MODES[output_format]
 
-        with Image.open(path) as img:
+        with Image.open(path) as raw_img:
+            # Apply EXIF orientation so the returned array matches the
+            # image's displayed orientation (consistent with LazyImage).
+            img = ImageOps.exif_transpose(raw_img)
             # For 16-bit grayscale images, PIL uses mode 'I;16' or 'I'
             # Convert to target mode if needed, preserving bit depth
             if output_format == "GRAY" and img.mode in ("I;16", "I;16L", "I;16B"):
@@ -490,7 +500,10 @@ class ImageBytesToImageConverter(MediaBridgeConverter):
         """
         from io import BytesIO
 
-        with Image.open(BytesIO(image_bytes)) as img:
+        with Image.open(BytesIO(image_bytes)) as raw_img:
+            # Apply EXIF orientation so decoded bytes match the image's
+            # displayed orientation (consistent with file-based loading).
+            img = ImageOps.exif_transpose(raw_img)
             is_high_depth = img.mode in ("I", "I;16", "I;16B", "I;16L", "I;16N")
 
             if is_high_depth and output_format in ("RGB", "BGR"):
@@ -774,7 +787,12 @@ class ImagePathToImageInfoConverter(MediaBridgeConverter):
                 )
 
             with Image.open(str(path)) as img:
+                # Respect EXIF orientation so reported dimensions match the
+                # image as displayed (and as loaded via LazyImage).
                 w, h = img.size
+                orientation = int(img.getexif().get(_EXIF_ORIENTATION_TAG, 1) or 1)
+                if orientation in (5, 6, 7, 8):
+                    w, h = h, w
                 widths.append(w)
                 heights.append(h)
 

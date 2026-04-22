@@ -39,12 +39,18 @@ logger = logging.getLogger(__name__)
 
 
 def _get_image_size(image_path: Path) -> tuple[int, int]:
-    """Get image dimensions (height, width) using PIL."""
+    """Get image dimensions (height, width) using PIL, honoring EXIF orientation."""
     try:
         from PIL import Image
 
         with Image.open(image_path) as img:
-            return img.size[1], img.size[0]  # height, width
+            w, h = img.size
+            # EXIF Orientation values 5-8 imply a 90/270° rotation, swapping
+            # width and height. Honor it so dimensions match the displayed image.
+            orientation = int(img.getexif().get(0x0112, 1) or 1)
+            if orientation in (5, 6, 7, 8):
+                w, h = h, w
+            return h, w  # height, width
     except Exception as e:
         logger.warning("Failed to read image size from %s: %s", image_path, e)
         return 0, 0

@@ -502,6 +502,112 @@ class LazyImageEdgeCasesTest:
                 assert sample.image.path == expected_path
 
 
+class LazyImageExifOrientationTest:
+    """Tests that LazyImage correctly honors EXIF orientation metadata.
+
+    Some cameras store images in their raw sensor orientation and set an EXIF
+    ``Orientation`` tag indicating that the image should be rotated/flipped for
+    display. PIL's ``Image.open`` does not apply this transform automatically,
+    so ``img.size`` / ``img.width`` / ``img.height`` return the un-oriented
+    dimensions, which don't match what is shown on screen (or what dataset
+    annotations typically reference).
+
+    ``LazyImage`` is expected to apply EXIF orientation so that ``data``,
+    ``width``, ``height``, ``size`` and ``shape`` all correspond to the image
+    as displayed.
+    """
+
+    # EXIF Orientation tag id
+    _ORIENTATION_TAG = 0x0112
+
+    @staticmethod
+    def _save_with_orientation(path: str, img_array: np.ndarray, orientation: int) -> None:
+        """Save a JPEG with a given EXIF Orientation tag."""
+        img = PILImage.fromarray(img_array)
+        exif = img.getexif()
+        exif[LazyImageExifOrientationTest._ORIENTATION_TAG] = orientation
+        # JPEG is required to round-trip the EXIF orientation tag reliably.
+        img.save(path, format="JPEG", exif=exif.tobytes())
+
+    @pytest.fixture(autouse=True)
+    def _reset_cache(self):
+        ImageCache.clear()
+        yield
+        ImageCache.clear()
+
+    @pytest.mark.parametrize("orientation", [1, 2, 3, 4])
+    def test_non_rotating_orientation_preserves_dimensions(self, orientation):
+        """Orientations 1-4 do not swap width/height (identity/flip/180°)."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Raw pixel data is landscape 80 wide x 40 tall (H=40, W=80).
+            img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+            path = os.path.join(temp_dir, f"orient_{orientation}.jpg")
+            self._save_with_orientation(path, img_array, orientation)
+
+            lazy_img = LazyImage(path=path)
+
+            assert lazy_img.width == 80
+            assert lazy_img.height == 40
+            assert lazy_img.size == (80, 40)
+            # data should remain (H, W, C)
+            assert lazy_img.data.shape == (40, 80, 3)
+
+    @pytest.mark.parametrize("orientation", [5, 6, 7, 8])
+    def test_rotating_orientation_swaps_dimensions(self, orientation):
+        """Orientations 5-8 imply a 90/270° rotation, so width/height swap."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Raw pixel data is landscape 80 wide x 40 tall (H=40, W=80).
+            img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+            path = os.path.join(temp_dir, f"orient_{orientation}.jpg")
+            self._save_with_orientation(path, img_array, orientation)
+
+            lazy_img = LazyImage(path=path)
+
+            # After applying EXIF orientation, the image is portrait: 40x80.
+            assert lazy_img.width == 40
+            assert lazy_img.height == 80
+            assert lazy_img.size == (40, 80)
+            # data should match the oriented dimensions: (H=80, W=40, C)
+            assert lazy_img.data.shape == (80, 40, 3)
+
+    def test_orientation_6_data_matches_width_height(self):
+        """Regression: ``data.shape`` must be consistent with width/height.
+
+        Previously ``width``/``height`` returned the raw (un-oriented) size
+        while ``data`` was also un-oriented; since some data sources (e.g.
+        COCO annotations) record oriented dimensions, the mismatch looked
+        like width/height were swapped. After the fix, both report the same
+        (oriented) dimensions and ``data.shape`` matches ``(height, width, C)``.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Use distinct width/height so a swap is detectable.
+            img_array = np.zeros((30, 90, 3), dtype=np.uint8)
+            path = os.path.join(temp_dir, "orient_6.jpg")
+            self._save_with_orientation(path, img_array, 6)
+
+            lazy_img = LazyImage(path=path)
+
+            h, w, _ = lazy_img.data.shape
+            assert (w, h) == lazy_img.size
+            assert w == lazy_img.width
+            assert h == lazy_img.height
+
+    def test_orientation_not_set_uses_raw_dimensions(self):
+        """Images without an EXIF orientation tag should behave as before."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            img_array = np.zeros((40, 80, 3), dtype=np.uint8)
+            path = os.path.join(temp_dir, "no_exif.png")
+            # PNG save without EXIF - no orientation metadata at all.
+            PILImage.fromarray(img_array).save(path)
+
+            lazy_img = LazyImage(path=path)
+
+            assert lazy_img.width == 80
+            assert lazy_img.height == 40
+            assert lazy_img.size == (80, 40)
+            assert lazy_img.data.shape == (40, 80, 3)
+
+
 class LazyImageTypeAliasTest:
     """Tests for the LazyImage type alias to avoid type checker warnings."""
 
