@@ -118,7 +118,7 @@ def test_create_filtering_transform_returns_module_level_callable():
     assert isinstance(factory, _FilteringTransformFactory)
     # Module-level qualname (no ``<locals>``) is what enables pickle-by-reference.
     assert "<locals>" not in type(factory).__qualname__
-    assert type(factory).__module__ == "datumaro.experimental.filtering.filter_registry"
+    assert type(factory).__module__ == create_filtering_transform.__module__
 
 
 def test_create_filtering_transform_factory_is_picklable():

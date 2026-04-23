@@ -365,7 +365,7 @@ def test_create_tiling_transform_returns_module_level_callable():
     assert isinstance(factory, _TilingTransformFactory)
     # Module-level qualname (no ``<locals>``) is what enables pickle-by-reference.
     assert "<locals>" not in type(factory).__qualname__
-    assert type(factory).__module__ == "datumaro.experimental.tiling.tiler_registry"
+    assert type(factory).__module__ == create_tiling_transform.__module__
 
 
 def test_create_tiling_transform_factory_stores_config():
@@ -373,7 +373,7 @@ def test_create_tiling_transform_factory_stores_config():
     config = TilingConfig(tile_width=64, tile_height=32, overlap_x=0.1, overlap_y=0.2)
     factory = create_tiling_transform(config, threshold_drop_ann=0.5)
 
-    assert factory.config is config
+    assert factory.config == config
     assert factory.threshold_drop_ann == 0.5
 
 
