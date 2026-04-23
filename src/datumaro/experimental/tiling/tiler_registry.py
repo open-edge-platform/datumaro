@@ -639,13 +639,32 @@ class TilingTransform(Transform):
         return len(self._df)
 
 
+class _TilingTransformFactory:
+    """Module-level callable that builds a :class:`TilingTransform` from a parent transform.
+
+    Defined at module scope (instead of a local ``factory`` closure) so instances
+    pickle by reference. This allows the returned transform to be safely passed
+    across process boundaries (e.g. multiprocessing).
+    """
+
+    __slots__ = ("config", "threshold_drop_ann")
+
+    def __init__(self, config: TilingConfig, threshold_drop_ann: float = 0.8):
+        self.config = config
+        self.threshold_drop_ann = threshold_drop_ann
+
+    def __call__(self, parent: Transform) -> TilingTransform:
+        plan = _create_tiling_plan(parent.schema, self.config, self.threshold_drop_ann)
+        return TilingTransform(parent, plan)
+
+
 def create_tiling_transform(
     config: TilingConfig, threshold_drop_ann: float = 0.8
 ) -> Callable[[Transform], TilingTransform]:
     """Create a transform factory for tiling operations.
 
     This is the main entry point for creating a tiling transform. It returns
-    a factory function that will create TilingTransform instances when needed.
+    a picklable callable that will create TilingTransform instances when needed.
     This pattern allows the transform to be used in dataset pipelines.
 
     Args:
@@ -655,7 +674,7 @@ def create_tiling_transform(
             Defaults to 0.8 (80% of original area must be in tile).
 
     Returns:
-        A factory function that creates TilingTransform instances.
+        A picklable callable that creates TilingTransform instances.
 
     Example:
         ```python
@@ -667,9 +686,4 @@ def create_tiling_transform(
         dataset = dataset.transform(tiling_transform)
         ```
     """
-
-    def factory(parent: Transform) -> TilingTransform:
-        plan = _create_tiling_plan(parent.schema, config, threshold_drop_ann)
-        return TilingTransform(parent, plan)
-
-    return factory
+    return _TilingTransformFactory(config, threshold_drop_ann)
