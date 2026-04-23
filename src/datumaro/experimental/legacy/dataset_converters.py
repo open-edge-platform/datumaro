@@ -221,28 +221,24 @@ def convert_from_legacy(
         legacy_dataset, hierarchical=hierarchical, multi_label=multi_label, anomaly=anomaly
     )
 
-    # Step 2: Create new dataset with inferred schema
-    experimental_dataset = Dataset(analysis_result.schema)
-
-    # Step 3: Convert all items
+    # Step 2: Build samples from the legacy items.
+    samples: list[Sample] = []
     for legacy_item in legacy_dataset:
-        # Skip items only when the media converter explicitly marks them as
-        # omitted (e.g. a whole Video item whose frames are already represented
-        # by VideoFrame items).
         if analysis_result.media_converter is not None and analysis_result.media_converter.should_skip_item(
             legacy_item
         ):
             continue
 
-        # Convert legacy item to new sample format
         sample_data = _convert_legacy_item(legacy_item, analysis_result)
 
-        if analysis_result.is_hierarchical and isinstance(sample_data["label"], int):
-            # Convert single labels in hierarchical project to be a list
+        if analysis_result.is_hierarchical and isinstance(sample_data.get("label"), int):
             sample_data["label"] = [sample_data["label"]]
-        # Create sample and add to dataset
-        sample = Sample(**sample_data)
-        experimental_dataset.append(sample)
+
+        samples.append(Sample(**sample_data))
+
+    # Step 3: Create the dataset and bulk-append the samples.
+    experimental_dataset: Dataset[Sample] = Dataset(analysis_result.schema)
+    experimental_dataset.append_batch(samples)
 
     if analysis_result.is_anomaly:
         categories = experimental_dataset.schema.attributes["label"].categories
