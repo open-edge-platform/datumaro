@@ -303,15 +303,30 @@ class FilteringTransform(Transform):
         return self._length
 
 
+class _FilteringTransformFactory:
+    """Module-level callable that builds a :class:`FilteringTransform` from a parent transform.
+
+    Defined at module scope (instead of a local ``factory`` closure) so instances
+    pickle by reference. This allows the returned transform to be safely passed
+    across process boundaries (e.g. multiprocessing, ``cloudpickle``-free paths).
+    """
+
+    __slots__ = ()
+
+    def __call__(self, parent: Transform) -> "FilteringTransform":
+        plan = create_filtering_plan(parent.schema)
+        return FilteringTransform(parent, plan)
+
+
 def create_filtering_transform() -> Callable[[Transform], FilteringTransform]:
     """Create a transform factory for filtering operations.
 
     This is the main entry point for creating a filtering transform. It returns
-    a factory function that will create FilteringTransform instances when needed.
+    a picklable callable that will create FilteringTransform instances when needed.
     This pattern allows the transform to be used in dataset pipelines.
 
     Returns:
-        A factory function that creates FilteringTransform instances.
+        A picklable callable that creates FilteringTransform instances.
 
     Example:
         ```python
@@ -322,9 +337,4 @@ def create_filtering_transform() -> Callable[[Transform], FilteringTransform]:
         dataset = dataset.transform(filtering_transform)
         ```
     """
-
-    def factory(parent: Transform):
-        plan = create_filtering_plan(parent.schema)
-        return FilteringTransform(parent, plan)
-
-    return factory
+    return _FilteringTransformFactory()

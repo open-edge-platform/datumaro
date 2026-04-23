@@ -8,8 +8,10 @@ import pytest
 
 from datumaro.experimental.fields import BBoxField, PolygonField, bbox_field, polygon_field
 from datumaro.experimental.filtering.filter_registry import (
+    FilteringTransform,
     FilterRegistry,
     _compute_filter_mask,
+    _FilteringTransformFactory,
     create_filtering_plan,
     create_filtering_transform,
 )
@@ -105,4 +107,45 @@ def test_transform_application():
     filtered_df = transform.apply(["bboxes"])
 
     assert len(filtered_df) == 2  # Should keep only non-empty bboxes
+    assert all(len(bboxes) > 0 for bboxes in filtered_df["bboxes"])
+
+
+def test_create_filtering_transform_returns_module_level_callable():
+    """The returned factory should be an instance of the module-level class,
+    not a local closure, so it can be pickled by reference."""
+    factory = create_filtering_transform()
+
+    assert isinstance(factory, _FilteringTransformFactory)
+    # Module-level qualname (no ``<locals>``) is what enables pickle-by-reference.
+    assert "<locals>" not in type(factory).__qualname__
+    assert type(factory).__module__ == "datumaro.experimental.filtering.filter_registry"
+
+
+def test_create_filtering_transform_factory_is_picklable():
+    """The factory returned by ``create_filtering_transform`` must pickle."""
+    import pickle
+
+    factory = create_filtering_transform()
+    restored = pickle.loads(pickle.dumps(factory))
+
+    assert isinstance(restored, _FilteringTransformFactory)
+
+
+def test_filtering_factory_builds_transform_after_unpickling():
+    """A round-tripped factory should still build a working FilteringTransform."""
+    import pickle
+
+    df = pl.DataFrame({"bboxes": [[], [[0, 0, 10, 10]], [[20, 20, 30, 30]]]})
+    schema = Schema(
+        {
+            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64())),
+        }
+    )
+
+    factory = pickle.loads(pickle.dumps(create_filtering_transform()))
+    transform = factory(IdentityTransform(df, schema))
+
+    assert isinstance(transform, FilteringTransform)
+    filtered_df = transform.apply(["bboxes"])
+    assert len(filtered_df) == 2
     assert all(len(bboxes) > 0 for bboxes in filtered_df["bboxes"])

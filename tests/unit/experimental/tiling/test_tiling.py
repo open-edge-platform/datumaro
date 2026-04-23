@@ -18,9 +18,12 @@ from datumaro.experimental.schema import Schema
 from datumaro.experimental.tiling.tiler_registry import (
     AttributeSpec,
     TilingConfig,
+    TilingTransform,
     _apply_tiling,
     _calculate_tiles,
     _create_tiling_plan,
+    _TilingTransformFactory,
+    create_tiling_transform,
 )
 
 
@@ -352,3 +355,50 @@ def test_polygon_and_label_tiling():
     assert len(result_df[3, "labels"]) == 2
     assert result_df[3, "labels"][0] == "cat"  # First label kept
     assert result_df[3, "labels"][1] == "dog"  # Second label kept
+
+
+def test_create_tiling_transform_returns_module_level_callable():
+    """The returned factory should be an instance of the module-level class,
+    not a local closure, so it can be pickled by reference."""
+    factory = create_tiling_transform(TilingConfig(tile_width=50, tile_height=50))
+
+    assert isinstance(factory, _TilingTransformFactory)
+    # Module-level qualname (no ``<locals>``) is what enables pickle-by-reference.
+    assert "<locals>" not in type(factory).__qualname__
+    assert type(factory).__module__ == "datumaro.experimental.tiling.tiler_registry"
+
+
+def test_create_tiling_transform_factory_stores_config():
+    """The factory should retain the config and threshold it was created with."""
+    config = TilingConfig(tile_width=64, tile_height=32, overlap_x=0.1, overlap_y=0.2)
+    factory = create_tiling_transform(config, threshold_drop_ann=0.5)
+
+    assert factory.config is config
+    assert factory.threshold_drop_ann == 0.5
+
+
+def test_create_tiling_transform_factory_is_picklable():
+    """The factory returned by ``create_tiling_transform`` must pickle by reference."""
+    import pickle
+
+    config = TilingConfig(tile_width=50, tile_height=50, overlap_x=0.25, overlap_y=0.0)
+    factory = create_tiling_transform(config, threshold_drop_ann=0.3)
+    restored = pickle.loads(pickle.dumps(factory))
+
+    assert isinstance(restored, _TilingTransformFactory)
+    assert restored.config == config
+    assert restored.threshold_drop_ann == 0.3
+
+
+def test_tiling_factory_builds_transform_after_unpickling(sample_df, sample_schema):
+    """A round-tripped factory should still build a working TilingTransform."""
+    import pickle
+
+    from datumaro.experimental.transform import IdentityTransform
+
+    config = TilingConfig(tile_width=50, tile_height=50)
+    factory = pickle.loads(pickle.dumps(create_tiling_transform(config)))
+    transform = factory(IdentityTransform(sample_df, sample_schema))
+
+    assert isinstance(transform, TilingTransform)
+    assert len(transform) == 16  # matches test_apply_tiling
