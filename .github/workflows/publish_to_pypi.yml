@@ -18,11 +18,13 @@ jobs:
         # macos-13 is used to build x86_64 MacOS binaries while macos-15 is used for arm64
         os: ["ubuntu-24.04", "windows-2022", "macos-13", "macos-15"]
     steps:
-      - name: Harden the runner (audit all outbound calls)
+      - &harden_runner
+        name: Harden the runner (audit all outbound calls)
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
         with:
           egress-policy: audit
-      - name: Checkout
+      - &checkout
+        name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
@@ -45,14 +47,8 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
-        with:
-          egress-policy: audit
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
+      - *harden_runner
+      - *checkout
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
@@ -74,10 +70,7 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
-        with:
-          egress-policy: audit
+      - *harden_runner
       - name: Download artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
