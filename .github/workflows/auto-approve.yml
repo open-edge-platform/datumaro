@@ -23,6 +23,12 @@ jobs:
       github.event.sender.login == 'oep-renovate[bot]'
       }}
     steps:
+      - &harden_runner
+        name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
       - name: Capture Commit SHA
         id: capture_sha
         run: |
@@ -49,6 +55,8 @@ jobs:
       deployment: false
     runs-on: ubuntu-latest
     steps:
+      - *harden_runner
+
       - name: Debug
         env:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
