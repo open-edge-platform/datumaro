@@ -76,6 +76,8 @@ docs = [
     "myst-parser",
     "nbsphinx",
     "jupyter",
+    "jupyterlab>=4.5.7",
+    "notebook>=7.5.6",
     "jupytext",
     "pandoc",
     "sphinx-design",
@@ -87,7 +89,9 @@ docs = [
 # Also exclude TensorFlow from the MacOS checks due to the following issue:
 # https://github.com/tensorflow/tensorflow/issues/98563
 tf = [
-    "tensorflow; python_version < '3.13' and sys_platform != 'darwin'",
+    "tensorflow; python_version >= '3.11' and python_version < '3.13' and sys_platform != 'darwin'",
+    # Pin keras to a non-vulnerable version
+    "keras>=3.13.2; python_version >= '3.11' and python_version < '3.13' and sys_platform != 'darwin'",
 ]
 # TODO: Reenable tfds
 #tfds = [

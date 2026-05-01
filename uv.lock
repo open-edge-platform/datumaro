@@ -186,8 +186,8 @@ name = "astunparse"
 version = "1.6.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "python_full_version < '3.13'" },
-    { name = "wheel", marker = "python_full_version < '3.13'" },
+    { name = "six", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "wheel", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f3/af/4182184d3c338792894f34a62672919db7ca008c89abee9b564dd34d8029/astunparse-1.6.3.tar.gz", hash = "sha256:5ad93a8456f0d084c3456d059fd9a92cce667963232cbf763eac3bc5b7940872", size = 18290, upload-time = "2019-12-22T18:12:13.129Z" }
 wheels = [
@@ -973,11 +973,13 @@ dev = [
 docs = [
     { name = "ipython" },
     { name = "jupyter" },
+    { name = "jupyterlab" },
     { name = "jupytext" },
     { name = "markupsafe" },
     { name = "myst-parser" },
     { name = "nbconvert" },
     { name = "nbsphinx" },
+    { name = "notebook" },
     { name = "pandoc" },
     { name = "pydata-sphinx-theme" },
     { name = "sphinx" },
@@ -1028,7 +1030,8 @@ test = [
     { name = "tifffile", version = "2026.4.11", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 tf = [
-    { name = "tensorflow", marker = "python_full_version < '3.13' and sys_platform != 'darwin'" },
+    { name = "keras", marker = "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin'" },
+    { name = "tensorflow", marker = "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin'" },
 ]
 torch = [
     { name = "torch" },
@@ -1050,8 +1053,10 @@ requires-dist = [
     { name = "ipython", marker = "extra == 'docs'", specifier = "==8.39.0" },
     { name = "json-stream", specifier = "~=2.4" },
     { name = "jupyter", marker = "extra == 'docs'" },
+    { name = "jupyterlab", marker = "extra == 'docs'", specifier = ">=4.5.7" },
     { name = "jupytext", marker = "extra == 'docs'" },
     { name = "kaggle", marker = "extra == 'kaggle'" },
+    { name = "keras", marker = "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin' and extra == 'tf'", specifier = ">=3.13.2" },
     { name = "lxml", specifier = "~=6.0" },
     { name = "markupsafe", marker = "extra == 'docs'", specifier = "==3.0.3" },
     { name = "matplotlib", marker = "extra == 'cli'", specifier = ">=3.3.1" },
@@ -1061,6 +1066,7 @@ requires-dist = [
     { name = "nbsphinx", marker = "extra == 'docs'" },
     { name = "nibabel", marker = "extra == 'nibabel'", specifier = ">=3.2.1" },
     { name = "nltk", marker = "extra == 'nlp'" },
+    { name = "notebook", marker = "extra == 'docs'", specifier = ">=7.5.6" },
     { name = "numpy", specifier = "~=2.2" },
     { name = "opencv-python-headless", specifier = "~=4.11" },
     { name = "orjson", specifier = "~=3.10" },
@@ -1093,7 +1099,7 @@ requires-dist = [
     { name = "tabulate", marker = "extra == 'cli'" },
     { name = "tabulate", marker = "extra == 'tabulate'" },
     { name = "tensorboardx", marker = "extra == 'cli'", specifier = ">=1.8,!=2.3" },
-    { name = "tensorflow", marker = "python_full_version < '3.13' and sys_platform != 'darwin' and extra == 'tf'" },
+    { name = "tensorflow", marker = "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'darwin' and extra == 'tf'" },
     { name = "tifffile", marker = "extra == 'test'" },
     { name = "tokenizers", marker = "extra == 'nlp'" },
     { name = "torch", marker = "extra == 'torch'", specifier = ">=2.9" },
@@ -1342,7 +1348,7 @@ name = "google-pasta"
 version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "python_full_version < '3.13'" },
+    { name = "six", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/35/4a/0bd53b36ff0323d10d5f24ebd67af2de10a1117f5cf4d7add90df92756f1/google-pasta-0.2.0.tar.gz", hash = "sha256:c9f2c8dfc8f96d0d5808299920721be30c9eec37f2389f28904f454565c8a16e", size = 40430, upload-time = "2020-03-13T18:57:50.34Z" }
 wheels = [
@@ -1354,7 +1360,7 @@ name = "grpcio"
 version = "1.80.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b7/48/af6173dbca4454f4637a4678b67f52ca7e0c1ed7d5894d89d434fecede05/grpcio-1.80.0.tar.gz", hash = "sha256:29aca15edd0688c22ba01d7cc01cb000d72b2033f4a3c72a81a19b56fd143257", size = 12978905, upload-time = "2026-03-30T08:49:10.502Z" }
 wheels = [
@@ -1958,7 +1964,7 @@ wheels = [
 
 [[package]]
 name = "jupyterlab"
-version = "4.5.6"
+version = "4.5.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "async-lru" },
@@ -1976,9 +1982,9 @@ dependencies = [
     { name = "tornado" },
     { name = "traitlets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ac/d5/730628e03fff2e8a8e8ccdaedde1489ab1309f9a4fa2536248884e30b7c7/jupyterlab-4.5.6.tar.gz", hash = "sha256:642fe2cfe7f0f5922a8a558ba7a0d246c7bc133b708dfe43f7b3a826d163cf42", size = 23970670, upload-time = "2026-03-11T14:17:04.531Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2b/22/8440ec827762146e7cdecf04335bd348795899d29dc6ae82238707353a2c/jupyterlab-4.5.7.tar.gz", hash = "sha256:55a9822c4754da305f41e113452c68383e214dcf96de760146af89ce5d5117b0", size = 23992763, upload-time = "2026-04-29T16:43:51.328Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/1b/dad6fdcc658ed7af26fdf3841e7394072c9549a8b896c381ab49dd11e2d9/jupyterlab-4.5.6-py3-none-any.whl", hash = "sha256:d6b3dac883aa4d9993348e0f8e95b24624f75099aed64eab6a4351a9cdd1e580", size = 12447124, upload-time = "2026-03-11T14:17:00.229Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/aa/537b8f7d80e799af19af35fb3ddfc970b951088a13c57dd9387dcfbb7f61/jupyterlab-4.5.7-py3-none-any.whl", hash = "sha256:fba4cb0e2c44a52859669d8c98b45de029d5e515f8407bf8534d2a8fc5f0964d", size = 12450123, upload-time = "2026-04-29T16:43:46.639Z" },
 ]
 
 [[package]]
@@ -2104,34 +2110,8 @@ wheels = [
 
 [[package]]
 name = "keras"
-version = "3.12.1"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version < '3.11'",
-]
-dependencies = [
-    { name = "absl-py", marker = "python_full_version < '3.11'" },
-    { name = "h5py", marker = "python_full_version < '3.11'" },
-    { name = "ml-dtypes", marker = "python_full_version < '3.11'" },
-    { name = "namex", marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "optree", marker = "python_full_version < '3.11'" },
-    { name = "packaging", marker = "python_full_version < '3.11'" },
-    { name = "rich", marker = "python_full_version < '3.11'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/85/1d/b64986120f5de68b921aa9bc2b69cb53ad20c1a6ebe5431a73def28525ef/keras-3.12.1.tar.gz", hash = "sha256:3cb760b3fec105db4d893dd717daafdd0e35457a8201502c1ba8bedfaf334a71", size = 1127003, upload-time = "2026-01-30T18:28:57.087Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/7a/40096b1e1c29ffa830497a80800775ada5ba93f15cd52e0f1a84b4f22cd4/keras-3.12.1-py3-none-any.whl", hash = "sha256:c340f8a25362398b20500c64e290f6ee280c6aeec51e1044eb8d759b32dc272a", size = 1475784, upload-time = "2026-01-30T18:28:54.383Z" },
-]
-
-[[package]]
-name = "keras"
 version = "3.14.0"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version == '3.12.*'",
-    "python_full_version == '3.11.*'",
-]
 dependencies = [
     { name = "absl-py", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
     { name = "h5py", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
@@ -2643,7 +2623,6 @@ name = "ml-dtypes"
 version = "0.5.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/0e/4a/c27b42ed9b1c7d13d9ba8b6905dece787d6259152f2309338aed29b2447b/ml_dtypes-0.5.4.tar.gz", hash = "sha256:8ab06a50fb9bf9666dd0fe5dfb4676fa2b0ac0f31ecff72a6c3af8e22c063453", size = 692314, upload-time = "2025-11-17T22:32:31.031Z" }
@@ -2932,7 +2911,7 @@ wheels = [
 
 [[package]]
 name = "notebook"
-version = "7.5.5"
+version = "7.5.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jupyter-server" },
@@ -2941,9 +2920,9 @@ dependencies = [
     { name = "notebook-shim" },
     { name = "tornado" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1f/6d/41052c48d6f6349ca0a7c4d1f6a78464de135e6d18f5829ba2510e62184c/notebook-7.5.5.tar.gz", hash = "sha256:dc0bfab0f2372c8278c457423d3256c34154ac2cc76bf20e9925260c461013c3", size = 14169167, upload-time = "2026-03-11T16:32:51.922Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2a/c2/cf59bd2e6f2c8b976b52477e3e53bf6f97bc714ed046a51821afb428eaee/notebook-7.5.6.tar.gz", hash = "sha256:621174aade80108f0020b0f00738000b215f75fa3cd90771ad7aa0f24536a4e1", size = 14170814, upload-time = "2026-04-30T11:46:26.613Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f8/aa/cbd1deb9f07446241e88f8d5fecccd95b249bca0b4e5482214a4d1714c49/notebook-7.5.5-py3-none-any.whl", hash = "sha256:a7c14dbeefa6592e87f72290ca982e0c10f5bbf3786be2a600fda9da2764a2b8", size = 14578929, upload-time = "2026-03-11T16:32:48.021Z" },
+    { url = "https://files.pythonhosted.org/packages/e9/d6/1fd0646b9bbd9efbb0b8ae21b2325fbef515769a5621c03e31d8eb8da587/notebook-7.5.6-py3-none-any.whl", hash = "sha256:4dde3f8fb55fa8fb7946d58c6e869ce9baf46d00fc070664f62604569d0faca0", size = 14581730, upload-time = "2026-04-30T11:46:22.342Z" },
 ]
 
 [[package]]
@@ -3290,7 +3269,7 @@ name = "optree"
 version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3d/63/7b078bc36d5a206c21b03565a818ede38ff0fbf014e92085ec467ef10adb/optree-0.19.0.tar.gz", hash = "sha256:bc1991a948590756409e76be4e29efd4a487a185056d35db6c67619c19ea27a1", size = 175199, upload-time = "2026-02-23T01:56:37.752Z" }
 wheels = [
@@ -5228,17 +5207,16 @@ name = "tensorboard"
 version = "2.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "absl-py", marker = "python_full_version < '3.13'" },
-    { name = "grpcio", marker = "python_full_version < '3.13'" },
-    { name = "markdown", marker = "python_full_version < '3.13'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "absl-py", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "grpcio", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "markdown", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
-    { name = "packaging", marker = "python_full_version < '3.13'" },
-    { name = "pillow", marker = "python_full_version < '3.13'" },
-    { name = "protobuf", marker = "python_full_version < '3.13'" },
-    { name = "setuptools", marker = "python_full_version < '3.13'" },
-    { name = "tensorboard-data-server", marker = "python_full_version < '3.13'" },
-    { name = "werkzeug", marker = "python_full_version < '3.13'" },
+    { name = "packaging", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "pillow", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "protobuf", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "setuptools", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "tensorboard-data-server", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "werkzeug", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9c/d9/a5db55f88f258ac669a92858b70a714bbbd5acd993820b41ec4a96a4d77f/tensorboard-2.20.0-py3-none-any.whl", hash = "sha256:9dc9f978cb84c0723acf9a345d96c184f0293d18f166bb8d59ee098e6cfaaba6", size = 5525680, upload-time = "2025-07-17T19:20:49.638Z" },
@@ -5273,29 +5251,27 @@ name = "tensorflow"
 version = "2.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "absl-py", marker = "python_full_version < '3.13'" },
-    { name = "astunparse", marker = "python_full_version < '3.13'" },
-    { name = "flatbuffers", marker = "python_full_version < '3.13'" },
-    { name = "gast", marker = "python_full_version < '3.13'" },
-    { name = "google-pasta", marker = "python_full_version < '3.13'" },
-    { name = "grpcio", marker = "python_full_version < '3.13'" },
-    { name = "h5py", marker = "python_full_version < '3.13'" },
-    { name = "keras", version = "3.12.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "keras", version = "3.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
-    { name = "libclang", marker = "python_full_version < '3.13'" },
-    { name = "ml-dtypes", marker = "python_full_version < '3.13'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "absl-py", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "astunparse", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "flatbuffers", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "gast", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "google-pasta", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "grpcio", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "h5py", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "keras", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "libclang", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "ml-dtypes", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
-    { name = "opt-einsum", marker = "python_full_version < '3.13'" },
-    { name = "packaging", marker = "python_full_version < '3.13'" },
-    { name = "protobuf", marker = "python_full_version < '3.13'" },
-    { name = "requests", marker = "python_full_version < '3.13'" },
-    { name = "setuptools", marker = "python_full_version < '3.13'" },
-    { name = "six", marker = "python_full_version < '3.13'" },
-    { name = "tensorboard", marker = "python_full_version < '3.13'" },
-    { name = "termcolor", marker = "python_full_version < '3.13'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
-    { name = "wrapt", marker = "python_full_version < '3.13'" },
+    { name = "opt-einsum", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "packaging", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "protobuf", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "requests", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "setuptools", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "six", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "tensorboard", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "termcolor", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "wrapt", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ff/07/ea91ac67a9fd36d3372099f5a3e69860ded544f877f5f2117802388f4212/tensorflow-2.20.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:02a0293d94f5c8b7125b66abf622cc4854a33ae9d618a0d41309f95e091bbaea", size = 259307122, upload-time = "2025-08-13T16:50:47.909Z" },
@@ -5731,7 +5707,7 @@ name = "werkzeug"
 version = "3.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markupsafe", marker = "python_full_version < '3.13'" },
+    { name = "markupsafe", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/dd/b2/381be8cfdee792dd117872481b6e378f85c957dd7c5bca38897b08f765fd/werkzeug-3.1.8.tar.gz", hash = "sha256:9bad61a4268dac112f1c5cd4630a56ede601b6ed420300677a869083d70a4c44", size = 875852, upload-time = "2026-04-02T18:49:14.268Z" }
 wheels = [
@@ -5743,7 +5719,7 @@ name = "wheel"
 version = "0.47.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "packaging", marker = "python_full_version < '3.13'" },
+    { name = "packaging", marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/39/62/75f18a0f03b4219c456652c7780e4d749b929eb605c098ce3a5b6b6bc081/wheel-0.47.0.tar.gz", hash = "sha256:cc72bd1009ba0cf63922e28f94d9d83b920aa2bb28f798a31d0691b02fa3c9b3", size = 63854, upload-time = "2026-04-22T15:51:27.727Z" }
 wheels = [
