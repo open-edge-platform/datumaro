@@ -29,7 +29,7 @@ jobs:
     steps:
       - &harden_runner
         name: Harden the runner (audit all outbound calls)
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
         with:
           egress-policy: audit
 
@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
 
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@6fe3ccd4f702a56614487b4aa3a414c4fe5221bf
+        uses: open-edge-platform/geti-ci/actions/zizmor@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
         with:
           severity-level: "LOW"
           confidence-level: "LOW"
@@ -57,7 +57,7 @@ jobs:
       - *checkout
 
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@6fe3ccd4f702a56614487b4aa3a414c4fe5221bf
+        uses: open-edge-platform/geti-ci/actions/bandit@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
         with:
           severity-level: "LOW"
           confidence-level: "LOW"
@@ -77,7 +77,7 @@ jobs:
 
       - name: Run Trivy scan
         id: trivy
-        uses: open-edge-platform/geti-ci/actions/trivy@6fe3ccd4f702a56614487b4aa3a414c4fe5221bf
+        uses: open-edge-platform/geti-ci/actions/trivy@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
         with:
           scan_type: "fs"
           scan-scope: all
@@ -104,7 +104,7 @@ jobs:
 
       - name: Run Semgrep scan
         id: semgrep
-        uses: open-edge-platform/geti-ci/actions/semgrep@6fe3ccd4f702a56614487b4aa3a414c4fe5221bf
+        uses: open-edge-platform/geti-ci/actions/semgrep@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
         with:
           scan-scope: "all"
           severity: "LOW"
