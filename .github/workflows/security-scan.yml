@@ -28,10 +28,19 @@ jobs:
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - &harden_runner
-        name: Harden the runner (audit all outbound calls)
+        name: Harden the runner
         uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
         with:
-          egress-policy: audit
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            168.63.129.16:80
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
+            raw.githubusercontent.com:443
+            releases.astral.sh:443
+            semgrep.dev:443
 
       - &checkout
         name: Checkout code
