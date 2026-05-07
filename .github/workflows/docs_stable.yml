@@ -13,10 +13,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Harden the runner (audit all outbound calls)
+      - name: Harden the runner
         uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
         with:
-          egress-policy: audit
+          disable-sudo: false
+          disable-telemetry: true
+          egress-policy: block
+          allowed-endpoints: >
+            # Azure Wire Server IP
+            168.63.129.16:80
+            docs.python.org:443
+            github.com:443
+            numpy.org:443
+            static.crates.io:443
       
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
