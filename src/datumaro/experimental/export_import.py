@@ -112,7 +112,7 @@ class ExportMode(Enum):
 # cross-platform datasets).
 _WINDOWS_ILLEGAL_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 # Reserved device names on Windows (case-insensitive, with or without extension)
-_WINDOWS_RESERVED_NAMES = re.compile(r"^(CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])(\..+)?$", re.IGNORECASE)
+_WINDOWS_RESERVED_NAMES = re.compile(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..+)?$", re.IGNORECASE)
 
 
 def sanitize_filename(name: str, *, cross_platform: bool = True) -> str:
