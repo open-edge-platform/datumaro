@@ -2705,6 +2705,12 @@ class SanitizeExtractedFilesTest:
 
     def test_control_chars_renamed(self, tmp_path):
         """Files with control characters should be renamed."""
+        import platform
+
+        # Control characters cannot be created in filenames on Windows
+        if platform.system() == "Windows":
+            pytest.skip("Cannot create files with control characters on Windows")
+
         bad_file = tmp_path / "file\x01name.txt"
         bad_file.touch()
         _sanitize_extracted_files(tmp_path)
