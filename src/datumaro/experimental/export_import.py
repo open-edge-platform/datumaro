@@ -1313,6 +1313,25 @@ def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
     return Sample
 
 
+def _resolve_reconstructed_video_path(path: str | None, input_dir: Path) -> str | None:
+    """Resolve a reconstructed video path under *input_dir* for copy-mode imports."""
+    if path is None:
+        return None
+    abs_path = input_dir / path
+    if abs_path.exists():
+        return str(abs_path)
+
+    # Fallback for archives where extracted filenames were
+    # sanitized on this OS (e.g. control chars renamed).
+    path_obj = Path(path)
+    sanitized_parts = tuple(sanitize_filename(part, cross_platform=False) for part in path_obj.parts)
+    if sanitized_parts != path_obj.parts:
+        sanitized_abs_path = input_dir.joinpath(*sanitized_parts)
+        if sanitized_abs_path.exists():
+            return str(sanitized_abs_path)
+    return path
+
+
 def _reconstruct_video_fields(
     df: pl.DataFrame,
     metadata: dict,
@@ -1348,17 +1367,8 @@ def _reconstruct_video_fields(
             continue
 
         if export_mode == "copy":
-            # Paths are relative to input_dir, make them absolute
-            def make_absolute(path: str | None) -> str | None:
-                if path is None:
-                    return None
-                abs_path = input_dir / path
-                if abs_path.exists():
-                    return str(abs_path)
-                return path
-
             paths = df[field_name].to_list()
-            updated_paths = [make_absolute(p) for p in paths]
+            updated_paths = [_resolve_reconstructed_video_path(p, input_dir) for p in paths]
             df = df.with_columns(pl.Series(field_name, updated_paths, dtype=pl.String()))
 
     return df

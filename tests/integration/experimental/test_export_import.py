@@ -33,6 +33,7 @@ from datumaro.experimental.export_import import (
     _get_registered_samples,
     _get_video_fields,
     _match_dtype_from_schema,
+    _reconstruct_video_fields,
     _sample_registry,
     _sanitize_extracted_files,
     export_dataset,
@@ -1731,6 +1732,22 @@ def test_export_videos_copy_mode_creates_correct_paths(tmp_path):
 
     # Path should be relative to export dir and start with videos/
     assert frame_path.startswith(VIDEOS_DIR + "/")
+
+
+def test_reconstruct_video_fields_uses_sanitized_fallback_path(tmp_path):
+    """Video path reconstruction should fall back to sanitized extracted names."""
+    exported_rel_path = f"{VIDEOS_DIR}/clip\x01name.mp4"
+    sanitized_rel_path = f"{VIDEOS_DIR}/clip_name.mp4"
+    sanitized_abs_path = tmp_path / sanitized_rel_path
+    sanitized_abs_path.parent.mkdir(parents=True, exist_ok=True)
+    sanitized_abs_path.touch()
+
+    df = pl.DataFrame({"frame": [exported_rel_path], "frame_frame_index": [0]})
+    metadata = {"videos": {"fields": ["frame"], "export_mode": "copy"}}
+
+    updated_df = _reconstruct_video_fields(df, metadata, tmp_path)
+
+    assert updated_df["frame"][0] == str(sanitized_abs_path)
 
 
 def test_export_video_error_missing_video_file(tmp_path):
