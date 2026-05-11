@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import json
 import logging
+import platform
+import re
 import shutil
 import tempfile
 from enum import Enum
@@ -106,6 +108,63 @@ class ExportMode(Enum):
     COPY = "copy"
 
 
+# Characters that are illegal in filenames on Windows (and thus unsafe for
+# cross-platform datasets).
+_WINDOWS_ILLEGAL_CHARS = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+# Reserved device names on Windows (case-insensitive, with or without extension)
+_WINDOWS_RESERVED_NAMES = re.compile(r"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\..+)?$", re.IGNORECASE)
+
+
+def sanitize_filename(name: str, *, cross_platform: bool = True) -> str:
+    """Sanitize a filename so it is safe for the current (or all) OS(es).
+
+    When *cross_platform* is ``True`` (the default, used during export) the
+    filename is made safe for **all** major operating systems (Windows, macOS,
+    Linux).  When ``False``, only the rules of the **current** OS are applied
+    (useful during import to fix names that are invalid on the importing
+    machine).
+
+    The function replaces illegal characters with underscores, strips trailing
+    dots/spaces (Windows limitation), and prefixes reserved Windows device
+    names with an underscore.
+
+    Args:
+        name: The filename (without directory components) to sanitize.
+        cross_platform: If ``True``, apply rules for all OSes. If ``False``,
+            only apply rules for the current OS.
+
+    Returns:
+        The sanitized filename.
+    """
+    if not name:
+        return name
+
+    current_os = platform.system()  # 'Windows', 'Darwin', 'Linux'
+
+    apply_windows_rules = cross_platform or current_os == "Windows"
+    apply_macos_rules = cross_platform or current_os == "Darwin"
+
+    if apply_windows_rules:
+        name = _WINDOWS_ILLEGAL_CHARS.sub("_", name)
+        name = name.rstrip(". ")
+        if _WINDOWS_RESERVED_NAMES.match(name):
+            name = f"_{name}"
+    else:
+        if apply_macos_rules:
+            # macOS HFS+ / Finder disallows colons (displayed as '/' in
+            # Finder but stored as ':' on disk).
+            name = name.replace(":", "_")
+
+        # On Linux and macOS, replace control characters (0x00-0x1f) that
+        # cause problems with terminals, shells, and many tools.
+        name = re.sub(r"[\x00-\x1f]", "_", name)
+
+    if not name:
+        name = "_"
+
+    return name
+
+
 def _get_image_fields(dataset: Dataset[DType]) -> list[tuple[str, object]]:
     """Extract all image-related fields from the dataset schema.
 
@@ -163,6 +222,7 @@ def _export_image_path_field(
         # Preserve the original filename; fall back to index-based naming
         # only when the source has no name at all.
         dest_name = source_path.name if source_path.name else f"{field_name}_{idx:06d}.png"
+        dest_name = sanitize_filename(dest_name)
         abs_path = output_dir / dest_name
 
         # Handle name collisions with a numeric suffix
@@ -170,7 +230,7 @@ def _export_image_path_field(
         while abs_path.exists():
             stem = source_path.stem if source_path.stem else f"{field_name}_{idx:06d}"
             suffix = source_path.suffix if source_path.suffix else ".png"
-            abs_path = output_dir / f"{stem}_{counter}{suffix}"
+            abs_path = output_dir / sanitize_filename(f"{stem}_{counter}{suffix}")
             counter += 1
 
         rel_path = abs_path.name
@@ -219,7 +279,7 @@ def _export_callable_field(
         if pil_img is None:
             return None
 
-        rel_path = f"{field_name}_{idx:06d}.png"
+        rel_path = sanitize_filename(f"{field_name}_{idx:06d}.png")
         abs_path = output_dir / rel_path
         pil_img.save(abs_path)
         return str(rel_path)
@@ -465,13 +525,13 @@ def _copy_video_files(
                 continue
             raise ValueError(f"Video file not found: {video_path}")
 
-        dest_path = output_dir / source_path.name
+        dest_path = output_dir / sanitize_filename(source_path.name)
         # Handle name collisions
         counter = 1
         while dest_path.exists():
             stem = source_path.stem
             suffix = source_path.suffix
-            dest_path = output_dir / f"{stem}_{counter}{suffix}"
+            dest_path = output_dir / sanitize_filename(f"{stem}_{counter}{suffix}")
             counter += 1
         shutil.copy2(source_path, dest_path)
         rel_path = dest_path.relative_to(output_dir.parent).as_posix()
@@ -992,9 +1052,38 @@ def import_dataset(
                     )
             zipf.extractall(extract_dir)
 
+        _sanitize_extracted_files(extract_dir)
+
         dataset_root = find_dataset_root(extract_dir)
         return _import_dataset_from_dir(dataset_root, dtype)
     return _import_dataset_from_dir(input_path, dtype)
+
+
+def _sanitize_extracted_files(directory: Path) -> None:
+    """Rename files whose names contain characters illegal on the current OS.
+
+    Walks *directory* bottom-up so that files inside subdirectories are
+    renamed before their parent directories.  Only the final path component
+    (the file/directory name) is sanitized; parent components are left as-is
+    because they have already been created by the zip extraction.
+    """
+    # Collect all paths first, then process bottom-up to avoid issues with
+    # iterating while renaming.
+    all_paths = sorted(directory.rglob("*"), key=lambda p: len(p.parts), reverse=True)
+    for path in all_paths:
+        sanitized_name = sanitize_filename(path.name)
+        if sanitized_name != path.name:
+            new_path = path.parent / sanitized_name
+            # Handle collisions
+            counter = 1
+            while new_path.exists() and new_path != path:
+                stem, *ext_parts = sanitized_name.rsplit(".", 1)
+                suffix = f".{ext_parts[0]}" if ext_parts else ""
+                new_path = path.parent / f"{stem}_{counter}{suffix}"
+                counter += 1
+            if new_path != path:
+                log.info("Renaming '%s' -> '%s' (filename sanitization)", path.name, new_path.name)
+                path.rename(new_path)
 
 
 def _load_metadata(input_dir: Path) -> dict:
@@ -1062,6 +1151,13 @@ def _resolve_image_file(
         candidate = images_base_dir / df_path
         if candidate.exists():
             return candidate
+        # Try with sanitized filename (handles cross-OS imports, e.g.
+        # colons in filenames from Linux on Windows)
+        sanitized = sanitize_filename(Path(df_path).name, cross_platform=False)
+        if sanitized != Path(df_path).name:
+            candidate = images_base_dir / sanitized
+            if candidate.exists():
+                return candidate
 
     return None
 
@@ -1217,6 +1313,26 @@ def _match_dtype_from_schema(schema: Schema) -> type[Sample]:
     return Sample
 
 
+def _resolve_reconstructed_video_path(path: str | None, input_dir: Path) -> str | None:
+    """Resolve a reconstructed video path under *input_dir* for copy-mode imports."""
+    if path is None:
+        return None
+    abs_path = input_dir / path
+    if abs_path.exists():
+        return str(abs_path)
+
+    # Fallback for archives where extracted filenames were
+    # sanitized on this OS (e.g. control chars renamed).
+    path_obj = Path(path)
+    # Use OS-specific sanitization to mirror _sanitize_extracted_files behavior.
+    sanitized_parts = tuple(sanitize_filename(part, cross_platform=False) for part in path_obj.parts)
+    if sanitized_parts != path_obj.parts:
+        sanitized_abs_path = input_dir.joinpath(*sanitized_parts)
+        if sanitized_abs_path.exists():
+            return str(sanitized_abs_path)
+    return path
+
+
 def _reconstruct_video_fields(
     df: pl.DataFrame,
     metadata: dict,
@@ -1252,17 +1368,8 @@ def _reconstruct_video_fields(
             continue
 
         if export_mode == "copy":
-            # Paths are relative to input_dir, make them absolute
-            def make_absolute(path: str | None) -> str | None:
-                if path is None:
-                    return None
-                abs_path = input_dir / path
-                if abs_path.exists():
-                    return str(abs_path)
-                return path
-
             paths = df[field_name].to_list()
-            updated_paths = [make_absolute(p) for p in paths]
+            updated_paths = [_resolve_reconstructed_video_path(p, input_dir) for p in paths]
             df = df.with_columns(pl.Series(field_name, updated_paths, dtype=pl.String()))
 
     return df

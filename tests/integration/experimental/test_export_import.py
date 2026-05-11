@@ -33,10 +33,13 @@ from datumaro.experimental.export_import import (
     _get_registered_samples,
     _get_video_fields,
     _match_dtype_from_schema,
+    _reconstruct_video_fields,
     _sample_registry,
+    _sanitize_extracted_files,
     export_dataset,
     import_dataset,
     register_sample,
+    sanitize_filename,
 )
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -1731,6 +1734,22 @@ def test_export_videos_copy_mode_creates_correct_paths(tmp_path):
     assert frame_path.startswith(VIDEOS_DIR + "/")
 
 
+def test_reconstruct_video_fields_uses_sanitized_fallback_path(tmp_path):
+    """Video path reconstruction should fall back to sanitized extracted names."""
+    exported_rel_path = f"{VIDEOS_DIR}/clip\x01name.mp4"
+    sanitized_rel_path = f"{VIDEOS_DIR}/clip_name.mp4"
+    sanitized_abs_path = tmp_path / sanitized_rel_path
+    sanitized_abs_path.parent.mkdir(parents=True, exist_ok=True)
+    sanitized_abs_path.touch()
+
+    df = pl.DataFrame({"frame": [exported_rel_path], "frame_frame_index": [0]})
+    metadata = {"videos": {"fields": ["frame"], "export_mode": "copy"}}
+
+    updated_df = _reconstruct_video_fields(df, metadata, tmp_path)
+
+    assert updated_df["frame"][0] == str(sanitized_abs_path)
+
+
 def test_export_video_error_missing_video_file(tmp_path):
     """Error when a video file does not exist and ignore_missing_media=False."""
 
@@ -2520,3 +2539,246 @@ def test_export_import_preserves_filenames_via_zip(tmp_path):
     path = Path(sample.image_path)
     assert path.exists()
     assert path.name == "my_image.png"
+
+
+# ============================================================
+# sanitize_filename unit tests
+# ============================================================
+
+
+class SanitizeFilenameTest:
+    """Unit tests for the sanitize_filename function."""
+
+    def test_empty_string(self):
+        assert sanitize_filename("") == ""
+
+    def test_normal_filename_unchanged(self):
+        assert sanitize_filename("image_001.png") == "image_001.png"
+
+    def test_replaces_colons_cross_platform(self):
+        assert sanitize_filename("2024:01:15_photo.jpg") == "2024_01_15_photo.jpg"
+
+    def test_replaces_angle_brackets(self):
+        assert sanitize_filename("file<1>.txt") == "file_1_.txt"
+
+    def test_replaces_question_mark(self):
+        assert sanitize_filename("what?.png") == "what_.png"
+
+    def test_replaces_asterisk(self):
+        assert sanitize_filename("star*.png") == "star_.png"
+
+    def test_replaces_pipe(self):
+        assert sanitize_filename("a|b.png") == "a_b.png"
+
+    def test_replaces_double_quote(self):
+        assert sanitize_filename('say"hello".png') == "say_hello_.png"
+
+    def test_replaces_backslash(self):
+        assert sanitize_filename("path\\file.png") == "path_file.png"
+
+    def test_strips_trailing_dots(self):
+        assert sanitize_filename("file...") == "file"
+
+    def test_strips_trailing_spaces(self):
+        assert sanitize_filename("file   ") == "file"
+
+    def test_strips_trailing_dots_and_spaces(self):
+        assert sanitize_filename("file. . .") == "file"
+
+    def test_reserved_name_con(self):
+        assert sanitize_filename("CON") == "_CON"
+
+    def test_reserved_name_con_with_extension(self):
+        assert sanitize_filename("CON.txt") == "_CON.txt"
+
+    def test_reserved_name_nul(self):
+        assert sanitize_filename("NUL") == "_NUL"
+
+    def test_reserved_name_com1(self):
+        assert sanitize_filename("COM1") == "_COM1"
+
+    def test_reserved_name_lpt3(self):
+        assert sanitize_filename("LPT3.log") == "_LPT3.log"
+
+    def test_reserved_name_case_insensitive(self):
+        assert sanitize_filename("con") == "_con"
+        assert sanitize_filename("Aux.txt") == "_Aux.txt"
+
+    def test_not_reserved_name(self):
+        # "CONSOLE" is not a reserved name
+        assert sanitize_filename("CONSOLE") == "CONSOLE"
+
+    def test_control_characters_replaced(self):
+        assert sanitize_filename("file\x01name\x1f.png") == "file_name_.png"
+
+    def test_null_byte_replaced(self):
+        assert sanitize_filename("file\x00name.png") == "file_name.png"
+
+    def test_result_not_empty_after_sanitization(self):
+        # All characters are replaced but result is not empty
+        assert sanitize_filename(":::") == "___"
+        # Trailing dots/spaces stripped to empty → falls back to "_"
+        assert sanitize_filename("...") == "_"
+
+    def test_cross_platform_false_on_current_os(self):
+        """cross_platform=False should at least handle control chars."""
+        result = sanitize_filename("file\x00\x01.png", cross_platform=False)
+        assert "\x00" not in result
+        assert "\x01" not in result
+
+    def test_multiple_illegal_chars(self):
+        assert sanitize_filename('a<b>c:d"e|f?g*.png') == "a_b_c_d_e_f_g_.png"
+
+    def test_preserves_unicode(self):
+        assert sanitize_filename("日本語ファイル.png") == "日本語ファイル.png"
+
+    def test_preserves_dashes_and_underscores(self):
+        assert sanitize_filename("my-file_name.png") == "my-file_name.png"
+
+    def test_preserves_dots_in_middle(self):
+        assert sanitize_filename("file.v2.0.png") == "file.v2.0.png"
+
+
+# ============================================================
+# _sanitize_extracted_files tests
+# ============================================================
+
+
+class SanitizeExtractedFilesTest:
+    """Tests for _sanitize_extracted_files which renames files after zip extraction."""
+
+    def test_renames_file_with_colon(self, tmp_path):
+        """Files with colons should be renamed (important for macOS/Windows)."""
+        import platform
+
+        # On macOS/Windows we can't even create files with colons, so skip
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        bad_file = tmp_path / "image:01.png"
+        bad_file.touch()
+        _sanitize_extracted_files(tmp_path)
+        assert not bad_file.exists()
+        sanitized = tmp_path / "image_01.png"
+        assert sanitized.exists()
+
+    def test_no_rename_needed(self, tmp_path):
+        """Normal files should not be renamed."""
+        good_file = tmp_path / "normal_image.png"
+        good_file.touch()
+        _sanitize_extracted_files(tmp_path)
+        assert good_file.exists()
+
+    def test_handles_collision(self, tmp_path):
+        """When sanitized name already exists, a numeric suffix is added."""
+        import platform
+
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        # Create the target name first
+        (tmp_path / "image_01.png").touch()
+        # Create the file that needs sanitizing
+        (tmp_path / "image:01.png").touch()
+
+        _sanitize_extracted_files(tmp_path)
+
+        assert (tmp_path / "image_01.png").exists()  # original untouched
+        assert (tmp_path / "image_01_1.png").exists()  # collision resolved
+
+    def test_subdirectories_handled(self, tmp_path):
+        """Files in subdirectories are also sanitized."""
+        import platform
+
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        sub = tmp_path / "images"
+        sub.mkdir()
+        bad_file = sub / "img:1.png"
+        bad_file.touch()
+
+        _sanitize_extracted_files(tmp_path)
+
+        assert not bad_file.exists()
+        assert (sub / "img_1.png").exists()
+
+    def test_control_chars_renamed(self, tmp_path):
+        """Files with control characters should be renamed."""
+        import platform
+
+        # Control characters cannot be created in filenames on Windows
+        if platform.system() == "Windows":
+            pytest.skip("Cannot create files with control characters on Windows")
+
+        bad_file = tmp_path / "file\x01name.txt"
+        bad_file.touch()
+        _sanitize_extracted_files(tmp_path)
+        assert not bad_file.exists()
+        assert (tmp_path / "file_name.txt").exists()
+
+
+# ============================================================
+# Export/import roundtrip with sanitized filenames
+# ============================================================
+
+
+def test_export_sanitizes_filenames_cross_platform(tmp_path):
+    """Export with COPY mode should sanitize filenames for cross-platform safety."""
+    import platform
+
+    if platform.system() != "Linux":
+        pytest.skip("Can only create source files with colons on Linux")
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+        label: int = label_field()
+
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    # Create an image with a colon in the name (valid on Linux, invalid on Windows/macOS)
+    img_path = source_dir / "photo:2024:01.png"
+    PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(img_path)
+
+    dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
+    dataset.append(PathSample(image_path=str(img_path), label=0))
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_media=ExportMode.COPY)
+
+    # The exported image should have colons replaced
+    images_dir = output_dir / IMAGES_DIR
+    exported_files = list(images_dir.iterdir())
+    assert len(exported_files) == 1
+    assert ":" not in exported_files[0].name
+    assert exported_files[0].name == "photo_2024_01.png"
+
+
+def test_export_import_roundtrip_sanitized_filename(tmp_path):
+    """Full roundtrip: export a dataset with problematic filename, import it back."""
+    import platform
+
+    if platform.system() != "Linux":
+        pytest.skip("Can only create source files with colons on Linux")
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+        label: int = label_field()
+
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    img_path = source_dir / "test:image.png"
+    img_array = np.random.randint(0, 255, (10, 15, 3), dtype=np.uint8)
+    PILImage.fromarray(img_array).save(img_path)
+
+    dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
+    dataset.append(PathSample(image_path=str(img_path), label=2))
+
+    output_dir = tmp_path / "export"
+    export_dataset(dataset, output_dir, export_media=ExportMode.COPY)
+
+    imported = import_dataset(output_dir, dtype=PathSample)
+    assert len(imported) == 1
+    sample = imported[0]
+    assert Path(sample.image_path).exists()
+    assert sample.label == 2
