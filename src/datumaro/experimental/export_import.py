@@ -1324,6 +1324,7 @@ def _resolve_reconstructed_video_path(path: str | None, input_dir: Path) -> str 
     # Fallback for archives where extracted filenames were
     # sanitized on this OS (e.g. control chars renamed).
     path_obj = Path(path)
+    # Use OS-specific sanitization to mirror _sanitize_extracted_files behavior.
     sanitized_parts = tuple(sanitize_filename(part, cross_platform=False) for part in path_obj.parts)
     if sanitized_parts != path_obj.parts:
         sanitized_abs_path = input_dir.joinpath(*sanitized_parts)
