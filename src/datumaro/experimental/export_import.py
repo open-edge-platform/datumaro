@@ -1071,7 +1071,7 @@ def _sanitize_extracted_files(directory: Path) -> None:
     # iterating while renaming.
     all_paths = sorted(directory.rglob("*"), key=lambda p: len(p.parts), reverse=True)
     for path in all_paths:
-        sanitized_name = sanitize_filename(path.name, cross_platform=False)
+        sanitized_name = sanitize_filename(path.name)
         if sanitized_name != path.name:
             new_path = path.parent / sanitized_name
             # Handle collisions
