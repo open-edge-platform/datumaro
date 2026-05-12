@@ -1066,10 +1066,17 @@ def _sanitize_extracted_files(directory: Path) -> None:
     renamed before their parent directories.  Only the final path component
     (the file/directory name) is sanitized; parent components are left as-is
     because they have already been created by the zip extraction.
+
+    After renaming, any JSON or YAML annotation files within *directory* are
+    updated so that references to the old filenames point to the new names.
     """
     # Collect all paths first, then process bottom-up to avoid issues with
     # iterating while renaming.
     all_paths = sorted(directory.rglob("*"), key=lambda p: len(p.parts), reverse=True)
+
+    # Mapping of old filename → new filename (basename only) for text-file patching
+    rename_map: dict[str, str] = {}
+
     for path in all_paths:
         sanitized_name = sanitize_filename(path.name)
         if sanitized_name != path.name:
@@ -1083,7 +1090,37 @@ def _sanitize_extracted_files(directory: Path) -> None:
                 counter += 1
             if new_path != path:
                 log.info("Renaming '%s' -> '%s' (filename sanitization)", path.name, new_path.name)
+                rename_map[path.name] = new_path.name
                 path.rename(new_path)
+
+    # Patch annotation files that may reference the old filenames
+    if rename_map:
+        _patch_annotation_files(directory, rename_map)
+
+
+def _patch_annotation_files(directory: Path, rename_map: dict[str, str]) -> None:
+    """Update annotation files so they reference the new (sanitized) filenames.
+
+    Handles JSON files (COCO annotations) and YAML files (YOLO configs) by
+    performing simple string replacement of old filenames with new ones.
+    XML files (VOC annotations) are handled similarly.
+    """
+    annotation_extensions = {".json", ".yaml", ".yml", ".xml", ".txt"}
+    for ann_path in directory.rglob("*"):
+        if not ann_path.is_file() or ann_path.suffix.lower() not in annotation_extensions:
+            continue
+        try:
+            text = ann_path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+
+        updated = text
+        for old_name, new_name in rename_map.items():
+            updated = updated.replace(old_name, new_name)
+
+        if updated != text:
+            log.info("Patching annotation file '%s' with sanitized filenames", ann_path)
+            ann_path.write_text(updated, encoding="utf-8")
 
 
 def _load_metadata(input_dir: Path) -> dict:
