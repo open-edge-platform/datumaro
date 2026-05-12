@@ -1074,8 +1074,9 @@ def _sanitize_extracted_files(directory: Path) -> None:
     # iterating while renaming.
     all_paths = sorted(directory.rglob("*"), key=lambda p: len(p.parts), reverse=True)
 
-    # Mapping of old filename → new filename (basename only) for text-file patching
+    # Mapping of old path/name strings -> new path/name strings for text-file patching
     rename_map: dict[str, str] = {}
+    basename_targets: dict[str, set[str]] = {}
 
     for path in all_paths:
         sanitized_name = sanitize_filename(path.name)
@@ -1090,8 +1091,16 @@ def _sanitize_extracted_files(directory: Path) -> None:
                 counter += 1
             if new_path != path:
                 log.info("Renaming '%s' -> '%s' (filename sanitization)", path.name, new_path.name)
-                rename_map[path.name] = new_path.name
+                old_rel_path = path.relative_to(directory).as_posix()
+                new_rel_path = new_path.relative_to(directory).as_posix()
+                rename_map[old_rel_path] = new_rel_path
+                basename_targets.setdefault(path.name, set()).add(new_path.name)
                 path.rename(new_path)
+
+    # Also patch basename-only references where the mapping is unambiguous.
+    for old_name, new_names in basename_targets.items():
+        if len(new_names) == 1:
+            rename_map.setdefault(old_name, next(iter(new_names)))
 
     # Patch annotation files that may reference the old filenames
     if rename_map:
@@ -1101,11 +1110,12 @@ def _sanitize_extracted_files(directory: Path) -> None:
 def _patch_annotation_files(directory: Path, rename_map: dict[str, str]) -> None:
     """Update annotation files so they reference the new (sanitized) filenames.
 
-    Handles JSON files (COCO annotations) and YAML files (YOLO configs) by
-    performing simple string replacement of old filenames with new ones.
-    XML files (VOC annotations) are handled similarly.
+    Handles JSON/YAML/XML/TXT annotation-like files by performing string
+    replacement of old path/name references with the new sanitized values.
     """
     annotation_extensions = {".json", ".yaml", ".yml", ".xml", ".txt"}
+    replacements = sorted(rename_map.items(), key=lambda item: len(item[0]), reverse=True)
+
     for ann_path in directory.rglob("*"):
         if not ann_path.is_file() or ann_path.suffix.lower() not in annotation_extensions:
             continue
@@ -1115,7 +1125,7 @@ def _patch_annotation_files(directory: Path, rename_map: dict[str, str]) -> None
             continue
 
         updated = text
-        for old_name, new_name in rename_map.items():
+        for old_name, new_name in replacements:
             updated = updated.replace(old_name, new_name)
 
         if updated != text:

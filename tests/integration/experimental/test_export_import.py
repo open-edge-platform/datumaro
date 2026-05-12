@@ -2770,6 +2770,33 @@ class SanitizeExtractedFilesTest:
 
         assert ann.read_text() == '{"images": [{"file_name": "normal.jpg"}]}'
 
+    def test_patches_relative_paths_without_basename_collisions(self, tmp_path):
+        """Relative-path references should be patched correctly when basenames collide."""
+        import platform
+
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        sub1 = tmp_path / "sub1"
+        sub2 = tmp_path / "sub2"
+        sub1.mkdir()
+        sub2.mkdir()
+
+        (sub1 / "img_1.jpg").touch()
+        (sub1 / "img:1.jpg").touch()
+        (sub2 / "img:1.jpg").touch()
+
+        ann = tmp_path / "annotations.json"
+        ann.write_text('["sub1/img:1.jpg", "sub2/img:1.jpg"]')
+
+        _sanitize_extracted_files(tmp_path)
+
+        text = ann.read_text()
+        assert "sub1/img_1_1.jpg" in text
+        assert "sub2/img_1.jpg" in text
+        assert "sub1/img:1.jpg" not in text
+        assert "sub2/img:1.jpg" not in text
+
 
 # ============================================================
 # _patch_annotation_files unit tests
