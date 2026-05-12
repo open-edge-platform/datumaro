@@ -2792,6 +2792,8 @@ class SanitizeExtractedFilesTest:
         _sanitize_extracted_files(tmp_path)
 
         text = ann.read_text()
+        # sub1/img:1.jpg collides with an existing sub1/img_1.jpg, so a numeric
+        # suffix is added during sanitization.
         assert "sub1/img_1_1.jpg" in text
         assert "sub2/img_1.jpg" in text
         assert "sub1/img:1.jpg" not in text

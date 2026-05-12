@@ -1114,6 +1114,8 @@ def _patch_annotation_files(directory: Path, rename_map: dict[str, str]) -> None
     replacement of old path/name references with the new sanitized values.
     """
     annotation_extensions = {".json", ".yaml", ".yml", ".xml", ".txt"}
+    # Replace longer keys first so path replacements like "sub1/img:1.jpg" are
+    # applied before basename-only replacements like "img:1.jpg".
     replacements = sorted(rename_map.items(), key=lambda item: len(item[0]), reverse=True)
 
     for ann_path in directory.rglob("*"):
