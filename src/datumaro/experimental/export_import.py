@@ -1060,7 +1060,7 @@ def import_dataset(
 
 
 def _sanitize_extracted_files(directory: Path) -> None:
-    """Rename files whose names contain characters illegal on the current OS.
+    """Rename files whose names contain characters illegal that might be illegal on certain Operating systems.
 
     Walks *directory* bottom-up so that files inside subdirectories are
     renamed before their parent directories.  Only the final path component
