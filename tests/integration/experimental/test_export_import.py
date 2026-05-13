@@ -33,6 +33,7 @@ from datumaro.experimental.export_import import (
     _get_registered_samples,
     _get_video_fields,
     _match_dtype_from_schema,
+    _patch_annotation_files,
     _reconstruct_video_fields,
     _sample_registry,
     _sanitize_extracted_files,
@@ -2717,10 +2718,145 @@ class SanitizeExtractedFilesTest:
         assert not bad_file.exists()
         assert (tmp_path / "file_name.txt").exists()
 
+    def test_patches_annotation_files_after_rename(self, tmp_path):
+        """Annotation files (JSON, YAML, XML, TXT) should be updated to reference renamed files."""
+        import platform
+
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        # Create an image with a colon
+        (tmp_path / "photo:1.jpg").touch()
+
+        # Create annotation files referencing the old name
+        ann_json = tmp_path / "annotations.json"
+        ann_json.write_text('{"images": [{"file_name": "photo:1.jpg"}]}')
+
+        ann_xml = tmp_path / "annotation.xml"
+        ann_xml.write_text("<annotation><filename>photo:1.jpg</filename></annotation>")
+
+        ann_yaml = tmp_path / "data.yaml"
+        ann_yaml.write_text("train: photo:1.jpg\n")
+
+        ann_txt = tmp_path / "train.txt"
+        ann_txt.write_text("photo:1.jpg\n")
+
+        _sanitize_extracted_files(tmp_path)
+
+        # Image should be renamed
+        assert not (tmp_path / "photo:1.jpg").exists()
+        assert (tmp_path / "photo_1.jpg").exists()
+
+        # All annotation files should reference the new name
+        assert "photo_1.jpg" in ann_json.read_text()
+        assert "photo:1.jpg" not in ann_json.read_text()
+
+        assert "photo_1.jpg" in ann_xml.read_text()
+        assert "photo:1.jpg" not in ann_xml.read_text()
+
+        assert "photo_1.jpg" in ann_yaml.read_text()
+        assert "photo:1.jpg" not in ann_yaml.read_text()
+
+        assert "photo_1.jpg" in ann_txt.read_text()
+        assert "photo:1.jpg" not in ann_txt.read_text()
+
+    def test_patch_does_not_modify_unrelated_files(self, tmp_path):
+        """Annotation files without renamed references should not be modified."""
+        ann = tmp_path / "clean.json"
+        ann.write_text('{"images": [{"file_name": "normal.jpg"}]}')
+        (tmp_path / "normal.jpg").touch()
+
+        _sanitize_extracted_files(tmp_path)
+
+        assert ann.read_text() == '{"images": [{"file_name": "normal.jpg"}]}'
+
+    def test_patches_relative_paths_without_basename_collisions(self, tmp_path):
+        """Relative-path references should be patched correctly when basenames collide."""
+        import platform
+
+        if platform.system() != "Linux":
+            pytest.skip("Can only create files with colons on Linux")
+
+        sub1 = tmp_path / "sub1"
+        sub2 = tmp_path / "sub2"
+        sub1.mkdir()
+        sub2.mkdir()
+
+        (sub1 / "img_1.jpg").touch()
+        (sub1 / "img:1.jpg").touch()
+        (sub2 / "img:1.jpg").touch()
+
+        ann = tmp_path / "annotations.json"
+        ann.write_text('["sub1/img:1.jpg", "sub2/img:1.jpg"]')
+
+        _sanitize_extracted_files(tmp_path)
+
+        text = ann.read_text()
+        # sub1/img:1.jpg collides with an existing sub1/img_1.jpg, so a numeric
+        # suffix is added during sanitization.
+        assert "sub1/img_1_1.jpg" in text
+        assert "sub2/img_1.jpg" in text
+        assert "sub1/img:1.jpg" not in text
+        assert "sub2/img:1.jpg" not in text
+
 
 # ============================================================
-# Export/import roundtrip with sanitized filenames
+# _patch_annotation_files unit tests
 # ============================================================
+
+
+class PatchAnnotationFilesTest:
+    """Tests for _patch_annotation_files in isolation."""
+
+    def test_replaces_in_json(self, tmp_path):
+        ann = tmp_path / "ann.json"
+        ann.write_text('{"file_name": "old:name.jpg"}')
+        _patch_annotation_files(tmp_path, {"old:name.jpg": "old_name.jpg"})
+        assert ann.read_text() == '{"file_name": "old_name.jpg"}'
+
+    def test_replaces_in_xml(self, tmp_path):
+        ann = tmp_path / "ann.xml"
+        ann.write_text("<filename>old:name.jpg</filename>")
+        _patch_annotation_files(tmp_path, {"old:name.jpg": "old_name.jpg"})
+        assert ann.read_text() == "<filename>old_name.jpg</filename>"
+
+    def test_replaces_in_yaml(self, tmp_path):
+        ann = tmp_path / "data.yaml"
+        ann.write_text("path: old:name.jpg\n")
+        _patch_annotation_files(tmp_path, {"old:name.jpg": "old_name.jpg"})
+        assert ann.read_text() == "path: old_name.jpg\n"
+
+    def test_replaces_in_txt(self, tmp_path):
+        ann = tmp_path / "train.txt"
+        ann.write_text("old:name\n")
+        _patch_annotation_files(tmp_path, {"old:name": "old_name"})
+        assert ann.read_text() == "old_name\n"
+
+    def test_multiple_replacements(self, tmp_path):
+        ann = tmp_path / "ann.json"
+        ann.write_text('["a:1.jpg", "b:2.jpg"]')
+        _patch_annotation_files(tmp_path, {"a:1.jpg": "a_1.jpg", "b:2.jpg": "b_2.jpg"})
+        assert ann.read_text() == '["a_1.jpg", "b_2.jpg"]'
+
+    def test_skips_non_annotation_extensions(self, tmp_path):
+        f = tmp_path / "data.parquet"
+        f.write_text("old:name.jpg")
+        _patch_annotation_files(tmp_path, {"old:name.jpg": "old_name.jpg"})
+        assert f.read_text() == "old:name.jpg"
+
+    def test_skips_binary_files(self, tmp_path):
+        f = tmp_path / "binary.json"
+        f.write_bytes(b"\x80\x81\x82\x83")
+        # Should not raise
+        _patch_annotation_files(tmp_path, {"old": "new"})
+
+    def test_patches_in_subdirectories(self, tmp_path):
+        sub = tmp_path / "annotations"
+        sub.mkdir()
+        ann = sub / "instances.json"
+        ann.write_text('{"file_name": "img:1.jpg"}')
+        _patch_annotation_files(tmp_path, {"img:1.jpg": "img_1.jpg"})
+        assert ann.read_text() == '{"file_name": "img_1.jpg"}'
 
 
 def test_export_sanitizes_filenames_cross_platform(tmp_path):
