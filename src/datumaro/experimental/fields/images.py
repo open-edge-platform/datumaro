@@ -26,12 +26,10 @@ class TensorField(Field):
     Attributes:
         semantic: String tag describing the tensor's purpose
         dtype: Polars data type for tensor elements
-        channels_first: Whether the tensor uses channels-first format (C, H, W) vs channels-last (H, W, C)
     """
 
     semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.UInt8)
-    channels_first: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -40,9 +38,6 @@ class TensorField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert tensor to flattened data and shape information."""
         numpy_value = to_numpy(value, self.dtype)
-
-        if self.channels_first and numpy_value is not None:
-            numpy_value = np.transpose(numpy_value, (2, 0, 1))
 
         schema = self.to_polars_schema("tensor")
 
@@ -62,9 +57,6 @@ class TensorField(Field):
         shape = df[name + "_shape"][row_index]
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
 
-        if self.channels_first and numpy_data is not None:
-            numpy_data = np.transpose(numpy_data, (2, 0, 1))
-
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -83,18 +75,61 @@ def tensor_field(dtype: Any, semantic: str = "default") -> Any:
 
 
 @dataclass(frozen=True)
-class ImageField(TensorField):
+class ImageField(Field):
     """
     Represents an image tensor field with format information.
 
-    Extends TensorField to include image-specific metadata such as
-    color format (RGB, BGR, etc.).
+    Data is always stored internally in HWC (height, width, channels) format.
+    When channels_first is True, the user provides/receives CHW data, and
+    this field handles the conversion to/from HWC for internal storage.
 
     Attributes:
+        semantic: String tag describing the image's purpose
+        dtype: Polars data type for pixel values
         format: Image color format (e.g., "RGB", "BGR", "RGBA")
+        channels_first: Whether the user provides/receives CHW format
     """
 
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     format: str = "RGB"
+    channels_first: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate Polars schema with separate columns for data and shape."""
+        return {name: pl.List(self.dtype), name + "_shape": pl.List(pl.Int32())}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert image tensor to flattened data."""
+        numpy_value = to_numpy(value, self.dtype)
+
+        if self.channels_first and numpy_value is not None:
+            # User provides CHW; store as HWC internally
+            numpy_value = np.transpose(numpy_value, (1, 2, 0))
+
+        schema = self.to_polars_schema("tensor")
+
+        numpy_value_shape: Any | None = None
+        if numpy_value is not None:
+            numpy_value_shape = numpy_value.shape
+            numpy_value = numpy_value.reshape(-1)
+
+        return {
+            name: pl.Series(name, [numpy_value], dtype=schema["tensor"]),
+            name + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["tensor_shape"]),
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct image tensor, converting from internal HWC to CHW if needed."""
+        flat_data = df[name][row_index]
+        shape = df[name + "_shape"][row_index]
+        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
+
+        if self.channels_first and numpy_data is not None:
+            # Stored as HWC; user expects CHW
+            numpy_data = np.transpose(numpy_data, (2, 0, 1))
+
+        return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
 def image_field(
