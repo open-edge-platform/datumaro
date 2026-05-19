@@ -102,18 +102,21 @@ class MediaPathToImageConverter(MediaBridgeConverter):
             try:
                 if frame_idx is not None:
                     # Video frame - use LazyVideoFrame
+                    # Always load as HWC for internal storage; ImageField.from_polars
+                    # handles CHW conversion when channels_first=True.
                     media = LazyVideoFrame(
                         video_path=str(path),
                         frame_index=frame_idx,
                         format=output_format,
-                        channels_first=self.output_image.field.channels_first,
+                        channels_first=False,
                     )
                 else:
                     # Standalone image - use LazyImage
+                    # Always load as HWC for internal storage.
                     media = LazyImage(
                         path=str(path),
                         format=output_format,
-                        channels_first=self.output_image.field.channels_first,
+                        channels_first=False,
                     )
 
                 img_array = media.data

@@ -924,8 +924,8 @@ class ConverterChannelsFirstTest:
         result_df = converter.convert(df)
         image_shape = list(result_df["image_shape"][0])
 
-        # Channels first: (C, H, W)
-        assert image_shape[0] == 3  # RGB channels first
+        # Internally stored as HWC; ImageField.from_polars handles CHW conversion
+        assert image_shape[-1] == 3  # RGB channels last in storage
 
     def test_media_path_converter_channels_first(self, test_video_exists):
         """Test MediaPathToImageConverter with channels_first=True."""
@@ -961,5 +961,5 @@ class ConverterChannelsFirstTest:
         result_df = converter.convert(df)
         image_shape = list(result_df["image_shape"][0])
 
-        # Channels first: (C, H, W)
-        assert image_shape[0] == 3  # RGB channels first
+        # Internally stored as HWC; ImageField.from_polars handles CHW conversion
+        assert image_shape[-1] == 3  # RGB channels last in storage

@@ -103,7 +103,7 @@ class ImageField(Field):
         """Convert image tensor to flattened data."""
         numpy_value = to_numpy(value, self.dtype)
 
-        if self.channels_first and numpy_value is not None:
+        if self.channels_first and numpy_value is not None and numpy_value.ndim == 3:
             # User provides CHW; store as HWC internally
             numpy_value = np.transpose(numpy_value, (1, 2, 0))
 
@@ -125,7 +125,7 @@ class ImageField(Field):
         shape = df[name + "_shape"][row_index]
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
 
-        if self.channels_first and numpy_data is not None:
+        if self.channels_first and numpy_data is not None and numpy_data.ndim == 3:
             # Stored as HWC; user expects CHW
             numpy_data = np.transpose(numpy_data, (2, 0, 1))
 
