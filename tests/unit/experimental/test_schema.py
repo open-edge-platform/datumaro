@@ -121,8 +121,8 @@ def test_tensor_field_polars_conversion():
     assert np.allclose(reconstructed, test_tensor)
 
 
-def test_tensor_field_channels_first_roundtrip():
-    """Test TensorField is a transparent roundtrip for any shape."""
+def test_tensor_field_3d_tensor_roundtrip():
+    """Test TensorField preserves a generic 3D tensor through a round-trip."""
     field = TensorField(dtype=pl.UInt8())
     test_tensor = np.random.randint(0, 255, (3, 720, 1280), dtype=np.uint8)
 
