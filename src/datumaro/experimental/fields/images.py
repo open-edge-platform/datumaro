@@ -79,9 +79,12 @@ class ImageField(Field):
     """
     Represents an image tensor field with format information.
 
-    Data is always stored internally in HWC (height, width, channels) format.
-    When channels_first is True, the user provides/receives CHW data, and
-    this field handles the conversion to/from HWC for internal storage.
+    3D image data is stored internally in HWC (height, width, channels)
+    format. Images without an explicit channel dimension (for example,
+    grayscale images shaped as HW) are stored as-is in HW format.
+    When channels_first is True, the user provides/receives CHW data for
+    3D images, and this field handles the conversion to/from HWC for
+    internal storage. 2D images are not transposed.
 
     Attributes:
         semantic: String tag describing the image's purpose
