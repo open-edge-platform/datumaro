@@ -5,6 +5,107 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release 1.13.0
+
+This release is centered around the maturation of the experimental dataset
+class introduced in 1.12.0, while also delivering improvements to core
+Datumaro, dependency management, CI, and security. The changes below are
+split between the experimental module and the rest of Datumaro.
+
+### Experimental module
+
+#### New features
+- Dataset format support
+  - YOLO dataset import/export
+  - Pascal VOC import/export, including classification-only datasets
+  - Refactored COCO dataset import/export interface
+  - Importing legacy Datumaro datasets, including datasets with videos
+  - Conversion of legacy anomaly datasets
+  - Automatic dataset format detection and import
+  - Automatic sample-type detection on data import
+  - Detect Roboflow COCO layout
+- Media and image
+  - Video media support
+  - 16-bit and 32-bit image support
+  - EXIF orientation honored in image loading and processing
+  - Support for mask callables
+  - `MediaBridgeConverter` for media field type conversions
+  - `LazyImage` loading from `ImagePathField`
+- Dataset and transforms
+  - Tiling support, with picklable transform factories
+  - Keypoint support, including `KeypointCategories`
+  - Multi-label and hierarchical-label classification support
+  - Saving datasets as zip archives
+  - `append_dataset` method
+  - Dataset filtering on subset
+  - Label filtering on the dataset class, with option to keep empty samples
+  - Multi-worker dataloader support
+  - Lazy-loading during attribute access
+  - Dataset export/import implementation
+- Schema and type system
+  - New fields: `ScoreField`, `EllipseField`, `StringField`
+  - Type converters for `NumericField`, `BoolField`, `StringField`, and a bool Polars converter
+  - Optional field handling and optional attributes in schema conversions
+  - Typed numpy array support
+  - Categories validation and propagation across conversions
+  - Conversion between categories
+  - Sample and dtype validation
+  - Legacy mapper for classification
+  - Uppercase subset enums
+
+#### Enhancements
+- Batch dataset building optimized with PyArrow integration
+- Optimized image loading and channel swapping
+- Improved dtype conversions and RGB/BGR color converter
+- Reimplemented label shape converter to support multi-label / is-list swaps
+- Extended label converter to handle both multi-label and is-list
+- Allow label list conversions
+- Added several converters and fixed an out-of-sync dataframe
+- Extended field converters and enhanced cost calculation for direct field-type converters
+- Added a `direct_only` option to dataset import/export functions
+- Extended automatic schema detection checks
+- Cross-platform filename sanitization for dataset imports
+- Prevent file overwrite failure when exporting to an existing directory
+- Support for missing images in dataset export
+- Ensure new Datumaro datasets are picklable
+- Enhanced conversion error handling
+- Restructured experimental tests directories and reorganized files in the experimental folder
+- Documentation improvements and a README for the experimental module
+
+### Core Datumaro
+
+#### New features
+- `format` parameter added to the `datum patch` command
+- Include empty annotation files for YOLO export
+- Export segment info attributes in COCO panoptic
+
+#### Enhancements
+- Added support for Python 3.14 and restored Python 3.10 support
+- Migrated dependency management to `uv`
+- Switched linting to `prek` and `ruff` with an updated rule set
+- Simplify `original_size` check in CVAT base
+- Documentation workflow fixes and renamed `AttributeInfo` attribute
+
+#### Bug fixes
+- Fix `RotatedBbox.wrap()` by assigning correct attributes
+
+#### CI / tooling
+- Enabled Renovate and removed Dependabot configuration
+- Added auto-approval flow for Renovate `uv.lock` refresh PRs
+- Refactored GitHub Action workflows
+- Moved linter and docs workflows to a dedicated runner group
+- Added harden-runner step for audit traffic and enabled traffic blocking in workflows
+- Security workflow consolidation and GitHub Actions upgrades
+- Added Collect Library Licenses workflow
+
+#### Security
+- Resolve CVE-2026-1462 and CVE-2026-40171
+- Update Pillow to 12.1.1 (security)
+- Update nbconvert to 7.17.0 (security)
+
+#### Removed
+- `pytest-csv` dependency
+
 ## Release 1.12.0
 
 This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
