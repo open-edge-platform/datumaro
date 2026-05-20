@@ -195,22 +195,7 @@ def _ensure_declared_label_categories(
     is_multi_label: bool,
     is_hierarchical: bool,
 ) -> None:
-    """Inject a label converter when categories are declared but no item carries annotations.
-
-    When the legacy dataset declares ``categories[AnnotationType.label]`` with a
-    non-empty label list but every item has empty ``annotations=[]``, the
-    annotation-type loop in :func:`analyze_legacy_dataset` produces no
-    converter because ``legacy_dataset.ann_types()`` is derived purely from
-    observed item annotations.  The result is an experimental schema with no
-    ``label`` attribute, silently dropping the declared LabelCategories on the
-    floor.
-
-    Downstream consumers (e.g. schema-to-target converters, Geti import) rely
-    on declared LabelCategories surviving import even for fully unannotated
-    datasets.  This helper detects that case and registers a synthetic label
-    converter so the categories propagate through the schema and each item
-    receives a ``None`` label value.
-    """
+    """Inject a label converter when categories are declared but no item carries annotations."""
     if AnnotationType.label in ann_converters:
         return
     legacy_label_categories = legacy_dataset.categories().get(AnnotationType.label)
