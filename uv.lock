@@ -804,7 +804,7 @@ name = "cuda-bindings"
 version = "13.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-pathfinder", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "cuda-pathfinder", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1a/fe/7351d7e586a8b4c9f89731bfe4cf0148223e8f9903ff09571f78b3fb0682/cuda_bindings-13.2.0-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:08b395f79cb89ce0cd8effff07c4a1e20101b873c256a1aeb286e8fd7bd0f556", size = 5744254, upload-time = "2026-03-11T00:12:29.798Z" },
@@ -967,7 +967,6 @@ test = [
     { name = "dill" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "pytest-csv" },
     { name = "pytest-html" },
     { name = "pytest-stress" },
     { name = "tifffile", version = "2025.5.10", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -1027,7 +1026,6 @@ requires-dist = [
     { name = "pydata-sphinx-theme", marker = "extra == 'docs'", specifier = "==0.17.1" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=5.3.5" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=4.0.0" },
-    { name = "pytest-csv", marker = "extra == 'test'" },
     { name = "pytest-html", marker = "extra == 'test'" },
     { name = "pytest-stress", marker = "extra == 'test'" },
     { name = "pyyaml", specifier = "~=6.0" },
@@ -1150,7 +1148,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "(python_full_version < '3.11' and sys_platform != 'darwin') or (python_full_version < '3.13' and sys_platform == 'darwin')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -3022,7 +3020,7 @@ name = "nvidia-cublas"
 version = "13.1.1.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cuda-nvrtc", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "nvidia-cuda-nvrtc", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a7/a1/0bd24ee8c8d03adac032fd2909426a00c88f8c57961b1277ded97f91119f/nvidia_cublas-13.1.1.3-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:b7a210458267ac818974c53038fbec2e969d5c99f305ab15c72522fa9f001dd5", size = 542848918, upload-time = "2026-04-08T18:46:22.985Z" },
@@ -3061,7 +3059,7 @@ name = "nvidia-cudnn-cu13"
 version = "9.20.0.48"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "nvidia-cublas", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/56/c5/83384d846b2fd17c44bd499b36c75a45ed4f095fbbb2252294e89cea5c5c/nvidia_cudnn_cu13-9.20.0.48-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:e31454ae00094b0c55319d9d15b6fa2fc50a9e1c0f5c8c80fb75258234e731e1", size = 444574296, upload-time = "2026-03-09T19:28:27.751Z" },
@@ -3073,7 +3071,7 @@ name = "nvidia-cufft"
 version = "12.0.0.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "nvidia-nvjitlink", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/ae/f417a75c0259e85c1d2f83ca4e960289a5f814ed0cea74d18c353d3e989d/nvidia_cufft-12.0.0.61-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:2708c852ef8cd89d1d2068bdbece0aa188813a0c934db3779b9b1faa8442e5f5", size = 214053554, upload-time = "2025-09-04T08:31:38.196Z" },
@@ -3103,9 +3101,9 @@ name = "nvidia-cusolver"
 version = "12.0.4.66"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
-    { name = "nvidia-cusparse", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
-    { name = "nvidia-nvjitlink", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "nvidia-cublas", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
+    { name = "nvidia-cusparse", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
+    { name = "nvidia-nvjitlink", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/c3/b30c9e935fc01e3da443ec0116ed1b2a009bb867f5324d3f2d7e533e776b/nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:02c2457eaa9e39de20f880f4bd8820e6a1cfb9f9a34f820eb12a155aa5bc92d2", size = 223467760, upload-time = "2025-09-04T08:33:04.222Z" },
@@ -3117,7 +3115,7 @@ name = "nvidia-cusparse"
 version = "12.6.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink", marker = "python_full_version != '3.11.*' or sys_platform != 'darwin'" },
+    { name = "nvidia-nvjitlink", marker = "python_full_version < '3.11' or python_full_version >= '3.13' or sys_platform != 'darwin'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f8/94/5c26f33738ae35276672f12615a64bd008ed5be6d1ebcb23579285d960a9/nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:80bcc4662f23f1054ee334a15c72b8940402975e0eab63178fc7e670aa59472c", size = 162155568, upload-time = "2025-09-04T08:33:42.864Z" },
@@ -3942,19 +3940,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b1/51/a849f96e117386044471c8ec2bd6cfebacda285da9525c9106aeb28da671/pytest_cov-7.1.0.tar.gz", hash = "sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2", size = 55592, upload-time = "2026-03-21T20:11:16.284Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9d/7a/d968e294073affff457b041c2be9868a40c1c71f4a35fcc1e45e5493067b/pytest_cov-7.1.0-py3-none-any.whl", hash = "sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678", size = 22876, upload-time = "2026-03-21T20:11:14.438Z" },
-]
-
-[[package]]
-name = "pytest-csv"
-version = "3.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytest" },
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/76/a6/dd9820c07c0d6251ab9c8764307aca3cd2ce9057f7f9459edd173dab342e/pytest-csv-3.0.0.tar.gz", hash = "sha256:6d01e7db1aa2137eae822d3fdb2d6a5dd0ce736548593b5311ae3cf41e2d12d4", size = 21923, upload-time = "2021-04-22T19:31:53.512Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/2c/2ce553f606e1544655928d7a9280c63270d57a431e3dad621132e09a8147/pytest_csv-3.0.0-py2.py3-none-any.whl", hash = "sha256:599ab855d2ba748275dc7f814f63f9f6593bdd9a064f27cfd3940e68e6525c36", size = 26401, upload-time = "2021-04-22T19:31:52.472Z" },
 ]
 
 [[package]]
