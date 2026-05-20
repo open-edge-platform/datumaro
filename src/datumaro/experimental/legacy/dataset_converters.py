@@ -86,6 +86,7 @@ def analyze_legacy_dataset(
         multi_label_group_names = [name for name in label_group_names if name.startswith("Classification labels__")]
         is_multi_label = (len(multi_label_group_names) > 1 and not is_hierarchical) or multi_label
     else:
+        label_groups = []
         is_hierarchical = False
         is_multi_label = False
 
@@ -116,24 +117,26 @@ def analyze_legacy_dataset(
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
-            if (is_multi_label or is_hierarchical) and AnnotationType.label.name in ann_attributes:
-                ann_attributes[AnnotationType.label.name].field = label_field(multi_label=True)
-                ann_attributes[AnnotationType.label.name].type = np.ndarray
-            if is_hierarchical and AnnotationType.label.name in ann_attributes:
-                categories = legacy_dataset.categories()[AnnotationType.label].items
-                label_categories = tuple(
-                    HierarchicalLabelCategory(
-                        name=category.name,
-                        parent=category.parent,
-                        label_semantics=_attributes_to_dict(category.attributes),
-                    )
-                    for category in categories
-                )
-                hierarchical_categories = HierarchicalLabelCategories(
-                    items=label_categories, label_groups=tuple(label_groups)
-                )
-                ann_attributes[AnnotationType.label.name].categories = hierarchical_categories
+            _apply_label_overrides(
+                ann_attributes,
+                legacy_dataset,
+                label_groups=label_groups,
+                is_multi_label=is_multi_label,
+                is_hierarchical=is_hierarchical,
+            )
             attributes.update(ann_attributes)
+
+    # Preserve declared label categories even when no item carries annotations.
+    _ensure_declared_label_categories(
+        legacy_dataset,
+        attributes=attributes,
+        ann_converters=ann_converters,
+        semantic=semantic,
+        label_groups=label_groups,
+        is_multi_label=is_multi_label,
+        is_hierarchical=is_hierarchical,
+    )
+
     schema = Schema(attributes=attributes)
     return AnalysisResult(
         schema=schema,
@@ -143,6 +146,93 @@ def analyze_legacy_dataset(
         is_anomaly=is_anomaly,
         is_hierarchical=is_hierarchical,
     )
+
+
+def _apply_label_overrides(
+    ann_attributes: dict[str, AttributeInfo],
+    legacy_dataset: LegacyDataset,
+    *,
+    label_groups: list[LabelGroup],
+    is_multi_label: bool,
+    is_hierarchical: bool,
+) -> None:
+    """Override label-attribute field/categories for multi-label or hierarchical datasets.
+
+    Mutates ``ann_attributes`` in place.  No-op when the converter produced no
+    label attribute or when neither multi-label nor hierarchical handling is
+    required.
+    """
+    label_key = AnnotationType.label.name
+    if label_key not in ann_attributes:
+        return
+
+    if is_multi_label or is_hierarchical:
+        ann_attributes[label_key].field = label_field(multi_label=True)
+        ann_attributes[label_key].type = np.ndarray
+
+    if is_hierarchical:
+        categories = legacy_dataset.categories()[AnnotationType.label].items
+        hierarchical_items = tuple(
+            HierarchicalLabelCategory(
+                name=category.name,
+                parent=category.parent,
+                label_semantics=_attributes_to_dict(category.attributes),
+            )
+            for category in categories
+        )
+        ann_attributes[label_key].categories = HierarchicalLabelCategories(
+            items=hierarchical_items, label_groups=tuple(label_groups)
+        )
+
+
+def _ensure_declared_label_categories(
+    legacy_dataset: LegacyDataset,
+    *,
+    attributes: dict[str, AttributeInfo],
+    ann_converters: dict[AnnotationType, ForwardAnnotationConverter],
+    semantic: str,
+    label_groups: list[LabelGroup],
+    is_multi_label: bool,
+    is_hierarchical: bool,
+) -> None:
+    """Inject a label converter when categories are declared but no item carries annotations.
+
+    When the legacy dataset declares ``categories[AnnotationType.label]`` with a
+    non-empty label list but every item has empty ``annotations=[]``, the
+    annotation-type loop in :func:`analyze_legacy_dataset` produces no
+    converter because ``legacy_dataset.ann_types()`` is derived purely from
+    observed item annotations.  The result is an experimental schema with no
+    ``label`` attribute, silently dropping the declared LabelCategories on the
+    floor.
+
+    Downstream consumers (e.g. schema-to-target converters, Geti import) rely
+    on declared LabelCategories surviving import even for fully unannotated
+    datasets.  This helper detects that case and registers a synthetic label
+    converter so the categories propagate through the schema and each item
+    receives a ``None`` label value.
+    """
+    if AnnotationType.label in ann_converters:
+        return
+    legacy_label_categories = legacy_dataset.categories().get(AnnotationType.label)
+    if legacy_label_categories is None or len(legacy_label_categories.items) == 0:
+        return
+    if any((attr_name == "label" or attr_name.endswith("labels")) for attr_name in attributes):
+        return
+
+    label_converter = get_forward_annotation_converter(AnnotationType.label, legacy_dataset, semantic, "")
+    if label_converter is None:
+        return
+
+    ann_converters[AnnotationType.label] = label_converter
+    ann_attributes = label_converter.get_schema_attributes()
+    _apply_label_overrides(
+        ann_attributes,
+        legacy_dataset,
+        label_groups=label_groups,
+        is_multi_label=is_multi_label,
+        is_hierarchical=is_hierarchical,
+    )
+    attributes.update(ann_attributes)
 
 
 def _attributes_to_dict(attributes: list[str]) -> dict[str, str]:
