@@ -99,7 +99,8 @@ split between the experimental module and the rest of Datumaro.
 - Added Collect Library Licenses workflow
 
 #### Security
-- Resolve CVE-2026-1462 and CVE-2026-40171
+- Pin keras to >=3.13.2 (security)
+- Pin jupyterlab>=4.5.7 (security) 
 - Update Pillow to 12.1.1 (security)
 - Update nbconvert to 7.17.0 (security)
 
