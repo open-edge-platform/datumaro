@@ -102,7 +102,6 @@ class VideoFramePathToImageConverter(MediaBridgeConverter):
                 video_path=str(path),
                 frame_index=frame_idx,
                 format=output_format,
-                channels_first=self.output_image.field.channels_first,
             )
 
             try:

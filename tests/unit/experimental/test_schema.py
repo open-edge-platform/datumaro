@@ -121,6 +121,43 @@ def test_tensor_field_polars_conversion():
     assert np.allclose(reconstructed, test_tensor)
 
 
+def test_tensor_field_3d_tensor_roundtrip():
+    """Test TensorField preserves a generic 3D tensor through a round-trip."""
+    field = TensorField(dtype=pl.UInt8())
+    test_tensor = np.random.randint(0, 255, (3, 720, 1280), dtype=np.uint8)
+
+    polars_data = field.to_polars("img", test_tensor)
+    df = pl.DataFrame(polars_data)
+
+    # Stored shape matches input exactly
+    stored_shape = df["img_shape"][0].to_list()
+    assert stored_shape == [3, 720, 1280]
+
+    # Returned data matches input exactly
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("img", 0, df, np.ndarray))
+    assert reconstructed.shape == (3, 720, 1280)
+    assert np.array_equal(reconstructed, test_tensor)
+
+
+def test_image_field_channels_first_roundtrip():
+    """Test ImageField channels_first: user provides CHW, stored as HWC internally, returned as CHW."""
+    img_field = ImageField(dtype=pl.UInt8(), channels_first=True)
+    # User provides CHW
+    test_image = np.random.randint(0, 255, (3, 720, 1280), dtype=np.uint8)
+
+    polars_data = img_field.to_polars("img", test_image)
+    df = pl.DataFrame(polars_data)
+
+    # Internally stored as HWC
+    stored_shape = df["img_shape"][0].to_list()
+    assert stored_shape == [720, 1280, 3]
+
+    # Returned to user as CHW
+    reconstructed = cast("np.ndarray[Any, Any]", img_field.from_polars("img", 0, df, np.ndarray))
+    assert reconstructed.shape == (3, 720, 1280)
+    assert np.array_equal(reconstructed, test_image)
+
+
 def test_image_field_creation():
     """Test ImageField creation and properties."""
     field = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
@@ -791,13 +828,12 @@ def test_polygon_field_polars_conversion():
 
 def test_tensor_field_serialization():
     """Test TensorField to_dict/from_dict serialization."""
-    field = TensorField(dtype=pl.Float32(), semantic="bbox", channels_first=True)
+    field = TensorField(dtype=pl.Float32(), semantic="bbox")
 
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "TensorField"
     assert field_dict["semantic"] == "bbox"
-    assert field_dict["channels_first"] is True
     assert "Float32" in str(field_dict["dtype"])
 
     # Deserialize from dict
@@ -808,7 +844,6 @@ def test_tensor_field_serialization():
 
     # Compare with original
     assert reconstructed.semantic == field.semantic
-    assert reconstructed.channels_first == field.channels_first
     assert str(reconstructed.dtype) == str(field.dtype)
 
 
