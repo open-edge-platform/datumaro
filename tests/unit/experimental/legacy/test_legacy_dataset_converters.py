@@ -295,6 +295,107 @@ class AnalyzeLegacyDatasetTest:
             assert "bboxes" not in analysis_result.schema.attributes
             assert "bbox_labels" not in analysis_result.schema.attributes
 
+    def test_analyze_unannotated_items_preserve_declared_label_categories(self):
+        """Items without annotations must not erase declared LabelCategories.
+
+        Regression test: when a legacy dataset declares
+        ``categories[AnnotationType.label]`` but every item has empty
+        ``annotations=[]``, the inferred experimental schema must still
+        contain a ``label`` attribute whose ``categories`` matches the
+        declared label list. Previously the schema dropped the declared
+        labels because annotation converters were only triggered for
+        annotation types actually present on items.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            image_path = str(temp_path / "image1.jpg")
+            image_media = Image.from_file(image_path, size=(480, 640))
+            item = DatasetItem(id="item1", media=image_media, annotations=[])
+
+            label_categories = LabelCategories()
+            label_categories.add("LED")
+
+            dataset = LegacyDataset.from_iterable(
+                [item],
+                categories={AnnotationType.label: label_categories},
+            )
+
+            analysis_result = analyze_legacy_dataset(dataset)
+
+            assert "label" in analysis_result.schema.attributes
+            preserved = analysis_result.schema.attributes["label"].categories
+            assert preserved is not None
+            assert preserved.labels == ("LED",)
+
+    def test_convert_from_legacy_unannotated_preserves_label_categories(self):
+        """End-to-end: ``convert_from_legacy`` survives all-empty annotations.
+
+        Building the experimental Dataset from a legacy dataset whose items
+        all have ``annotations=[]`` but whose ``categories`` declare labels
+        must succeed and expose those labels via the ``label`` attribute
+        with a populated ``LabelCategories``. Each item's ``label`` value
+        is ``None`` since no Label annotation was present.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            items = []
+            for i in range(3):
+                image_path = str(temp_path / f"image{i}.jpg")
+                image_media = Image.from_file(image_path, size=(480, 640))
+                items.append(DatasetItem(id=f"item{i}", media=image_media, annotations=[]))
+
+            label_categories = LabelCategories()
+            label_categories.add("LED")
+
+            legacy_dataset = LegacyDataset.from_iterable(
+                items,
+                categories={AnnotationType.label: label_categories},
+            )
+
+            experimental_dataset = convert_from_legacy(legacy_dataset)
+
+            assert len(experimental_dataset) == 3
+            assert "label" in experimental_dataset.schema.attributes
+            categories = experimental_dataset.schema.attributes["label"].categories
+            assert categories is not None
+            assert categories.labels == ("LED",)
+            # Every item should carry a null label value (no Label annotation
+            # was present on the source items).
+            for sample in experimental_dataset:
+                assert sample.label is None
+
+    def test_analyze_bbox_dataset_without_label_categories(self):
+        """Datasets with annotations but no declared label categories must analyze cleanly."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            image_path = str(temp_path / "image1.jpg")
+            image_media = Image.from_file(image_path, size=(480, 640))
+            bbox = Bbox(10, 20, 30, 40)
+            item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
+
+            # Note: no categories[AnnotationType.label] - this is the path
+            # that exercises the `else: label_groups = []` branch.
+            dataset = LegacyDataset.from_iterable(
+                [item],
+                ann_types={AnnotationType.bbox},
+            )
+
+            analysis_result = analyze_legacy_dataset(dataset)
+
+            # Bbox attribute must be present from the bbox converter
+            assert "bboxes" in analysis_result.schema.attributes
+            # No label categories were declared, so no label-bearing
+            # attribute should be synthesised by the fallback
+            assert "label" not in analysis_result.schema.attributes
+            assert "labels" not in analysis_result.schema.attributes
+            # The bbox converter itself reports no label sub-attribute when
+            # no label categories exist
+            assert analysis_result.is_hierarchical is False
+            assert analysis_result.is_anomaly is False
+
     def test_analyze_unknown_annotation_type(self):
         """Test analysis with unknown annotation type."""
         with tempfile.TemporaryDirectory() as temp_dir:
