@@ -825,11 +825,11 @@ def test_label_shape_converter_conversions(
 @pytest.mark.parametrize(
     "input_multi, input_is_list, output_multi, output_is_list, data, schema_type, expected_value, expected_dtype",
     [
-        pytest.param(True,  False, False, False, {"label": [[5, 10, 15]]},            pl.List(pl.UInt32()),          5,          pl.UInt32(),          id="multi_to_single_scalar"),  # noqa: E501
-        pytest.param(True,  True,  False, True,  {"label": [[[5, 10], [15, 20]]]},    pl.List(pl.List(pl.UInt32())), [5, 15],    pl.List(pl.UInt32()), id="multi_to_single_list"),  # noqa: E501
-        pytest.param(False, True,  False, False, {"label": [[10, 20, 30]]},           pl.List(pl.UInt32()),          10,         pl.UInt32(),          id="list_to_scalar"),  # noqa: E501
-        pytest.param(True,  True,  True,  False, {"label": [[[1, 2], [3, 4], [5]]]},  pl.List(pl.List(pl.UInt32())), [1, 2],     pl.List(pl.UInt32()), id="multi_label_list_to_scalar"),  # noqa: E501
-        pytest.param(True,  True,  False, False, {"label": [[[5, 10], [15, 20]]]},    pl.List(pl.List(pl.UInt32())), 5,          pl.UInt32(),          id="both_list_list_to_scalar"),  # noqa: E501
+        pytest.param(True,  False, False, False, {"label": [[5, 10, 15]]},            pl.List(pl.UInt32()),          15,         pl.UInt32(),          id="multi_to_single_scalar"),  # noqa: E501
+        pytest.param(True,  True,  False, True,  {"label": [[[5, 10], [15, 20]]]},    pl.List(pl.List(pl.UInt32())), [10, 20],   pl.List(pl.UInt32()), id="multi_to_single_list"),  # noqa: E501
+        pytest.param(False, True,  False, False, {"label": [[10, 20, 30]]},           pl.List(pl.UInt32()),          30,         pl.UInt32(),          id="list_to_scalar"),  # noqa: E501
+        pytest.param(True,  True,  True,  False, {"label": [[[1, 2], [3, 4], [5]]]},  pl.List(pl.List(pl.UInt32())), [5],        pl.List(pl.UInt32()), id="multi_label_list_to_scalar"),  # noqa: E501
+        pytest.param(True,  True,  False, False, {"label": [[[5, 10], [15, 20]]]},    pl.List(pl.List(pl.UInt32())), 20,         pl.UInt32(),          id="both_list_list_to_scalar"),  # noqa: E501
     ],
 )  # fmt: on  noqa: RUF028
 def test_label_shape_converter_lossy_conversions(
@@ -843,7 +843,7 @@ def test_label_shape_converter_lossy_conversions(
     expected_dtype,
     caplog,
 ):
-    """convert() keeps the first element and logs a warning for lossy multi_label/is_list reductions."""
+    """convert() keeps the last element and logs a warning for lossy multi_label/is_list reductions."""
     from datumaro.experimental.converters import LabelShapeConverter
 
     converter_instance = LabelShapeConverter()
@@ -869,7 +869,7 @@ def test_label_shape_converter_lossy_conversions(
         assert result_val == expected_value
 
     # Verify a warning was logged
-    assert any("keeping the first" in msg for msg in caplog.messages)
+    assert any("keeping the last" in msg for msg in caplog.messages)
 
 
 def test_label_shape_converter_filter_returns_false():
