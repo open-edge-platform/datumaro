@@ -340,8 +340,8 @@ class LabelShapeConverter(Converter):
       - ``is_list=True, multi_label=False`` ↔ ``is_list=False, multi_label=True``:
         both map to ``List(dtype)``; the conversion is a no-op on the data.
 
-    Lossy conversions (keep first element, logs a warning):
-      - ``List(dtype) → dtype`` (multi_label or is_list reduction): keeps the first element only
+    Lossy conversions (keep last element, logs a warning):
+      - ``List(dtype) → dtype`` (multi_label or is_list reduction): keeps the last element only
     """
 
     input_label: AttributeSpec[LabelField]
@@ -366,16 +366,16 @@ class LabelShapeConverter(Converter):
     def _convert_multi_label(
         self, df: pl.DataFrame, input_col: str, output_col: str, input_is_list: bool
     ) -> pl.DataFrame:
-        """Reduce multi_label → single-label (inner dimension): keep first label."""
+        """Reduce multi_label → single-label (inner dimension): keep last label."""
         log.warning(
-            "Converting multi-label to single-label for field '%s': keeping the first label only. Data may be lost.",
+            "Converting multi-label to single-label for field '%s': keeping the last label only. Data may be lost.",
             input_col,
         )
         if input_is_list:
-            # List(List(dtype)) → List(dtype): take first element of each inner list
-            return df.with_columns(pl.col(input_col).list.eval(pl.element().list.first()).alias(output_col))
-        # List(dtype) → dtype: take the first element
-        return df.with_columns(pl.col(input_col).list.first().alias(output_col))
+            # List(List(dtype)) → List(dtype): take last element of each inner list
+            return df.with_columns(pl.col(input_col).list.eval(pl.element().list.last()).alias(output_col))
+        # List(dtype) → dtype: take the last element
+        return df.with_columns(pl.col(input_col).list.last().alias(output_col))
 
     def _expand_multi_label(
         self, df: pl.DataFrame, input_col: str, output_col: str, input_is_list: bool
@@ -398,11 +398,11 @@ class LabelShapeConverter(Converter):
         """Handle is_list conversion (outer dimension)."""
         if input_is_list:
             log.warning(
-                "Converting list to non-list for field '%s': keeping the first element only. Data may be lost.",
+                "Converting list to non-list for field '%s': keeping the last element only. Data may be lost.",
                 src_col,
             )
-            # List(X) → X: take the first element
-            return df.with_columns(pl.col(src_col).list.first().alias(output_col))
+            # List(X) → X: take the last element
+            return df.with_columns(pl.col(src_col).list.last().alias(output_col))
         # X → List(X): wrap each sample's value in a 1-element list, preserving nulls
         if not output_multi:
             # Scalar → List(scalar): use native concat_list (fast path)
