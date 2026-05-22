@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>YOLO-Ultralytics &#8212; Datumaro 1.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=8f5b6f32"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/data-formats/formats/yolo_ultralytics';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Supported Media Formats" href="../media_formats.html" />
+    <link rel="prev" title="YOLO" href="yolo.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.0 documentation - Home"/>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_dataset_download.html">Level 1: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_import_export.html">Level 2: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_detect_data_format.html">Level 3: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/04_data_aggregation.html">Level 4: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_merge.html">Level 6: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_validate.html">Level 7: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_filtering.html">Level 8: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_framework_conversion.html">Level 9: Framework Conversion</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Formats</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yolo.html">YOLO</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">YOLO-Ultralytics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/dataset_IO.html">Dataset I/O</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/manipulate.html">Manipulate</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/refine.html">Refine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/04_filter.html">Filter Data through Your Query</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/transform.html">Transform</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/e2e_example.html">From Datumaro to Model Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/22_framework_converter.html">Data Framework Convert</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/compare.html">Compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/convert.html">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/detect.html">Detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/dinfo.html">Info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/filter.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/format.html">Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/merge.html">Merge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/patch.html">Patch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/stats.html">Stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/transform.html">Transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/validate.html">Validate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/datumaro_module.html">Datumaro Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.html">datumaro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.html">datumaro.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.html">datumaro.util</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.deprecation.html">datumaro.util.deprecation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.points_util.html">datumaro.util.points_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Formats</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">YOLO-Ultralytics</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="yolo-ultralytics">
+<h1>YOLO-Ultralytics<a class="headerlink" href="#yolo-ultralytics" title="Link to this heading">#</a></h1>
+<section id="format-specification">
+<h2>Format specification<a class="headerlink" href="#format-specification" title="Link to this heading">#</a></h2>
+<p>The YOLO-Ultralytics dataset format is used for <a class="reference external" href="https://github.com/ultralytics/ultralytics">Ultralytics YOLOv8</a>, developed by <a class="reference external" href="https://ultralytics.com/">Ultralytics</a>. An example for this format is available <a class="reference external" href="https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/datasets/coco.yaml">here</a>. This format shares the same annotation bounding box text file format with <a class="reference internal" href="yolo.html#bounding-box-annotation-text-file"><span class="std std-ref">YOLO</span></a>. However, it requires a YAML meta file where <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">val</span></code>, and <code class="docutils literal notranslate"><span class="pre">test</span></code> (optional) subsets are specified.</p>
+<p>Supported annotation types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Bounding</span> <span class="pre">boxes</span></code></p></li>
+</ul>
+<p>YOLO-Ultralytics format doesn’t support attributes for annotations.</p>
+<p>The format only supports three subset names: <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">val</span></code>, and <code class="docutils literal notranslate"><span class="pre">test</span></code> (optional).</p>
+<blockquote>
+<div><p>Note, the YOLO-Ultralytics trainer does not expect any subset names,
+except <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">val</span></code>, and <code class="docutils literal notranslate"><span class="pre">test</span></code> (optional). If there is any other subset name,
+Datumaro raises an exception when you export the dataset to the YOLO-Ultralytics format.</p>
+</div></blockquote>
+</section>
+<section id="convert-yolo-dataset">
+<h2>Convert YOLO dataset<a class="headerlink" href="#convert-yolo-dataset" title="Link to this heading">#</a></h2>
+<p>A Datumaro dataset can be converted in the following way:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>convert<span class="w"> </span>-if<span class="w"> </span>yolo<span class="w"> </span>-i<span class="w"> </span>&lt;path/to/dataset&gt;<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;
+</pre></div>
+</div>
+<section id="directory-structure">
+<h3>Directory structure<a class="headerlink" href="#directory-structure" title="Link to this heading">#</a></h3>
+<p>YOLO dataset directory should have the following structure:</p>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>yolo-ultralytics/
+├── dataset_meta.json   # a list of non-format labels (optional)
+├── data.yaml           # YAML meta file (required)
+├── train.txt           # Train image file list (required)
+├── val.txt             # Validation image file list (required)
+├── test.txt            # Test image file list (optional)
+├── images              # Image directory
+│   ├── train           # (required)
+│   │   ├── img1.jpg    # Image file
+│   │   ├── img2.jpg
+│   │   └── ...
+│   ├── val             # (required)
+│   └── test            # (optional)
+└── labels              # Label directory
+    ├── train           # (required)
+    │   ├── img1.txt    # Bounding box label file (Its name must be paired with the image)
+    │   ├── img2.txt
+    │   └── ...
+    ├── val             # (required)
+    └── test            # (optional)
+</pre></div>
+</div>
+<section id="meta-file">
+<h4>Meta file<a class="headerlink" href="#meta-file" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data.yaml</span></code> should have the following content:</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test.txt</span><span class="w"> </span><span class="c1"># (optional)</span>
+<span class="nt">train</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">train.txt</span>
+<span class="nt">val</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">val.txt</span>
+<span class="nt">names</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">0</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;label_name_1&gt;</span>
+<span class="w">  </span><span class="nt">1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;label_name_1&gt;</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</section>
+<section id="subset-files">
+<h4>Subset files<a class="headerlink" href="#subset-files" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Files <code class="docutils literal notranslate"><span class="pre">train.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">val.txt</span></code>, and <code class="docutils literal notranslate"><span class="pre">test.txt</span></code> (optional) should have the following structure:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">images</span><span class="o">/&lt;</span><span class="n">subset</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/&lt;</span><span class="n">image</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">name</span><span class="o">-</span><span class="mf">1.</span><span class="n">jpg</span><span class="o">&gt;</span>
+<span class="o">./</span><span class="n">images</span><span class="o">/&lt;</span><span class="n">subset</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;/&lt;</span><span class="n">image</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">name</span><span class="o">-</span><span class="mf">2.</span><span class="n">jpg</span><span class="o">&gt;</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="bounding-box-annotation-text-file">
+<h4>Bounding box annotation text file<a class="headerlink" href="#bounding-box-annotation-text-file" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Files in directories <code class="docutils literal notranslate"><span class="pre">labels/&lt;subset-name&gt;</span></code> should contain information about labeled bounding boxes
+for images:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># image1.txt:</span>
+<span class="c1"># &lt;label_index&gt; &lt;x_center&gt; &lt;y_center&gt; &lt;width&gt; &lt;height&gt;</span>
+<span class="mi">0</span> <span class="mf">0.250000</span> <span class="mf">0.400000</span> <span class="mf">0.300000</span> <span class="mf">0.400000</span>
+<span class="mi">3</span> <span class="mf">0.600000</span> <span class="mf">0.400000</span> <span class="mf">0.400000</span> <span class="mf">0.266667</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">x_center</span></code>, <code class="docutils literal notranslate"><span class="pre">y_center</span></code>, <code class="docutils literal notranslate"><span class="pre">width</span></code>, and <code class="docutils literal notranslate"><span class="pre">height</span></code> are relative to the image’s
+width and height. The <code class="docutils literal notranslate"><span class="pre">x_center</span></code> and <code class="docutils literal notranslate"><span class="pre">y_center</span></code> are center of rectangle
+(are not top-left corner).</p>
+<p>To add custom classes, you can use <a class="reference internal" href="index.html#dataset-meta-info-file"><span class="std std-ref"><code class="docutils literal notranslate"><span class="pre">dataset_meta.json</span></code></span></a>.</p>
+</section>
+</section>
+</section>
+<section id="export-to-yolo-ultralytics-format">
+<h2>Export to YOLO-Ultralytics format<a class="headerlink" href="#export-to-yolo-ultralytics-format" title="Link to this heading">#</a></h2>
+<p>Datumaro can convert <a class="reference internal" href="index.html"><span class="std std-doc">any other image dataset format</span></a> which has bounding box annotations into YOLO-Ultralytics format.
+After the successful conversion, you can train your own detector with the exported dataset and  <a class="reference external" href="https://github.com/ultralytics/ultralytics">Ultralytics YOLOv8 trainer</a>.</p>
+<blockquote>
+<div><p>Note, if you want to see the end-to-end Jupyter-notebook example from the dataset conversion to the training, please see this <a class="reference external" href="https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb">link</a>.</p>
+</div></blockquote>
+<p>There are several ways to convert other dataset formats to the YOLO-Ultralytics format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>convert<span class="w"> </span>-if<span class="w"> </span>&lt;any-other-dataset-format&gt;<span class="w"> </span>-i<span class="w"> </span>&lt;path/to/dataset&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">              </span>-f<span class="w"> </span>yolo_ultralytics<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;<span class="w"> </span>--<span class="w"> </span>--save-media
+</pre></div>
+</div>
+<p>Or, using Python API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;any-other-dataset-format&gt;&#39;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;save_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;yolo_ultralytics&#39;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Note, we recommend you to turn on <code class="docutils literal notranslate"><span class="pre">--save-media</span></code> (CLI) or <code class="docutils literal notranslate"><span class="pre">save_media=True</span></code> (Python API) option. This is because without this option, you would have to manually copy and paste the image into the appropriate location in the exported dataset directory. Enabling this option will save your manual effort.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="yolo.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">YOLO</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../media_formats.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Supported Media Formats</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#format-specification">Format specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convert-yolo-dataset">Convert YOLO dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-structure">Directory structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#meta-file">Meta file</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#subset-files">Subset files</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bounding-box-annotation-text-file">Bounding box annotation text file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-to-yolo-ultralytics-format">Export to YOLO-Ultralytics format</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/data-formats/formats/yolo_ultralytics.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
