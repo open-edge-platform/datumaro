@@ -1211,6 +1211,122 @@ class ResizeTransform(ItemTransform):
         return self.wrap_item(item, media=resized_image, annotations=resized_annotations)
 
 
+class CropTransform(ItemTransform, CliPlugin):
+    """
+    Crops images and annotations in the dataset.
+    Supports displacement from the top-left corner.|n
+    |n
+    Examples:|n
+        - Crop all images to a 256x256 square starting from (10, 10)|n
+
+        .. code-block::
+
+        |s|s%(prog)s -dx 10 -dy 10 -dw 256 -dh 256
+    """
+
+    @classmethod
+    def build_cmdline_parser(cls, **kwargs):
+        parser = super().build_cmdline_parser(**kwargs)
+        parser.add_argument("-dx", "--x", type=int, default=0, help="Crop x coordinate (default: 0)")
+        parser.add_argument("-dy", "--y", type=int, default=0, help="Crop y coordinate (default: 0)")
+        parser.add_argument("-dw", "--width", type=int, required=True, help="Destination image width")
+        parser.add_argument("-dh", "--height", type=int, required=True, help="Destination image height")
+        return parser
+
+    def __init__(self, extractor: IDataset, x: int, y: int, width: int, height: int) -> None:
+        super().__init__(extractor)
+
+        assert width > 0 and height > 0
+        assert x >= 0 and y >= 0
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+
+    @staticmethod
+    def _lazy_crop_image(image, x, y, width, height):
+        def _crop_image():
+            img_data = image.data
+            return img_data[y : y + height, x : x + width]
+
+        return Image.from_numpy(_crop_image, ext=image.ext, size=(height, width))
+
+    @staticmethod
+    def _lazy_crop_mask(mask, x, y, width, height):
+        def _crop_image():
+            img_data = mask.image
+            return img_data[y : y + height, x : x + width]
+
+        return _crop_image
+
+    @staticmethod
+    def _lazy_crop_rlemask(mask, x, y, width, height):
+        def _crop_image():
+            img_data = mask.image
+            cropped = img_data[y : y + height, x : x + width]
+            return mask_utils.encode(np.asfortranarray(cropped.astype(np.uint8)))
+
+        return _crop_image
+
+    def transform_item(self, item):
+        if not isinstance(item.media, Image):
+            raise DatumaroError("Item %s: image info is required for this transform" % (item.id,))
+
+        h, w = item.media.size
+        crop_x = min(self._x, w)
+        crop_y = min(self._y, h)
+        crop_w = min(self._width, w - crop_x)
+        crop_h = min(self._height, h - crop_y)
+
+        cropped_image = None
+        if item.media.has_data:
+            cropped_image = self._lazy_crop_image(item.media, crop_x, crop_y, crop_w, crop_h)
+
+        cropped_annotations = []
+        for ann in item.annotations:
+            if isinstance(ann, Bbox):
+                ann_x1 = max(crop_x, ann.x)
+                ann_y1 = max(crop_y, ann.y)
+                ann_x2 = min(crop_x + crop_w, ann.x + ann.w)
+                ann_y2 = min(crop_y + crop_h, ann.y + ann.h)
+
+                if ann_x1 < ann_x2 and ann_y1 < ann_y2:
+                    cropped_annotations.append(
+                        ann.wrap(
+                            x=ann_x1 - crop_x,
+                            y=ann_y1 - crop_y,
+                            w=ann_x2 - ann_x1,
+                            h=ann_y2 - ann_y1,
+                        )
+                    )
+            elif isinstance(ann, (Polygon, Points, PolyLine)):
+                # Shift points into crop-relative coordinates
+                shifted_points = [p - crop_x if i % 2 == 0 else p - crop_y for i, p in enumerate(ann.points)]
+                # Check if the shape's bounding box intersects the crop region
+                xs = shifted_points[0::2]
+                ys = shifted_points[1::2]
+                if max(xs) <= 0 or min(xs) >= crop_w or max(ys) <= 0 or min(ys) >= crop_h:
+                    continue  # entirely outside the crop region
+                # Clip coordinates to the cropped image boundaries
+                clipped_points = [
+                    max(0, min(p, crop_w)) if i % 2 == 0 else max(0, min(p, crop_h))
+                    for i, p in enumerate(shifted_points)
+                ]
+                cropped_annotations.append(ann.wrap(points=clipped_points))
+            elif isinstance(ann, RleMask):
+                rescaled_mask = self._lazy_crop_rlemask(ann, crop_x, crop_y, crop_w, crop_h)
+                cropped_annotations.append(ann.wrap(rle=rescaled_mask))
+            elif isinstance(ann, Mask):
+                rescaled_mask = self._lazy_crop_mask(ann, crop_x, crop_y, crop_w, crop_h)
+                cropped_annotations.append(ann.wrap(image=rescaled_mask))
+            elif isinstance(ann, (Caption, Label)):
+                cropped_annotations.append(ann)
+            else:
+                raise ValueError(f"Unexpected annotation type {type(ann)}")
+
+        return self.wrap_item(item, media=cropped_image, annotations=cropped_annotations)
+
+
 class RemoveItems(ItemTransform):
     """
     Allows to remove specific dataset items from dataset by their ids.|n

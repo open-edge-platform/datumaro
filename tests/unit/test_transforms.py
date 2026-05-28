@@ -61,6 +61,77 @@ class TransformsTest(TestCase):
         actual = transforms.Reindex(source, start=5)
         compare_datasets(self, expected, actual)
 
+    def test_crop_transform(self):
+        source_mask = np.array(
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ],
+            dtype=np.uint8,
+        )
+        source_rle = mask_utils.encode(np.asfortranarray(source_mask))
+
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    media=Image.from_numpy(data=np.ones((10, 10, 3))),
+                    annotations=[
+                        Bbox(1, 2, 3, 4, label=1),
+                        Bbox(5, 5, 3, 3, label=2),
+                        Bbox(8, 8, 2, 2, label=3),
+                        Mask(source_mask, label=4),
+                        RleMask(rle=source_rle, label=5),
+                        Polygon([1, 1, 4, 1, 4, 4, 1, 4], label=6),
+                        Points([1, 1, 3, 4], label=7),
+                        PolyLine([1, 1, 4, 4], label=8),
+                        Polygon([0, 0, 1, 0, 1, 1, 0, 1], label=9),
+                    ],
+                )
+            ]
+        )
+
+        # Crop region: x=2, y=3, w=4, h=4 → rows 3..6, cols 2..5
+        expected_mask = np.array(
+            [
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [1, 1, 1, 1],
+                [0, 0, 0, 0],
+            ],
+            dtype=np.uint8,
+        )
+        expected_rle = mask_utils.encode(np.asfortranarray(expected_mask))
+
+        target_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    media=Image.from_numpy(data=np.ones((4, 4, 3))),
+                    annotations=[
+                        Bbox(0, 0, 2, 3, label=1),
+                        Bbox(3, 2, 1, 2, label=2),
+                        Mask(expected_mask, label=4),
+                        RleMask(rle=expected_rle, label=5),
+                        Polygon([0, 0, 2, 0, 2, 1, 0, 1], label=6),
+                        Points([0, 0, 1, 1], label=7),
+                        PolyLine([0, 0, 2, 1], label=8),
+                    ],
+                ),
+            ]
+        )
+
+        actual = transforms.CropTransform(source_dataset, x=2, y=3, width=4, height=4)
+        compare_datasets(self, target_dataset, actual)
+
     def test_sort(self):
         items = []
         for i in range(10):
