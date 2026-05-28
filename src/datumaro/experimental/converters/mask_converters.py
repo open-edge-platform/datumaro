@@ -227,10 +227,10 @@ class PolygonToInstanceMaskConverter(Converter):
             n = len(polygons_data)
 
             if n == 0:
-                empty_mask = np.array([], dtype=np.uint8)
+                empty_mask = np.array([], dtype=np.uint8 if _use_uint8_storage else _numpy_dtype)
                 return empty_mask, [0, image_height, image_width]
 
-            # Pre-allocate the full (N, H, W) output in one shot as uint8
+            # Pre-allocate the full (N, H, W) output in one shot as uint8 (required by OpenCV)
             stacked_masks = np.zeros((n, image_height, image_width), dtype=np.uint8)
 
             for i, polygon_data in enumerate(polygons_data):
@@ -245,7 +245,11 @@ class PolygonToInstanceMaskConverter(Converter):
                 # fillPoly is faster than drawContours for single-polygon fills
                 cv2.fillPoly(stacked_masks[i], [contour], 1)
 
-            # Keep as uint8 for Polars storage; dtype cast happens after collection
+            # For Boolean output, keep as uint8 for fast Polars List(UInt8) storage;
+            # the cast to Boolean happens after collection. For other dtypes, cast now.
+            if not _use_uint8_storage and _numpy_dtype != np.uint8:
+                stacked_masks = stacked_masks.astype(_numpy_dtype)
+
             return stacked_masks.reshape(-1), list(stacked_masks.shape)
 
         # Apply conversion using map_batches
