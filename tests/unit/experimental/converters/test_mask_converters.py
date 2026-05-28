@@ -501,3 +501,91 @@ def test_mask_callable_to_mask_converter_validation():
     # Check that it raises error for invalid shape
     with pytest.raises(ValueError, match="Mask array must be 2D \(H,W\), got shape \(1, 2, 2\)"):
         converter_instance.convert(df)
+
+
+def test_polygon_to_instance_mask_converter_uint8_dtype():
+    """Test instance mask converter with UInt8 output dtype (no boolean cast path)."""
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series([polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 80, "height": 80}],
+        }
+    )
+
+    converter_instance = PolygonToInstanceMaskConverter()
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(converter_instance, "input_image_info", AttributeSpec(name="image_info", field=ImageInfoField()))
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=InstanceMaskField(dtype=pl.UInt8())),
+    )
+    converter_instance.filter_output_spec()
+
+    result_df = converter_instance.convert(df)
+
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    assert masks.shape == (2, 80, 80)
+    assert masks.dtype == np.uint8
+    assert masks[0, 15, 15] == 1  # Inside triangle
+    assert masks[0, 5, 5] == 0  # Outside triangle
+    assert masks[1, 35, 35] == 1  # Inside rectangle
+    assert not np.any(masks[0] & masks[1])
+
+
+def test_polygon_to_instance_mask_converter_multi_sample_batch():
+    """Test instance mask converter with multiple samples in a single DataFrame."""
+    poly1 = pl.Series(
+        [[[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]],
+        dtype=pl.List(pl.Array(pl.Float32, 2)),
+    )
+    poly2 = pl.Series(
+        [[[30.0, 30.0], [50.0, 30.0], [50.0, 50.0], [30.0, 50.0]]],
+        dtype=pl.List(pl.Array(pl.Float32, 2)),
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [poly1, poly2],
+            "image_info": [{"width": 60, "height": 60}, {"width": 60, "height": 60}],
+        }
+    )
+
+    converter_instance = PolygonToInstanceMaskConverter()
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(converter_instance, "input_image_info", AttributeSpec(name="image_info", field=ImageInfoField()))
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=InstanceMaskField(dtype=pl.Boolean())),
+    )
+    converter_instance.filter_output_spec()
+
+    result_df = converter_instance.convert(df)
+
+    # Check first sample (triangle)
+    mask1 = np.array(result_df["instance_mask"][0]).reshape(result_df["instance_mask_shape"][0])
+    assert mask1.shape == (1, 60, 60)
+    assert mask1[0, 15, 15]  # Inside triangle
+
+    # Check second sample (rectangle)
+    mask2 = np.array(result_df["instance_mask"][1]).reshape(result_df["instance_mask_shape"][1])
+    assert mask2.shape == (1, 60, 60)
+    assert mask2[0, 40, 40]  # Inside rectangle
+    assert not mask2[0, 5, 5]  # Outside rectangle
