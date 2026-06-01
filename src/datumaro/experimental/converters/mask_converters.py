@@ -1,7 +1,7 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import Any
 
 import cv2
@@ -32,12 +32,12 @@ PolygonCoords = Any
 def polygons_to_mask(
     polygons_data: Sequence[PolygonCoords],
     labels_data: Sequence[int],
-    img_info: Mapping[str, int],
+    img_size: tuple[int, int],
     *,
     dtype: np.dtype = np.uint8,
     normalize: bool = False,
     background_index: int = 0,
-    mask_info: Mapping[str, int] | None = None,
+    mask_size: tuple[int, int] | None = None,
 ) -> tuple[np.ndarray, list[int]]:
     """Rasterize polygons into a single indexed (semantic) mask using OpenCV contour filling.
 
@@ -52,28 +52,24 @@ def polygons_to_mask(
             ``(x, y)`` points, so ``numpy.ndarray``, ``polars.Series``, or
             nested ``list``/``tuple`` are all accepted.
         labels_data: Class label index for each polygon.
-        img_info: Mapping with ``"width"`` and ``"height"`` keys.
+        img_size: Image size as a ``(width, height)`` tuple.
         dtype: Output numpy dtype for the mask.
         normalize: If True, polygon coordinates are treated as normalized
             (in ``[0, 1]``) and are scaled by the image dimensions.
         background_index: Fill value used for background pixels.
-        mask_info: Optional mapping with ``"width"`` and ``"height"`` keys
-            describing the output mask size. Defaults to ``img_info``. When it
-            differs from the image size, polygon coordinates are scaled to fit
-            the mask.
+        mask_size: Optional output mask size as a ``(width, height)`` tuple.
+            Defaults to ``img_size``. When it differs from the image size,
+            polygon coordinates are scaled to fit the mask.
 
     Returns:
         A tuple ``(flattened_mask, shape)`` where ``flattened_mask`` is the
         flattened ``(H * W,)`` mask array and ``shape`` is ``[height, width]``.
     """
     # Extract image dimensions
-    image_width = img_info["width"]
-    image_height = img_info["height"]
+    image_width, image_height = img_size
 
     # Resolve target mask dimensions (default to the image dimensions)
-    mask_info = mask_info if mask_info is not None else img_info
-    out_width = mask_info["width"]
-    out_height = mask_info["height"]
+    out_width, out_height = mask_size if mask_size is not None else img_size
 
     # Scale factors to map image-space coordinates into mask-space
     scale_x = out_width / image_width
@@ -115,11 +111,11 @@ def polygons_to_mask(
 
 def polygons_to_instance_masks(
     polygons_data: Sequence[PolygonCoords],
-    img_info: Mapping[str, int],
+    img_size: tuple[int, int],
     *,
     dtype: np.dtype = np.uint8,
     normalize: bool = False,
-    mask_info: Mapping[str, int] | None = None,
+    mask_size: tuple[int, int] | None = None,
 ) -> tuple[np.ndarray, list[int]]:
     """Rasterize polygons into binary instance masks using OpenCV contour filling.
 
@@ -132,28 +128,24 @@ def polygons_to_instance_masks(
             converted with ``np.asarray`` into an ``(N, 2)`` array of
             ``(x, y)`` points, so ``numpy.ndarray``, ``polars.Series``, or
             nested ``list``/``tuple`` are all accepted.
-        img_info: Mapping with ``"width"`` and ``"height"`` keys.
+        img_size: Image size as a ``(width, height)`` tuple.
         dtype: Output numpy dtype for the masks.
         normalize: If True, polygon coordinates are treated as normalized
             (in ``[0, 1]``) and are scaled by the image dimensions.
-        mask_info: Optional mapping with ``"width"`` and ``"height"`` keys
-            describing the output mask size. Defaults to ``img_info``. When it
-            differs from the image size, polygon coordinates are scaled to fit
-            the mask.
+        mask_size: Optional output mask size as a ``(width, height)`` tuple.
+            Defaults to ``img_size``. When it differs from the image size,
+            polygon coordinates are scaled to fit the mask.
 
     Returns:
         A tuple ``(flattened_masks, shape)`` where ``flattened_masks`` is the
         flattened ``(N * H * W,)`` mask array and ``shape`` is
         ``[num_instances, height, width]``.
     """
-    image_width = img_info["width"]
-    image_height = img_info["height"]
+    image_width, image_height = img_size
     n = len(polygons_data)
 
     # Resolve target mask dimensions (default to the image dimensions)
-    mask_info = mask_info if mask_info is not None else img_info
-    out_width = mask_info["width"]
-    out_height = mask_info["height"]
+    out_width, out_height = mask_size if mask_size is not None else img_size
 
     # Scale factors to map image-space coordinates into mask-space
     scale_x = out_width / image_width
@@ -207,9 +199,6 @@ class PolygonToMaskConverter(Converter):
 
     # Configuration options
     background_index: int = 0  # Background value
-    # Optional output mask size as a mapping with "width"/"height" keys.
-    # When None, the mask matches the image size (img_info).
-    mask_info: Mapping[str, int] | None = None
 
     def filter_output_spec(self) -> bool:
         """
@@ -267,7 +256,6 @@ class PolygonToMaskConverter(Converter):
         _numpy_dtype = polars_to_numpy_dtype(self.output_mask.field.dtype)
         _normalize = self.input_polygon.field.normalize
         _background_index = self.background_index
-        _mask_info = self.mask_info
 
         # Apply conversion using map_batches
         def apply_conversion_batch(batch_df: pl.DataFrame) -> pl.DataFrame:
@@ -282,11 +270,10 @@ class PolygonToMaskConverter(Converter):
                 mask_data, shape_data = polygons_to_mask(
                     polygons,
                     labels,
-                    img_infos,
+                    (img_infos["width"], img_infos["height"]),
                     dtype=_numpy_dtype,
                     normalize=_normalize,
                     background_index=_background_index,
-                    mask_info=_mask_info,
                 )
                 results_batch_polygons.append(pl.Series(mask_data))
                 results_batch_shape.append(shape_data)
@@ -330,10 +317,6 @@ class PolygonToInstanceMaskConverter(Converter):
     input_image_info: AttributeSpec[ImageInfoField]
     output_instance_mask: AttributeSpec[InstanceMaskField]
 
-    # Optional output mask size as a mapping with "width"/"height" keys.
-    # When None, the mask matches the image size (img_info).
-    mask_info: Mapping[str, int] | None = None
-
     def filter_output_spec(self) -> bool:
         """Configure output specification for instance mask format."""
         # Configure output for instance mask format
@@ -370,7 +353,6 @@ class PolygonToInstanceMaskConverter(Converter):
         # For Boolean output, rasterize as uint8 for fast Polars List(UInt8) storage;
         # the cast to Boolean happens after collection.
         _storage_numpy_dtype = np.uint8 if _use_uint8_storage else _numpy_dtype
-        _mask_info = self.mask_info
 
         # Apply conversion using map_batches
         def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:  # noqa: ARG001
@@ -384,10 +366,9 @@ class PolygonToInstanceMaskConverter(Converter):
             for polygons, img_info in zip(batch_polygons, batch_img_infos):
                 mask_data, shape_data = polygons_to_instance_masks(
                     polygons,
-                    img_info,
+                    (img_info["width"], img_info["height"]),
                     dtype=_storage_numpy_dtype,
                     normalize=_normalize,
-                    mask_info=_mask_info,
                 )
                 results_batch_mask.append(pl.Series(mask_data))
                 results_batch_shape.append(shape_data)
