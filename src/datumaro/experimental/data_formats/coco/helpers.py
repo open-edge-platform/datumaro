@@ -447,7 +447,6 @@ def _collect_instances_for_image(
         original_bbox = ann.get("bbox")
         original_area = ann.get("area")
 
-        # Handle multi-part polygons by splitting them into separate annotations
         polygon_parts = _segmentation_to_poly_parts(segmentation)
 
         ic = ann.get("iscrowd", 0)
@@ -456,28 +455,44 @@ def _collect_instances_for_image(
         except Exception:  # pragma: no cover - tolerant casting
             iscrowd_val = False
 
-        for poly_array in polygon_parts:
-            # Compute bbox from polygon points (x, y, w, h format for COCO compatibility)
-            if poly_array.size > 0:
-                x_coords = poly_array[:, 0]
-                y_coords = poly_array[:, 1]
-                x1, y1 = float(x_coords.min()), float(y_coords.min())
-                x2, y2 = float(x_coords.max()), float(y_coords.max())
-                computed_bbox = [x1, y1, x2 - x1, y2 - y1]  # x, y, w, h
-                area = (x2 - x1) * (y2 - y1)
-            elif original_bbox is not None and len(original_bbox) == 4:
-                # Use original bbox from annotation if no polygon
-                computed_bbox = [float(v) for v in original_bbox]
-                area = float(original_area) if original_area is not None else computed_bbox[2] * computed_bbox[3]
-            else:
-                computed_bbox = [0.0, 0.0, 0.0, 0.0]
-                area = 0.0
+        valid_parts = [part for part in polygon_parts if part.size > 0]
+        combined_poly = np.concatenate(valid_parts, axis=0) if valid_parts else np.zeros((0, 2), dtype=np.float32)
 
-            bboxes_list.append(computed_bbox)
-            polygons_list.append(poly_array)
-            labels_list.append(category_idx)
-            areas_list.append(area)
-            iscrowd_list.append(iscrowd_val)
+        if original_bbox is not None and len(original_bbox) == 4:
+            computed_bbox = [float(v) for v in original_bbox]
+            area = float(original_area) if original_area is not None else computed_bbox[2] * computed_bbox[3]
+        elif valid_parts:
+            x1 = float(combined_poly[:, 0].min())
+            y1 = float(combined_poly[:, 1].min())
+            x2 = float(combined_poly[:, 0].max())
+            y2 = float(combined_poly[:, 1].max())
+            computed_bbox: list[float] = [x1, y1, x2 - x1, y2 - y1]
+            area = (x2 - x1) * (y2 - y1)
+        else:
+            computed_bbox = [0.0, 0.0, 0.0, 0.0]
+            area = 0.0
+
+        bboxes_list.append(computed_bbox)
+        polygons_list.append(combined_poly)
+        labels_list.append(category_idx)
+        areas_list.append(area)
+        iscrowd_list.append(iscrowd_val)
+
+    if bboxes_list:
+        seen: set[tuple[int | None, tuple[float, ...]]] = set()
+        dedup_indices: list[int] = []
+        for index, (bbox, label) in enumerate(zip(bboxes_list, labels_list)):
+            key = (label, tuple(round(value, 2) for value in bbox) if bbox else ())
+            if key not in seen:
+                seen.add(key)
+                dedup_indices.append(index)
+
+        if len(dedup_indices) < len(bboxes_list):
+            bboxes_list = [bboxes_list[index] for index in dedup_indices]
+            polygons_list = [polygons_list[index] for index in dedup_indices]
+            labels_list = [labels_list[index] for index in dedup_indices]
+            areas_list = [areas_list[index] for index in dedup_indices]
+            iscrowd_list = [iscrowd_list[index] for index in dedup_indices]
 
     return bboxes_list, polygons_list, labels_list, areas_list, iscrowd_list
 
