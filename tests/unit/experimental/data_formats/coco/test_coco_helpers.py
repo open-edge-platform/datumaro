@@ -333,7 +333,10 @@ def test_collect_instances_dedup_identical_annotations():
 
     assert len(bboxes) == 1
     assert bboxes[0] == [10.0, 10.0, 20.0, 20.0]
+    assert len(polys) == 1
     assert labels == [0]
+    assert areas[0] == pytest.approx(400.0)
+    assert iscrowd == [False]
 
 
 def test_serialize_instances_requires_labels():
