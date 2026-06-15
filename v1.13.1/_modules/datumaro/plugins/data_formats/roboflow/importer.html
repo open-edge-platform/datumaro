@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.plugins.data_formats.roboflow.importer &#8212; Datumaro 1.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../../../_static/documentation_options.js?v=8f5b6f32"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/roboflow/importer';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.0 documentation - Home"/>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">datumaro.plugins.data_formats.roboflow.importer</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.plugins.data_formats.roboflow.importer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextIOWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">defusedxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionConfidence</span><span class="p">,</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtractorMerger</span>
+
+
+<div class="viewcode-block" id="RoboflowCocoImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowCocoImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_coco&quot;</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_annotations.coco.json&quot;</span>
+
+<div class="viewcode-block" id="RoboflowCocoImporter.detect">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.detect">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
+
+
+<div class="viewcode-block" id="RoboflowCocoImporter.find_sources">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.find_sources">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">subset_path</span> <span class="ow">in</span> <span class="n">subset_paths</span><span class="p">:</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">subset_path</span><span class="p">))</span>
+            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">subset_path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset_name</span><span class="p">}})</span>
+
+        <span class="k">return</span> <span class="n">sources</span></div>
+
+
+<div class="viewcode-block" id="RoboflowCocoImporter.get_file_extensions">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.get_file_extensions">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="RoboflowCocoImporter.get_extractor_merger">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.get_extractor_merger">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_extractor_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ExtractorMerger</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">ExtractorMerger</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RoboflowVocImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowVocImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_voc&quot;</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.xml&quot;</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="RoboflowVocImporter.detect">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter.detect">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">(),</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;Requirements for the annotation file of voc format&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Roboflow VOC format xml file should have the annotation tag.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;source/database&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;roboflow.ai&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Roboflow VOC format xml file should have the source/database with `roboflow.ai`.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_filter_ann_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">DatasetImportError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">ext</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">,</span>
+            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">dirname</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span><span class="p">,</span>
+            <span class="n">file_filter</span><span class="o">=</span><span class="n">_filter_ann_file</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
+            <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">sources</span>
+
+<div class="viewcode-block" id="RoboflowVocImporter.find_sources">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter.find_sources">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sources</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">subsets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RoboflowVocImporter.get_file_extensions">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter.get_file_extensions">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RoboflowYoloImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowYoloImporter</span><span class="p">(</span><span class="n">RoboflowVocImporter</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_yolo&quot;</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;labels/&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Roboflow Yolo format txt file should have 5 fields for each line, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Each field should be a number but fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check the first line only</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RoboflowYoloImporter.find_sources">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloImporter.find_sources">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sources</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">subsets</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                    <span class="s2">&quot;urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">urls</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RoboflowYoloObbImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloObbImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowYoloObbImporter</span><span class="p">(</span><span class="n">RoboflowYoloImporter</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_yolo_obb&quot;</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;labelTxt/&quot;</span>
+
+<div class="viewcode-block" id="RoboflowYoloObbImporter.detect">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloObbImporter.detect">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;FormatDetectionConfidence of &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="si">}</span><span class="s2">&#39; is lowered because of &#39;dota&#39; format support. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;It will be deprecated in datumaro==1.8.0.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">(),</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">LOW</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Roboflow Yolo OBB format txt file should have 10 fields for each line, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check the first line only</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="RoboflowCreateMlImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCreateMlImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowCreateMlImporter</span><span class="p">(</span><span class="n">RoboflowCocoImporter</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_create_ml&quot;</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_annotations.createml.json&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RoboflowMulticlassImporter">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowMulticlassImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RoboflowMulticlassImporter</span><span class="p">(</span><span class="n">RoboflowCocoImporter</span><span class="p">):</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_multiclass&quot;</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_classes.csv&quot;</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

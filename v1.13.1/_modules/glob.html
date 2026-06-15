@@ -1,0 +1,639 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>glob &#8212; Datumaro 1.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=8f5b6f32"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/glob';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.0 documentation - Home"/>
+    <img src="../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">glob</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for glob</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Filename globbing utility.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;glob&quot;</span><span class="p">,</span> <span class="s2">&quot;iglob&quot;</span><span class="p">,</span> <span class="s2">&quot;escape&quot;</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list of paths matching a pathname pattern.</span>
+
+<span class="sd">    The pattern may contain simple shell-style wildcards a la</span>
+<span class="sd">    fnmatch. However, unlike fnmatch, filenames starting with a</span>
+<span class="sd">    dot are special cases that are not matched by &#39;*&#39; and &#39;?&#39;</span>
+<span class="sd">    patterns.</span>
+
+<span class="sd">    If recursive is true, the pattern &#39;**&#39; will match any files and</span>
+<span class="sd">    zero or more directories and subdirectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">))</span>
+
+<div class="viewcode-block" id="iglob">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.importer.iglob">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an iterator which yields the paths matching a pathname pattern.</span>
+
+<span class="sd">    The pattern may contain simple shell-style wildcards a la</span>
+<span class="sd">    fnmatch. However, unlike fnmatch, filenames starting with a</span>
+<span class="sd">    dot are special cases that are not matched by &#39;*&#39; and &#39;?&#39;</span>
+<span class="sd">    patterns.</span>
+
+<span class="sd">    If recursive is true, the pattern &#39;**&#39; will match any files and</span>
+<span class="sd">    zero or more directories and subdirectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s2">&quot;glob.glob&quot;</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">recursive</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s2">&quot;glob.glob/2&quot;</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">root_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">root_dir</span> <span class="o">=</span> <span class="n">pathname</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pathname</span> <span class="ow">or</span> <span class="n">recursive</span> <span class="ow">and</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">pathname</span><span class="p">[:</span><span class="mi">2</span><span class="p">]):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>  <span class="c1"># skip empty string</span>
+            <span class="k">if</span> <span class="n">s</span><span class="p">:</span>
+                <span class="n">it</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">((</span><span class="n">s</span><span class="p">,),</span> <span class="n">it</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">it</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">dironly</span>
+        <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_lexists</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">pathname</span><span class="p">),</span> <span class="n">dir_fd</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">pathname</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Patterns ending with a slash should match only directories</span>
+            <span class="k">if</span> <span class="n">_isdir</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dirname</span><span class="p">),</span> <span class="n">dir_fd</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">pathname</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">recursive</span> <span class="ow">and</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
+            <span class="k">yield from</span> <span class="n">_glob2</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="n">_glob1</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="c1"># `os.path.split()` returns the argument itself as a dirname if it is a</span>
+    <span class="c1"># drive or UNC path.  Prevent an infinite recursion if a drive or UNC path</span>
+    <span class="c1"># contains magic characters (i.e. r&#39;\\?\C:&#39;).</span>
+    <span class="k">if</span> <span class="n">dirname</span> <span class="o">!=</span> <span class="n">pathname</span> <span class="ow">and</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
+        <span class="n">dirs</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dirname</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">recursive</span> <span class="ow">and</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
+            <span class="n">glob_in_dir</span> <span class="o">=</span> <span class="n">_glob2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">glob_in_dir</span> <span class="o">=</span> <span class="n">_glob1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">glob_in_dir</span> <span class="o">=</span> <span class="n">_glob0</span>
+    <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">glob_in_dir</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dirname</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># These 2 helper functions non-recursively glob inside a literal directory.</span>
+<span class="c1"># They return a list of basenames.  _glob1 accepts a pattern while _glob0</span>
+<span class="c1"># takes a literal basename (so it only has to check for its existence).</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob1</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">_listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_lexists</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">),</span> <span class="n">dir_fd</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">basename</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># `os.path.split()` returns an empty basename for paths ending with a</span>
+        <span class="c1"># directory separator.  &#39;q*x/&#39; should match only directories.</span>
+        <span class="k">if</span> <span class="n">_isdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">basename</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[]</span>
+
+<span class="c1"># Following functions are not public but can be used by third-party code.</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glob0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_glob0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">glob1</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_glob1</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># This helper function recursively yields relative pathnames inside a literal</span>
+<span class="c1"># directory.</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob2</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">pattern</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">yield from</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+
+<span class="c1"># If dironly is false, yields all file names inside a directory.</span>
+<span class="c1"># If dironly is true, yields only directory names.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iterdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fd</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">fsencode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">dir_fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dirname</span><span class="p">:</span>
+                <span class="n">fd</span> <span class="o">=</span> <span class="n">arg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">_dir_open_flags</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg</span> <span class="o">=</span> <span class="n">dir_fd</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">fsencode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fsencode</span>
+        <span class="k">elif</span> <span class="n">dirname</span><span class="p">:</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">dirname</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">,</span> <span class="s1">&#39;ASCII&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">as</span> <span class="n">it</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">dironly</span> <span class="ow">or</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">fsencode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                <span class="k">yield</span> <span class="n">fsencode</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="k">yield</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
+                    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">closing</span><span class="p">(</span><span class="n">_iterdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">))</span> <span class="k">as</span> <span class="n">it</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+
+<span class="c1"># Recursively yields relative pathnames inside a literal directory.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">_listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">x</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">_join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">dirname</span> <span class="k">else</span> <span class="n">x</span>
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">_join</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lexists</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">):</span>
+    <span class="c1"># Same as os.path.lexists(), but with dir_fd</span>
+    <span class="k">if</span> <span class="n">dir_fd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_isdir</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">):</span>
+    <span class="c1"># Same as os.path.isdir(), but with dir_fd</span>
+    <span class="k">if</span> <span class="n">dir_fd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISDIR</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">):</span>
+    <span class="c1"># It is common if dirname or basename is empty</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">basename</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dirname</span> <span class="ow">or</span> <span class="n">basename</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
+
+<span class="n">magic_check</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;([*?[])&#39;</span><span class="p">)</span>
+<span class="n">magic_check_bytes</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;([*?[])&#39;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">has_magic</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">magic_check_bytes</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">magic_check</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ishidden</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;.&#39;</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_isrecursive</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pattern</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;**&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pattern</span> <span class="o">==</span> <span class="s1">&#39;**&#39;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">escape</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Escape all special characters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Escaping is done by wrapping any of &quot;*?[&quot; between square brackets.</span>
+    <span class="c1"># Metacharacters do not work in the drive part and shouldn&#39;t be escaped.</span>
+    <span class="n">drive</span><span class="p">,</span> <span class="n">pathname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">pathname</span> <span class="o">=</span> <span class="n">magic_check_bytes</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;[\1]&#39;</span><span class="p">,</span> <span class="n">pathname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pathname</span> <span class="o">=</span> <span class="n">magic_check</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\1]&#39;</span><span class="p">,</span> <span class="n">pathname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">drive</span> <span class="o">+</span> <span class="n">pathname</span>
+
+
+<span class="n">_dir_open_flags</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span> <span class="o">|</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s1">&#39;O_DIRECTORY&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

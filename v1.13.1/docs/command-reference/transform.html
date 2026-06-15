@@ -1,0 +1,1683 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transform &#8212; Datumaro 1.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=8f5b6f32"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/command-reference/transform';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Util" href="util.html" />
+    <link rel="prev" title="Stats" href="stats.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.0 documentation - Home"/>
+    <img src="../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../get-started/quick-start-guide/index.html">Quick Start Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../level-up/basic_skills/index.html">Basic Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/basic_skills/01_dataset_download.html">Level 1: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/basic_skills/02_dataset_import_export.html">Level 2: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/basic_skills/03_detect_data_format.html">Level 3: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../level-up/intermediate_skills/index.html">Intermediate Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/04_data_aggregation.html">Level 4: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/05_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/06_data_merge.html">Level 6: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/07_data_validate.html">Level 7: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/08_data_filtering.html">Level 8: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../level-up/intermediate_skills/09_framework_conversion.html">Level 9: Framework Conversion</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data-formats/formats/index.html">Formats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter_notebook_examples/dataset_IO.html">Dataset I/O</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter_notebook_examples/manipulate.html">Manipulate</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter_notebook_examples/refine.html">Refine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/04_filter.html">Filter Data through Your Query</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter_notebook_examples/transform.html">Transform</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../jupyter_notebook_examples/e2e_example.html">From Datumaro to Model Training</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/22_framework_converter.html">Data Framework Convert</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compare.html">Compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detect.html">Detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dinfo.html">Info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filter.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="merge.html">Merge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="patch.html">Patch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">Stats</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate.html">Validate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/datumaro_module.html">Datumaro Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/_autosummary/datumaro.html">datumaro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/_autosummary/datumaro.components.html">datumaro.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/_autosummary/datumaro.util.html">datumaro.util</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.deprecation.html">datumaro.util.deprecation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.points_util.html">datumaro.util.points_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user-manual/extending.html">Extending</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../release_notes.html">Release Notes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Docs</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Transform</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="transform">
+<h1>Transform<a class="headerlink" href="#transform" title="Link to this heading">#</a></h1>
+<section id="transform-dataset">
+<h2>Transform Dataset<a class="headerlink" href="#transform-dataset" title="Link to this heading">#</a></h2>
+<p>Often datasets Examples:</p>
+<ul>
+<li><p>Split a VOC-like dataset randomly</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform --overwrite path/to/dataset:voc -t random_split</span>
+</pre></div>
+</div>
+</li>
+<li><p>Rename images in a dataset by a regex from <code class="docutils literal notranslate"><span class="pre">frame_XXX</span></code> to <code class="docutils literal notranslate"><span class="pre">XXX</span></code></p>
+<p><strong>NOTE:</strong> Please use double quotes (<code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) for regex representation. Check <a class="reference external" href="https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd">Reason to use double quotes</a>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e &quot;|^frame_||&quot;</span>
+<span class="go">```ified during preparation for model training and</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>experimenting. In trivial cases it can be done manually - e.g. image renaming
+or label renaming. However, in more complex cases even simple modifications
+can require too much efforts, distracting the user from the real work.
+Datumaro provides the <code class="docutils literal notranslate"><span class="pre">datum</span> <span class="pre">transform</span></code> command to help in such cases.</p>
+<p>This command allows to modify dataset images or annotations all at once.</p>
+<blockquote>
+<div><p>This command is designed for batch dataset processing, so if you only
+need to modify few elements of a dataset, you might want to use
+other approaches for better performance. A possible solution can be
+a simple script, which uses <a class="reference internal" href="../explanation/architecture.html"><span class="doc std std-doc">Datumaro API</span></a>.</p>
+</div></blockquote>
+<p>By default, datasets are updated in-place. The <code class="docutils literal notranslate"><span class="pre">-o/--output-dir</span></code>
+option can be used to specify another output directory. When
+updating in-place, use the <code class="docutils literal notranslate"><span class="pre">--overwrite</span></code> parameter (in-place
+updates fail by default to prevent data loss).</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform [-h] -t TRANSFORM [-o DST_DIR] [--overwrite] target ...</span>
+</pre></div>
+</div>
+<p>Parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">target</span></code> (string) - Target dataset path with optional format specification</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t,</span> <span class="pre">--transform</span></code> (string) - Transform to apply to the dataset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o,</span> <span class="pre">--output-dir</span></code> (string) - Output directory. If not specified, the results will be saved inplace</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--overwrite</span></code> - Overwrite existing files in the save directory</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra_args</span></code> - Additional arguments for transformation (pass ‘– -h’ for help). Must be specified after the main command arguments and after the ‘–’ separator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-h,</span> <span class="pre">--help</span></code> - Print the help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;extra</span> <span class="pre">args&gt;</span></code> - The list of extra transformation parameters. Should be
+passed after the <code class="docutils literal notranslate"><span class="pre">--</span></code> separator after the main command arguments. See
+transform descriptions for info about extra parameters. Use the <code class="docutils literal notranslate"><span class="pre">--help</span></code>
+option to print parameter info.</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>Split a VOC-like dataset randomly</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform --overwrite path/to/dataset:voc -t random_split</span>
+</pre></div>
+</div>
+</li>
+<li><p>Rename images in a dataset by a regex from <code class="docutils literal notranslate"><span class="pre">frame_XXX</span></code> to <code class="docutils literal notranslate"><span class="pre">XXX</span></code></p>
+<p><strong>NOTE:</strong> Please use double quotes (<code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) for regex representation. Check <a class="reference external" href="https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd">Reason to use double quotes</a>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e &quot;|^frame_||&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<section id="built-in-transforms">
+<h3>Built-in transforms<a class="headerlink" href="#built-in-transforms" title="Link to this heading">#</a></h3>
+<p>Basic dataset item manipulations:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#rename"><span class="std std-ref">rename</span></a> - Renames dataset items by regular expression</p></li>
+<li><p>id_from_image_name - Renames dataset
+items to their image filenames</p></li>
+<li><p><a class="reference internal" href="#reindex"><span class="std std-ref">reindex</span></a> - Renames dataset items with numbers</p></li>
+<li><p><a class="reference internal" href="#sort"><span class="std std-ref">sort</span></a> - Sort dataset items</p></li>
+<li><p><a class="reference internal" href="#ndr"><span class="std std-ref">ndr</span></a> - Removes duplicated images from dataset</p></li>
+<li><p>relevancy_sampler - Leaves only the most
+important images
+(requires model inference results)</p></li>
+<li><p>random_sampler - Leaves no more than k items
+from the dataset randomly</p></li>
+<li><p>label_random_sampler - Leaves at least
+k images with annotations per class</p></li>
+<li><p><a class="reference internal" href="#resize"><span class="std std-ref">resize</span></a> - Resizes images and annotations in the dataset</p></li>
+<li><p>remove_images - Removes specific images</p></li>
+<li><p>remove_annotations - Removes annotations</p></li>
+<li><p>remove_attributes - Removes attributes</p></li>
+<li><p>astype_annotations - Transforms annotation types</p></li>
+<li><p>pseudo_labeling - Generates pseudo labels for unlabeled data</p></li>
+<li><p><a class="reference internal" href="#correct"><span class="std std-ref">correct</span></a> - Corrects annotation types</p></li>
+<li><p><a class="reference internal" href="#clean"><span class="std std-ref">clean</span></a> - Removes noisy data for tabular dataset</p></li>
+</ul>
+<p>Subset manipulations:</p>
+<ul class="simple">
+<li><p>random_split - Splits dataset into subsets
+randomly</p></li>
+<li><p><a class="reference internal" href="#split"><span class="std std-ref">split</span></a> - Splits dataset into subsets for classification,
+detection, segmentation or re-identification</p></li>
+<li><p>map_subsets - Renames and removes subsets</p></li>
+</ul>
+<p>Annotation manipulations:</p>
+<ul class="simple">
+<li><p>remap_labels - Renames, adds or removes
+labels in dataset</p></li>
+<li><p>project_labels - Sets dataset labels to
+the requested sequence</p></li>
+<li><p>shapes_to_boxes - Replaces spatial
+annotations with bounding boxes</p></li>
+<li><p>boxes_to_masks - Converts bounding boxes
+to instance masks</p></li>
+<li><p>polygons_to_masks - Converts polygons
+to instance masks</p></li>
+<li><p>masks_to_polygons - Converts instance
+masks to polygons</p></li>
+<li><p>anns_to_labels - Replaces annotations having
+labels with label annotations</p></li>
+<li><p>merge_instance_segments - Merges
+grouped spatial annotations into a mask</p></li>
+<li><p>crop_covered_segments - Removes
+occluded segments of covered masks</p></li>
+<li><p>bbox_value_decrement - Subtracts
+1 from bbox coordinates</p></li>
+</ul>
+<section id="rename">
+<h4><code class="docutils literal notranslate"><span class="pre">rename</span></code><a class="headerlink" href="#rename" title="Link to this heading">#</a></h4>
+<p>Renames items in the dataset. Supports regular expressions.
+The first character in the expression is a delimiter for
+the pattern and replacement parts. Replacement part can also
+contain <code class="docutils literal notranslate"><span class="pre">str.format</span></code> replacement fields with the <code class="docutils literal notranslate"><span class="pre">item</span></code>
+(of type <code class="docutils literal notranslate"><span class="pre">DatasetItem</span></code>) object available.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">rename [-h] [-e REGEX]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span></code>, <code class="docutils literal notranslate"><span class="pre">--regex</span></code> (string) - Regex for renaming in the form
+<code class="docutils literal notranslate"><span class="pre">&lt;sep&gt;&lt;search&gt;&lt;sep&gt;&lt;replacement&gt;&lt;sep&gt;</span></code></p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Replace ‘pattern’ with ‘replacement’</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|pattern|replacement|&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Remove the <code class="docutils literal notranslate"><span class="pre">frame_</span></code> prefix from item ids</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|^frame_|&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Collect images from subdirectories into the base image directory using regex</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|^((.+[/\\])*)?(.+)$|\2|&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add subset prefix to images</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|(.*)|{item.subset}_\1|&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="id-from-image-name">
+<h4><code class="docutils literal notranslate"><span class="pre">id_from_image_name</span></code><a class="headerlink" href="#id-from-image-name" title="Link to this heading">#</a></h4>
+<p>Renames items in the dataset based on the image file name, excluding the extension.
+When ‘ensure_unique’ is enabled, a random suffix is appended to ensure each identifier is unique
+in cases where the image name is not distinct. By default, the random suffix is three characters long,
+but this can be adjusted with the ‘suffix_length’ parameter.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">id_from_image_name [-h] [-u] [-l SUFFIX_LENGTH]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u</span></code>, <code class="docutils literal notranslate"><span class="pre">--ensure_unique</span></code> (flag) - Appends a random suffix to ensure each identifier is unique if the image name is duplicated</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l</span></code>, <code class="docutils literal notranslate"><span class="pre">--suffix_length</span></code> (int) - Alters the length of the random suffix if the <code class="docutils literal notranslate"><span class="pre">ensure_unique</span></code> is enabled(default: 3)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Renames items without duplication check</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t id_from_image_name</span>
+</pre></div>
+</div>
+</li>
+<li><p>Renames items with duplication check</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t id_from_image_name -- --ensure_unique</span>
+</pre></div>
+</div>
+</li>
+<li><p>Renames items with duplication check and alters the suffix length(default: 3)</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t id_from_image_name -- --ensure_unique --suffix_length 2</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="reindex">
+<h4><code class="docutils literal notranslate"><span class="pre">reindex</span></code><a class="headerlink" href="#reindex" title="Link to this heading">#</a></h4>
+<p>Replaces dataset item IDs with sequential indices.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">reindex [-h] [-s START]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--start</span></code> (int) - Start value for item ids (default: 1)</p></li>
+</ul>
+</section>
+<section id="sort">
+<h4><code class="docutils literal notranslate"><span class="pre">sort</span></code><a class="headerlink" href="#sort" title="Link to this heading">#</a></h4>
+<p>Sorts dataset items.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">reindex [-h] [-s START]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k</span></code>, <code class="docutils literal notranslate"><span class="pre">--key</span></code> (string/callable) - key function to sort (default: sorted by <code class="docutils literal notranslate"><span class="pre">item.id</span></code>)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Sort by id converted into integer</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t ndr -- --key &quot;lambda item: int(item.id)&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="ndr">
+<h4><code class="docutils literal notranslate"><span class="pre">ndr</span></code><a class="headerlink" href="#ndr" title="Link to this heading">#</a></h4>
+<p>Removes near-duplicated images in subset.</p>
+<p>Remove duplicated images from a dataset. Keep at most <code class="docutils literal notranslate"><span class="pre">-k/--num_cut</span></code>
+resulting images.</p>
+<p>Available oversampling policies (the <code class="docutils literal notranslate"><span class="pre">-e</span></code> parameter):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">random</span></code> - sample from removed data randomly</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">similarity</span></code> - sample from removed data with ascending similarity score</p></li>
+</ul>
+<p>Available undersampling policies (the <code class="docutils literal notranslate"><span class="pre">-u</span></code> parameter):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">uniform</span></code> - sample data with uniform distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inverse</span></code> - sample data with reciprocal of the number of number of
+items with the same similarity</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">ndr [-h] [-w WORKING_SUBSET] [-d DUPLICATED_SUBSET] [-a {gradient}]</span>
+<span class="go">    [-k NUM_CUT] [-e {random,similarity}] [-u {uniform,inverse}] [-s SEED]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-w</span></code>, <code class="docutils literal notranslate"><span class="pre">--working_subset</span></code> (str) - Name of the subset to operate
+(default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">--duplicated_subset</span></code> (str) - Name of the subset for the removed
+data after NDR runs (default: duplicated)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code>, <code class="docutils literal notranslate"><span class="pre">--algorithm</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">gradient</span></code>) - Name of the algorithm to
+use (default: <code class="docutils literal notranslate"><span class="pre">gradient</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k</span></code>, <code class="docutils literal notranslate"><span class="pre">--num_cut</span></code> (int) - Maximum output dataset size</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-e</span></code>, <code class="docutils literal notranslate"><span class="pre">--over_sample</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">random</span></code>, <code class="docutils literal notranslate"><span class="pre">similarity</span></code>) - The policy to use
+when <code class="docutils literal notranslate"><span class="pre">num_cut</span></code> is bigger than result length (default: <code class="docutils literal notranslate"><span class="pre">random</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u</span></code>, <code class="docutils literal notranslate"><span class="pre">--under_sample</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">uniform</span></code>, <code class="docutils literal notranslate"><span class="pre">inverse</span></code>) - The policy to use
+when <code class="docutils literal notranslate"><span class="pre">num_cut</span></code> is smaller than result length (default: <code class="docutils literal notranslate"><span class="pre">uniform</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--seed</span></code> (int) - Random seed</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Apply NDR, return no more than 100 images</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t ndr -- \</span>
+<span class="go">  --working_subset train</span>
+<span class="go">  --algorithm gradient</span>
+<span class="go">  --num_cut 100</span>
+<span class="go">  --over_sample random</span>
+<span class="go">  --under_sample uniform</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="relevancy-sampler">
+<h4><code class="docutils literal notranslate"><span class="pre">relevancy_sampler</span></code><a class="headerlink" href="#relevancy-sampler" title="Link to this heading">#</a></h4>
+<p>Sampler that analyzes model inference results on the dataset
+and picks the most relevant samples for training.</p>
+<p>Creates a dataset from the <code class="docutils literal notranslate"><span class="pre">-k/--count</span></code> hardest items for a model.
+The whole dataset or a single subset will be split into the <code class="docutils literal notranslate"><span class="pre">sampled</span></code>
+and <code class="docutils literal notranslate"><span class="pre">unsampled</span></code> subsets based on the model confidence. The dataset
+<strong>must</strong> contain model confidence values in the <code class="docutils literal notranslate"><span class="pre">scores</span></code> attributes
+of annotations.</p>
+<p>There are five methods of sampling (the <code class="docutils literal notranslate"><span class="pre">-m/--method</span></code> option):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">topk</span></code> - Return the k items with the highest uncertainty data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lowk</span></code> - Return the k items with the lowest uncertainty data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">randk</span></code> - Return random k items</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mixk</span></code> - Return a half using topk, and the other half using lowk method</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">randtopk</span></code> - Select 3*k items randomly, and return the topk among them</p></li>
+</ul>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Each image’s inference result must contain the probability for
+all classes (in the <code class="docutils literal notranslate"><span class="pre">scores</span></code> attribute).</p></li>
+<li><p>Requesting a sample larger than the number of all images will return
+all images.</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">relevancy_sampler [-h] -k COUNT [-a {entropy}] [-i INPUT_SUBSET]</span>
+<span class="go">                  [-o SAMPLED_SUBSET] [-u UNSAMPLED_SUBSET]</span>
+<span class="go">                  [-m {topk,lowk,randk,mixk,randtopk}] [-d OUTPUT_FILE]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k</span></code>, <code class="docutils literal notranslate"><span class="pre">--count</span></code> (int) - Number of items to sample</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code>, <code class="docutils literal notranslate"><span class="pre">--algorithm</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">entropy</span></code>) - Sampling
+algorithm (default: <code class="docutils literal notranslate"><span class="pre">entropy</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-i</span></code>, <code class="docutils literal notranslate"><span class="pre">--input_subset</span></code> (str) - Subset name to select sample
+from (default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span></code>, <code class="docutils literal notranslate"><span class="pre">--sampled_subset</span></code> (str) - Subset name to put sampled data
+to (default: <code class="docutils literal notranslate"><span class="pre">sample</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-u</span></code>, <code class="docutils literal notranslate"><span class="pre">--unsampled_subset</span></code> (str) - Subset name to put the
+rest data to (default: <code class="docutils literal notranslate"><span class="pre">unsampled</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-m</span></code>, <code class="docutils literal notranslate"><span class="pre">--sampling_method</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">topk</span></code>, <code class="docutils literal notranslate"><span class="pre">lowk</span></code>, <code class="docutils literal notranslate"><span class="pre">randk</span></code>, <code class="docutils literal notranslate"><span class="pre">mixk</span></code>,
+<code class="docutils literal notranslate"><span class="pre">randtopk</span></code>) - Sampling method (default: <code class="docutils literal notranslate"><span class="pre">topk</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code>, <code class="docutils literal notranslate"><span class="pre">--output_file</span></code> (path) - A <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file path to dump sampling results</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Select the most relevant data subset of 20 images
+based on model certainty, put the result into <code class="docutils literal notranslate"><span class="pre">sample</span></code> subset
+and put all the rest into <code class="docutils literal notranslate"><span class="pre">unsampled</span></code> subset, use <code class="docutils literal notranslate"><span class="pre">train</span></code> subset
+as input. The dataset <strong>must</strong> contain model confidence values in the <code class="docutils literal notranslate"><span class="pre">scores</span></code>
+attributes of annotations.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t relevancy_sampler -- \</span>
+<span class="go">  --algorithm entropy \</span>
+<span class="go">  --subset_name train \</span>
+<span class="go">  --sample_name sample \</span>
+<span class="go">  --unsampled_name unsampled \</span>
+<span class="go">  --sampling_method topk -k 20</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="random-sampler">
+<h4><code class="docutils literal notranslate"><span class="pre">random_sampler</span></code><a class="headerlink" href="#random-sampler" title="Link to this heading">#</a></h4>
+<p>Sampler that keeps no more than required number of items in the dataset.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Items are selected uniformly (tries to keep original item distribution
+by subsets)</p></li>
+<li><p>Requesting a sample larger than the number of all images will return
+all images</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">random_sampler [-h] -k COUNT [-s SUBSET] [--seed SEED]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k</span></code>, <code class="docutils literal notranslate"><span class="pre">--count</span></code> (int) - Maximum number of items to sample</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--subset</span></code> (str) - Limit changes to this subset
+(default: affect all dataset)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> (int) - Initial value for random number generator</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Select subset of 20 images randomly</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t random_sampler -- -k 20</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select subset of 20 images, modify only <code class="docutils literal notranslate"><span class="pre">train</span></code> subset</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t random_sampler -- -k 20 -s train</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="random-label-sampler">
+<h4><code class="docutils literal notranslate"><span class="pre">random_label_sampler</span></code><a class="headerlink" href="#random-label-sampler" title="Link to this heading">#</a></h4>
+<p>Sampler that keeps at least the required number of annotations of
+each class in the dataset for each subset separately.</p>
+<p>Consider using the “stats” command to get class distribution in the dataset.</p>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Items can contain annotations of several selected classes
+(e.g. 3 bounding boxes per image). The number of annotations in the
+resulting dataset varies between <code class="docutils literal notranslate"><span class="pre">max(class</span> <span class="pre">counts)</span></code> and <code class="docutils literal notranslate"><span class="pre">sum(class</span> <span class="pre">counts)</span></code></p></li>
+<li><p>If the input dataset does not has enough class annotations, the result
+will contain only what is available</p></li>
+<li><p>Items are selected uniformly</p></li>
+<li><p>For reasons above, the resulting class distribution in the dataset may
+not be the same as requested</p></li>
+<li><p>The resulting dataset will only keep annotations for classes with
+specified <code class="docutils literal notranslate"><span class="pre">count</span></code> &gt; 0</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">label_random_sampler [-h] -k COUNT [-l LABEL_COUNTS] [--seed SEED]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-k</span></code>, <code class="docutils literal notranslate"><span class="pre">--count</span></code> (int) - Minimum number of annotations of each class</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l</span></code>, <code class="docutils literal notranslate"><span class="pre">--label</span></code> (str; repeatable) - Minimum number of annotations of
+a specific class. Overrides the <code class="docutils literal notranslate"><span class="pre">-k/--count</span></code> setting for the class.
+The format is <code class="docutils literal notranslate"><span class="pre">&lt;label_name&gt;:&lt;count&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> (int) - Initial value for random number generator</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Select a dataset with at least 10 images of each class</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t label_random_sampler -- -k 10</span>
+</pre></div>
+</div>
+</li>
+<li><p>Select a dataset with at least 20 <code class="docutils literal notranslate"><span class="pre">cat</span></code> images, 5 <code class="docutils literal notranslate"><span class="pre">dog</span></code>, 0 <code class="docutils literal notranslate"><span class="pre">car</span></code> and 10 of each
+unmentioned class</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t label_random_sampler -- \</span>
+<span class="go">  -l cat:20 \ # keep 20 images with cats</span>
+<span class="go">  -l dog:5 \ # keep 5 images with dogs</span>
+<span class="go">  -l car:0 \ # remove car annotations</span>
+<span class="go">  -k 10 # for remaining classes</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="resize">
+<h4><code class="docutils literal notranslate"><span class="pre">resize</span></code><a class="headerlink" href="#resize" title="Link to this heading">#</a></h4>
+<p>Resizes images and annotations in the dataset to the specified size.
+Supports upscaling, downscaling and mixed variants.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">resize [-h] [-dw WIDTH] [-dh HEIGHT]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-dw</span></code>, <code class="docutils literal notranslate"><span class="pre">--width</span></code> (int) - Destination image width</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-dh</span></code>, <code class="docutils literal notranslate"><span class="pre">--height</span></code> (int) - Destination image height</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Resize all images to 256x256 size</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">datum</span> <span class="n">transform</span> <span class="o">-</span><span class="n">t</span> <span class="n">resize</span> <span class="o">--</span> <span class="o">-</span><span class="n">dw</span> <span class="mi">256</span> <span class="o">-</span><span class="n">dh</span> <span class="mi">256</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="remove-images">
+<h4><code class="docutils literal notranslate"><span class="pre">remove_images</span></code><a class="headerlink" href="#remove-images" title="Link to this heading">#</a></h4>
+<p>Removes specific dataset items by their ids.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">remove_images [-h] [--id IDs]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> (str) - Item id to remove. Id is ‘<name>:<subset>’ pair (repeatable)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Remove specific images from the dataset</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_images -- --id &#39;image1:train&#39; --id &#39;image2:test&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="remove-annotations">
+<h4><code class="docutils literal notranslate"><span class="pre">remove_annotations</span></code><a class="headerlink" href="#remove-annotations" title="Link to this heading">#</a></h4>
+<p>Allows to remove annotations on specific dataset items.</p>
+<p>Can be useful to clean the dataset from broken or unnecessary annotations.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">remove_annotations [-h] [--id IDs]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> (str) - Item id to clean from annotations. Id is ‘<name>:<subset>’ pair.
+If not specified, removes all annotations (repeatable)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Remove annotations from specific items in the dataset</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_annotations -- --id &#39;image1:train&#39; --id &#39;image2:test&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="remove-attributes">
+<h4><code class="docutils literal notranslate"><span class="pre">remove_attributes</span></code><a class="headerlink" href="#remove-attributes" title="Link to this heading">#</a></h4>
+<p>Allows to remove item and annotation attributes in a dataset.</p>
+<p>Can be useful to clean the dataset from broken or unnecessary attributes.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">remove_attributes [-h] [--id IDs] [--attr ATTRIBUTE_NAME]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> (str) - Image id to clean from annotations. Id is ‘<name>:<subset>’ pair.
+If not specified, affects all items and annotations (repeatable)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code>, <code class="docutils literal notranslate"><span class="pre">--attr</span></code> (flag) - Attribute name to be removed. If not specified,
+removes all attributes (repeatable)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Remove the <code class="docutils literal notranslate"><span class="pre">is_crowd</span></code> attribute from dataset</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_attributes -- \</span>
+<span class="go">  --attr &#39;is_crowd&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Remove the <code class="docutils literal notranslate"><span class="pre">occluded</span></code> attribute from annotations of
+the <code class="docutils literal notranslate"><span class="pre">2010_001705</span></code> item in the <code class="docutils literal notranslate"><span class="pre">train</span></code> subset</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_attributes -- \</span>
+<span class="go">  --id &#39;2010_001705:train&#39; --attr &#39;occluded&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="astype-annotations">
+<h4><code class="docutils literal notranslate"><span class="pre">astype_annotations</span></code><a class="headerlink" href="#astype-annotations" title="Link to this heading">#</a></h4>
+<p>Enables the conversion of annotation types for the categories and individual items within a dataset.
+This transform only supports tabular datasets. If you want to change annotation types in datasets of other types, please use a different transform.</p>
+<p>Based on default setting it transforms the annotation types, changing them to ‘Label’ if they are categorical,
+and to ‘Caption’ if they are of type string, float, or integer.
+If you specifically set mapping, change annotation types based on the mapping.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">astype_annotations [-h] [--mapping MAPPING]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mapping</span></code> (str) - Annotations type in the form of: ‘<src>:<dst>’ (repeatable)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Convert type of <code class="docutils literal notranslate"><span class="pre">title</span></code> and <code class="docutils literal notranslate"><span class="pre">rating</span></code> annotation</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t astype_annotations -- \</span>
+<span class="go">  --mapping &#39;title:text,rating:label&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="random-split">
+<h4><code class="docutils literal notranslate"><span class="pre">random_split</span></code><a class="headerlink" href="#random-split" title="Link to this heading">#</a></h4>
+<p>Joins all subsets into one and splits the result into few parts.
+It is expected that item ids are unique and subset ratios sum up to 1.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">random_split [-h] [-s SPLITS] [--seed SEED]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--subset</span></code> (str, repeatable) - Subsets in the form: ‘<subset>:<ratio>’
+(repeatable, default: {<code class="docutils literal notranslate"><span class="pre">train</span></code>: 0.67, <code class="docutils literal notranslate"><span class="pre">test</span></code>: 0.33})</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code> (int) - Random seed</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Split a dataset randomly to <code class="docutils literal notranslate"><span class="pre">train</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> subsets, ratio is 2:1</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t random_split -- --subset train:.67 --subset test:.33</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="split">
+<h4><code class="docutils literal notranslate"><span class="pre">split</span></code><a class="headerlink" href="#split" title="Link to this heading">#</a></h4>
+<p>Splits a dataset for model training, using task information:</p>
+<ul class="simple">
+<li><p>classification splits
+Splits dataset into subsets (train/val/test) in class-wise manner.
+Splits dataset images in the specified ratio, keeping the initial
+class distribution.</p></li>
+<li><p>detection &amp; segmentation splits
+Each image can have multiple object annotations - bbox, mask, polygon.
+Since an image shouldn’t be included in multiple subsets at the same time,
+and image annotations shouldn’t be split, in general, dataset annotations are
+unlikely to be split exactly in the specified ratio.
+This split tries to split dataset images as close as possible to the specified
+ratio, keeping the initial class distribution.</p></li>
+<li><p>reidentification splits
+In this task, the test set should consist of images of unseen people or
+objects during the training phase.
+This function splits a dataset in the following way:</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Splits the dataset into <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">+</span> <span class="pre">val</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> sets
+based on person or object ID.</p></li>
+<li><p>Splits <code class="docutils literal notranslate"><span class="pre">test</span></code> set into <code class="docutils literal notranslate"><span class="pre">test-gallery</span></code> and <code class="docutils literal notranslate"><span class="pre">test-query</span></code> sets
+in class-wise manner.</p></li>
+<li><p>Splits the <code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">+</span> <span class="pre">val</span></code> set into <code class="docutils literal notranslate"><span class="pre">train</span></code> and <code class="docutils literal notranslate"><span class="pre">val</span></code> sets
+in the same way.
+The final subsets would be <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">val</span></code>, <code class="docutils literal notranslate"><span class="pre">test-gallery</span></code> and <code class="docutils literal notranslate"><span class="pre">test-query</span></code>.</p></li>
+</ol>
+<p>Notes:</p>
+<ul class="simple">
+<li><p>Each image is expected to have only one <code class="docutils literal notranslate"><span class="pre">Annotation</span></code>. Unlabeled or
+multi-labeled images will be split into subsets randomly.</p></li>
+<li><p>If Labels also have attributes, also splits by attribute values.</p></li>
+<li><p>If there is not enough images in some class or attributes group,
+the split ratio can’t be guaranteed.</p></li>
+</ul>
+<p>In reidentification task,</p>
+<ul class="simple">
+<li><p>Object ID can be described by Label, or by attribute (<code class="docutils literal notranslate"><span class="pre">--attr</span></code> parameter)</p></li>
+<li><p>The splits of the test set are controlled by <code class="docutils literal notranslate"><span class="pre">--query</span></code> parameter
+Gallery ratio would be <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span> <span class="pre">query</span></code>.</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">split [-h] [-t {classification,detection,segmentation,reid}]</span>
+<span class="go">      [-s SPLITS] [--query QUERY] [--attr ATTR_FOR_ID] [--seed SEED]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-t</span></code>, <code class="docutils literal notranslate"><span class="pre">--task</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">classification</span></code>, <code class="docutils literal notranslate"><span class="pre">detection</span></code>, <code class="docutils literal notranslate"><span class="pre">segmentation</span></code>,
+<code class="docutils literal notranslate"><span class="pre">reid</span></code>) - Dataset task (default: <code class="docutils literal notranslate"><span class="pre">classification</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--subset</span></code> (str; repeatable) - Subsets in the form: ‘<subset>:<ratio>’
+(default: {<code class="docutils literal notranslate"><span class="pre">train</span></code>: 0.5, <code class="docutils literal notranslate"><span class="pre">val</span></code>: 0.2, <code class="docutils literal notranslate"><span class="pre">test</span></code>: 0.3})</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query</span></code> (float) - Query ratio in the test set (default: 0.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--attr</span></code> (str) - Attribute name representing the ID (default: use label)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--seed</span></code>(int) - Random seed</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Split by ratio</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">datum</span> <span class="n">transform</span> <span class="o">-</span><span class="n">t</span> <span class="n">split</span> <span class="o">--</span> <span class="o">-</span><span class="n">t</span> <span class="n">classification</span> \
+  <span class="o">--</span><span class="n">subset</span> <span class="n">train</span><span class="p">:</span><span class="mf">.5</span> <span class="o">--</span><span class="n">subset</span> <span class="n">val</span><span class="p">:</span><span class="mf">.2</span> <span class="o">--</span><span class="n">subset</span> <span class="n">test</span><span class="p">:</span><span class="mf">.3</span>
+
+<span class="n">datum</span> <span class="n">transform</span> <span class="o">-</span><span class="n">t</span> <span class="n">split</span> <span class="o">--</span> <span class="o">-</span><span class="n">t</span> <span class="n">detection</span> \
+  <span class="o">--</span><span class="n">subset</span> <span class="n">train</span><span class="p">:</span><span class="mf">.5</span> <span class="o">--</span><span class="n">subset</span> <span class="n">val</span><span class="p">:</span><span class="mf">.2</span> <span class="o">--</span><span class="n">subset</span> <span class="n">test</span><span class="p">:</span><span class="mf">.3</span>
+
+<span class="n">datum</span> <span class="n">transform</span> <span class="o">-</span><span class="n">t</span> <span class="n">split</span> <span class="o">--</span> <span class="o">-</span><span class="n">t</span> <span class="n">segmentation</span> \
+  <span class="o">--</span><span class="n">subset</span> <span class="n">train</span><span class="p">:</span><span class="mf">.5</span> <span class="o">--</span><span class="n">subset</span> <span class="n">val</span><span class="p">:</span><span class="mf">.2</span> <span class="o">--</span><span class="n">subset</span> <span class="n">test</span><span class="p">:</span><span class="mf">.3</span>
+
+<span class="n">datum</span> <span class="n">transform</span> <span class="o">-</span><span class="n">t</span> <span class="n">split</span> <span class="o">--</span> <span class="o">-</span><span class="n">t</span> <span class="n">reid</span> \
+  <span class="o">--</span><span class="n">subset</span> <span class="n">train</span><span class="p">:</span><span class="mf">.5</span> <span class="o">--</span><span class="n">subset</span> <span class="n">val</span><span class="p">:</span><span class="mf">.2</span> <span class="o">--</span><span class="n">subset</span> <span class="n">test</span><span class="p">:</span><span class="mf">.3</span> <span class="o">--</span><span class="n">query</span> <span class="mf">.5</span>
+</pre></div>
+</div>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">person_id</span></code> attribute for splitting</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t split -- -t detection --attr person_id</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="map-subsets">
+<h4><code class="docutils literal notranslate"><span class="pre">map_subsets</span></code><a class="headerlink" href="#map-subsets" title="Link to this heading">#</a></h4>
+<p>Renames subsets in the dataset.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">map_subsets [-h] [-s MAPPING]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code>, <code class="docutils literal notranslate"><span class="pre">--subset</span></code> (str; repeatable) - Subset mapping of the form: <code class="docutils literal notranslate"><span class="pre">src:dst</span></code></p></li>
+</ul>
+</section>
+<section id="remap-labels">
+<h4><code class="docutils literal notranslate"><span class="pre">remap_labels</span></code><a class="headerlink" href="#remap-labels" title="Link to this heading">#</a></h4>
+<p>Changes labels in the dataset.</p>
+<p>A label can be:</p>
+<ul class="simple">
+<li><p>renamed (and joined with existing) -
+when <code class="docutils literal notranslate"><span class="pre">--label</span> <span class="pre">&lt;old_name&gt;:&lt;new_name&gt;</span></code> is specified</p></li>
+<li><p>deleted - when <code class="docutils literal notranslate"><span class="pre">--label</span> <span class="pre">&lt;name&gt;:</span></code> is specified, or default action is <code class="docutils literal notranslate"><span class="pre">delete</span></code>
+and the label is not mentioned in the list. When a label
+is deleted, all the associated annotations are removed</p></li>
+<li><p>kept unchanged - when <code class="docutils literal notranslate"><span class="pre">--label</span> <span class="pre">&lt;name&gt;:&lt;name&gt;</span></code> is specified,
+or default action is <code class="docutils literal notranslate"><span class="pre">keep</span></code> and the label is not mentioned in the list
+Annotations with no label are managed by the default action policy.</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">remap_labels [-h] [-l MAPPING] [--default {keep,delete}]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l</span></code>, <code class="docutils literal notranslate"><span class="pre">--label</span></code> (str; repeatable) - Label in the form of: <code class="docutils literal notranslate"><span class="pre">&lt;src&gt;:&lt;dst&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--default</span></code> (one of: <code class="docutils literal notranslate"><span class="pre">keep</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>) - Action for unspecified labels
+(default: <code class="docutils literal notranslate"><span class="pre">keep</span></code>)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Remove the <code class="docutils literal notranslate"><span class="pre">person</span></code> label (and corresponding annotations)</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remap_labels -- -l person: --default keep</span>
+</pre></div>
+</div>
+</li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">person</span></code> to <code class="docutils literal notranslate"><span class="pre">pedestrian</span></code> and <code class="docutils literal notranslate"><span class="pre">human</span></code> to <code class="docutils literal notranslate"><span class="pre">pedestrian</span></code>, join annotations
+that had different classes under the same class id for <code class="docutils literal notranslate"><span class="pre">pedestrian</span></code>,
+don’t touch other classes</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remap_labels -- \</span>
+<span class="go">  -l person:pedestrian -l human:pedestrian --default keep</span>
+</pre></div>
+</div>
+</li>
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">person</span></code> to <code class="docutils literal notranslate"><span class="pre">car</span></code> and <code class="docutils literal notranslate"><span class="pre">cat</span></code> to <code class="docutils literal notranslate"><span class="pre">dog</span></code>, keep <code class="docutils literal notranslate"><span class="pre">bus</span></code>, remove others</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remap_labels -- \</span>
+<span class="go">  -l person:car -l bus:bus -l cat:dog --default delete</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="project-labels">
+<h4><code class="docutils literal notranslate"><span class="pre">project_labels</span></code><a class="headerlink" href="#project-labels" title="Link to this heading">#</a></h4>
+<p>Changes the order of labels in the dataset from the existing
+to the desired one, removes unknown labels and adds new labels.
+Updates or removes the corresponding annotations.</p>
+<p>Labels are matched by names (case dependent). Parent labels are
+only kept if they are present in the resulting set of labels.
+If new labels are added, and the dataset has mask colors defined,
+new labels will obtain generated colors.</p>
+<p>Useful for merging similar datasets, whose labels need to be aligned.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">project_labels [-h] [-l DST_LABELS]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-l</span></code>, <code class="docutils literal notranslate"><span class="pre">--label</span></code> (str; repeatable) - Label name (ordered)</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Set dataset labels to [<code class="docutils literal notranslate"><span class="pre">person</span></code>, <code class="docutils literal notranslate"><span class="pre">cat</span></code>, <code class="docutils literal notranslate"><span class="pre">dog</span></code>], remove others, add missing.
+Original labels (for example): <code class="docutils literal notranslate"><span class="pre">cat</span></code>, <code class="docutils literal notranslate"><span class="pre">dog</span></code>, <code class="docutils literal notranslate"><span class="pre">elephant</span></code>, <code class="docutils literal notranslate"><span class="pre">human</span></code>.
+New labels: <code class="docutils literal notranslate"><span class="pre">person</span></code> (added), <code class="docutils literal notranslate"><span class="pre">cat</span></code> (kept), <code class="docutils literal notranslate"><span class="pre">dog</span></code> (kept).</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform dataset_path -t project_labels -- -l person -l cat -l dog</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="shapes-to-boxes">
+<h4><code class="docutils literal notranslate"><span class="pre">shapes_to_boxes</span></code><a class="headerlink" href="#shapes-to-boxes" title="Link to this heading">#</a></h4>
+<p>Converts spatial annotations (masks, polygons, polylines, points)
+to enclosing bounding boxes.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">shapes_to_boxes [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Convert spatial annotations between each other</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t boxes_to_masks</span>
+<span class="go">datum transform -t masks_to_polygons</span>
+<span class="go">datum transform -t polygons_to_masks</span>
+<span class="go">datum transform -t shapes_to_boxes</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="boxes-to-masks">
+<h4><code class="docutils literal notranslate"><span class="pre">boxes_to_masks</span></code><a class="headerlink" href="#boxes-to-masks" title="Link to this heading">#</a></h4>
+<p>Converts bounding boxes to masks.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">boxes_to_masks [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="polygons-to-masks">
+<h4><code class="docutils literal notranslate"><span class="pre">polygons_to_masks</span></code><a class="headerlink" href="#polygons-to-masks" title="Link to this heading">#</a></h4>
+<p>Converts polygons to masks.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">polygons_to_masks [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="masks-to-polygons">
+<h4><code class="docutils literal notranslate"><span class="pre">masks_to_polygons</span></code><a class="headerlink" href="#masks-to-polygons" title="Link to this heading">#</a></h4>
+<p>Converts masks to polygons.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">masks_to_polygons [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="anns-to-labels">
+<h4><code class="docutils literal notranslate"><span class="pre">anns_to_labels</span></code><a class="headerlink" href="#anns-to-labels" title="Link to this heading">#</a></h4>
+<p>Collects all labels from annotations (of all types) and transforms
+them into a set of annotations of type <code class="docutils literal notranslate"><span class="pre">Label</span></code></p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">anns_to_labels [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="merge-instance-segments">
+<h4><code class="docutils literal notranslate"><span class="pre">merge_instance_segments</span></code><a class="headerlink" href="#merge-instance-segments" title="Link to this heading">#</a></h4>
+<p>Replaces instance masks and, optionally, polygons with a single mask.
+A group of annotations with the same group id is considered an “instance”.
+The largest annotation in the group is considered the group “head”, so the
+resulting mask takes properties from that annotation.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">merge_instance_segments [-h] [--include-polygons]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--include-polygons</span></code> (flag) - Include polygons</p></li>
+</ul>
+</section>
+<section id="crop-covered-segments">
+<h4><code class="docutils literal notranslate"><span class="pre">crop_covered_segments</span></code><a class="headerlink" href="#crop-covered-segments" title="Link to this heading">#</a></h4>
+<p>Sorts polygons and masks (“segments”) according to <code class="docutils literal notranslate"><span class="pre">z_order</span></code>,
+crops covered areas of underlying segments. If a segment is split
+into several independent parts by the segments above, produces
+the corresponding number of separate annotations joined into a group.</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">crop_covered_segments [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="bbox-value-decrement">
+<h4><code class="docutils literal notranslate"><span class="pre">bbox_value_decrement</span></code><a class="headerlink" href="#bbox-value-decrement" title="Link to this heading">#</a></h4>
+<p>Subtracts one from the coordinates of bounding boxes</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">bbox_values_decrement [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+</section>
+<section id="pseudo-labeling">
+<h4><code class="docutils literal notranslate"><span class="pre">pseudo_labeling</span></code><a class="headerlink" href="#pseudo-labeling" title="Link to this heading">#</a></h4>
+<p>Assigns pseudo-labels to items in a dataset based on their similarity to predefined labels. This class is useful for semi-supervised learning when dealing with missing or uncertain labels.</p>
+<p>The process includes:</p>
+<ul class="simple">
+<li><p>Similarity Computation: Uses hashing techniques to compute the similarity between items and predefined labels.</p></li>
+<li><p>Pseudo-Label Assignment: Assigns the most similar label as a pseudo-label to each item.</p></li>
+</ul>
+<p>Attributes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">extractor</span></code> (IDataset) - Provides access to dataset items and their annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code> (Optional[List[str]]) - List of predefined labels for pseudo-labeling. Defaults to all available labels if not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">explorer</span></code> (Optional[Explorer]) - Computes hash keys for items and labels. If not provided, a new Explorer is created.</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pseudo_labeling [-h] [--labels LABELS]</span>
+
+<span class="go">Optional arguments:</span>
+<span class="go">- `-h`, `--help` (flag) - Show this help message and exit</span>
+<span class="go">- `--labels` (str) - Comma-separated list of label names for pseudo-labeling</span>
+
+<span class="go">Examples:</span>
+<span class="go">- Assign pseudo-labels based on predefined labels</span>
+<span class="go">  ```console</span>
+<span class="go">  datum transform -t pseudo_labeling -- --labels &#39;label1,label2&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="correct">
+<h4><code class="docutils literal notranslate"><span class="pre">correct</span></code><a class="headerlink" href="#correct" title="Link to this heading">#</a></h4>
+<p>Correct the dataset from a validation report</p>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">correct [-h] [-r REPORT_PATH]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r</span></code>, <code class="docutils literal notranslate"><span class="pre">--reports</span></code> (str) - A validation report from a ‘validate’ CLI (default=validation_reports.json)</p></li>
+</ul>
+</section>
+<section id="clean">
+<h4><code class="docutils literal notranslate"><span class="pre">clean</span></code><a class="headerlink" href="#clean" title="Link to this heading">#</a></h4>
+<p>Refines and preprocesses media items in a dataset, focusing on string, numeric, and categorical data. This transform is designed to clean and improve the quality of the data, making it more suitable for analysis and modeling.</p>
+<p>The cleaning process includes:</p>
+<ul class="simple">
+<li><p>String Data: Removes unnecessary characters using NLP techniques.</p></li>
+<li><p>Numeric Data: Identifies and handles outliers and missing values.</p></li>
+<li><p>Categorical Data: Cleans and refines categorical information.</p></li>
+</ul>
+<p>Usage:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">clean [-h]</span>
+</pre></div>
+</div>
+<p>Optional arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code> (flag) - Show this help message and exit</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li><p>Clean and preprocess dataset items</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t clean</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="stats.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Stats</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="util.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Util</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transform-dataset">Transform Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-transforms">Built-in transforms</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rename"><code class="docutils literal notranslate"><span class="pre">rename</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id-from-image-name"><code class="docutils literal notranslate"><span class="pre">id_from_image_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#reindex"><code class="docutils literal notranslate"><span class="pre">reindex</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sort"><code class="docutils literal notranslate"><span class="pre">sort</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ndr"><code class="docutils literal notranslate"><span class="pre">ndr</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#relevancy-sampler"><code class="docutils literal notranslate"><span class="pre">relevancy_sampler</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#random-sampler"><code class="docutils literal notranslate"><span class="pre">random_sampler</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#random-label-sampler"><code class="docutils literal notranslate"><span class="pre">random_label_sampler</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#resize"><code class="docutils literal notranslate"><span class="pre">resize</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-images"><code class="docutils literal notranslate"><span class="pre">remove_images</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-annotations"><code class="docutils literal notranslate"><span class="pre">remove_annotations</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-attributes"><code class="docutils literal notranslate"><span class="pre">remove_attributes</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#astype-annotations"><code class="docutils literal notranslate"><span class="pre">astype_annotations</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#random-split"><code class="docutils literal notranslate"><span class="pre">random_split</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#split"><code class="docutils literal notranslate"><span class="pre">split</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#map-subsets"><code class="docutils literal notranslate"><span class="pre">map_subsets</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#remap-labels"><code class="docutils literal notranslate"><span class="pre">remap_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#project-labels"><code class="docutils literal notranslate"><span class="pre">project_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#shapes-to-boxes"><code class="docutils literal notranslate"><span class="pre">shapes_to_boxes</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#boxes-to-masks"><code class="docutils literal notranslate"><span class="pre">boxes_to_masks</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polygons-to-masks"><code class="docutils literal notranslate"><span class="pre">polygons_to_masks</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#masks-to-polygons"><code class="docutils literal notranslate"><span class="pre">masks_to_polygons</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#anns-to-labels"><code class="docutils literal notranslate"><span class="pre">anns_to_labels</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-instance-segments"><code class="docutils literal notranslate"><span class="pre">merge_instance_segments</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#crop-covered-segments"><code class="docutils literal notranslate"><span class="pre">crop_covered_segments</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bbox-value-decrement"><code class="docutils literal notranslate"><span class="pre">bbox_value_decrement</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudo-labeling"><code class="docutils literal notranslate"><span class="pre">pseudo_labeling</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#correct"><code class="docutils literal notranslate"><span class="pre">correct</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#clean"><code class="docutils literal notranslate"><span class="pre">clean</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/docs/command-reference/transform.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

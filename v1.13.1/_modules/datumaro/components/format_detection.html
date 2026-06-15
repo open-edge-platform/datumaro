@@ -1,0 +1,1015 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.components.format_detection &#8212; Datumaro 1.13.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=8f5b6f32"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/format_detection';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.0 documentation - Home"/>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">datumaro.components.format_detection</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.components.format_detection</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Collection</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">NoReturn</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
+
+
+<div class="viewcode-block" id="FormatDetectionConfidence">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionConfidence">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionConfidence</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the level of confidence that a detector has in a dataset</span>
+<span class="sd">    belonging to the detector&#39;s format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EXTREME_LOW</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EXTREME_LOW: This is currently only assigned to ImageDir format. This is because</span>
+<span class="sd">    ImageDir format can be detected in every image dataset format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOW</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LOW: The dataset seems to belong to the format, but the format is too loosely</span>
+<span class="sd">    defined to be able to distinguish it from other formats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MEDIUM</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MEDIUM: The dataset seems to belong to the format, and is likely not to belong</span>
+<span class="sd">    to any other format.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+    <span class="c1"># There&#39;s no HIGH confidence yet, because none of the detectors</span>
+    <span class="c1"># deserve it. It&#39;s reserved for when the detector is sure that</span>
+    <span class="c1"># the dataset belongs to the format; for example, because the format</span>
+    <span class="c1"># has explicit identification via magic numbers/files.</span>
+
+
+<div class="viewcode-block" id="DetectedFormat">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.DetectedFormat">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectedFormat</span><span class="p">:</span>
+    <span class="n">confidence</span><span class="p">:</span> <span class="n">FormatDetectionConfidence</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;DetectedFormat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+
+
+
+<span class="c1"># All confidence levels should be positive for a couple of reasons:</span>
+<span class="c1"># * It makes it possible to use 0 or a negative number as a special</span>
+<span class="c1">#   value that is guaranteed to be less than any real value.</span>
+<span class="c1"># * It makes sure that every confidence level is a true value.</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">FormatDetectionConfidence</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RejectionReason">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.RejectionReason">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RejectionReason</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">unmet_requirements</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">insufficient_confidence</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">detection_unsupported</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_FormatRejected</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<div class="viewcode-block" id="FormatRequirementsUnmet">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.FormatRequirementsUnmet">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatRequirementsUnmet</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a situation where a dataset does not meet the requirements</span>
+<span class="sd">    of a given dataset format.</span>
+<span class="sd">    More specifically, if this exception is raised, then it is necessary</span>
+<span class="sd">    (but may not be sufficient) for the dataset to meet at least</span>
+<span class="sd">    one of these requirements to be detected as being in that format.</span>
+
+<span class="sd">    Each element of `failed_alternatives` must be a human-readable</span>
+<span class="sd">    statement describing a requirement that was not met.</span>
+
+<span class="sd">    Must not be constructed or raised directly; use `FormatDetectionContext`</span>
+<span class="sd">    methods.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">failed_alternatives</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">failed_alternatives</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">failed_alternatives</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;None of the following requirements were met:&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;The following requirement was not met:&quot;</span><span class="p">)</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="n">req</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RejectionReason</span><span class="o">.</span><span class="n">unmet_requirements</span></div>
+
+
+
+<div class="viewcode-block" id="FormatDetectionUnsupported">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.FormatDetectionUnsupported">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionUnsupported</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a situation where detection is attempted with a format that</span>
+<span class="sd">    does not support it.</span>
+
+<span class="sd">    Must not be constructed or raised directly; use</span>
+<span class="sd">    `FormatDetectionContext.raise_unsupported` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Detection for this format is unsupported&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RejectionReason</span><span class="o">.</span><span class="n">detection_unsupported</span></div>
+
+
+
+<div class="viewcode-block" id="FormatDetectionContext">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionContext</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An instance of this class is given to a dataset format detector.</span>
+<span class="sd">    See the `FormatDetector` documentation. The class should not</span>
+<span class="sd">    be instantiated directly.</span>
+
+<span class="sd">    A context encapsulates information about the dataset whose format</span>
+<span class="sd">    is being detected. It also offers methods that place requirements</span>
+<span class="sd">    on that dataset. Each such method raises a `FormatRequirementsUnmet`</span>
+<span class="sd">    exception if the requirement is not met. If the requirement _is_</span>
+<span class="sd">    met, the return value depends on the method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">_OneOrMoreContext</span><span class="p">:</span>
+        <span class="n">failed_alternatives</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+        <span class="n">had_successful_alternatives</span><span class="p">:</span> <span class="nb">bool</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">had_successful_alternatives</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># This points to a `_OneOrMoreContext` when and only when the detector</span>
+    <span class="c1"># is directly within a `require_any` block.</span>
+    <span class="n">_one_or_more_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_OneOrMoreContext</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span> <span class="o">=</span> <span class="n">root_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">root_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the path to the root directory of the dataset.</span>
+<span class="sd">        Detectors should avoid using this property in favor of specific</span>
+<span class="sd">        requirement methods.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_path_within_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks that `path` is a relative path and does not attempt to leave</span>
+<span class="sd">        the dataset root by using `..` segments.</span>
+
+<span class="sd">        Requirement-placing methods that use this to verify their arguments</span>
+<span class="sd">        should raise a FormatRequirementsUnmet rather than a &quot;hard&quot; error like</span>
+<span class="sd">        AssertionError if False is returned. The reason is that the path passed</span>
+<span class="sd">        by the detector might not have been hardcoded, and instead might have</span>
+<span class="sd">        been acquired from another file in the dataset. In that case, an invalid</span>
+<span class="sd">        pattern signifies a problem with the dataset, not with the detector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_start_requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;a requirement (</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">) can&#39;t be placed directly within a &#39;require_any&#39; block&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FormatDetectionContext.raise_unsupported">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.raise_unsupported">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">raise_unsupported</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Raises a `FormatDetectionUnsupported` exception to signal that the</span>
+<span class="sd">        current format does not support detection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="n">FormatDetectionUnsupported</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.fail">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.fail">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Places a requirement that is never met. `requirement_desc` must contain</span>
+<span class="sd">        a human-readable description of the requirement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;fail&quot;</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="n">FormatRequirementsUnmet</span><span class="p">((</span><span class="n">requirement_desc</span><span class="p">,))</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.require_file">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">exclude_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Places the requirement that the dataset contains at least one file whose</span>
+<span class="sd">        relative path matches the given pattern. The pattern must be a glob-like</span>
+<span class="sd">        pattern; `**` can be used to indicate a sequence of zero or more</span>
+<span class="sd">        subdirectories.</span>
+<span class="sd">        If the pattern does not describe a relative path, or refers to files</span>
+<span class="sd">        outside the dataset root, the requirement is considered unmet.</span>
+<span class="sd">        If the requirement is met, the relative path to one of the files that</span>
+<span class="sd">        match the pattern is returned. If there are multiple such files, it&#39;s</span>
+<span class="sd">        unspecified which one of them is returned.</span>
+
+<span class="sd">        `exclude_fnames` must be a collection of patterns or a single pattern.</span>
+<span class="sd">        If at least one pattern is supplied, then the placed requirement is</span>
+<span class="sd">        narrowed to only accept files with names that match none of these</span>
+<span class="sd">        patterns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;require_file&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_require_files_iter</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">exclude_fnames</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.require_files">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_files">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">exclude_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Same as `require_file`, but returns all matching paths in alphabetical</span>
+<span class="sd">        order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;require_files&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_require_files_iter</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">exclude_fnames</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.require_files_iter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_files_iter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_files_iter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">exclude_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Same as `require_files`, but returns a generator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;require_files_iter&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_require_files_iter</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">exclude_fnames</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_require_files_iter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">exclude_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_fnames</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">exclude_fnames</span> <span class="o">=</span> <span class="p">(</span><span class="n">exclude_fnames</span><span class="p">,)</span>
+
+        <span class="n">requirement_desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;dataset must contain a file matching pattern &quot;</span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+
+        <span class="k">if</span> <span class="n">exclude_fnames</span><span class="p">:</span>
+            <span class="n">requirement_desc</span> <span class="o">+=</span> <span class="s2">&quot; (but not named &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exclude_fnames</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_path_within_root</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">requirement_desc</span><span class="p">)</span>
+
+        <span class="n">pattern_abs</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span><span class="p">),</span> <span class="n">pattern</span><span class="p">)</span>
+        <span class="n">none_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">pattern_abs</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="c1"># Ideally, we should provide a way to filter out whole paths,</span>
+                <span class="c1"># not just file names. However, there is no easy way to match an</span>
+                <span class="c1"># entire path with a pattern (fnmatch is unsuitable, because</span>
+                <span class="c1"># it lets &#39;*&#39; match a slash, which can lead to spurious matches</span>
+                <span class="c1"># and is not how glob works).</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">pat</span><span class="p">)</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">exclude_fnames</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="k">yield</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span><span class="p">)</span>
+                <span class="n">none_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">none_found</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">requirement_desc</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FormatDetectionContext.probe_text_file">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.probe_text_file">[docs]</a>
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">probe_text_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">requirement_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_binary_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BufferedReader</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a context manager that can be used to place a requirement on</span>
+<span class="sd">        the contents of the file referred to by `path`. To do so, you must</span>
+<span class="sd">        enter and exit this context manager (typically, by using the `with`</span>
+<span class="sd">        statement). On entering, the file is opened for reading in text mode and</span>
+<span class="sd">        the resulting file object is returned. On exiting, the file object is</span>
+<span class="sd">        closed.</span>
+
+<span class="sd">        The requirement that is placed by doing this is considered met if all</span>
+<span class="sd">        of the following are true:</span>
+
+<span class="sd">        * `path` is a relative path that refers to a file within the dataset</span>
+<span class="sd">          root.</span>
+<span class="sd">        * The file is opened successfully.</span>
+<span class="sd">        * The context is exited without an exception.</span>
+
+<span class="sd">        If the context is exited with an exception that was produced by another</span>
+<span class="sd">        requirement being unmet, that exception is reraised and the new</span>
+<span class="sd">        requirement is abandoned.</span>
+
+<span class="sd">        `requirement_desc` must be a human-readable statement describing the</span>
+<span class="sd">        requirement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;probe_text_file&quot;</span><span class="p">)</span>
+
+        <span class="n">requirement_desc_full</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">requirement_desc</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_path_within_root</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">requirement_desc_full</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_binary_file</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">f</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">f</span>
+        <span class="k">except</span> <span class="n">_FormatRejected</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">requirement_desc_full</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.require_any">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_any">[docs]</a>
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_any</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a context manager that can be used to place a requirement that</span>
+<span class="sd">        is considered met if at least one of several alternative sets of</span>
+<span class="sd">        requirements is met.</span>
+<span class="sd">        To do so, use a `with` statement, with the alternative sets of</span>
+<span class="sd">        requirements represented as nested `with` statements using the context</span>
+<span class="sd">        manager returned by `alternative`:</span>
+
+<span class="sd">        .. code-block::</span>
+
+<span class="sd">            with context.require_any():</span>
+<span class="sd">                with context.alternative():</span>
+<span class="sd">                    # place requirements from alternative set 1 here</span>
+<span class="sd">                with context.alternative():</span>
+<span class="sd">                    # place requirements from alternative set 2 here</span>
+<span class="sd">                ...</span>
+
+<span class="sd">        The contents of all `with context.alternative()` blocks will be</span>
+<span class="sd">        executed, even if an alternative that is met is found early.</span>
+
+<span class="sd">        Requirements must not be placed directly within a</span>
+<span class="sd">        `with context.require_any()` block.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_requirement</span><span class="p">(</span><span class="s2">&quot;require_any&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_OneOrMoreContext</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span>
+
+            <span class="c1"># If at least one `alternative` block succeeded,</span>
+            <span class="c1"># then the `require_any` block succeeds.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="o">.</span><span class="n">had_successful_alternatives</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="c1"># If no alternatives succeeded, and none failed, then there were</span>
+            <span class="c1"># no alternatives at all.</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;a &#39;require_any&#39; block must contain at least one &#39;alternative&#39; block&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">raise</span> <span class="n">FormatRequirementsUnmet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FormatDetectionContext.alternative">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.alternative">[docs]</a>
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a context manager that can be used in combination with</span>
+<span class="sd">        `require_any` to define alternative requirements. See the</span>
+<span class="sd">        documentation for `require_any` for more details.</span>
+
+<span class="sd">        Must only be used directly within a `with context.requirements()` block.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="s2">&quot;An &#39;alternative&#39; block must be directly within a &#39;require_any&#39; block&quot;</span>
+
+        <span class="n">saved_one_or_more_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span>
+        <span class="k">except</span> <span class="n">FormatRequirementsUnmet</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">saved_one_or_more_context</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">saved_one_or_more_context</span><span class="o">.</span><span class="n">had_successful_alternatives</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="n">saved_one_or_more_context</span></div>
+</div>
+
+
+
+<span class="n">FormatDetector</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span>
+    <span class="p">[</span><span class="n">FormatDetectionContext</span><span class="p">],</span>
+    <span class="n">Optional</span><span class="p">[</span><span class="n">FormatDetectionConfidence</span><span class="p">],</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Denotes a callback that implements detection for a specific dataset format.</span>
+<span class="sd">The callback receives an instance of `FormatDetectionContext` and must call</span>
+<span class="sd">methods on that instance to place requirements that the dataset must meet</span>
+<span class="sd">in order for it to be considered as belonging to the format.</span>
+
+<span class="sd">Must terminate in one of the following ways:</span>
+
+<span class="sd">* by returning the level of confidence in the dataset belonging to the format</span>
+<span class="sd">  (or `None`, which is equivalent to the `MEDIUM` level);</span>
+<span class="sd">* by raising a `FormatRequirementsUnmet` exception via one of</span>
+<span class="sd">  the `FormatDetectionContext` methods;</span>
+<span class="sd">* by raising a `FormatDetectionUnsupported` exception via</span>
+<span class="sd">  `FormatDetectionContext.raise_unsupported`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="apply_format_detector">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.apply_format_detector">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_format_detector</span><span class="p">(</span>
+    <span class="n">dataset_root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">detector</span><span class="p">:</span> <span class="n">FormatDetector</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether the dataset located at `dataset_root_path` belongs to the</span>
+<span class="sd">    format detected by `detector`. If it does, returns the confidence level</span>
+<span class="sd">    of the detection. Otherwise, terminates with the exception that was raised</span>
+<span class="sd">    by the detector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">FormatDetectionContext</span><span class="p">(</span><span class="n">dataset_root_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dataset_root_path</span><span class="p">):</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;root path </span><span class="si">{</span><span class="n">dataset_root_path</span><span class="si">}</span><span class="s2"> must refer to a directory&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">detector</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="ow">or</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
+
+
+
+<div class="viewcode-block" id="RejectionCallback">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.RejectionCallback">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RejectionCallback</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">reason</span><span class="p">:</span> <span class="n">RejectionReason</span><span class="p">,</span>
+        <span class="n">human_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="detect_dataset_format">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.detect_dataset_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_dataset_format</span><span class="p">(</span>
+    <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatDetector</span><span class="p">]],</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">rejection_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">RejectionCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines which format(s) the dataset at the specified path belongs to.</span>
+
+<span class="sd">    The function applies each supplied detector to the given patch and decides</span>
+<span class="sd">    whether the corresponding format is detected or rejected. A format may be</span>
+<span class="sd">    rejected if the detector fails or if it succeeds with less confidence than</span>
+<span class="sd">    another detector (other rejection reasons might be added in the future).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        `formats`: The formats to be considered. Each element of the</span>
+<span class="sd">            iterable must be a tuple of a format name and a `FormatDetector`</span>
+<span class="sd">            instance.</span>
+
+<span class="sd">        `path`: the filesystem path to the dataset to be analyzed.</span>
+
+<span class="sd">        `rejection_callback`: Unless `None`, called for every rejected format</span>
+<span class="sd">            to report the reason it was rejected.</span>
+
+<span class="sd">    Returns: a sequence of detected format names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> doesn&#39;t exist&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">report_insufficient_confidence</span><span class="p">(</span>
+        <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">format_with_more_confidence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">rejection_callback</span><span class="p">:</span>
+            <span class="n">rejection_callback</span><span class="p">(</span>
+                <span class="n">format_name</span><span class="p">,</span>
+                <span class="n">RejectionReason</span><span class="o">.</span><span class="n">insufficient_confidence</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Another format (</span><span class="si">{</span><span class="n">format_with_more_confidence</span><span class="si">}</span><span class="s2">) was matched with more confidence&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="n">max_confidence</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">format_name</span><span class="p">,</span> <span class="n">detector</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking &#39;</span><span class="si">%s</span><span class="s2">&#39; format...&quot;</span><span class="p">,</span> <span class="n">format_name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_confidence</span> <span class="o">=</span> <span class="n">apply_format_detector</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">detector</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">_FormatRejected</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="n">human_message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rejection_callback</span><span class="p">:</span>
+                <span class="n">rejection_callback</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">human_message</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">human_message</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Format matched with confidence </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">new_confidence</span><span class="p">)</span>
+
+            <span class="c1"># keep only matches with the highest confidence</span>
+            <span class="k">if</span> <span class="n">new_confidence</span> <span class="o">&gt;</span> <span class="n">max_confidence</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                    <span class="n">report_insufficient_confidence</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">format_name</span><span class="p">)</span>
+
+                <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">DetectedFormat</span><span class="p">(</span><span class="n">new_confidence</span><span class="p">,</span> <span class="n">format_name</span><span class="p">)]</span>
+                <span class="n">max_confidence</span> <span class="o">=</span> <span class="n">new_confidence</span>
+            <span class="k">elif</span> <span class="n">new_confidence</span> <span class="o">==</span> <span class="n">max_confidence</span><span class="p">:</span>
+                <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DetectedFormat</span><span class="p">(</span><span class="n">new_confidence</span><span class="p">,</span> <span class="n">format_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># new confidence is less than max</span>
+                <span class="n">report_insufficient_confidence</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># TODO: This should be controlled by our priority logic.</span>
+    <span class="c1"># However, some datasets&#39; detect() are currently broken,</span>
+    <span class="c1"># so that it is inevitable to introduce this.</span>
+    <span class="c1"># We must revisit this after fixing detect().</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_give_more_priority_to_with_subset_dirs</span><span class="p">(</span><span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">match</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+            <span class="n">with_subset_dir_match</span> <span class="o">=</span> <span class="n">DetectedFormat</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_with_subset_dirs&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">with_subset_dir_match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">while</span> <span class="n">_give_more_priority_to_with_subset_dirs</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+        <span class="k">continue</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
