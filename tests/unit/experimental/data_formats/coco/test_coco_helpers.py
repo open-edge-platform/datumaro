@@ -247,7 +247,7 @@ def test_collect_helpers_extract_expected_fields():
         ]
     }
     bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {2: 0})
-    assert bboxes[0] == [0.0, 0.0, 2.0, 2.0]  # Computed from polygon, not from annotation bbox
+    assert bboxes[0] == [1.0, 1.0, 2.0, 2.0]  # Uses annotation bbox as primary source
     assert polys[0].shape == (4, 2)
     assert labels == [0]
     assert areas[0] == pytest.approx(4.0)
@@ -284,6 +284,56 @@ def test_collect_instances_uses_bbox_when_no_polygon():
     # Should use the original area from annotation
     assert areas[0] == pytest.approx(50000.0)
     assert iscrowd == [False]
+
+
+def test_collect_instances_multi_polygon_union_bbox():
+    """Multi-part polygon annotation yields one bbox covering the union of all parts."""
+    part1 = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0, 0.0, 10.0]
+    part2 = [20.0, 20.0, 30.0, 20.0, 30.0, 30.0, 20.0, 30.0]
+    instances_by_image = {
+        1: [
+            {
+                "image_id": 1,
+                "category_id": 1,
+                "bbox": [0, 0, 30, 30],
+                "segmentation": [part1, part2],
+            },
+        ]
+    }
+    bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {1: 0})
+
+    assert len(bboxes) == 1
+    assert bboxes[0] == [0.0, 0.0, 30.0, 30.0]
+    assert len(polys) == 1
+    assert polys[0].shape == (8, 2)
+    assert labels == [0]
+    assert areas[0] == pytest.approx(900.0)
+    assert iscrowd == [False]
+
+
+def test_collect_instances_dedup_identical_annotations():
+    """Exact duplicate (label + bbox) annotations are collapsed to one."""
+    instances_by_image = {
+        1: [
+            {
+                "image_id": 1,
+                "category_id": 1,
+                "bbox": [10, 10, 20, 20],
+                "segmentation": [[10, 10, 30, 10, 30, 30, 10, 30]],
+            },
+            {
+                "image_id": 1,
+                "category_id": 1,
+                "bbox": [10, 10, 20, 20],
+                "segmentation": [[10, 10, 30, 10, 30, 30, 10, 30]],
+            },
+        ]
+    }
+    bboxes, _polys, labels, _areas, _iscrowd = _collect_instances_for_image(1, instances_by_image, {1: 0})
+
+    assert len(bboxes) == 1
+    assert bboxes[0] == [10.0, 10.0, 20.0, 20.0]
+    assert labels == [0]
 
 
 def test_serialize_instances_requires_labels():
