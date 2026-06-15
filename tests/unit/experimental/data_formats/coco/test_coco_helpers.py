@@ -329,7 +329,7 @@ def test_collect_instances_dedup_identical_annotations():
             },
         ]
     }
-    bboxes, polys, labels, areas, iscrowd = _collect_instances_for_image(1, instances_by_image, {1: 0})
+    bboxes, _polys, labels, _areas, _iscrowd = _collect_instances_for_image(1, instances_by_image, {1: 0})
 
     assert len(bboxes) == 1
     assert bboxes[0] == [10.0, 10.0, 20.0, 20.0]
