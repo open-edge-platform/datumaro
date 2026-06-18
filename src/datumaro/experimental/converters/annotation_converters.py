@@ -438,8 +438,8 @@ class LabelShapeConverter(Converter):
                 # List(dtype) [multi_label] → List(dtype) [is_list]: no-op rename
                 return df.with_columns(pl.col(input_col).alias(output_col))
             if not input_multi and output_multi and input_is_list and not output_is_list:
-                # List(dtype) [is_list] → List(dtype) [multi_label]: no-op rename
-                return df.with_columns(pl.col(input_col).alias(output_col))
+                # List(dtype) [is_list] → List(dtype) [multi_label]: ensure uniqueness
+                return df.with_columns(pl.col(input_col).list.unique().alias(output_col))
 
         # Step 1: handle multi_label conversion (inner dimension)
         if input_multi and not output_multi:
