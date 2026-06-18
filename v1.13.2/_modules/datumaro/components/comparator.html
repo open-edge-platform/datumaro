@@ -1,0 +1,1080 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.components.comparator &#8212; Datumaro 1.13.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=1cdb6141"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/comparator';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.2 documentation - Home"/>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.2 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">datumaro.components.comparator</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.components.comparator</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2023-2024 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">textwrap</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestCase</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_name</span>
+
+
+<div class="viewcode-block" id="generate_next_file_name">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.comparator.html#datumaro.components.comparator.generate_next_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_next_file_name</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate next file name using the core utility function.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">basedir</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span></div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotations.matcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineMatcher</span><span class="p">,</span> <span class="n">PointsMatcher</span><span class="p">,</span> <span class="n">match_segments_pair</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.operations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ann_statistics</span><span class="p">,</span>
+    <span class="n">compute_image_statistics</span><span class="p">,</span>
+    <span class="n">match_items_by_id</span><span class="p">,</span>
+    <span class="n">match_items_by_image_hash</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">filter_dict</span><span class="p">,</span> <span class="n">find</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_if_none</span>
+
+
+<div class="viewcode-block" id="DistanceComparator">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DistanceComparator</span><span class="p">:</span>
+    <span class="n">iou_threshold</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DistanceComparator.match_annotations">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_annotations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_ann_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c1"># pylint: disable=no-value-for-parameter</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_labels</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_boxes</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_polygons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_masks</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_points</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_lines</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="c1"># pylint: enable=no-value-for-parameter</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unexpected annotation type </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_ann_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">t</span><span class="p">]</span>
+
+<div class="viewcode-block" id="DistanceComparator.match_labels">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="n">a_labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">item_a</span><span class="p">))</span>
+        <span class="n">b_labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">item_b</span><span class="p">))</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">a_labels</span> <span class="o">&amp;</span> <span class="n">b_labels</span>
+        <span class="n">a_unmatched</span> <span class="o">=</span> <span class="n">a_labels</span> <span class="o">-</span> <span class="n">b_labels</span>
+        <span class="n">b_unmatched</span> <span class="o">=</span> <span class="n">b_labels</span> <span class="o">-</span> <span class="n">a_labels</span>
+        <span class="k">return</span> <span class="n">matches</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="n">a_boxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">item_a</span><span class="p">)</span>
+        <span class="n">b_boxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">match_segments_pair</span><span class="p">(</span><span class="n">a_boxes</span><span class="p">,</span> <span class="n">b_boxes</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iou_threshold</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DistanceComparator.match_polygons">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_polygons">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_segments</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DistanceComparator.match_masks">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_masks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_segments</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DistanceComparator.match_boxes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_boxes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_boxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_segments</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DistanceComparator.match_points">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="n">a_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">item_a</span><span class="p">)</span>
+        <span class="n">b_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span>
+
+        <span class="n">instance_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">item_a</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">annotations</span><span class="p">]:</span>
+            <span class="n">s_instances</span> <span class="o">=</span> <span class="n">find_instances</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">inst</span> <span class="ow">in</span> <span class="n">s_instances</span><span class="p">:</span>
+                <span class="n">inst_bbox</span> <span class="o">=</span> <span class="n">max_bbox</span><span class="p">(</span><span class="n">inst</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">inst</span><span class="p">:</span>
+                    <span class="n">instance_map</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ann</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">inst</span><span class="p">,</span> <span class="n">inst_bbox</span><span class="p">]</span>
+        <span class="n">matcher</span> <span class="o">=</span> <span class="n">PointsMatcher</span><span class="p">(</span><span class="n">instance_map</span><span class="o">=</span><span class="n">instance_map</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">match_segments_pair</span><span class="p">(</span><span class="n">a_points</span><span class="p">,</span> <span class="n">b_points</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iou_threshold</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">matcher</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DistanceComparator.match_lines">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.DistanceComparator.match_lines">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="n">a_lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span><span class="p">,</span> <span class="n">item_a</span><span class="p">)</span>
+        <span class="n">b_lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ann_type</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span>
+
+        <span class="n">matcher</span> <span class="o">=</span> <span class="n">LineMatcher</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">match_segments_pair</span><span class="p">(</span><span class="n">a_lines</span><span class="p">,</span> <span class="n">b_lines</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iou_threshold</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">matcher</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EqualityComparator">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.EqualityComparator">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EqualityComparator</span><span class="p">:</span>
+    <span class="n">match_images</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ignored_fields</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">set</span><span class="p">))</span>
+    <span class="n">ignored_attrs</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">set</span><span class="p">))</span>
+    <span class="n">ignored_item_attrs</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">set</span><span class="p">))</span>
+    <span class="nb">all</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">_test</span><span class="p">:</span> <span class="n">TestCase</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_test</span> <span class="o">=</span> <span class="n">TestCase</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_test</span><span class="o">.</span><span class="n">maxDiff</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_images</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">match_items_by_image_hash</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">match_items_by_id</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+
+        <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">test</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+                    <span class="n">a</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                    <span class="n">b</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">test</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+                    <span class="n">a</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span><span class="p">,</span>
+                    <span class="n">b</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;colormap&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+        <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">test</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+                    <span class="n">a</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                    <span class="n">b</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="n">ignored_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignored_fields</span>
+        <span class="n">ignored_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignored_attrs</span>
+
+        <span class="n">a_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ignored_fields</span><span class="p">}</span>
+        <span class="n">b_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ignored_fields</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s2">&quot;attributes&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignored_fields</span><span class="p">:</span>
+            <span class="n">a_fields</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">ignored_attrs</span><span class="p">)</span>
+            <span class="n">b_fields</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_dict</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">ignored_attrs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="o">**</span><span class="n">a_fields</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="o">**</span><span class="n">b_fields</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compare_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">):</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test</span>
+
+        <span class="n">a_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_a</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+        <span class="n">b_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_b</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+
+        <span class="n">matched</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">unmatched</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">test</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span>
+                <span class="n">filter_dict</span><span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignored_item_attrs</span><span class="p">),</span>
+                <span class="n">filter_dict</span><span class="p">(</span><span class="n">item_b</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignored_item_attrs</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;item_attr&quot;</span><span class="p">,</span> <span class="s2">&quot;a_item&quot;</span><span class="p">:</span> <span class="n">a_id</span><span class="p">,</span> <span class="s2">&quot;b_item&quot;</span><span class="p">:</span> <span class="n">b_id</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)})</span>
+
+        <span class="n">b_annotations</span> <span class="o">=</span> <span class="n">item_b</span><span class="o">.</span><span class="n">annotations</span><span class="p">[:]</span>
+        <span class="k">for</span> <span class="n">ann_a</span> <span class="ow">in</span> <span class="n">item_a</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+            <span class="n">ann_b_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">item_b</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">ann_a</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+
+            <span class="n">ann_b</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span>
+                <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_compare_annotations</span><span class="p">(</span><span class="n">ann_a</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ann_b_candidates</span><span class="p">),</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">ann_b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">unmatched</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="n">a_id</span><span class="p">,</span>
+                        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;ann&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ann_a</span><span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">ann_b</span> <span class="o">=</span> <span class="n">ann_b_candidates</span><span class="p">[</span><span class="n">ann_b</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+            <span class="n">b_annotations</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ann_b</span><span class="p">)</span>  <span class="c1"># avoid repeats</span>
+            <span class="n">matched</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;a_item&quot;</span><span class="p">:</span> <span class="n">a_id</span><span class="p">,</span> <span class="s2">&quot;b_item&quot;</span><span class="p">:</span> <span class="n">b_id</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ann_a</span><span class="p">),</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ann_b</span><span class="p">)})</span>
+
+        <span class="k">for</span> <span class="n">ann_b</span> <span class="ow">in</span> <span class="n">b_annotations</span><span class="p">:</span>
+            <span class="n">unmatched</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;item&quot;</span><span class="p">:</span> <span class="n">b_id</span><span class="p">,</span> <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;ann&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ann_b</span><span class="p">)})</span>
+
+        <span class="k">return</span> <span class="n">matched</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">,</span> <span class="n">errors</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_print_output</span><span class="p">(</span><span class="n">output</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The first project has </span><span class="si">%s</span><span class="s2"> unmatched items&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_extra_items&quot;</span><span class="p">,</span> <span class="p">[])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The second project has </span><span class="si">%s</span><span class="s2"> unmatched items&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;b_extra_items&quot;</span><span class="p">,</span> <span class="p">[])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> item conflicts&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;errors&quot;</span><span class="p">,</span> <span class="p">[])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> matching annotations&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;matches&quot;</span><span class="p">,</span> <span class="p">[])))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> mismatching annotations&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mismatches&quot;</span><span class="p">,</span> <span class="p">[])))</span>
+
+<div class="viewcode-block" id="EqualityComparator.compare_datasets">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.EqualityComparator.compare_datasets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compare_categories</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">categories</span><span class="p">(),</span> <span class="n">b</span><span class="o">.</span><span class="n">categories</span><span class="p">())</span>
+
+        <span class="n">matched</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">unmatched</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">matches</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_items</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span> <span class="o">!=</span> <span class="n">b</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;mismatches&quot;</span><span class="p">:</span> <span class="n">unmatched</span><span class="p">,</span>
+                <span class="s2">&quot;a_extra_items&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">),</span>
+                <span class="s2">&quot;b_extra_items&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">),</span>
+                <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">matched</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_dist</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">a_ids</span><span class="p">,</span> <span class="n">b_ids</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="c1"># build distance matrix</span>
+            <span class="n">match_status</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># (a_id, b_id): [matched, unmatched, errors]</span>
+            <span class="n">a_matches</span> <span class="o">=</span> <span class="p">{</span><span class="n">a_id</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">a_id</span> <span class="ow">in</span> <span class="n">a_ids</span><span class="p">}</span>
+            <span class="n">b_matches</span> <span class="o">=</span> <span class="p">{</span><span class="n">b_id</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">b_id</span> <span class="ow">in</span> <span class="n">b_ids</span><span class="p">}</span>
+
+            <span class="k">for</span> <span class="n">a_id</span> <span class="ow">in</span> <span class="n">a_ids</span><span class="p">:</span>
+                <span class="n">item_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">a_id</span><span class="p">)</span>
+                <span class="n">candidates</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="k">for</span> <span class="n">b_id</span> <span class="ow">in</span> <span class="n">b_ids</span><span class="p">:</span>
+                    <span class="n">item_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">b_id</span><span class="p">)</span>
+
+                    <span class="n">i_m</span><span class="p">,</span> <span class="n">i_um</span><span class="p">,</span> <span class="n">i_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare_items</span><span class="p">(</span><span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">)</span>
+                    <span class="n">candidates</span><span class="p">[</span><span class="n">b_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i_m</span><span class="p">,</span> <span class="n">i_um</span><span class="p">,</span> <span class="n">i_err</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_um</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">a_matches</span><span class="p">[</span><span class="n">a_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_id</span>
+                        <span class="n">b_matches</span><span class="p">[</span><span class="n">b_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_id</span>
+                        <span class="n">matched</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i_m</span><span class="p">)</span>
+                        <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i_err</span><span class="p">)</span>
+                        <span class="k">break</span>
+
+                <span class="n">match_status</span><span class="p">[</span><span class="n">a_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">candidates</span>
+
+            <span class="c1"># assign</span>
+            <span class="k">for</span> <span class="n">a_id</span> <span class="ow">in</span> <span class="n">a_ids</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+                <span class="c1"># find the closest, ignore already assigned</span>
+                <span class="n">matched_b</span> <span class="o">=</span> <span class="n">a_matches</span><span class="p">[</span><span class="n">a_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">matched_b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">min_dist</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">for</span> <span class="n">b_id</span> <span class="ow">in</span> <span class="n">b_ids</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">b_matches</span><span class="p">[</span><span class="n">b_id</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">_dist</span><span class="p">(</span><span class="n">match_status</span><span class="p">[</span><span class="n">a_id</span><span class="p">][</span><span class="n">b_id</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">min_dist</span> <span class="ow">and</span> <span class="n">min_dist</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">min_dist</span> <span class="o">=</span> <span class="n">d</span>
+                    <span class="n">matched_b</span> <span class="o">=</span> <span class="n">b_id</span>
+
+                <span class="k">if</span> <span class="n">matched_b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">a_matches</span><span class="p">[</span><span class="n">a_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">matched_b</span>
+                <span class="n">b_matches</span><span class="p">[</span><span class="n">matched_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_id</span>
+
+                <span class="n">m</span> <span class="o">=</span> <span class="n">match_status</span><span class="p">[</span><span class="n">a_id</span><span class="p">][</span><span class="n">matched_b</span><span class="p">]</span>
+                <span class="n">matched</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">unmatched</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+            <span class="n">a_unmatched</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">a_id</span> <span class="k">for</span> <span class="n">a_id</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">a_matches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">)</span>
+            <span class="n">b_unmatched</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">b_id</span> <span class="k">for</span> <span class="n">b_id</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">b_matches</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mismatches&quot;</span><span class="p">:</span> <span class="n">unmatched</span><span class="p">,</span>
+            <span class="s2">&quot;a_extra_items&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">),</span>
+            <span class="s2">&quot;b_extra_items&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">),</span>
+            <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">errors</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">matched</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="EqualityComparator.save_compare_report">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.EqualityComparator.save_compare_report">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_compare_report</span><span class="p">(</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">report_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the comparison report to JSON and text files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output: A dictionary containing the comparison data.</span>
+<span class="sd">            report_dir: A string representing the directory to save the report files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">report_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">report_dir</span><span class="p">,</span>
+            <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;equality_compare&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">report_dir</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving compare json to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">dump_json_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TableComparator">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.TableComparator">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TableComparator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for comparing datasets and generating comparison report table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_labels</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts labels from the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: An instance of a Dataset class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A set of labels present in the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">label_cat</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">label_cat</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes image and annotation statistics of the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: An instance of a Dataset class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing image statistics and annotation statistics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image_stats</span> <span class="o">=</span> <span class="n">compute_image_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">ann_stats</span> <span class="o">=</span> <span class="n">compute_ann_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image_stats</span><span class="p">,</span> <span class="n">ann_stats</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_analyze_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyzes the dataset to get labels, format, and statistics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: An instance of a Dataset class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing Dataset format, set of label names, image statistics,</span>
+<span class="sd">            and annotation statistics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset_format</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">format</span>
+        <span class="n">dataset_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_labels</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">image_stats</span><span class="p">,</span> <span class="n">ann_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dataset_format</span><span class="p">,</span> <span class="n">dataset_labels</span><span class="p">,</span> <span class="n">image_stats</span><span class="p">,</span> <span class="n">ann_stats</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_table</span><span class="p">(</span><span class="n">headers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a table with the given headers and rows using the tabulate module.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            headers: A list containing table headers.</span>
+<span class="sd">            rows: A list containing table rows.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string representation of the table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapfunc</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Wrap a item consisted of text, returning a list of wrapped lines.&quot;&quot;&quot;</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="mi">35</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">max_len</span><span class="p">))</span>
+
+        <span class="n">wrapped_rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="n">new_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">wrapfunc</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+            <span class="n">wrapped_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_row</span><span class="p">)</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
+
+        <span class="k">return</span> <span class="n">tabulate</span><span class="p">(</span><span class="n">wrapped_rows</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_dict</span><span class="p">(</span><span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a dictionary from the rows of the table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rows: A list containing table rows.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary where the key is the first element of a row and the value is</span>
+<span class="sd">            the rest of the row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="mi">1</span><span class="p">:]}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_high_level_comparison_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_info</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">second_info</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a high-level comparison table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first_info: A tuple containing information about the first dataset.</span>
+<span class="sd">            second_info: A tuple containing information about the second dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing the table as a string and a dictionary representing the data</span>
+<span class="sd">            of the table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">first_format</span><span class="p">,</span> <span class="n">first_labels</span><span class="p">,</span> <span class="n">first_image_stats</span><span class="p">,</span> <span class="n">first_ann_stats</span> <span class="o">=</span> <span class="n">first_info</span>
+        <span class="n">second_format</span><span class="p">,</span> <span class="n">second_labels</span><span class="p">,</span> <span class="n">second_image_stats</span><span class="p">,</span> <span class="n">second_ann_stats</span> <span class="o">=</span> <span class="n">second_info</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;First&quot;</span><span class="p">,</span> <span class="s2">&quot;Second&quot;</span><span class="p">]</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;Format&quot;</span><span class="p">,</span> <span class="n">first_format</span><span class="p">,</span> <span class="n">second_format</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Number of classes&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">first_labels</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">second_labels</span><span class="p">))],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Common classes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">first_labels</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">second_labels</span><span class="p">)))),</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">second_labels</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">first_labels</span><span class="p">)))),</span>
+            <span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Classes&quot;</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">first_labels</span><span class="p">)),</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">second_labels</span><span class="p">))],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Images count&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;images count&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;images count&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Unique images count&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;unique images count&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;unique images count&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Repeated images count&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;repeated images count&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">][</span><span class="s2">&quot;repeated images count&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Annotations count&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">first_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations count&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">second_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations count&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;Unannotated images count&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">first_ann_stats</span><span class="p">[</span><span class="s2">&quot;unannotated images count&quot;</span><span class="p">]),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">second_ann_stats</span><span class="p">[</span><span class="s2">&quot;unannotated images count&quot;</span><span class="p">]),</span>
+            <span class="p">],</span>
+        <span class="p">]</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dict</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">data_dict</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_mid_level_comparison_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_info</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">second_info</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a mid-level comparison table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first_info: A tuple containing information about the first dataset.</span>
+<span class="sd">            second_info: A tuple containing information about the second dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing the table as a string and a dictionary representing the data</span>
+<span class="sd">            of the table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">first_image_stats</span><span class="p">,</span> <span class="n">first_ann_stats</span> <span class="o">=</span> <span class="n">first_info</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">second_image_stats</span><span class="p">,</span> <span class="n">second_ann_stats</span> <span class="o">=</span> <span class="n">second_info</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;First&quot;</span><span class="p">,</span> <span class="s2">&quot;Second&quot;</span><span class="p">]</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">first_subsets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">second_subsets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="n">subset_names</span> <span class="o">=</span> <span class="n">first_subsets</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">subset_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">second_subsets</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_subsets</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="n">subset_names</span><span class="p">:</span>
+            <span class="n">first_subset_data</span> <span class="o">=</span> <span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">second_subset_data</span> <span class="o">=</span> <span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="n">image_mean_array_first</span> <span class="o">=</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">mean_str_first</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">&lt;6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_mean_array_first</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_mean_array_first</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_mean_array_first</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_mean_array_first</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">image_std_array_first</span> <span class="o">=</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">std_str_first</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_std_array_first</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_std_array_first</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_std_array_first</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_std_array_first</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">image_mean_array_second</span> <span class="o">=</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">mean_str_second</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_mean_array_second</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_mean_array_second</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_mean_array_second</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_mean_array_second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">image_std_array_second</span> <span class="o">=</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">std_str_second</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_std_array_second</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_std_array_second</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_std_array_second</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_std_array_second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2"> - Image Mean (RGB)&quot;</span><span class="p">,</span> <span class="n">mean_str_first</span><span class="p">,</span> <span class="n">mean_str_second</span><span class="p">])</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2"> - Image Std (RGB)&quot;</span><span class="p">,</span> <span class="n">std_str_first</span><span class="p">,</span> <span class="n">std_str_second</span><span class="p">])</span>
+
+        <span class="n">first_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">first_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">second_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">second_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="n">label_names</span> <span class="o">=</span> <span class="n">first_labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">label_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">second_labels</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">first_labels</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">label_names</span><span class="p">:</span>
+            <span class="n">count_dist_first</span> <span class="o">=</span> <span class="n">first_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+            <span class="n">count_dist_second</span> <span class="o">=</span> <span class="n">second_ann_stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">][</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+            <span class="n">count_first</span><span class="p">,</span> <span class="n">dist_first</span> <span class="o">=</span> <span class="n">count_dist_first</span> <span class="k">if</span> <span class="n">count_dist_first</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="n">count_second</span><span class="p">,</span> <span class="n">dist_second</span> <span class="o">=</span> <span class="n">count_dist_second</span> <span class="k">if</span> <span class="n">count_dist_second</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="sa">f</span><span class="s2">&quot;Label - </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;imgs: </span><span class="si">{</span><span class="n">count_first</span><span class="si">}</span><span class="s2">, percent: </span><span class="si">{</span><span class="n">dist_first</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">count_first</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;imgs: </span><span class="si">{</span><span class="n">count_second</span><span class="si">}</span><span class="s2">, percent: </span><span class="si">{</span><span class="n">dist_second</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">count_second</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dict</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">data_dict</span>
+
+<div class="viewcode-block" id="TableComparator.compare_datasets">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.TableComparator.compare_datasets">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compares two datasets and generates comparison reports.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first: The first dataset to compare.</span>
+<span class="sd">            second: The second dataset to compare.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing high-level table, mid-level table, low-level table, and a</span>
+<span class="sd">            dictionary representation of the comparison.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">first_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyze_dataset</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+        <span class="n">second_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyze_dataset</span><span class="p">(</span><span class="n">second</span><span class="p">)</span>
+
+        <span class="n">high_level_table</span><span class="p">,</span> <span class="n">high_level_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
+        <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">mid_level_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+            <span class="n">high_level_table</span><span class="p">,</span> <span class="n">high_level_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_high_level_comparison_table</span><span class="p">(</span><span class="n">first_info</span><span class="p">,</span> <span class="n">second_info</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mid&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+            <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">mid_level_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_mid_level_comparison_table</span><span class="p">(</span><span class="n">first_info</span><span class="p">,</span> <span class="n">second_info</span><span class="p">)</span>
+
+        <span class="n">comparison_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">high_level</span><span class="o">=</span><span class="n">high_level_dict</span><span class="p">,</span> <span class="n">mid_level</span><span class="o">=</span><span class="n">mid_level_dict</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;High-level comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">high_level_table</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mid-level comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">mid_level_table</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">high_level_table</span><span class="p">,</span> <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">comparison_dict</span></div>
+
+
+<div class="viewcode-block" id="TableComparator.save_compare_report">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.TableComparator.save_compare_report">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_compare_report</span><span class="p">(</span>
+        <span class="n">high_level_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">mid_level_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">comparison_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+        <span class="n">report_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the comparison report to JSON and text files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            high_level_table: High-level comparison table as a string.</span>
+<span class="sd">            mid_level_table: Mid-level comparison table as a string.</span>
+<span class="sd">            comparison_dict: A dictionary containing the comparison data.</span>
+<span class="sd">            report_dir: A string representing the directory to save the report files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">report_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">json_output_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">report_dir</span><span class="p">,</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;table_compare&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">report_dir</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">txt_output_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">report_dir</span><span class="p">,</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;table_compare&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="n">report_dir</span><span class="p">))</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving compare json to </span><span class="si">{</span><span class="n">json_output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving compare table to </span><span class="si">{</span><span class="n">txt_output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">dump_json_file</span><span class="p">(</span><span class="n">json_output_file</span><span class="p">,</span> <span class="n">comparison_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">txt_output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;High-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">high_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mid-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">mid_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

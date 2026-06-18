@@ -1,0 +1,1518 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format &#8212; Datumaro 1.13.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=1cdb6141"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Data Framework Convert" href="22_framework_converter.html" />
+    <link rel="prev" title="From Datumaro to Model Training" href="../e2e_example.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.2 documentation - Home"/>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.2 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_dataset_download.html">Level 1: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_import_export.html">Level 2: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_detect_data_format.html">Level 3: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/04_data_aggregation.html">Level 4: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_merge.html">Level 6: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_validate.html">Level 7: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_filtering.html">Level 8: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_framework_conversion.html">Level 9: Framework Conversion</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data-formats/formats/index.html">Formats</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dataset_IO.html">Dataset I/O</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../manipulate.html">Manipulate</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../refine.html">Refine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_filter.html">Filter Data through Your Query</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transform.html">Transform</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../e2e_example.html">From Datumaro to Model Training</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="22_framework_converter.html">Data Framework Convert</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/compare.html">Compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/convert.html">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/detect.html">Detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/dinfo.html">Info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/filter.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/format.html">Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/merge.html">Merge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/patch.html">Patch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/stats.html">Stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/transform.html">Transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/validate.html">Validate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/datumaro_module.html">Datumaro Module</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.html">datumaro</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.html">datumaro.components</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.html">datumaro.util</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.deprecation.html">datumaro.util.deprecation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.points_util.html">datumaro.util.points_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../e2e_example.html" class="nav-link">From Datumaro to Model Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Train-Your-OpenVINO™-Model-Using-YoloV8-Trainer-For-Any-Dataset-Format">
+<h1>Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format<a class="headerlink" href="#Train-Your-OpenVINO™-Model-Using-YoloV8-Trainer-For-Any-Dataset-Format" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb"><img alt="Jupyter Notebook" src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&amp;logo=jupyter&amp;logoColor=white" /></a></p>
+<section id="Prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#Prerequisite" title="Link to this heading">#</a></h2>
+<section id="Download-Six-sided-Dice-dataset">
+<h3>Download Six-sided Dice dataset<a class="headerlink" href="#Download-Six-sided-Dice-dataset" title="Link to this heading">#</a></h3>
+<p>This is <a class="reference external" href="https://www.kaggle.com/datasets/nellbyler/d6-dice?resource=download">a download link for Six-sided Dice dataset in Kaggle</a>. Please download using this link and extract to your workspace directory. Then, you will have a <code class="docutils literal notranslate"><span class="pre">d6-dice</span></code> directory with annotations and images in YOLO format as follows.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>d6-dice
+├──<span class="w"> </span>Annotations
+│<span class="w">   </span>├──<span class="w"> </span>classes.txt
+│<span class="w">   </span>├──<span class="w"> </span>IMG_20191208_111228.txt
+│<span class="w">   </span>├──<span class="w"> </span>IMG_20191208_111246.txt
+│<span class="w">   </span>├──<span class="w"> </span>...
+└──<span class="w"> </span>Images
+<span class="w">    </span>├──<span class="w"> </span>IMG_20191208_111228.jpg
+<span class="w">    </span>├──<span class="w"> </span>IMG_20191208_111246.jpg
+<span class="w">    </span>├──<span class="w"> </span>...
+</pre></div>
+</div>
+<p>However, for import compatibility, <code class="docutils literal notranslate"><span class="pre">obj.names</span></code> file must be added to <code class="docutils literal notranslate"><span class="pre">d6-dice/obj.names</span></code> filepath for import compatibility. This <code class="docutils literal notranslate"><span class="pre">obj.names</span></code> file includes the label names of the dataset, e.g., <code class="docutils literal notranslate"><span class="pre">[dice1,</span> <span class="pre">...,</span> <span class="pre">dice6]</span></code>. Therefore, you can write it with the following simple code. Please see <a class="reference external" href="https://open-edge-platform.github.io/datumaro/latest/docs/explanation/formats/yolo">Yolo Loose format</a> for more details.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">root_dir</span> <span class="o">=</span> <span class="s2">&quot;d6-dice&quot;</span>
+
+<span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">dice1</span>
+<span class="s2">dice2</span>
+<span class="s2">dice3</span>
+<span class="s2">dice4</span>
+<span class="s2">dice5</span>
+<span class="s2">dice6</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="s2">&quot;obj.names&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Import-dataset">
+<h2>Import dataset<a class="headerlink" href="#Import-dataset" title="Link to this heading">#</a></h2>
+<p>Firstly, we import this dataset using Datumaro Python API. The Six-sided Dice dataset has no subset split so that Datumaro will create “default” subset for it.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;./d6-dice&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;yolo&quot;</span><span class="p">)</span>
+<span class="n">dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=250
+        source_path=./d6-dice
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=250
+        annotations_count=1795
+subsets
+        default: # of items=250, # of annotated items=250, # of annotations=1795, annotation types=[&#39;bbox&#39;]
+infos
+        categories
+        label: [&#39;dice1&#39;, &#39;dice2&#39;, &#39;dice3&#39;, &#39;dice4&#39;, &#39;dice5&#39;, &#39;dice6&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Split-subsets-and-export-dataset">
+<h2>Split subsets and export dataset<a class="headerlink" href="#Split-subsets-and-export-dataset" title="Link to this heading">#</a></h2>
+<p>There is no subset split in the imported dataset. However, Ultralytics-YOLO trainer must require “train” and “val” subsets (“test” is optional). So, we will create “train”, “val”, and “test” splits from the imported dataset.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;random_split&quot;</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)])</span>
+<span class="n">splited_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=250
+        source_path=./d6-dice
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=250
+        annotations_count=1795
+subsets
+        test: # of items=75, # of annotated items=75, # of annotations=517, annotation types=[&#39;bbox&#39;]
+        train: # of items=125, # of annotated items=125, # of annotations=951, annotation types=[&#39;bbox&#39;]
+        val: # of items=50, # of annotated items=50, # of annotations=327, annotation types=[&#39;bbox&#39;]
+infos
+        categories
+        label: [&#39;dice1&#39;, &#39;dice2&#39;, &#39;dice3&#39;, &#39;dice4&#39;, &#39;dice5&#39;, &#39;dice6&#39;]
+</pre></div></div>
+</div>
+<p>Now, we export the splited subsets to “yolo_ultralytics” format with <code class="docutils literal notranslate"><span class="pre">save_media=True</span></code> for Ultralytics-YOLO trainer. It is recommended to set <code class="docutils literal notranslate"><span class="pre">save_media=True</span></code>. If this option is enabled, Datumaro automatically copy-and-pastes the source images according to the correct directory structure of the target dataset format.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;d6-dice-ultralytics&quot;</span><span class="p">,</span> <span class="s2">&quot;yolo_ultralytics&quot;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Train-model-with-Ultralytics-YOLOv8-trainer">
+<h2>Train model with Ultralytics YOLOv8 trainer<a class="headerlink" href="#Train-model-with-Ultralytics-YOLOv8-trainer" title="Link to this heading">#</a></h2>
+<p>At first, we will install Ultralytics YOLOv8 trainer to train the model and export it to <a class="reference external" href="https://docs.openvino.ai/latest/home.html">OpenVINO™ Intermediate Representation (IR)</a>. For export OpenVINO™ IR, we should install it with <code class="docutils literal notranslate"><span class="pre">export</span></code> extra (<code class="docutils literal notranslate"><span class="pre">ultralytics[export]</span></code>).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install ultralytics[export]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+
+<span class="c1"># To give the Ultralytics YOLO trainer an arbitrary dataset path,</span>
+<span class="c1"># you must provide its absolute path.</span>
+<span class="n">data_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;d6-dice-ultralytics&quot;</span><span class="p">,</span> <span class="s2">&quot;data.yaml&quot;</span><span class="p">))</span>
+<span class="n">model_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;d6-dice-project&quot;</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="s2">&quot;best.pt&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<section id="Train-yolov8n-model">
+<h3>Train yolov8n model<a class="headerlink" href="#Train-yolov8n-model" title="Link to this heading">#</a></h3>
+<p>We will train a <code class="docutils literal notranslate"><span class="pre">yolov8n</span></code> model on the Six-sided Dataset for 100 epochs.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>yolo<span class="w"> </span>detect<span class="w"> </span>train<span class="w"> </span><span class="nv">model</span><span class="o">=</span>yolov8n.pt<span class="w"> </span><span class="nv">data</span><span class="o">={</span>data_fpath<span class="o">}</span><span class="w"> </span><span class="nv">epochs</span><span class="o">=</span><span class="m">100</span><span class="w"> </span><span class="nv">imgsz</span><span class="o">=</span><span class="m">640</span><span class="w"> </span><span class="nv">project</span><span class="o">=</span>d6-dice-project
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Ultralytics YOLOv8.0.53 🚀 Python-3.9.13 torch-1.13.1+cu117 CUDA:0 (NVIDIA GeForce RTX 3090, 24268MiB)
+<span class="ansi-blue-intense-fg ansi-bold">yolo/engine/trainer: </span>task=detect, mode=train, model=yolov8n.pt, data=/home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/data.yaml, epochs=100, patience=50, batch=16, imgsz=640, save=True, save_period=-1, cache=False, device=None, workers=8, project=d6-dice-project, name=None, exist_ok=False, pretrained=False, optimizer=SGD, verbose=True, seed=0, deterministic=True, single_cls=False, image_weights=False, rect=False, cos_lr=False, close_mosaic=10, resume=False, overlap_mask=True, mask_ratio=4, dropout=0.0, val=True, split=val, save_json=False, save_hybrid=False, conf=None, iou=0.7, max_det=300, half=False, dnn=False, plots=True, source=None, show=False, save_txt=False, save_conf=False, save_crop=False, hide_labels=False, hide_conf=False, vid_stride=1, line_thickness=3, visualize=False, augment=False, agnostic_nms=False, classes=None, retina_masks=False, boxes=True, format=torchscript, keras=False, optimize=False, int8=False, dynamic=False, simplify=False, opset=None, workspace=4, nms=False, lr0=0.01, lrf=0.01, momentum=0.937, weight_decay=0.0005, warmup_epochs=3.0, warmup_momentum=0.8, warmup_bias_lr=0.1, box=7.5, cls=0.5, dfl=1.5, fl_gamma=0.0, label_smoothing=0.0, nbs=64, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, degrees=0.0, translate=0.1, scale=0.5, shear=0.0, perspective=0.0, flipud=0.0, fliplr=0.5, mosaic=1.0, mixup=0.0, copy_paste=0.0, cfg=None, v5loader=False, tracker=botsort.yaml, save_dir=d6-dice-project/train2
+Overriding model.yaml nc=80 with nc=6
+
+                   from  n    params  module                                       arguments
+  0                  -1  1       464  ultralytics.nn.modules.Conv                  [3, 16, 3, 2]
+  1                  -1  1      4672  ultralytics.nn.modules.Conv                  [16, 32, 3, 2]
+  2                  -1  1      7360  ultralytics.nn.modules.C2f                   [32, 32, 1, True]
+  3                  -1  1     18560  ultralytics.nn.modules.Conv                  [32, 64, 3, 2]
+  4                  -1  2     49664  ultralytics.nn.modules.C2f                   [64, 64, 2, True]
+  5                  -1  1     73984  ultralytics.nn.modules.Conv                  [64, 128, 3, 2]
+  6                  -1  2    197632  ultralytics.nn.modules.C2f                   [128, 128, 2, True]
+  7                  -1  1    295424  ultralytics.nn.modules.Conv                  [128, 256, 3, 2]
+  8                  -1  1    460288  ultralytics.nn.modules.C2f                   [256, 256, 1, True]
+  9                  -1  1    164608  ultralytics.nn.modules.SPPF                  [256, 256, 5]
+ 10                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, &#39;nearest&#39;]
+ 11             [-1, 6]  1         0  ultralytics.nn.modules.Concat                [1]
+ 12                  -1  1    148224  ultralytics.nn.modules.C2f                   [384, 128, 1]
+ 13                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, &#39;nearest&#39;]
+ 14             [-1, 4]  1         0  ultralytics.nn.modules.Concat                [1]
+ 15                  -1  1     37248  ultralytics.nn.modules.C2f                   [192, 64, 1]
+ 16                  -1  1     36992  ultralytics.nn.modules.Conv                  [64, 64, 3, 2]
+ 17            [-1, 12]  1         0  ultralytics.nn.modules.Concat                [1]
+ 18                  -1  1    123648  ultralytics.nn.modules.C2f                   [192, 128, 1]
+ 19                  -1  1    147712  ultralytics.nn.modules.Conv                  [128, 128, 3, 2]
+ 20             [-1, 9]  1         0  ultralytics.nn.modules.Concat                [1]
+ 21                  -1  1    493056  ultralytics.nn.modules.C2f                   [384, 256, 1]
+ 22        [15, 18, 21]  1    752482  ultralytics.nn.modules.Detect                [6, [64, 128, 256]]
+Model summary: 225 layers, 3012018 parameters, 3012002 gradients, 8.2 GFLOPs
+
+Transferred 319/355 items from pretrained weights
+<span class="ansi-blue-intense-fg ansi-bold">AMP: </span>running Automatic Mixed Precision (AMP) checks with YOLOv8n...
+<span class="ansi-blue-intense-fg ansi-bold">AMP: </span>checks passed ✅
+<span class="ansi-blue-intense-fg ansi-bold">optimizer:</span> SGD(lr=0.01) with parameter groups 57 weight(decay=0.0), 64 weight(decay=0.0005), 63 bias
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>Scanning /home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/labels/tra
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>New cache created: /home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/labels/train.cache
+<span class="ansi-blue-intense-fg ansi-bold">val: </span>Scanning /home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/labels/val..
+<span class="ansi-blue-intense-fg ansi-bold">val: </span>New cache created: /home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/labels/val.cache
+Plotting labels to d6-dice-project/train2/labels.jpg...
+Image sizes 640 train, 640 val
+Using 8 dataloader workers
+Logging results to <span class="ansi-bold">d6-dice-project/train2</span>
+Starting training for 100 epochs...
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      1/100      2.14G      1.615      4.381      1.119        112        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327          0          0          0          0
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      2/100      2.14G      1.364      4.068      1.016        118        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327    0.00656      0.248     0.0101    0.00435
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      3/100      2.14G      1.417       3.31      1.049        122        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327    0.00288      0.134    0.00556    0.00287
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      4/100      2.14G       1.36      2.637      1.051        126        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0162      0.648     0.0893      0.043
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      5/100      2.14G       1.36      2.334      1.052        162        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.015      0.616      0.111     0.0529
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      6/100      2.14G      1.427      2.235      1.063        187        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0211       0.91      0.204     0.0995
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      7/100      2.14G      1.389       2.19       1.05        198        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0228      0.968      0.236      0.137
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      8/100      2.14G      1.375      2.102      1.106        129        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0225       0.98      0.241      0.117
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+      9/100      2.14G      1.398      2.084       1.06        139        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0231          1      0.274      0.163
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     10/100      2.14G      1.419      2.062      1.072        109        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0233          1      0.288      0.176
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     11/100      2.14G      1.343      2.225      1.068        157        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0229      0.985      0.289      0.126
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     12/100      2.14G      1.431      2.125       1.08        168        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327     0.0243      0.986      0.272      0.125
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     13/100      2.14G      1.404      2.004      1.062        158        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.213        0.8      0.321      0.167
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     14/100      2.14G      1.365      1.995      1.064        177        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.343      0.369      0.368      0.207
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     15/100      2.14G      1.402      1.948       1.07        106        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.339      0.682      0.395      0.223
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     16/100      2.14G      1.387      1.906       1.06        139        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.275      0.559      0.368      0.211
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     17/100      2.26G       1.34      1.897      1.064        129        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.347      0.568      0.421      0.251
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     18/100      2.26G      1.292      1.918      1.042        188        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.617      0.303      0.379       0.23
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     19/100      2.26G      1.273      1.954      1.023        164        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.275      0.754      0.343      0.183
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     20/100      2.26G      1.358      1.803      1.026        133        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.301      0.839      0.437      0.221
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     21/100      2.26G      1.322      1.768      1.049        106        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.34      0.784      0.453      0.241
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     22/100      2.26G      1.293      1.775      1.056        131        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.262      0.644      0.402       0.25
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     23/100      2.26G      1.236      1.839      1.023        113        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.27      0.743      0.411      0.256
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     24/100      2.26G      1.348      1.758       1.01        223        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.343      0.885      0.519      0.332
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     25/100      2.26G       1.23      1.811      1.022        169        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.338      0.836      0.507      0.319
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     26/100      2.26G      1.188      1.745      1.013        119        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.418       0.76      0.531      0.346
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     27/100      2.26G      1.191      1.786      1.019        114        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.305       0.82       0.44       0.25
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     28/100      2.26G      1.207      1.639      1.009        134        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.418      0.866      0.567       0.34
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     29/100      2.26G      1.289      1.699      1.044        140        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.371       0.81      0.478      0.264
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     30/100      2.26G      1.297      1.612      1.019        119        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.494      0.772      0.605      0.303
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     31/100      2.26G      1.256      1.598      1.009        123        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.381        0.7      0.488      0.277
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     32/100      2.26G      1.213      1.655      1.016        125        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.346      0.772      0.499      0.279
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     33/100      2.26G      1.231      1.559      1.019        195        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327        0.5      0.815      0.638      0.341
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     34/100      2.26G      1.233      1.536      1.032        134        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.482      0.798      0.671      0.414
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     35/100      2.26G      1.144      1.546     0.9998        125        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.309      0.642      0.419      0.249
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     36/100      2.26G      1.213      1.579      1.004        114        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.438      0.756      0.564      0.356
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     37/100      2.26G       1.21      1.533      1.008        128        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.501       0.75      0.629      0.377
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     38/100      2.26G      1.238      1.469      1.037        168        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.348      0.621       0.44      0.279
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     39/100      2.26G       1.22      1.492      1.042        105        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.575       0.73      0.665      0.422
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     40/100      2.26G      1.243      1.425      1.016        113        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.612      0.741      0.691      0.447
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     41/100      2.26G      1.229      1.482      1.026         76        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.639      0.821      0.751      0.482
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     42/100      2.26G      1.142      1.438     0.9861        122        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.626      0.787      0.756      0.476
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     43/100      2.26G       1.12      1.359     0.9938        125        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.61       0.79       0.74      0.476
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     44/100      2.26G      1.139      1.398      1.007        129        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.649      0.792      0.802      0.512
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     45/100      2.26G      1.137      1.294     0.9998        156        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.671      0.822      0.807       0.51
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     46/100      2.26G      1.138      1.291      1.031        152        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.539      0.697      0.673      0.429
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     47/100      2.26G      1.184      1.292      1.013        143        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.701      0.802      0.835      0.529
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     48/100      2.26G      1.213      1.261      1.034        148        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327        0.7      0.847      0.834      0.541
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     49/100      2.26G      1.159      1.251     0.9938        144        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.727      0.852       0.83      0.495
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     50/100      2.26G      1.195      1.226      1.038         94        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.71       0.84      0.846      0.517
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     51/100      2.26G      1.127      1.236     0.9852        155        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.674      0.781      0.805      0.517
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     52/100      2.26G      1.174      1.236      1.029        132        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.687      0.777      0.831      0.544
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     53/100      2.26G      1.105      1.199      1.018        127        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.615      0.765      0.762      0.496
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     54/100      2.26G      1.119      1.191      0.981        169        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.619      0.834      0.822      0.534
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     55/100      2.26G      1.069      1.143      0.972        133        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.759      0.843      0.886      0.559
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     56/100      2.26G      1.134      1.117     0.9923        115        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.687      0.832      0.848      0.555
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     57/100      2.26G      1.128       1.16     0.9833        161        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.736       0.85      0.882      0.565
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     58/100      2.26G      1.109      1.129     0.9741        151        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.804      0.805      0.884      0.578
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     59/100       2.4G       1.17       1.14      1.016         81        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.803      0.854      0.901      0.563
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     60/100       2.4G      1.133        1.1      1.014        170        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.803      0.858      0.904      0.547
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     61/100       2.4G      1.102      1.084     0.9943        144        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.807      0.852      0.913      0.578
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     62/100       2.4G      1.063      1.086     0.9789        108        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.842      0.851      0.899      0.563
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     63/100       2.4G       1.09      1.082     0.9843        121        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.841      0.866      0.927       0.57
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     64/100       2.4G      1.046       1.09      0.973        115        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.825      0.871      0.927      0.581
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     65/100       2.4G      1.098      1.056      0.961        227        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.781      0.887      0.913      0.581
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     66/100       2.4G      1.027      1.001     0.9675        137        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.845      0.859      0.917      0.546
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     67/100       2.4G      1.098      1.044     0.9798        153        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.895      0.839      0.932      0.577
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     68/100       2.4G      1.105      1.018     0.9884        186        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.812      0.874       0.91      0.575
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     69/100       2.4G       1.08      1.011     0.9878        133        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.837      0.818      0.896      0.566
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     70/100       2.4G       1.02       1.04     0.9831         76        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.824      0.905      0.937      0.593
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     71/100       2.4G      1.023      1.022     0.9531        147        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.807       0.89      0.935      0.587
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     72/100       2.4G      1.103     0.9996      1.025         78        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.875      0.845      0.921      0.577
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     73/100       2.4G      1.039     0.9157      0.975         74        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.835      0.868      0.934      0.578
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     74/100       2.4G      1.103      1.004     0.9866        153        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.886      0.866      0.944       0.59
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     75/100       2.4G      1.043     0.9381     0.9686        185        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.895      0.882      0.947      0.571
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     76/100       2.4G      1.035     0.9351     0.9714        110        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.813      0.922      0.944      0.591
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     77/100       2.4G      1.019     0.9196     0.9839        101        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.843      0.896      0.943      0.593
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     78/100       2.4G      1.059     0.9575     0.9794         95        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.88      0.882      0.949      0.559
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     79/100       2.4G      1.049     0.9213      0.972        117        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327        0.9      0.895      0.944      0.604
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     80/100       2.4G      1.015      0.878     0.9548        158        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.902      0.901      0.955      0.592
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     81/100       2.4G      1.014      0.901     0.9594        117        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.917      0.872      0.949      0.605
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     82/100       2.4G       1.07     0.9242      1.001        193        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.896       0.92      0.957       0.58
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     83/100       2.4G      1.018     0.8704     0.9674         96        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.903      0.934      0.959      0.591
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     84/100       2.4G      1.003      0.859     0.9545        120        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.913      0.866      0.961      0.611
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     85/100       2.4G      1.061     0.8796     0.9544        195        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.894      0.905      0.959      0.609
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     86/100       2.4G      1.069     0.9033     0.9926        146        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.87      0.911      0.958      0.606
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     87/100       2.4G       1.02     0.8343      0.961        127        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.931      0.901      0.964      0.613
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     88/100       2.4G      1.026     0.8555     0.9712        126        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.918      0.924      0.965       0.61
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     89/100       2.4G      1.039     0.8231     0.9747        103        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.876      0.934      0.963      0.602
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     90/100       2.4G     0.9811     0.8461     0.9502        178        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.895      0.879      0.959      0.608
+Closing dataloader mosaic
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     91/100       2.4G     0.9937      0.774      1.009        108        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327       0.89      0.916      0.956      0.594
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     92/100       2.4G      0.996      0.773      1.009        104        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.896      0.944      0.956      0.605
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     93/100       2.4G      1.006     0.7829      1.015        103        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.898       0.92      0.957      0.595
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     94/100       2.4G      1.016     0.7947      1.019        115        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.893      0.934      0.958      0.601
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     95/100       2.4G     0.9838     0.7514      1.008        117        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.915      0.924      0.964      0.607
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     96/100       2.4G      0.983     0.7637          1        112        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.909      0.919      0.964      0.603
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     97/100       2.4G     0.9728     0.7337      1.007         94        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.914      0.919      0.964      0.601
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     98/100       2.4G     0.9786     0.7598     0.9967         73        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.901       0.93      0.963      0.607
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+     99/100       2.4G     0.9658     0.7412     0.9884         88        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.925      0.918      0.963      0.601
+
+      Epoch    GPU_mem   box_loss   cls_loss   dfl_loss  Instances       Size
+    100/100       2.4G     0.9697     0.7439     0.9898         96        640: 1
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.904      0.934      0.964      0.584
+
+100 epochs completed in 0.293 hours.
+Optimizer stripped from d6-dice-project/train2/weights/last.pt, 6.2MB
+Optimizer stripped from d6-dice-project/train2/weights/best.pt, 6.2MB
+
+Validating d6-dice-project/train2/weights/best.pt...
+Ultralytics YOLOv8.0.53 🚀 Python-3.9.13 torch-1.13.1+cu117 CUDA:0 (NVIDIA GeForce RTX 3090, 24268MiB)
+Model summary (fused): 168 layers, 3006818 parameters, 0 gradients, 8.1 GFLOPs
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         50        327      0.931      0.902      0.964      0.611
+                 dice1         50         72      0.997      0.972      0.989      0.582
+                 dice2         50         48      0.933      0.917      0.976      0.651
+                 dice3         50         51      0.909      0.782      0.938      0.647
+                 dice4         50         40      0.887        0.9      0.949      0.636
+                 dice5         50         68      0.925        0.9      0.966       0.59
+                 dice6         50         48      0.934      0.938      0.966      0.558
+Speed: 0.8ms preprocess, 0.8ms inference, 0.0ms loss, 1.0ms postprocess per image
+Results saved to <span class="ansi-bold">d6-dice-project/train2</span>
+</pre></div></div>
+</div>
+</section>
+<section id="Evaluate-on-the-test-set">
+<h3>Evaluate on the test set<a class="headerlink" href="#Evaluate-on-the-test-set" title="Link to this heading">#</a></h3>
+<p>Now, we have the trained model saved in <code class="docutils literal notranslate"><span class="pre">model_fpath</span></code>. We can evaluate this model on the test dataset as follows.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>yolo<span class="w"> </span>detect<span class="w"> </span>val<span class="w"> </span><span class="nv">model</span><span class="o">={</span>model_fpath<span class="o">}</span><span class="w"> </span><span class="nv">data</span><span class="o">={</span>data_fpath<span class="o">}</span><span class="w"> </span><span class="nv">split</span><span class="o">=</span>test
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Ultralytics YOLOv8.0.53 🚀 Python-3.9.13 torch-1.13.1+cu117 CUDA:0 (NVIDIA GeForce RTX 3090, 24268MiB)
+Model summary (fused): 168 layers, 3006818 parameters, 0 gradients, 8.1 GFLOPs
+<span class="ansi-blue-intense-fg ansi-bold">val: </span>Scanning /home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/labels/test.
+                 Class     Images  Instances      Box(P          R      mAP50  m
+                   all         75        517      0.953      0.932      0.975      0.632
+                 dice1         75         83      0.977      0.952      0.987      0.662
+                 dice2         75        101      0.951      0.931      0.976      0.649
+                 dice3         75         84      0.962      0.903       0.96      0.596
+                 dice4         75         82       0.93       0.97       0.98      0.615
+                 dice5         75         88      0.938       0.92      0.969      0.629
+                 dice6         75         79       0.96      0.914      0.976      0.642
+Speed: 1.5ms preprocess, 1.0ms inference, 0.0ms loss, 26.3ms postprocess per image
+Results saved to <span class="ansi-bold">/home/vinnamki/ultralytics/runs/detect/val4</span>
+</pre></div></div>
+</div>
+</section>
+<section id="Export-the-trained-model-to-OpenVINO™-IR">
+<h3>Export the trained model to OpenVINO™ IR<a class="headerlink" href="#Export-the-trained-model-to-OpenVINO™-IR" title="Link to this heading">#</a></h3>
+<p>So far, we have been able to successfully train our <code class="docutils literal notranslate"><span class="pre">YOLOv8</span></code> model by converting the dataset format using Datumaro and passing it to the Ultralytics YOLOv8 trainer CLI. The final step is exporting the trained model to <a class="reference external" href="https://docs.openvino.ai/latest/home.html">OpenVINO™ IR</a> to accelerate model inference on any Intel™ device.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>yolo<span class="w"> </span>detect<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">model</span><span class="o">={</span>model_fpath<span class="o">}</span><span class="w"> </span><span class="nv">format</span><span class="o">=</span>openvino
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Ultralytics YOLOv8.0.53 🚀 Python-3.9.13 torch-1.13.1+cu117 CPU
+Model summary (fused): 168 layers, 3006818 parameters, 0 gradients, 8.1 GFLOPs
+
+<span class="ansi-blue-intense-fg ansi-bold">PyTorch:</span> starting from /home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights/best.pt with input shape (1, 3, 640, 640) BCHW and output shape(s) (1, 10, 8400) (5.9 MB)
+
+<span class="ansi-blue-intense-fg ansi-bold">ONNX:</span> starting export with onnx 1.13.1...
+<span class="ansi-blue-intense-fg ansi-bold">ONNX:</span> export success ✅ 0.4s, saved as /home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights/best.onnx (11.7 MB)
+
+<span class="ansi-blue-intense-fg ansi-bold">OpenVINO:</span> starting export with openvino 2022.3.0-9052-9752fafe8eb-releases/2022/3...
+<span class="ansi-blue-intense-fg ansi-bold">OpenVINO:</span> export success ✅ 0.7s, saved as /home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights/best_openvino_model/ (11.8 MB)
+
+Export complete (1.4s)
+Results saved to <span class="ansi-bold">/home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights</span>
+Predict:         yolo predict task=detect model=/home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights/best_openvino_model imgsz=640
+Validate:        yolo val task=detect model=/home/vinnamki/datumaro/notebooks/d6-dice-project/train/weights/best_openvino_model imgsz=640 data=/home/vinnamki/datumaro/notebooks/d6-dice-ultralytics/data.yaml
+Visualize:       https://netron.app
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../e2e_example.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">From Datumaro to Model Training</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="22_framework_converter.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Framework Convert</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Prerequisite">Prerequisite</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-Six-sided-Dice-dataset">Download Six-sided Dice dataset</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-dataset">Import dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Split-subsets-and-export-dataset">Split subsets and export dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Train-model-with-Ultralytics-YOLOv8-trainer">Train model with Ultralytics YOLOv8 trainer</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Train-yolov8n-model">Train yolov8n model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Evaluate-on-the-test-set">Evaluate on the test set</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Export-the-trained-model-to-OpenVINO™-IR">Export the trained model to OpenVINO™ IR</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

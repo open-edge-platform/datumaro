@@ -1,0 +1,1386 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.plugins.data_formats.open_images &#8212; Datumaro 1.13.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../../_static/documentation_options.js?v=1cdb6141"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/open_images';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.13.2 documentation - Home"/>
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark pst-js-only" alt="Datumaro 1.13.2 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs/index.html">
+    Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">datumaro.plugins.data_formats.open_images</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.plugins.data_formats.open_images</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2021-2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetError</span><span class="p">,</span> <span class="n">MediaTypeError</span><span class="p">,</span> <span class="n">RepeatedItemError</span><span class="p">,</span> <span class="n">UndefinedLabel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Severity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span>
+    <span class="n">find_images</span><span class="p">,</span>
+    <span class="n">lazy_image</span><span class="p">,</span>
+    <span class="n">load_image</span><span class="p">,</span>
+    <span class="n">load_image_meta_file</span><span class="p">,</span>
+    <span class="n">save_image</span><span class="p">,</span>
+    <span class="n">save_image_meta_file</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_meta_file</span><span class="p">,</span> <span class="n">parse_meta_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_file_name</span><span class="p">,</span> <span class="n">split_path</span>
+
+<span class="c1"># A regex to check whether a string can be used as a &quot;normal&quot; path</span>
+<span class="c1"># component.</span>
+<span class="c1"># Some strings that are loaded from annotation files are used in paths,</span>
+<span class="c1"># and we need to validate them with this, so that a specially crafted</span>
+<span class="c1"># annotation file can&#39;t access files outside of the expected directory.</span>
+<span class="n">_RE_INVALID_PATH_COMPONENT</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # empty</span>
+<span class="sd">    | \.\.? # special path component</span>
+<span class="sd">    | .*[/\\\0].* # contains special characters</span>
+<span class="sd">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="UnsupportedSubsetNameError">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedSubsetNameError">[docs]</a>
+<span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedSubsetNameError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has an unsupported subset name </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedBoxIdError">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedBoxIdError">[docs]</a>
+<span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedBoxIdError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">box_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has a mask with an unsupported box ID </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UnsupportedMaskPathError">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedMaskPathError">[docs]</a>
+<span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedMaskPathError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">mask_path</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has a mask with an unsupported path </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OpenImagesPath">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesPath">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesPath</span><span class="p">:</span>
+    <span class="n">ANNOTATIONS_DIR</span> <span class="o">=</span> <span class="s2">&quot;annotations&quot;</span>
+    <span class="n">IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span>
+    <span class="n">MASKS_DIR</span> <span class="o">=</span> <span class="s2">&quot;masks&quot;</span>
+
+    <span class="n">FULL_IMAGE_DESCRIPTION_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;image_ids_and_rotation.csv&quot;</span>
+    <span class="n">SUBSET_IMAGE_DESCRIPTION_FILE_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;*-images-with-rotation.csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;*-images-with-labels-with-rotation.csv&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">V5_CLASS_DESCRIPTION_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;class-descriptions.csv&quot;</span>
+    <span class="n">V5_CLASS_DESCRIPTION_BBOX_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;class-descriptions-boxable.csv&quot;</span>
+    <span class="n">HIERARCHY_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;bbox_labels_600_hierarchy.json&quot;</span>
+
+    <span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;-annotations-human-imagelabels.csv&quot;</span>
+    <span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;-annotations-bbox.csv&quot;</span>
+    <span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;-annotations-object-segmentation.csv&quot;</span>
+
+    <span class="n">IMAGE_DESCRIPTION_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;ImageID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Subset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OriginalURL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OriginalLandingURL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;License&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;AuthorProfileURL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Author&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OriginalSize&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;OriginalMD5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Thumbnail300KURL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Rotation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">LABEL_DESCRIPTION_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;ImageID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Source&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LabelName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Confidence&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">BBOX_DESCRIPTION_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;ImageID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Source&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LabelName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Confidence&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;XMin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;XMax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;YMin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;YMax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IsOccluded&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IsTruncated&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IsGroupOf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IsDepiction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;IsInside&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">BBOX_BOOLEAN_ATTRIBUTES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">datumaro_name</span><span class="o">=</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="n">oid_name</span><span class="o">=</span><span class="s2">&quot;IsOccluded&quot;</span><span class="p">),</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">datumaro_name</span><span class="o">=</span><span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="n">oid_name</span><span class="o">=</span><span class="s2">&quot;IsTruncated&quot;</span><span class="p">),</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">datumaro_name</span><span class="o">=</span><span class="s2">&quot;is_group_of&quot;</span><span class="p">,</span> <span class="n">oid_name</span><span class="o">=</span><span class="s2">&quot;IsGroupOf&quot;</span><span class="p">),</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">datumaro_name</span><span class="o">=</span><span class="s2">&quot;is_depiction&quot;</span><span class="p">,</span> <span class="n">oid_name</span><span class="o">=</span><span class="s2">&quot;IsDepiction&quot;</span><span class="p">),</span>
+        <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span><span class="n">datumaro_name</span><span class="o">=</span><span class="s2">&quot;is_inside&quot;</span><span class="p">,</span> <span class="n">oid_name</span><span class="o">=</span><span class="s2">&quot;IsInside&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">MASK_DESCRIPTION_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;MaskPath&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ImageID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LabelName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BoxID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BoxXMin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BoxXMax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BoxYMin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BoxYMax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PredictedIoU&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Clicks&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OpenImagesBase">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">image_meta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span> <span class="o">=</span> <span class="n">path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">assert</span> <span class="n">image_meta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_meta</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_meta</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">image_meta</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_meta</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="n">load_image_meta_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">image_meta</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">image_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="n">load_image_meta_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">has_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
+
+<div class="viewcode-block" id="OpenImagesBase.categories">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesBase.categories">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
+
+
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_csv_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_glob_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">annotation_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">annotation_file</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+
+        <span class="n">class_desc_patterns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;oidv*-class-descriptions.csv&quot;</span><span class="p">,</span>
+            <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_BBOX_FILE_NAME</span><span class="p">,</span>
+            <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">class_desc_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">class_desc_patterns</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="n">pattern</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">class_desc_files</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span>
+                <span class="s2">&quot;Can&#39;t find class description file, the annotations directory does&#39;t contain any of these files&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">class_desc_patterns</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="c1"># In OID v6, the class description file is prefixed with `oidv6-`, whereas</span>
+        <span class="c1"># in the previous versions, it isn&#39;t. We try to find it regardless.</span>
+        <span class="c1"># We use a wildcard so that if, say, OID v7 is released in the future with</span>
+        <span class="c1"># a similar layout as v6, it&#39;s automatically supported.</span>
+        <span class="c1"># If the file doesn&#39;t exist with either name, we&#39;ll fail trying to open</span>
+        <span class="c1"># `class-descriptions.csv`.</span>
+
+        <span class="n">annotation_name</span> <span class="o">=</span> <span class="n">class_desc_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">class_description_reader</span><span class="p">:</span>
+            <span class="c1"># Prior to OID v6, this file didn&#39;t contain a header row.</span>
+            <span class="k">if</span> <span class="n">annotation_name</span> <span class="ow">in</span> <span class="p">{</span>
+                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_BBOX_FILE_NAME</span><span class="p">,</span>
+                <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
+            <span class="p">}:</span>
+                <span class="n">class_description_reader</span><span class="o">.</span><span class="n">fieldnames</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;LabelName&quot;</span><span class="p">,</span> <span class="s2">&quot;DisplayName&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">class_description</span> <span class="ow">in</span> <span class="n">class_description_reader</span><span class="p">:</span>
+                <span class="n">label_name</span> <span class="o">=</span> <span class="n">class_description</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">]</span>
+                <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_categories</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_label_category_parents</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+
+        <span class="n">hierarchy_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">HIERARCHY_FILE_NAME</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">root_node</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">hierarchy_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_parents_from_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Subcategory&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">child_category</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">child_node</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">child_category</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">child_category</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">name</span>
+
+                <span class="n">set_parents_from_node</span><span class="p">(</span><span class="n">child_node</span><span class="p">,</span> <span class="n">child_category</span><span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">root_category</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">root_node</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">])</span>
+        <span class="n">set_parents_from_node</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">root_category</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_paths_by_id</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="c1"># the first component of `path_parts` is the subset name</span>
+            <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span> <span class="n">path</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">images_dir</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">path_parts</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">split_path</span><span class="p">(</span>
+                    <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="p">}</span>
+
+        <span class="n">items_by_id</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">load_from</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_reader</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">image_description</span> <span class="ow">in</span> <span class="n">image_reader</span><span class="p">:</span>
+                    <span class="n">image_id</span> <span class="o">=</span> <span class="n">image_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">items_by_id</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">RepeatedItemError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">)</span>
+
+                    <span class="n">subset</span> <span class="o">=</span> <span class="n">image_description</span><span class="p">[</span><span class="s2">&quot;Subset&quot;</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">_RE_INVALID_PATH_COMPONENT</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">subset</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="n">UnsupportedSubsetNameError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">items_by_id</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> is repeated&quot;</span> <span class="o">%</span> <span class="n">image_id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">items_by_id</span><span class="p">[</span><span class="n">image_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+
+        <span class="c1"># It&#39;s preferable to load the combined image description file,</span>
+        <span class="c1"># because it contains descriptions for training images without human-annotated labels</span>
+        <span class="c1"># (the file specific to the training set doesn&#39;t).</span>
+        <span class="c1"># However, if it&#39;s missing, we&#39;ll try loading subset-specific files instead, so that</span>
+        <span class="c1"># this extractor can be used on individual subsets of the dataset.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">load_from</span><span class="p">(</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">FULL_IMAGE_DESCRIPTION_FILE_NAME</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">SUBSET_IMAGE_DESCRIPTION_FILE_PATTERNS</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                    <span class="n">load_from</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_labels</span><span class="p">(</span><span class="n">items_by_id</span><span class="p">)</span>
+        <span class="n">normalized_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_bboxes</span><span class="p">(</span><span class="n">items_by_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_masks</span><span class="p">(</span><span class="n">items_by_id</span><span class="p">,</span> <span class="n">normalized_coords</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
+        <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_paths_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">image_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Can&#39;t find image for item: </span><span class="si">%s</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;It should be in the &#39;</span><span class="si">%s</span><span class="s2">&#39; directory&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">))</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">item</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_subset_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;oidv6&quot;</span> <span class="k">else</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+
+        <span class="c1"># TODO: implement reading of machine-annotated labels</span>
+
+        <span class="k">for</span> <span class="n">label_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">label_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">label_reader</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">label_description</span> <span class="ow">in</span> <span class="n">label_reader</span><span class="p">:</span>
+                    <span class="n">image_id</span> <span class="o">=</span> <span class="n">label_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                            <span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subset_name</span><span class="p">(</span><span class="n">label_path</span><span class="p">))</span>
+                        <span class="p">)</span>
+
+                    <span class="n">confidence</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">label_description</span><span class="p">[</span><span class="s2">&quot;Confidence&quot;</span><span class="p">])</span>
+
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_description</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">]</span>
+                    <span class="n">label_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">label_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UndefinedLabel</span><span class="p">(</span>
+                            <span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="n">subset</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
+                            <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span>
+                            <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">confidence</span><span class="p">}))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_bboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+
+        <span class="c1"># OID specifies box coordinates in the normalized form, which we have to</span>
+        <span class="c1"># convert to the unnormalized form to fit the Datumaro data model.</span>
+        <span class="c1"># However, we need to temporarily preserve the normalized form as well,</span>
+        <span class="c1"># because we will need it later to match up box and mask annotations.</span>
+        <span class="c1"># So we store each box&#39;s normalized coordinates in this dictionary.</span>
+        <span class="n">normalized_coords</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">bbox_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">bbox_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">bbox_reader</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">bbox_description</span> <span class="ow">in</span> <span class="n">bbox_reader</span><span class="p">:</span>
+                    <span class="n">image_id</span> <span class="o">=</span> <span class="n">bbox_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                            <span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subset_name</span><span class="p">(</span><span class="n">bbox_path</span><span class="p">))</span>
+                        <span class="p">)</span>
+
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">bbox_description</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">]</span>
+                    <span class="n">label_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">label_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UndefinedLabel</span><span class="p">(</span>
+                            <span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="n">subset</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
+                            <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span>
+                            <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+                        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t decode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">x_min_norm</span><span class="p">,</span> <span class="n">x_max_norm</span><span class="p">,</span> <span class="n">y_min_norm</span><span class="p">,</span> <span class="n">y_max_norm</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">bbox_description</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;XMin&quot;</span><span class="p">,</span> <span class="s2">&quot;XMax&quot;</span><span class="p">,</span> <span class="s2">&quot;YMin&quot;</span><span class="p">,</span> <span class="s2">&quot;YMax&quot;</span><span class="p">]</span>
+                    <span class="p">]</span>
+
+                    <span class="n">x_min</span> <span class="o">=</span> <span class="n">x_min_norm</span> <span class="o">*</span> <span class="n">width</span>
+                    <span class="n">x_max</span> <span class="o">=</span> <span class="n">x_max_norm</span> <span class="o">*</span> <span class="n">width</span>
+                    <span class="n">y_min</span> <span class="o">=</span> <span class="n">y_min_norm</span> <span class="o">*</span> <span class="n">height</span>
+                    <span class="n">y_max</span> <span class="o">=</span> <span class="n">y_max_norm</span> <span class="o">*</span> <span class="n">height</span>
+
+                    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bbox_description</span><span class="p">[</span><span class="s2">&quot;Confidence&quot;</span><span class="p">]),</span>
+                    <span class="p">}</span>
+
+                    <span class="k">for</span> <span class="n">bool_attr</span> <span class="ow">in</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_BOOLEAN_ATTRIBUTES</span><span class="p">:</span>
+                        <span class="n">int_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bbox_description</span><span class="p">[</span><span class="n">bool_attr</span><span class="o">.</span><span class="n">oid_name</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">int_value</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">attributes</span><span class="p">[</span><span class="n">bool_attr</span><span class="o">.</span><span class="n">datumaro_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">int_value</span><span class="p">)</span>
+
+                    <span class="c1"># Give each box within an item a distinct group ID,</span>
+                    <span class="c1"># so that we can later group them together with the corresponding masks.</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+                        <span class="n">group</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">group</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">group</span> <span class="o">=</span> <span class="mi">1</span>
+
+                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">Bbox</span><span class="p">(</span>
+                            <span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">x_min</span><span class="p">,</span>
+                            <span class="n">y</span><span class="o">=</span><span class="n">y_min</span><span class="p">,</span>
+                            <span class="n">w</span><span class="o">=</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">,</span>
+                            <span class="n">h</span><span class="o">=</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">,</span>
+                            <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+                            <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
+
+                    <span class="n">normalized_coords</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                        <span class="p">[</span><span class="n">x_min_norm</span><span class="p">,</span> <span class="n">x_max_norm</span><span class="p">,</span> <span class="n">y_min_norm</span><span class="p">,</span> <span class="n">y_max_norm</span><span class="p">]</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">normalized_coords</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">,</span> <span class="n">normalized_coords</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">mask_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">mask_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">mask_reader</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">mask_description</span> <span class="ow">in</span> <span class="n">mask_reader</span><span class="p">:</span>
+                    <span class="n">mask_path</span> <span class="o">=</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;MaskPath&quot;</span><span class="p">]</span>
+                    <span class="n">image_id</span> <span class="o">=</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">_RE_INVALID_PATH_COMPONENT</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">mask_path</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="n">UnsupportedMaskPathError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">,</span> <span class="n">mask_path</span><span class="o">=</span><span class="n">mask_path</span><span class="p">)</span>
+
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">item</span> <span class="o">=</span> <span class="n">items_by_id</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                            <span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_item</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subset_name</span><span class="p">(</span><span class="n">mask_path</span><span class="p">))</span>
+                        <span class="p">)</span>
+
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">]</span>
+                    <span class="n">label_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">label_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UndefinedLabel</span><span class="p">(</span>
+                            <span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="n">subset</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
+                            <span class="n">label_name</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span>
+                            <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span><span class="p">:</span>
+                        <span class="n">image_size</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+                        <span class="n">image_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t decode mask for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+
+                    <span class="c1"># The box IDs are rather useless, because the _box_ annotations</span>
+                    <span class="c1"># don&#39;t include them, so they cannot be used to match masks to boxes.</span>
+                    <span class="c1"># However, it is still desirable to record them, because they are</span>
+                    <span class="c1"># included in the mask file names, so in order to save each mask to the</span>
+                    <span class="c1"># file it was loaded from when saving in-places, we need to know</span>
+                    <span class="c1"># the original box ID.</span>
+                    <span class="n">box_id</span> <span class="o">=</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;BoxID&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">_RE_INVALID_PATH_COMPONENT</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">box_id</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="n">UnsupportedBoxIdError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">box_id</span><span class="o">=</span><span class="n">box_id</span><span class="p">)</span>
+                    <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;box_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">box_id</span>
+
+                    <span class="n">group</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="n">box_coord_fields</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;BoxXMin&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxXMax&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxYMin&quot;</span><span class="p">,</span> <span class="s2">&quot;BoxYMax&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># The original OID has box coordinates for all masks, but</span>
+                    <span class="c1"># a dataset converted from another dataset might not.</span>
+                    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">box_coord_fields</span><span class="p">):</span>
+                        <span class="c1"># Try to find the box annotation corresponding to the</span>
+                        <span class="c1"># current mask.</span>
+                        <span class="n">mask_box_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">box_coord_fields</span><span class="p">])</span>
+
+                        <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span>
+                                <span class="ow">and</span> <span class="n">annotation</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">label_index</span>
+                                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                                    <span class="n">mask_box_coords</span><span class="p">,</span>
+                                    <span class="n">normalized_coords</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">annotation</span><span class="p">)],</span>
+                                    <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                    <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="p">):</span>
+                                <span class="c1"># In the original OID, mask box coordinates are stored</span>
+                                <span class="c1"># with 6 digit precision, hence the tolerance.</span>
+                                <span class="n">group</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">group</span>
+
+                    <span class="k">if</span> <span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;PredictedIoU&quot;</span><span class="p">]:</span>
+                        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;predicted_iou&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mask_description</span><span class="p">[</span><span class="s2">&quot;PredictedIoU&quot;</span><span class="p">])</span>
+
+                    <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">Mask</span><span class="p">(</span>
+                            <span class="n">image</span><span class="o">=</span><span class="n">lazy_image</span><span class="p">(</span>
+                                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span><span class="p">,</span>
+                                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASKS_DIR</span><span class="p">,</span>
+                                    <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
+                                    <span class="n">mask_path</span><span class="p">,</span>
+                                <span class="p">),</span>
+                                <span class="n">loader</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_and_resize_mask</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span><span class="p">),</span>
+                            <span class="p">),</span>
+                            <span class="n">label</span><span class="o">=</span><span class="n">label_index</span><span class="p">,</span>
+                            <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+                            <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_and_resize_mask</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_NEAREST</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resized</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OpenImagesImporter">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="n">POSSIBLE_ANNOTATION_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">FULL_IMAGE_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">SUBSET_IMAGE_DESCRIPTION_FILE_PATTERNS</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="OpenImagesImporter.detect">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.detect">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ann_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">ann_patterns</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">ann_dirs</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ann_dir</span><span class="p">,</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="n">ann_patterns</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
+                    <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">ann_dir</span> <span class="o">+</span> <span class="n">ann_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OpenImagesImporter.find_sources">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.find_sources">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">pattern</span><span class="p">))</span> <span class="ow">or</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">pattern</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">OpenImagesBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="OpenImagesImporter.get_file_extensions">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.get_file_extensions">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">})</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_LazyCsvDictWriter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For annotation files, we only learn that the file is required after</span>
+<span class="sd">    we find at least one occurrence of the corresponding annotation type.</span>
+<span class="sd">    However, it&#39;s convenient to create the writer ahead of time, so that</span>
+<span class="sd">    it can be used in a `with` statement.</span>
+
+<span class="sd">    This class behaves like a csv.DictWriter, but it only creates the file</span>
+<span class="sd">    once the first row is written.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer_manager_factory</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager_factory</span> <span class="o">=</span> <span class="n">writer_manager_factory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">writerow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowdict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager_factory</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">rowdict</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AnnotationWriter</span><span class="p">:</span>
+    <span class="n">_POSSIBLE_ANNOTATION_FILE_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># class description files don&#39;t need to be listed,</span>
+        <span class="c1"># because they are always written</span>
+        <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">FULL_IMAGE_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">SUBSET_IMAGE_DESCRIPTION_FILE_PATTERNS</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+        <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+        <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+
+        <span class="c1"># Write to a temporary file first, to avoid data loss if we&#39;re patching</span>
+        <span class="c1"># an existing dataset and the process is interrupted.</span>
+        <span class="n">temp_file_path</span> <span class="o">=</span> <span class="n">file_path</span> <span class="o">+</span> <span class="s2">&quot;.tmp&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="n">temp_file_path</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+            <span class="n">newline</span><span class="o">=</span><span class="n">newline</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">f</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">temp_file_path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+
+    <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">write_header</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">field_names</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">write_header</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">writer</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_csv_lazy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_LazyCsvDictWriter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_unwritten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">file_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span> <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_POSSIBLE_ANNOTATION_FILE_PATTERNS</span>
+            <span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="OpenImagesExporter">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesExporter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">_AnnotationWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">))</span>
+
+<div class="viewcode-block" id="OpenImagesExporter.patch">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesExporter.patch">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+        <span class="n">annotation_writer</span> <span class="o">=</span> <span class="n">_AnnotationWriter</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
+        <span class="n">converter</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
+        <span class="n">annotation_writer</span><span class="o">.</span><span class="n">remove_unwritten</span><span class="p">()</span>
+
+        <span class="n">images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">),</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">patch</span><span class="o">.</span><span class="n">updated_items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">)</span>
+
+            <span class="n">image_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">images_dir</span><span class="p">,</span> <span class="n">converter</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">subset</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">image_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_categories</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_label_category_parents</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_subsets</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dataset_meta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_meta_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span>
+            <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">V5_CLASS_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
+            <span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">,</span> <span class="s2">&quot;DisplayName&quot;</span><span class="p">],</span>
+            <span class="c1"># no header, since we&#39;re saving it in the V5 format</span>
+            <span class="n">write_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">class_description_writer</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]:</span>
+                <span class="n">class_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;DisplayName&quot;</span><span class="p">:</span> <span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+        <span class="n">all_label_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">hierarchy_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">orphan_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hierarchy_nodes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]:</span>
+            <span class="n">all_label_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">child_node</span> <span class="o">=</span> <span class="n">get_node</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">category</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="n">parent_node</span> <span class="o">=</span> <span class="n">get_node</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+                <span class="n">parent_node</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Subcategory&quot;</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_node</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">orphan_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_node</span><span class="p">)</span>
+
+        <span class="c1"># The hierarchy has to be rooted in a single node. However, there&#39;s</span>
+        <span class="c1"># no guarantee that there exists only one orphan (label without a parent).</span>
+        <span class="c1"># Therefore, we create a fake root node and make it the parent of every</span>
+        <span class="c1"># orphan label.</span>
+        <span class="c1"># This is not a violation of the format, because the original OID does</span>
+        <span class="c1"># the same thing.</span>
+        <span class="n">root_node</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="c1"># Create an OID-like label name that isn&#39;t already used by a real label</span>
+            <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="n">root_name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="k">for</span> <span class="n">root_name</span> <span class="ow">in</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/m/</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">root_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_label_names</span>
+            <span class="p">),</span>
+            <span class="c1"># If an orphan has no children, then it makes no semantic difference</span>
+            <span class="c1"># whether it&#39;s listed in the hierarchy file or not. So strip such nodes</span>
+            <span class="c1"># to avoid recording meaningless data.</span>
+            <span class="s2">&quot;Subcategory&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">node</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">orphan_nodes</span> <span class="k">if</span> <span class="s2">&quot;Subcategory&quot;</span> <span class="ow">in</span> <span class="n">node</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">hierarchy_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">HIERARCHY_FILE_NAME</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">hierarchy_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">hierarchy_file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">hierarchy_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">hierarchy_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
+
+        <span class="n">image_meta</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">_RE_INVALID_PATH_COMPONENT</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">subset_name</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">UnsupportedSubsetNameError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">)</span>
+
+            <span class="n">image_description_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">-images-with-rotation.csv&quot;</span>
+
+            <span class="k">with</span> <span class="p">(</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span>
+                    <span class="n">image_description_name</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGE_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">image_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">LABEL_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">label_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">bbox_description_writer</span><span class="p">,</span>
+                <span class="n">annotation_writer</span><span class="o">.</span><span class="n">open_csv_lazy</span><span class="p">(</span>
+                    <span class="n">subset_name</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">,</span>
+                    <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FIELDS</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">mask_description_writer</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
+                    <span class="n">image_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="s2">&quot;Subset&quot;</span><span class="p">:</span> <span class="n">subset_name</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39; has no image&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_item_annotations</span><span class="p">(</span>
+                        <span class="n">item</span><span class="p">,</span>
+                        <span class="n">label_description_writer</span><span class="p">,</span>
+                        <span class="n">bbox_description_writer</span><span class="p">,</span>
+                        <span class="n">mask_description_writer</span><span class="p">,</span>
+                        <span class="n">label_categories</span><span class="p">,</span>
+                        <span class="n">image_meta</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">image_meta</span><span class="p">:</span>
+            <span class="n">image_meta_file_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span>
+            <span class="p">)</span>
+
+            <span class="n">save_image_meta_file</span><span class="p">(</span><span class="n">image_meta</span><span class="p">,</span> <span class="n">image_meta_file_path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_item_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item</span><span class="p">,</span>
+        <span class="n">label_description_writer</span><span class="p">,</span>
+        <span class="n">bbox_description_writer</span><span class="p">,</span>
+        <span class="n">mask_description_writer</span><span class="p">,</span>
+        <span class="n">label_categories</span><span class="p">,</span>
+        <span class="n">image_meta</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">next_box_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">existing_box_ids</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;box_id&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span>
+            <span class="k">if</span> <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span>
+            <span class="k">if</span> <span class="s2">&quot;box_id&quot;</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">find_instances</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">):</span>
+            <span class="n">instance_box</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">instance</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">instance</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+                    <span class="n">label_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;Confidence&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">image_meta</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+                        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t encode box for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">bbox_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                            <span class="s2">&quot;Confidence&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
+                            <span class="s2">&quot;XMin&quot;</span><span class="p">:</span> <span class="n">annotation</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
+                            <span class="s2">&quot;YMin&quot;</span><span class="p">:</span> <span class="n">annotation</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span>
+                            <span class="s2">&quot;XMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
+                            <span class="s2">&quot;YMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">annotation</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span>
+                            <span class="o">**</span><span class="p">{</span>
+                                <span class="n">bool_attr</span><span class="o">.</span><span class="n">oid_name</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bool_attr</span><span class="o">.</span><span class="n">datumaro_name</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                                <span class="k">for</span> <span class="n">bool_attr</span> <span class="ow">in</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">BBOX_BOOLEAN_ATTRIBUTES</span>
+                            <span class="p">},</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="n">annotation</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+                    <span class="n">mask_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASKS_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+
+                    <span class="n">box_id_str</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;box_id&quot;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">box_id_str</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">_RE_INVALID_PATH_COMPONENT</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">box_id_str</span><span class="p">):</span>
+                            <span class="k">raise</span> <span class="n">UnsupportedBoxIdError</span><span class="p">(</span><span class="n">item_id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">box_id</span><span class="o">=</span><span class="n">box_id_str</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># find a box ID that isn&#39;t used in any other annotations</span>
+                        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                            <span class="n">box_id_str</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">next_box_id</span><span class="p">,</span> <span class="s2">&quot;08x&quot;</span><span class="p">)</span>
+                            <span class="n">next_box_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">if</span> <span class="n">box_id_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_box_ids</span><span class="p">:</span>
+                                <span class="k">break</span>
+
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">annotation</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">mask_file_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">.png&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                        <span class="n">make_file_name</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                        <span class="n">make_file_name</span><span class="p">(</span><span class="n">label_name</span><span class="p">),</span>
+                        <span class="n">box_id_str</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="n">box_coords</span> <span class="o">=</span> <span class="p">{}</span>
+
+                    <span class="k">if</span> <span class="n">instance_box</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">image_meta</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+                            <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
+
+                            <span class="n">box_coords</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="s2">&quot;BoxXMin&quot;</span><span class="p">:</span> <span class="n">instance_box</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
+                                <span class="s2">&quot;BoxXMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">instance_box</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">instance_box</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span>
+                                <span class="s2">&quot;BoxYMin&quot;</span><span class="p">:</span> <span class="n">instance_box</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span>
+                                <span class="s2">&quot;BoxYMax&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">instance_box</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">instance_box</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="n">height</span><span class="p">,</span>
+                            <span class="p">}</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="s2">&quot;Can&#39;t encode box coordinates for a mask for item &#39;</span><span class="si">%s</span><span class="s2">&#39; due to missing image file&quot;</span><span class="p">,</span>
+                                <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="p">)</span>
+
+                    <span class="n">mask_description_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;MaskPath&quot;</span><span class="p">:</span> <span class="n">mask_file_name</span><span class="p">,</span>
+                            <span class="s2">&quot;ImageID&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                            <span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">label_name</span><span class="p">,</span>
+                            <span class="s2">&quot;BoxID&quot;</span><span class="p">:</span> <span class="n">box_id_str</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">box_coords</span><span class="p">,</span>
+                            <span class="s2">&quot;PredictedIoU&quot;</span><span class="p">:</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;predicted_iou&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+
+                    <span class="n">save_image</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mask_dir</span><span class="p">,</span> <span class="n">mask_file_name</span><span class="p">),</span> <span class="n">annotation</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">create_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
