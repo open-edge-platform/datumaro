@@ -336,10 +336,12 @@ class LabelShapeConverter(Converter):
     Both change simultaneously:
       - ``dtype → List(List(dtype))``: wrap scalar twice
 
-    Flag swap (no data change - semantic reinterpretation):
-      - ``is_list=True, multi_label=False`` ↔ ``is_list=False, multi_label=True``:
+    Flag swap:
+      - ``is_list=True, multi_label=False``-> ``is_list=False, multi_label=True``:
+        both map to ``List(dtype)``; removes duplicate labels
+      - ``is_list=False, multi_label=True``-> ``is_list=True, multi_label=False``:
         both map to ``List(dtype)``; the conversion is a no-op on the data.
-
+        
     Lossy conversions (keep last element, logs a warning):
       - ``List(dtype) → dtype`` (multi_label or is_list reduction): keeps the last element only
     """
