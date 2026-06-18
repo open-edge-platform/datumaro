@@ -779,7 +779,7 @@ def test_label_dtype_converter_multi_label_and_list():
         # --- both flags change (non-lossy: both expanding) ---
         pytest.param(False, False, True,  True,  {"label": [5]},                      pl.UInt32(),                  pl.List(pl.List(pl.UInt32)),      [[5]],       id="both_scalar_to_list_list"),  # noqa: E501
         # --- flag swap (no-op semantic reinterpretation) ---
-        pytest.param(False, True,  True,  False, {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),         pl.List(pl.UInt32),               [1, 2, 3],   id="swap_is_list_to_multi_label"),  # noqa: E501
+        pytest.param(False, True,  True,  False, {"label": [[3, 1, 2, 2, 1]]},           pl.List(pl.UInt32()),         pl.List(pl.UInt32),               [3, 1, 2],   id="swap_is_list_to_multi_label_dedup"),  # noqa: E501
         pytest.param(True,  False, False, True,  {"label": [[1, 2, 3]]},              pl.List(pl.UInt32()),         pl.List(pl.UInt32),               [1, 2, 3],   id="swap_multi_label_to_is_list"),  # noqa: E501
     ],
 )  # fmt: on  noqa: RUF028

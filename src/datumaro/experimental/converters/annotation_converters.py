@@ -336,8 +336,10 @@ class LabelShapeConverter(Converter):
     Both change simultaneously:
       - ``dtype → List(List(dtype))``: wrap scalar twice
 
-    Flag swap (no data change - semantic reinterpretation):
-      - ``is_list=True, multi_label=False`` ↔ ``is_list=False, multi_label=True``:
+    Flag swap:
+      - ``is_list=True, multi_label=False``-> ``is_list=False, multi_label=True``:
+        both map to ``List(dtype)``; removes duplicate labels
+      - ``is_list=False, multi_label=True``-> ``is_list=True, multi_label=False``:
         both map to ``List(dtype)``; the conversion is a no-op on the data.
 
     Lossy conversions (keep last element, logs a warning):
@@ -438,8 +440,8 @@ class LabelShapeConverter(Converter):
                 # List(dtype) [multi_label] → List(dtype) [is_list]: no-op rename
                 return df.with_columns(pl.col(input_col).alias(output_col))
             if not input_multi and output_multi and input_is_list and not output_is_list:
-                # List(dtype) [is_list] → List(dtype) [multi_label]: no-op rename
-                return df.with_columns(pl.col(input_col).alias(output_col))
+                # List(dtype) [is_list] → List(dtype) [multi_label]: ensure uniqueness
+                return df.with_columns(pl.col(input_col).list.unique(maintain_order=True).alias(output_col))
 
         # Step 1: handle multi_label conversion (inner dimension)
         if input_multi and not output_multi:
