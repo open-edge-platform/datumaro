@@ -164,7 +164,8 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
     """
     value_type = type(value)  # type: ignore
 
-    _register_converters_if_needed()
+    if value_type not in _to_numpy_converters and value_type not in (int, float, str, bool):
+        _register_converters_if_needed()
 
     if value_type in _to_numpy_converters:
         numpy_value = _to_numpy_converters[value_type](value)
@@ -265,14 +266,15 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     if polars_data is None:
         return None
 
-    _register_converters_if_needed()
+    origin_type = get_origin(target_type)
+    if target_type not in _from_polars_converters and origin_type not in _from_polars_converters:
+        _register_converters_if_needed()
 
     # Handle direct type matches first
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
 
     # Check if target_type is a generic type (e.g., np.ndarray[Any, np.dtype[np.float32]])
-    origin_type = get_origin(target_type)
     if origin_type is not None and origin_type in _from_polars_converters:
         # Handle typed numpy arrays and other generic types
         result = _from_polars_converters[origin_type](polars_data)
@@ -499,7 +501,8 @@ def convert_image_type(image: Any, target_type: type) -> Any:
         if target_type == np.ndarray:
             return numpy_image
 
-        _register_converters_if_needed()
+        if target_type not in _from_polars_converters:
+            _register_torch_converters()
         # Convert numpy to target via polars-style conversion
         return _from_polars_converters[target_type](numpy_image)
 
