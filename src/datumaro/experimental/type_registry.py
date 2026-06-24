@@ -164,6 +164,9 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
     """
     value_type = type(value)  # type: ignore
 
+    if value_type not in _to_numpy_converters and value_type not in (int, float, str, bool):
+        _register_converters_if_needed()
+
     if value_type in _to_numpy_converters:
         numpy_value = _to_numpy_converters[value_type](value)
 
@@ -263,12 +266,15 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     if polars_data is None:
         return None
 
+    origin_type = get_origin(target_type)
+    if target_type not in _from_polars_converters and origin_type not in _from_polars_converters:
+        _register_converters_if_needed()
+
     # Handle direct type matches first
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
 
     # Check if target_type is a generic type (e.g., np.ndarray[Any, np.dtype[np.float32]])
-    origin_type = get_origin(target_type)
     if origin_type is not None and origin_type in _from_polars_converters:
         # Handle typed numpy arrays and other generic types
         result = _from_polars_converters[origin_type](polars_data)
@@ -315,32 +321,49 @@ def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type:
     raise TypeError(f"No converter registered for type {target_type}")
 
 
-# Register PyTorch converters if available
-try:
-    import torch  # pyright: ignore[reportMissingImports]
+def _register_torch_converters() -> None:
+    if getattr(_register_torch_converters, "_done", False):
+        return
+    # Register PyTorch converters if available
+    try:
+        import torch  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(torch.Tensor, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-    register_from_polars_converter(torch.Tensor, lambda x: torch.tensor(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
-except ImportError:
-    pass
+        register_numpy_converter(torch.Tensor, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        register_from_polars_converter(torch.Tensor, lambda x: torch.tensor(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    except ImportError:
+        pass
+    finally:
+        _register_torch_converters._done = True  # type: ignore[attr-defined]
 
-# Register torchvision converters if available
-try:
-    from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(tv_tensors.Image, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+def _register_torchvision_converters() -> None:
+    if getattr(_register_torchvision_converters, "_done", False):
+        return
+    # Register torchvision converters if available
+    try:
+        from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        register_numpy_converter(tv_tensors.Image, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_numpy_converter(tv_tensors.Mask, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        register_numpy_converter(tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    # Conversion from Polars to tv_tensors BoundingBoxes and Keypoints are not supported
-    # because tv_tensors BoundingBoxes and Keypoints require the image size which is not available during conversion.
-    register_from_polars_converter(tv_tensors.Image, lambda x: tv_tensors.Image(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+        register_numpy_converter(tv_tensors.Mask, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_from_polars_converter(tv_tensors.Mask, lambda x: tv_tensors.Mask(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
-except ImportError:
-    pass
+        # Conversion from Polars to tv_tensors BoundingBoxes and Keypoints are not supported
+        # because tv_tensors BoundingBoxes and Keypoints require the image size which is not available during
+        # conversion.
+        register_from_polars_converter(tv_tensors.Image, lambda x: tv_tensors.Image(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+
+        register_from_polars_converter(tv_tensors.Mask, lambda x: tv_tensors.Mask(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    except ImportError:
+        pass
+    finally:
+        _register_torchvision_converters._done = True  # type: ignore[attr-defined]
+
+
+def _register_converters_if_needed() -> None:
+    _register_torch_converters()
+    _register_torchvision_converters()
 
 
 def is_tv_tensors_bounding_boxes(value: Any) -> bool:
@@ -477,6 +500,9 @@ def convert_image_type(image: Any, target_type: type) -> Any:
         # Then convert from numpy to target type
         if target_type == np.ndarray:
             return numpy_image
+
+        if target_type not in _from_polars_converters:
+            _register_torch_converters()
         # Convert numpy to target via polars-style conversion
         return _from_polars_converters[target_type](numpy_image)
 
@@ -490,6 +516,7 @@ def get_supported_image_types() -> list[type]:
     Returns:
         List of supported image types
     """
+    _register_converters_if_needed()
     supported_types = [np.ndarray]  # numpy is always supported
 
     # Add conditionally available types
