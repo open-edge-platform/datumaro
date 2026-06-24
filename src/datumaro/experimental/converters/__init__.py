@@ -49,6 +49,8 @@ from datumaro.experimental.converters.mask_converters import (
     MaskChannelsFirstConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
+    polygons_to_instance_masks,
+    polygons_to_mask,
 )
 from datumaro.experimental.converters.media_converters import (
     ImageInfoToMediaInfoConverter,
@@ -162,4 +164,6 @@ __all__ = [
     "copy_columns_with_shape",
     "find_conversion_path",
     "list_eval_ref",
+    "polygons_to_instance_masks",
+    "polygons_to_mask",
 ]

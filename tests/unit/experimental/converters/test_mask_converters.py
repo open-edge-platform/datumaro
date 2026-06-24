@@ -12,6 +12,7 @@ from datumaro.experimental.converters import (
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
 )
+from datumaro.experimental.converters.mask_converters import polygons_to_instance_masks, polygons_to_mask
 from datumaro.experimental.fields import (
     ImageInfoField,
     InstanceMaskCallableField,
@@ -501,3 +502,207 @@ def test_mask_callable_to_mask_converter_validation():
     # Check that it raises error for invalid shape
     with pytest.raises(ValueError, match="Mask array must be 2D \(H,W\), got shape \(1, 2, 2\)"):
         converter_instance.convert(df)
+
+
+def test_polygon_to_instance_mask_converter_uint8_dtype():
+    """Test instance mask converter with UInt8 output dtype (no boolean cast path)."""
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series([polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 80, "height": 80}],
+        }
+    )
+
+    converter_instance = PolygonToInstanceMaskConverter()
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(converter_instance, "input_image_info", AttributeSpec(name="image_info", field=ImageInfoField()))
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=InstanceMaskField(dtype=pl.UInt8())),
+    )
+    converter_instance.filter_output_spec()
+
+    result_df = converter_instance.convert(df)
+
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    assert masks.shape == (2, 80, 80)
+    assert masks.dtype == np.uint8
+    assert masks[0, 15, 15] == 1  # Inside triangle
+    assert masks[0, 5, 5] == 0  # Outside triangle
+    assert masks[1, 35, 35] == 1  # Inside rectangle
+    assert not np.any(masks[0] & masks[1])
+
+
+def test_polygon_to_instance_mask_converter_uint16_dtype():
+    """Test instance mask converter with UInt16 output dtype to verify proper casting."""
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+
+    polygon_series = pl.Series([polygon_coords1], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 50, "height": 50}],
+        }
+    )
+
+    converter_instance = PolygonToInstanceMaskConverter()
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(converter_instance, "input_image_info", AttributeSpec(name="image_info", field=ImageInfoField()))
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=InstanceMaskField(dtype=pl.UInt16())),
+    )
+    converter_instance.filter_output_spec()
+
+    result_df = converter_instance.convert(df)
+
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    assert masks.shape == (1, 50, 50)
+    assert masks.dtype == np.uint16
+    assert masks[0, 15, 15] == 1  # Inside triangle
+    assert masks[0, 5, 5] == 0  # Outside
+
+
+def test_polygon_to_instance_mask_converter_multi_sample_batch():
+    """Test instance mask converter with multiple samples in a single DataFrame."""
+    poly1 = pl.Series(
+        [[[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]],
+        dtype=pl.List(pl.Array(pl.Float32, 2)),
+    )
+    poly2 = pl.Series(
+        [[[30.0, 30.0], [50.0, 30.0], [50.0, 50.0], [30.0, 50.0]]],
+        dtype=pl.List(pl.Array(pl.Float32, 2)),
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [poly1, poly2],
+            "image_info": [{"width": 60, "height": 60}, {"width": 60, "height": 60}],
+        }
+    )
+
+    converter_instance = PolygonToInstanceMaskConverter()
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(converter_instance, "input_image_info", AttributeSpec(name="image_info", field=ImageInfoField()))
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=InstanceMaskField(dtype=pl.Boolean())),
+    )
+    converter_instance.filter_output_spec()
+
+    result_df = converter_instance.convert(df)
+
+    # Check first sample (triangle)
+    mask1 = np.array(result_df["instance_mask"][0]).reshape(result_df["instance_mask_shape"][0])
+    assert mask1.shape == (1, 60, 60)
+    assert mask1[0, 15, 15]  # Inside triangle
+
+    # Check second sample (rectangle)
+    mask2 = np.array(result_df["instance_mask"][1]).reshape(result_df["instance_mask_shape"][1])
+    assert mask2.shape == (1, 60, 60)
+    assert mask2[0, 40, 40]  # Inside rectangle
+    assert not mask2[0, 5, 5]  # Outside rectangle
+
+
+# ---------------------------------------------------------------------------
+# Tests for generating masks at a different size than the image
+# ---------------------------------------------------------------------------
+
+
+def test_polygons_to_mask_default_size_matches_image():
+    """Without mask_size the mask matches the image dimensions."""
+    # Square polygon covering the left/top quadrant of a 20x20 image.
+    polygons = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]])]
+
+    mask_data, shape = polygons_to_mask(polygons, [0], (20, 20))
+    mask = mask_data.reshape(shape)
+
+    assert shape == [20, 20]
+    assert mask[5, 5] == 1  # Inside the square (label 0 -> stored as 1)
+    assert mask[15, 15] == 0  # Background
+
+
+def test_polygons_to_mask_smaller_than_image():
+    """A smaller mask scales the polygon coordinates down accordingly."""
+    polygons = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]])]
+
+    mask_data, shape = polygons_to_mask(polygons, [0], (20, 20), mask_size=(10, 10))
+    mask = mask_data.reshape(shape)
+
+    assert shape == [10, 10]
+    # The 10x10 square in a 20x20 image scales to a 5x5 square in a 10x10 mask.
+    assert mask[2, 2] == 1  # Inside the scaled square
+    assert mask[8, 8] == 0  # Background (outside scaled square)
+
+
+def test_polygons_to_mask_larger_than_image():
+    """A larger mask scales the polygon coordinates up accordingly."""
+    polygons = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]])]
+
+    mask_data, shape = polygons_to_mask(polygons, [0], (20, 20), mask_size=(40, 40))
+    mask = mask_data.reshape(shape)
+
+    assert shape == [40, 40]
+    # The 10x10 square scales to a 20x20 square in a 40x40 mask.
+    assert mask[10, 10] == 1  # Inside the scaled-up square
+    assert mask[30, 30] == 0  # Background
+
+
+def test_polygons_to_mask_non_uniform_size():
+    """Width and height can be scaled independently."""
+    polygons = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]])]
+
+    mask_data, shape = polygons_to_mask(polygons, [0], (20, 20), mask_size=(40, 10))
+    mask = mask_data.reshape(shape)
+
+    assert shape == [10, 40]  # [height, width]
+    # x scales by 2 (20->40), y scales by 0.5 (20->10): square becomes 20 wide, 5 tall.
+    assert mask[2, 10] == 1  # Inside the stretched square
+    assert mask[8, 30] == 0  # Background
+
+
+def test_polygons_to_instance_masks_custom_size():
+    """Instance masks can also be rasterized at a different size than the image."""
+    polygons = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]])]
+
+    mask_data, shape = polygons_to_instance_masks(polygons, (20, 20), mask_size=(40, 40))
+    masks = mask_data.reshape(shape)
+
+    assert shape == [1, 40, 40]
+    assert masks[0, 10, 10] == 1  # Inside the scaled-up instance
+    assert masks[0, 35, 35] == 0  # Background
+
+
+def test_polygons_to_instance_masks_empty_custom_size():
+    """An empty polygon list still respects the requested mask size."""
+    mask_data, shape = polygons_to_instance_masks([], (20, 20), mask_size=(30, 15))
+
+    assert shape == [0, 15, 30]
+    assert mask_data.size == 0
