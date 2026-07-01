@@ -3,6 +3,7 @@ on: [pull_request]
 
 permissions:
   contents: read
+  pull-requests: write # comment PR on failure
 
 jobs:
   dependency-review:
@@ -26,3 +27,5 @@ jobs:
           persist-credentials: false
       - name: "Dependency Review"
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          config-file: "./.github/dependency_review_config.yml"

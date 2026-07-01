@@ -1,0 +1,42 @@
+fail-on-severity: "low"
+comment-summary-in-pr: on-failure
+deny-licenses:
+  - GPL-1.0-only
+  - GPL-1.0-or-later
+  - GPL-2.0-only
+  - GPL-2.0-or-later
+  - GPL-2.0
+  - GPL-3.0-only
+  - GPL-3.0-or-later
+  - GPL-3.0
+  - AGPL-1.0-only
+  - AGPL-1.0-or-later
+  - AGPL-1.0
+  - AGPL-3.0-only
+  - AGPL-3.0-or-later
+  - AGPL-3.0
+allow-dependencies-licenses:
+  # All packages below are official NVIDIA libraries published on PyPI by NVIDIA Inc.
+  # full license text is available inside each wheel's .dist-info/licenses/ directory
+  # datumaro does not bundle or redistribute them
+  #
+  # Packages covered by the CUDA Toolkit EULA
+  # https://docs.nvidia.com/cuda/eula/index.html#attachment-a
+  # and separate NVIDIA proprietary licenses available inside each wheel
+  - pkg:pypi/nvidia-cuda-runtime
+  - pkg:pypi/nvidia-cufft
+  - pkg:pypi/nvidia-cublas
+  - pkg:pypi/nvidia-cusparse
+  - pkg:pypi/nvidia-cusolver
+  - pkg:pypi/nvidia-curand
+  - pkg:pypi/nvidia-cuda-nvrtc
+  - pkg:pypi/nvidia-nvjitlink
+  - pkg:pypi/nvidia-cuda-cupti
+  - pkg:pypi/nvidia-nvtx
+  - pkg:pypi/nvidia-cufile
+  - pkg:pypi/cuda-toolkit
+  - pkg:pypi/nvidia-nccl-cu13
+  - pkg:pypi/nvidia-cudnn-cu13
+  - pkg:pypi/nvidia-nvshmem-cu13
+license-check: true
+vulnerability-check: true

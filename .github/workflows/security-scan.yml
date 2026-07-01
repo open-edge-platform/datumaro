@@ -51,7 +51,7 @@ jobs:
           persist-credentials: false
 
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
+        uses: open-edge-platform/geti-ci/actions/zizmor@0bed754fc7db24b5f9f15e7ead2eb4acdb0c7263 # zizmor/v0.1.2
         with:
           severity-level: "LOW"
           confidence-level: "LOW"
@@ -68,7 +68,7 @@ jobs:
       - *checkout
 
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
+        uses: open-edge-platform/geti-ci/actions/bandit@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d # bandit/v0.1.1
         with:
           severity-level: "LOW"
           confidence-level: "LOW"
@@ -93,7 +93,7 @@ jobs:
           scan_type: "fs"
           scan-scope: all
           severity: LOW
-          scanners: "vuln,secret,config"
+          scanners: "secret,config"
           format: "sarif"
           timeout: "15m"
           ignore_unfixed: "false"
