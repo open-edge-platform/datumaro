@@ -95,7 +95,7 @@ def _build_image_index(
         iterable = image_paths
     else:
         iterable = find_images(str(images_dir))
-    for image_path in iterable:
+    for image_path in sorted(iterable):
         path = Path(image_path) if isinstance(image_path, str) else image_path
         name = path.name
         start = 0
