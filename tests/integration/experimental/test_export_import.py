@@ -722,6 +722,105 @@ def test_import_dataset_with_instance_masks(tmp_path):
     assert mask1[10, 10] == 200  # Second mask
 
 
+def _count_path_glob_calls(monkeypatch) -> dict[str, int]:
+    """Patch ``Path.glob`` to count invocations for the duration of a test.
+
+    Returns a mutable dict with a ``"count"`` key that callers can reset
+    between measurements (e.g. before each ``import_dataset`` call).
+    """
+    counters = {"count": 0}
+    original_glob = Path.glob
+
+    def counting_glob(self, *args, **kwargs):
+        counters["count"] += 1
+        return original_glob(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "glob", counting_glob)
+    return counters
+
+
+def test_import_image_path_field_does_not_rescan_directory_per_row(tmp_path, monkeypatch):
+    """Regression test for a perf bug where resolving ``ImagePathField``
+    values called ``Path.glob()`` once per row, rescanning the entire images
+    directory on every call. On a ~100k-image real-world dataset this made
+    loading take roughly two hours instead of seconds (O(rows * files)
+    instead of O(files)). ``Path.glob()`` call count must not scale with the
+    number of rows.
+    """
+
+    class PathSample(Sample):
+        image_path: str = image_path_field()
+        label: int = label_field()
+
+    counters = _count_path_glob_calls(monkeypatch)
+
+    def build_and_import(num_samples: int) -> int:
+        source_dir = tmp_path / f"source_{num_samples}"
+        source_dir.mkdir()
+        dataset = Dataset(PathSample, categories={"label": LABEL_CATEGORIES})
+        for i in range(num_samples):
+            img_path = source_dir / f"img_{i}.png"
+            PILImage.fromarray(np.zeros((4, 4, 3), dtype=np.uint8)).save(img_path)
+            dataset.append(PathSample(image_path=str(img_path), label=1))
+
+        export_dir = tmp_path / f"export_{num_samples}"
+        export_dataset(dataset, export_dir, export_media=ExportMode.COPY, as_zip=False)
+
+        counters["count"] = 0
+        import_dataset(export_dir, dtype=PathSample)
+        return counters["count"]
+
+    small_calls = build_and_import(5)
+    large_calls = build_and_import(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of rows ({small_calls} -> {large_calls} "
+        "for 5 -> 50 rows); expected a constant, row-count-independent number of calls. This "
+        "indicates the O(rows * files) per-row directory rescan regression has returned."
+    )
+
+
+def test_import_instance_mask_field_does_not_rescan_directory_per_row(tmp_path, monkeypatch):
+    """Regression test for the callable-field branch of the same perf bug:
+    resolving ``{field}_{idx:06d}.*`` mask files must build a single index of
+    the images directory rather than calling ``Path.glob()`` once per row.
+    """
+
+    class MaskSample(Sample):
+        mask: Callable[[], np.ndarray] = instance_mask_callable_field()
+        label: int = label_field()
+
+    def make_mask(idx):
+        def load_mask():
+            m = np.zeros((6, 6), dtype=np.uint8)
+            m[:, :] = (idx % 250) + 1
+            return m
+
+        return load_mask
+
+    counters = _count_path_glob_calls(monkeypatch)
+
+    def build_and_import(num_samples: int) -> int:
+        dataset = Dataset(MaskSample, categories={"label": LABEL_CATEGORIES, "mask": MASK_CATEGORIES})
+        for i in range(num_samples):
+            dataset.append(MaskSample(mask=make_mask(i), label=1))
+
+        export_dir = tmp_path / f"mask_export_{num_samples}"
+        export_dataset(dataset, export_dir, export_media=ExportMode.COPY, as_zip=False)
+
+        counters["count"] = 0
+        import_dataset(export_dir, dtype=MaskSample)
+        return counters["count"]
+
+    small_calls = build_and_import(5)
+    large_calls = build_and_import(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of rows ({small_calls} -> {large_calls} "
+        "for 5 -> 50 rows) when resolving callable-field mask files."
+    )
+
+
 def test_import_missing_metadata_raises_error(tmp_path):
     """Test that an empty directory raises ValueError when format cannot be detected."""
 

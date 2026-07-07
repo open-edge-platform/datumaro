@@ -153,6 +153,76 @@ def test_load_voc_dataset_raises_on_missing_root():
         load_voc_dataset(root_dir="/nonexistent/path")
 
 
+def _create_voc_structure_with_n_images(root: Path, num_images: int) -> None:
+    """Create a minimal standard-layout VOC dataset with N images.
+
+    Unlike :func:`_create_voc_structure` (which hand-crafts two richly
+    annotated samples for content-correctness tests), this generates a
+    variable number of minimal placeholder samples, for tests that need to
+    vary the dataset size (e.g. performance regression tests).
+    """
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    image_ids = [f"img{i:04d}" for i in range(num_images)]
+    for image_id in image_ids:
+        _create_test_image(root / "JPEGImages" / f"{image_id}.jpg")
+        (root / "Annotations" / f"{image_id}.xml").write_text("""
+<annotation>
+    <size>
+        <width>64</width>
+        <height>48</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+        """)
+
+    (root / "ImageSets" / "Main" / "train.txt").write_text("\n".join(image_ids) + "\n")
+
+
+def test_load_voc_dataset_does_not_rescan_directory_per_image(tmp_path: Path, monkeypatch):
+    """Regression test for a perf bug where resolving each VOC sample's image
+    file called ``Path.glob()`` once per image, rescanning the entire images
+    directory on every call (O(images * files) overall - on large datasets
+    this made loading take hours instead of seconds). ``Path.glob()`` call
+    count must not scale with the number of images in the dataset.
+    """
+    counters = {"count": 0}
+    original_glob = Path.glob
+
+    def counting_glob(self, *args, **kwargs):
+        counters["count"] += 1
+        return original_glob(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "glob", counting_glob)
+
+    def build_and_load(num_images: int) -> int:
+        root = tmp_path / f"voc_{num_images}"
+        _create_voc_structure_with_n_images(root, num_images)
+        counters["count"] = 0
+        dataset = load_voc_dataset(root_dir=str(root))
+        assert len(dataset) == num_images
+        return counters["count"]
+
+    small_calls = build_and_load(5)
+    large_calls = build_and_load(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of images ({small_calls} -> {large_calls} "
+        "for 5 -> 50 images); expected a constant, image-count-independent number of calls. This "
+        "indicates the O(images * files) per-image directory rescan regression has returned."
+    )
+
+
 def test_load_voc_dataset_from_simple_layout(tmp_path: Path):
     """Test loading VOC dataset from simple images + annotations directories."""
     images_dir = tmp_path / "images"
@@ -186,6 +256,65 @@ def test_load_voc_dataset_from_simple_layout(tmp_path: Path):
     )
 
     assert len(dataset) == 1
+
+
+def test_load_voc_dataset_simple_layout_does_not_rescan_directory_per_image(tmp_path: Path, monkeypatch):
+    """Same regression test as
+    ``test_load_voc_dataset_does_not_rescan_directory_per_image`` but for the
+    "simple" images+annotations layout (``_load_voc_simple``), which builds
+    its own separate ``VocLoadContext``.
+    """
+    counters = {"count": 0}
+    original_glob = Path.glob
+
+    def counting_glob(self, *args, **kwargs):
+        counters["count"] += 1
+        return original_glob(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "glob", counting_glob)
+
+    def build_and_load(num_images: int) -> int:
+        images_dir = tmp_path / f"simple_images_{num_images}"
+        annotations_dir = tmp_path / f"simple_annotations_{num_images}"
+        images_dir.mkdir()
+        annotations_dir.mkdir()
+
+        for i in range(num_images):
+            image_id = f"img{i:04d}"
+            _create_test_image(images_dir / f"{image_id}.jpg")
+            (annotations_dir / f"{image_id}.xml").write_text("""
+<annotation>
+    <size>
+        <width>64</width>
+        <height>48</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+            """)
+
+        counters["count"] = 0
+        dataset = load_voc_dataset(
+            images_dir_path=str(images_dir),
+            annotations_dir_path=str(annotations_dir),
+        )
+        assert len(dataset) == num_images
+        return counters["count"]
+
+    small_calls = build_and_load(5)
+    large_calls = build_and_load(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of images ({small_calls} -> {large_calls} "
+        "for 5 -> 50 images) in the simple-layout VOC loader."
+    )
 
 
 # ==============================

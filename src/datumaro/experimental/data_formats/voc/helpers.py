@@ -62,6 +62,23 @@ def _find_image_file(images_dir: Path, stem: str) -> Path | None:
     return None
 
 
+def _build_image_index(images_dir: Path) -> dict[str, Path]:
+    """Build a one-time stem -> path lookup for all images in a directory.
+
+    ``_find_image_file`` calls :meth:`Path.glob` for a single stem, which
+    rescans the entire directory every time it's invoked. Calling it once
+    per sample (as ``_create_sample_from_annotation`` does for every image in
+    the dataset) makes loading an O(images * files) operation, which becomes
+    prohibitively slow for large datasets. Building this index once (a single
+    directory scan) and reusing it for every sample makes loading O(files).
+    """
+    index: dict[str, Path] = {}
+    for image_path in find_images(str(images_dir)):
+        path = Path(image_path)
+        index.setdefault(path.stem, path)
+    return index
+
+
 def _parse_voc_labelmap(labelmap_path: Path) -> list[str]:
     """
     Parse a VOC labelmap file.
@@ -454,6 +471,10 @@ class VocLoadContext:
     segmentation_class_dir: Path | None = None
     segmentation_object_dir: Path | None = None
     colormap: dict[tuple[int, int, int], int] | None = None
+    images_index: dict[str, Path] | None = None
+    """Pre-built stem -> path lookup for ``images_dir`` (see
+    :func:`_build_image_index`). When set, avoids re-globbing the directory
+    for every sample in :func:`_create_sample_from_annotation`."""
 
 
 def _create_sample_from_annotation(
@@ -472,8 +493,11 @@ def _create_sample_from_annotation(
             ImageSets/Main classification files. When the XML annotation does
             not contain any objects these are used as image-level labels.
     """
-    # Find image file
-    image_path = _find_image_file(ctx.images_dir, image_id)
+    # Find image file: prefer the pre-built index (O(1)) over re-globbing
+    # the directory (O(files)) for every sample.
+    image_path = ctx.images_index.get(image_id) if ctx.images_index is not None else None
+    if image_path is None:
+        image_path = _find_image_file(ctx.images_dir, image_id)
     if image_path is None:
         logger.warning("Image not found for ID '%s', skipping", image_id)
         return None
@@ -637,6 +661,7 @@ def _load_voc_from_imagesets(root_path: Path, categories: LabelCategories) -> li
         segmentation_class_dir=segmentation_class_dir,
         segmentation_object_dir=segmentation_object_dir,
         colormap=colormap,
+        images_index=_build_image_index(images_dir),
     )
 
     subsets = _detect_voc_subsets(root_path)
@@ -662,13 +687,15 @@ def _load_voc_simple(
     if not images_dir.exists():
         raise FileNotFoundError(f"Images directory not found: {images_dir}")
 
+    image_files = list(find_images(str(images_dir)))
+    images_index = {Path(image_path).stem: Path(image_path) for image_path in image_files}
+
     ctx = VocLoadContext(
         images_dir=images_dir,
         annotations_dir=annotations_dir,
         categories=categories,
+        images_index=images_index,
     )
-
-    image_files = list(find_images(str(images_dir)))
 
     for image_path in image_files:
         image_id = Path(image_path).stem

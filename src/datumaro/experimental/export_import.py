@@ -1175,24 +1175,59 @@ def _make_image_loader(path: Path):
     return load_image
 
 
+def _build_index_based_lookup(field_name: str, images_base_dir: Path) -> dict[int, Path]:
+    """Build a one-time row-index lookup for a field's index-named files.
+
+    Scans ``images_base_dir`` a single time for files matching the
+    ``{field_name}_{idx:06d}.*`` naming convention (used by callable fields
+    such as generated masks) and returns a mapping from row index to the
+    resolved file path.
+
+    This is built once per field rather than re-globbing the directory for
+    every row: calling :meth:`Path.glob` inside a per-row loop rescans the
+    entire directory on every call, which is O(rows * files) overall and
+    becomes prohibitively slow for large datasets (e.g. tens of thousands of
+    images can take hours). Building the lookup once is O(files).
+    """
+    lookup: dict[int, Path] = {}
+    prefix = f"{field_name}_"
+    for candidate in sorted(images_base_dir.glob(f"{prefix}*")):
+        idx_part = candidate.stem[len(prefix) :]
+        if not idx_part.isdigit():
+            continue
+        idx = int(idx_part)
+        # Require the canonical zero-padded (min-width 6) form, so this only
+        # recognizes filenames the exporter itself would have produced -
+        # exactly matching what the previous per-row `{idx:06d}` glob pattern
+        # would (and would not) have matched.
+        if f"{idx:06d}" != idx_part:
+            continue
+        # Keep the first match per index, mirroring the previous
+        # `sorted(images_base_dir.glob(pattern))[0]` behavior.
+        lookup.setdefault(idx, candidate)
+    return lookup
+
+
 def _resolve_image_file(
-    field_name: str,
     idx: int,
     images_base_dir: Path,
     df_path: str | None = None,
+    index_lookup: dict[int, Path] | None = None,
 ) -> Path | None:
     """Find the exported image file for a given field and row index.
 
     Resolution order:
-    1. Index-based pattern ``{field_name}_{idx:06d}.*`` (used by callable fields)
+    1. Index-based pattern ``{field_name}_{idx:06d}.*`` (used by callable fields),
+       resolved via ``index_lookup`` (see :func:`_build_index_based_lookup`)
+       instead of rescanning the directory for every row.
     2. The relative path stored in the parquet DataFrame (used by path fields
        that preserve the original filename)
     """
     # 1. Try index-based naming (callable fields always use this)
-    pattern = f"{field_name}_{idx:06d}.*"
-    matches = sorted(images_base_dir.glob(pattern))
-    if matches:
-        return matches[0]
+    if index_lookup is not None:
+        match = index_lookup.get(idx)
+        if match is not None:
+            return match
 
     # 2. Try the path stored in parquet (original filename preserved by
     #    _export_image_path_field)
@@ -1234,6 +1269,11 @@ def _reconstruct_field_values(
     if not (is_path_field or is_callable_field):
         return [], False, False
 
+    # Build the index-named-file lookup once per field (a single directory
+    # scan) instead of calling `Path.glob` inside the per-row loop below,
+    # which would rescan the whole directory for every row (O(rows * files)).
+    index_lookup = _build_index_based_lookup(field_name, images_base_dir)
+
     values: list[object | None] = []
     for idx in range(num_rows):
         # Get the path stored in parquet (if available) for fallback resolution
@@ -1243,7 +1283,7 @@ def _reconstruct_field_values(
             if raw is not None:
                 df_path = str(raw)
 
-        file_path = _resolve_image_file(field_name, idx, images_base_dir, df_path)
+        file_path = _resolve_image_file(idx, images_base_dir, df_path, index_lookup)
 
         if is_path_field:
             values.append(str(file_path) if file_path is not None else None)
