@@ -62,7 +62,10 @@ def _find_image_file(images_dir: Path, stem: str) -> Path | None:
     return None
 
 
-def _build_image_index(images_dir: Path) -> dict[str, Path]:
+def _build_image_index(
+    images_dir: Path,
+    image_paths: list[str] | None = None,
+) -> dict[str, Path]:
     """Build a one-time stem -> path lookup for all images in a directory.
 
     ``_find_image_file`` calls :meth:`Path.glob` for a single stem, which
@@ -79,10 +82,21 @@ def _build_image_index(images_dir: Path) -> dict[str, Path]:
     (which only strips the final suffix) would miss the "img0001" case, so
     every filename is registered under *each* prefix ending right before one
     of its "." characters, not just the last.
+
+    Args:
+        images_dir: The directory containing image files.
+        image_paths: Optional pre-discovered list of image paths. When a
+            caller has already scanned the directory (e.g.
+            ``_load_voc_simple``), passing the already-resolved paths avoids
+            a redundant second filesystem scan.
     """
     index: dict[str, Path] = {}
-    for image_path in find_images(str(images_dir)):
-        path = Path(image_path)
+    if image_paths is not None:
+        iterable = image_paths
+    else:
+        iterable = find_images(str(images_dir))
+    for image_path in iterable:
+        path = Path(image_path) if isinstance(image_path, str) else image_path
         name = path.name
         start = 0
         while True:
@@ -489,9 +503,9 @@ class VocLoadContext:
     segmentation_object_dir: Path | None = None
     colormap: dict[tuple[int, int, int], int] | None = None
     images_index: dict[str, Path] | None = None
-    """Pre-built stem -> path lookup for ``images_dir`` (see
-    :func:`_build_image_index`). When set, avoids re-globbing the directory
-    for every sample in :func:`_create_sample_from_annotation`."""
+    # Pre-built stem -> path lookup for ``images_dir`` (see
+    # _build_image_index). When set, avoids re-globbing the directory
+    # for every sample in _create_sample_from_annotation.
 
 
 def _create_sample_from_annotation(
@@ -711,7 +725,9 @@ def _load_voc_simple(
     # with `_find_image_file`'s original "first match wins" behavior. A
     # plain `{stem: path for path in image_files}` dict comprehension would
     # instead silently keep the *last* match.
-    images_index = _build_image_index(images_dir)
+    # Pass the already-scanned `image_files` so _build_image_index doesn't
+    # scan the directory a second time.
+    images_index = _build_image_index(images_dir, image_paths=image_files)
 
     ctx = VocLoadContext(
         images_dir=images_dir,
