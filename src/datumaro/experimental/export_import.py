@@ -1191,10 +1191,20 @@ def _build_index_based_lookup(field_name: str, images_base_dir: Path) -> dict[in
     """
     lookup: dict[int, Path] = {}
     prefix = f"{field_name}_"
+    # The original per-row glob pattern was `{prefix}{idx:06d}.*`, i.e.
+    # literal prefix + literal zero-padded index + literal "." + anything.
+    # Match that exact shape here: digits immediately followed by a dot.
+    # Using `Path.stem`/`.suffix` instead would mis-parse filenames with
+    # extra dots (e.g. "mask_000001.v1.png" strips to stem "mask_000001.v1")
+    # and would wrongly accept extension-less files (no "." at all), which
+    # the original glob pattern could never match.
+    index_pattern = re.compile(r"^(\d+)\.")
     for candidate in sorted(images_base_dir.glob(f"{prefix}*")):
-        idx_part = candidate.stem[len(prefix) :]
-        if not idx_part.isdigit():
+        rest = candidate.name[len(prefix) :]
+        match = index_pattern.match(rest)
+        if match is None:
             continue
+        idx_part = match.group(1)
         idx = int(idx_part)
         # Require the canonical zero-padded (min-width 6) form, so this only
         # recognizes filenames the exporter itself would have produced -
@@ -1214,12 +1224,14 @@ def _resolve_image_file(
     df_path: str | None = None,
     index_lookup: dict[int, Path] | None = None,
 ) -> Path | None:
-    """Find the exported image file for a given field and row index.
+    """Find the exported image file for a given row index.
 
     Resolution order:
-    1. Index-based pattern ``{field_name}_{idx:06d}.*`` (used by callable fields),
-       resolved via ``index_lookup`` (see :func:`_build_index_based_lookup`)
-       instead of rescanning the directory for every row.
+    1. ``index_lookup`` - an O(1) lookup by row index into a mapping built
+       once for the whole field by :func:`_build_index_based_lookup` from
+       the ``{field_name}_{idx:06d}.*`` naming convention used by callable
+       fields (e.g. generated masks), instead of rescanning the directory
+       for every row.
     2. The relative path stored in the parquet DataFrame (used by path fields
        that preserve the original filename)
     """

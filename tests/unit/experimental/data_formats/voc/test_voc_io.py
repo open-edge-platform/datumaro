@@ -11,6 +11,7 @@ import numpy as np
 import pytest
 
 from datumaro.experimental import Dataset
+from datumaro.experimental.data_formats.voc.helpers import _build_image_index
 from datumaro.experimental.data_formats.voc.io import load_voc_dataset, save_voc_dataset
 from datumaro.experimental.data_formats.voc.sample import VocSample
 from datumaro.experimental.fields import ImageInfo, Subset
@@ -315,6 +316,61 @@ def test_load_voc_dataset_simple_layout_does_not_rescan_directory_per_image(tmp_
         f"Path.glob() call count scaled with the number of images ({small_calls} -> {large_calls} "
         "for 5 -> 50 images) in the simple-layout VOC loader."
     )
+
+
+def test_load_voc_dataset_simple_layout_tie_break_matches_build_image_index(tmp_path: Path):
+    """Regression test: `_load_voc_simple` must resolve ambiguous (duplicate
+    stem, different extension) filenames the same way `_build_image_index`
+    does, rather than applying its own, different tie-breaking rule.
+
+    Previously `_load_voc_simple` built its image lookup with a plain
+    ``{stem: path for path in image_files}`` dict comprehension, which keeps
+    the *last* match for a repeated key - silently different from
+    `_build_image_index`'s (and the original `_find_image_file`'s) "first
+    match wins" behavior used everywhere else in the VOC loader.
+    """
+    images_dir = tmp_path / "images"
+    annotations_dir = tmp_path / "annotations"
+    images_dir.mkdir()
+    annotations_dir.mkdir()
+
+    # Two images sharing the same stem, different extensions.
+    _create_test_image(images_dir / "img0001.jpg")
+    _create_test_image(images_dir / "img0001.png")
+    (annotations_dir / "img0001.xml").write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+    """)
+
+    expected_path = _build_image_index(images_dir)["img0001"]
+
+    dataset = load_voc_dataset(
+        images_dir_path=str(images_dir),
+        annotations_dir_path=str(annotations_dir),
+    )
+
+    # Note: `_load_voc_simple` iterates every image file found (one loop
+    # entry per extension for a shared stem), so both "img0001.jpg" and
+    # "img0001.png" each produce a sample here - that duplication is a
+    # separate, pre-existing behavior and not what this test is about.
+    # What matters is that *every* sample for this stem resolves to the
+    # exact same file that `_build_image_index` picked for it.
+    assert len(dataset) == 2
+    for sample in dataset:
+        assert sample.image.path == str(expected_path)
 
 
 # ==============================

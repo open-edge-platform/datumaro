@@ -29,6 +29,7 @@ from datumaro.experimental.export_import import (
     VERSION,
     VIDEOS_DIR,
     ExportMode,
+    _build_index_based_lookup,
     _export_images_from_dataset,
     _get_registered_samples,
     _get_video_fields,
@@ -819,6 +820,58 @@ def test_import_instance_mask_field_does_not_rescan_directory_per_row(tmp_path, 
         f"Path.glob() call count scaled with the number of rows ({small_calls} -> {large_calls} "
         "for 5 -> 50 rows) when resolving callable-field mask files."
     )
+
+
+def test_build_index_based_lookup_matches_simple_filename(tmp_path):
+    """Baseline case: `{field}_{idx:06d}.<ext>` resolves to that file."""
+    (tmp_path / "mask_000001.png").touch()
+
+    lookup = _build_index_based_lookup("mask", tmp_path)
+
+    assert lookup == {1: tmp_path / "mask_000001.png"}
+
+
+def test_build_index_based_lookup_matches_filename_with_extra_dots(tmp_path):
+    """Regression test: the original per-row glob pattern was
+    `{field}_{idx:06d}.*`, where `.*` matches anything after the first dot -
+    including filenames with additional embedded dots, e.g. a versioned
+    extension like "mask_000001.v1.png". `Path.stem` only strips the last
+    suffix, so naively parsing `candidate.stem` (stem == "mask_000001.v1")
+    would wrongly reject this file. It must still be matched.
+    """
+    (tmp_path / "mask_000001.v1.png").touch()
+
+    lookup = _build_index_based_lookup("mask", tmp_path)
+
+    assert lookup == {1: tmp_path / "mask_000001.v1.png"}
+
+
+def test_build_index_based_lookup_ignores_extensionless_filename(tmp_path):
+    """Regression test: the original glob pattern `{field}_{idx:06d}.*`
+    requires a literal "." after the zero-padded index - it would never
+    match an extension-less file like "mask_000001". The lookup must not
+    match it either (naively checking `stem[len(prefix):].isdigit()` would
+    incorrectly accept it, since an extension-less file's stem equals its
+    full name).
+    """
+    (tmp_path / "mask_000001").touch()
+
+    lookup = _build_index_based_lookup("mask", tmp_path)
+
+    assert lookup == {}
+
+
+def test_build_index_based_lookup_ignores_non_canonical_padding(tmp_path):
+    """A file whose numeric suffix isn't the canonical zero-padded (min
+    width 6) form (e.g. "mask_42.png" instead of "mask_000042.png") would
+    never have matched the per-row query `{field}_{42:06d}.*` == "mask_000042.*",
+    so it must not be matched by the lookup either.
+    """
+    (tmp_path / "mask_42.png").touch()
+
+    lookup = _build_index_based_lookup("mask", tmp_path)
+
+    assert lookup == {}
 
 
 def test_import_missing_metadata_raises_error(tmp_path):

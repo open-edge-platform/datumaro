@@ -688,7 +688,13 @@ def _load_voc_simple(
         raise FileNotFoundError(f"Images directory not found: {images_dir}")
 
     image_files = list(find_images(str(images_dir)))
-    images_index = {Path(image_path).stem: Path(image_path) for image_path in image_files}
+    # Reuse `_build_image_index` (rather than re-deriving the same mapping
+    # inline) so tie-breaking for duplicate stems (e.g. "img0001.jpg" and
+    # "img0001.png") stays consistent with `_load_voc_from_imagesets` and
+    # with `_find_image_file`'s original "first match wins" behavior. A
+    # plain `{stem: path for path in image_files}` dict comprehension would
+    # instead silently keep the *last* match.
+    images_index = _build_image_index(images_dir)
 
     ctx = VocLoadContext(
         images_dir=images_dir,
