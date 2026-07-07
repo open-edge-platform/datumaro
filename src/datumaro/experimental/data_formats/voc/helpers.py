@@ -71,11 +71,28 @@ def _build_image_index(images_dir: Path) -> dict[str, Path]:
     the dataset) makes loading an O(images * files) operation, which becomes
     prohibitively slow for large datasets. Building this index once (a single
     directory scan) and reusing it for every sample makes loading O(files).
+
+    ``_find_image_file(images_dir, stem)`` resolves via
+    ``images_dir.glob(f"{stem}.*")``, which matches on *any* "." in the
+    filename, not just the last one - e.g. "img0001.v1.png" is matched by
+    both ``stem="img0001"`` and ``stem="img0001.v1"``. A single ``Path.stem``
+    (which only strips the final suffix) would miss the "img0001" case, so
+    every filename is registered under *each* prefix ending right before one
+    of its "." characters, not just the last.
     """
     index: dict[str, Path] = {}
     for image_path in find_images(str(images_dir)):
         path = Path(image_path)
-        index.setdefault(path.stem, path)
+        name = path.name
+        start = 0
+        while True:
+            dot_pos = name.find(".", start)
+            if dot_pos == -1:
+                break
+            prefix = name[:dot_pos]
+            if prefix:
+                index.setdefault(prefix, path)
+            start = dot_pos + 1
     return index
 
 

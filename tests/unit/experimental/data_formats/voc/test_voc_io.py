@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 
 from datumaro.experimental import Dataset
-from datumaro.experimental.data_formats.voc.helpers import _build_image_index
+from datumaro.experimental.data_formats.voc.helpers import _build_image_index, _find_image_file
 from datumaro.experimental.data_formats.voc.io import load_voc_dataset, save_voc_dataset
 from datumaro.experimental.data_formats.voc.sample import VocSample
 from datumaro.experimental.fields import ImageInfo, Subset
@@ -371,6 +371,79 @@ def test_load_voc_dataset_simple_layout_tie_break_matches_build_image_index(tmp_
     assert len(dataset) == 2
     for sample in dataset:
         assert sample.image.path == str(expected_path)
+
+
+def test_build_image_index_registers_all_dot_prefixes(tmp_path: Path):
+    """Regression test: `_find_image_file(images_dir, stem)` resolves via
+    ``glob(f"{stem}.*")``, which matches on *any* "." in the filename - so a
+    file like "img0001.v1.png" is matched by both stem="img0001" and
+    stem="img0001.v1". `_build_image_index` must register the file under
+    every such prefix, not just `Path.stem` ("img0001.v1"), otherwise a
+    lookup for the shorter, more common annotation ID ("img0001") would miss
+    the index and silently fall back to the slow per-sample glob.
+    """
+    (tmp_path / "img0001.v1.png").touch()
+
+    index = _build_image_index(tmp_path)
+
+    assert index["img0001"] == tmp_path / "img0001.v1.png"
+    assert index["img0001.v1"] == tmp_path / "img0001.v1.png"
+
+
+def test_load_voc_dataset_resolves_annotation_id_with_extra_dots_in_filename(tmp_path: Path, monkeypatch):
+    """End-to-end version of the above: an annotation/ImageSets ID of
+    "img0001" must resolve correctly - via the fast `images_index` lookup,
+    *without* falling back to `_find_image_file` (a per-sample glob) - even
+    when the actual image file on disk has an extra dot before its
+    extension ("img0001.v1.jpg"). Before the fix, `images_index` wouldn't
+    contain the "img0001" key at all, so this would only resolve correctly
+    by luck, via the slow fallback path.
+    """
+    root = tmp_path
+    (root / "JPEGImages").mkdir()
+    (root / "Annotations").mkdir()
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    _create_test_image(root / "JPEGImages" / "img0001.v1.jpg")
+    (root / "Annotations" / "img0001.xml").write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+    """)
+    (root / "ImageSets" / "Main" / "train.txt").write_text("img0001\n")
+
+    fallback_calls = {"count": 0}
+    original_find_image_file = _find_image_file
+
+    def counting_find_image_file(*args, **kwargs):
+        fallback_calls["count"] += 1
+        return original_find_image_file(*args, **kwargs)
+
+    monkeypatch.setattr(
+        "datumaro.experimental.data_formats.voc.helpers._find_image_file",
+        counting_find_image_file,
+    )
+
+    dataset = load_voc_dataset(root_dir=str(root))
+
+    assert len(dataset) == 1
+    assert dataset[0].image.path == str(root / "JPEGImages" / "img0001.v1.jpg")
+    assert fallback_calls["count"] == 0, (
+        "Resolution fell back to the slow per-sample _find_image_file() glob instead of "
+        "hitting the fast images_index lookup built by _build_image_index()."
+    )
 
 
 # ==============================
