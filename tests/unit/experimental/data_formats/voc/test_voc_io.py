@@ -11,6 +11,7 @@ import numpy as np
 import pytest
 
 from datumaro.experimental import Dataset
+from datumaro.experimental.data_formats.voc.helpers import _build_image_index, _find_image_file
 from datumaro.experimental.data_formats.voc.io import load_voc_dataset, save_voc_dataset
 from datumaro.experimental.data_formats.voc.sample import VocSample
 from datumaro.experimental.fields import ImageInfo, Subset
@@ -153,6 +154,76 @@ def test_load_voc_dataset_raises_on_missing_root():
         load_voc_dataset(root_dir="/nonexistent/path")
 
 
+def _create_voc_structure_with_n_images(root: Path, num_images: int) -> None:
+    """Create a minimal standard-layout VOC dataset with N images.
+
+    Unlike :func:`_create_voc_structure` (which hand-crafts two richly
+    annotated samples for content-correctness tests), this generates a
+    variable number of minimal placeholder samples, for tests that need to
+    vary the dataset size (e.g. performance regression tests).
+    """
+    (root / "JPEGImages").mkdir(parents=True)
+    (root / "Annotations").mkdir(parents=True)
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    image_ids = [f"img{i:04d}" for i in range(num_images)]
+    for image_id in image_ids:
+        _create_test_image(root / "JPEGImages" / f"{image_id}.jpg")
+        (root / "Annotations" / f"{image_id}.xml").write_text("""
+<annotation>
+    <size>
+        <width>64</width>
+        <height>48</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+        """)
+
+    (root / "ImageSets" / "Main" / "train.txt").write_text("\n".join(image_ids) + "\n")
+
+
+def test_load_voc_dataset_does_not_rescan_directory_per_image(tmp_path: Path, monkeypatch):
+    """Regression test for a perf bug where resolving each VOC sample's image
+    file called ``Path.glob()`` once per image, rescanning the entire images
+    directory on every call (O(images * files) overall - on large datasets
+    this made loading take hours instead of seconds). ``Path.glob()`` call
+    count must not scale with the number of images in the dataset.
+    """
+    counters = {"count": 0}
+    original_glob = Path.glob
+
+    def counting_glob(self, *args, **kwargs):
+        counters["count"] += 1
+        return original_glob(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "glob", counting_glob)
+
+    def build_and_load(num_images: int) -> int:
+        root = tmp_path / f"voc_{num_images}"
+        _create_voc_structure_with_n_images(root, num_images)
+        counters["count"] = 0
+        dataset = load_voc_dataset(root_dir=str(root))
+        assert len(dataset) == num_images
+        return counters["count"]
+
+    small_calls = build_and_load(5)
+    large_calls = build_and_load(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of images ({small_calls} -> {large_calls} "
+        "for 5 -> 50 images); expected a constant, image-count-independent number of calls. This "
+        "indicates the O(images * files) per-image directory rescan regression has returned."
+    )
+
+
 def test_load_voc_dataset_from_simple_layout(tmp_path: Path):
     """Test loading VOC dataset from simple images + annotations directories."""
     images_dir = tmp_path / "images"
@@ -186,6 +257,193 @@ def test_load_voc_dataset_from_simple_layout(tmp_path: Path):
     )
 
     assert len(dataset) == 1
+
+
+def test_load_voc_dataset_simple_layout_does_not_rescan_directory_per_image(tmp_path: Path, monkeypatch):
+    """Same regression test as
+    ``test_load_voc_dataset_does_not_rescan_directory_per_image`` but for the
+    "simple" images+annotations layout (``_load_voc_simple``), which builds
+    its own separate ``VocLoadContext``.
+    """
+    counters = {"count": 0}
+    original_glob = Path.glob
+
+    def counting_glob(self, *args, **kwargs):
+        counters["count"] += 1
+        return original_glob(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "glob", counting_glob)
+
+    def build_and_load(num_images: int) -> int:
+        images_dir = tmp_path / f"simple_images_{num_images}"
+        annotations_dir = tmp_path / f"simple_annotations_{num_images}"
+        images_dir.mkdir()
+        annotations_dir.mkdir()
+
+        for i in range(num_images):
+            image_id = f"img{i:04d}"
+            _create_test_image(images_dir / f"{image_id}.jpg")
+            (annotations_dir / f"{image_id}.xml").write_text("""
+<annotation>
+    <size>
+        <width>64</width>
+        <height>48</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+            """)
+
+        counters["count"] = 0
+        dataset = load_voc_dataset(
+            images_dir_path=str(images_dir),
+            annotations_dir_path=str(annotations_dir),
+        )
+        assert len(dataset) == num_images
+        return counters["count"]
+
+    small_calls = build_and_load(5)
+    large_calls = build_and_load(50)
+
+    assert large_calls == small_calls, (
+        f"Path.glob() call count scaled with the number of images ({small_calls} -> {large_calls} "
+        "for 5 -> 50 images) in the simple-layout VOC loader."
+    )
+
+
+def test_load_voc_dataset_simple_layout_tie_break_matches_build_image_index(tmp_path: Path):
+    """Regression test: `_load_voc_simple` must resolve ambiguous (duplicate
+    stem, different extension) filenames the same way `_build_image_index`
+    does, rather than applying its own, different tie-breaking rule.
+
+    Previously `_load_voc_simple` built its image lookup with a plain
+    ``{stem: path for path in image_files}`` dict comprehension, which keeps
+    the *last* match for a repeated key - silently different from
+    `_build_image_index`'s (and the original `_find_image_file`'s) "first
+    match wins" behavior used everywhere else in the VOC loader.
+    """
+    images_dir = tmp_path / "images"
+    annotations_dir = tmp_path / "annotations"
+    images_dir.mkdir()
+    annotations_dir.mkdir()
+
+    # Two images sharing the same stem, different extensions.
+    _create_test_image(images_dir / "img0001.jpg")
+    _create_test_image(images_dir / "img0001.png")
+    (annotations_dir / "img0001.xml").write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+    """)
+
+    expected_path = _build_image_index(images_dir)["img0001"]
+
+    dataset = load_voc_dataset(
+        images_dir_path=str(images_dir),
+        annotations_dir_path=str(annotations_dir),
+    )
+
+    # Note: `_load_voc_simple` iterates every image file found (one loop
+    # entry per extension for a shared stem), so both "img0001.jpg" and
+    # "img0001.png" each produce a sample here - that duplication is a
+    # separate, pre-existing behavior and not what this test is about.
+    # What matters is that *every* sample for this stem resolves to the
+    # exact same file that `_build_image_index` picked for it.
+    assert len(dataset) == 2
+    for sample in dataset:
+        assert sample.image.path == str(expected_path)
+
+
+def test_build_image_index_registers_all_dot_prefixes(tmp_path: Path):
+    """Regression test: `_find_image_file(images_dir, stem)` resolves via
+    ``glob(f"{stem}.*")``, which matches on *any* "." in the filename - so a
+    file like "img0001.v1.png" is matched by both stem="img0001" and
+    stem="img0001.v1". `_build_image_index` must register the file under
+    every such prefix, not just `Path.stem` ("img0001.v1"), otherwise a
+    lookup for the shorter, more common annotation ID ("img0001") would miss
+    the index and silently fall back to the slow per-sample glob.
+    """
+    (tmp_path / "img0001.v1.png").touch()
+
+    index = _build_image_index(tmp_path)
+
+    assert index["img0001"] == tmp_path / "img0001.v1.png"
+    assert index["img0001.v1"] == tmp_path / "img0001.v1.png"
+
+
+def test_load_voc_dataset_resolves_annotation_id_with_extra_dots_in_filename(tmp_path: Path, monkeypatch):
+    """End-to-end version of the above: an annotation/ImageSets ID of
+    "img0001" must resolve correctly - via the fast `images_index` lookup,
+    *without* falling back to `_find_image_file` (a per-sample glob) - even
+    when the actual image file on disk has an extra dot before its
+    extension ("img0001.v1.jpg"). Before the fix, `images_index` wouldn't
+    contain the "img0001" key at all, so this would only resolve correctly
+    by luck, via the slow fallback path.
+    """
+    root = tmp_path
+    (root / "JPEGImages").mkdir()
+    (root / "Annotations").mkdir()
+    (root / "ImageSets" / "Main").mkdir(parents=True)
+
+    _create_test_image(root / "JPEGImages" / "img0001.v1.jpg")
+    (root / "Annotations" / "img0001.xml").write_text("""
+<annotation>
+    <size>
+        <width>640</width>
+        <height>480</height>
+    </size>
+    <object>
+        <name>person</name>
+        <bndbox>
+            <xmin>1</xmin>
+            <ymin>1</ymin>
+            <xmax>10</xmax>
+            <ymax>10</ymax>
+        </bndbox>
+    </object>
+</annotation>
+    """)
+    (root / "ImageSets" / "Main" / "train.txt").write_text("img0001\n")
+
+    fallback_calls = {"count": 0}
+    original_find_image_file = _find_image_file
+
+    def counting_find_image_file(*args, **kwargs):
+        fallback_calls["count"] += 1
+        return original_find_image_file(*args, **kwargs)
+
+    monkeypatch.setattr(
+        "datumaro.experimental.data_formats.voc.helpers._find_image_file",
+        counting_find_image_file,
+    )
+
+    dataset = load_voc_dataset(root_dir=str(root))
+
+    assert len(dataset) == 1
+    assert dataset[0].image.path == str(root / "JPEGImages" / "img0001.v1.jpg")
+    assert fallback_calls["count"] == 0, (
+        "Resolution fell back to the slow per-sample _find_image_file() glob instead of "
+        "hitting the fast images_index lookup built by _build_image_index()."
+    )
 
 
 # ==============================

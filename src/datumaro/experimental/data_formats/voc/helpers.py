@@ -62,6 +62,54 @@ def _find_image_file(images_dir: Path, stem: str) -> Path | None:
     return None
 
 
+def _build_image_index(
+    images_dir: Path,
+    image_paths: list[str] | None = None,
+) -> dict[str, Path]:
+    """Build a one-time stem -> path lookup for all images in a directory.
+
+    ``_find_image_file`` calls :meth:`Path.glob` for a single stem, which
+    rescans the entire directory every time it's invoked. Calling it once
+    per sample (as ``_create_sample_from_annotation`` does for every image in
+    the dataset) makes loading an O(images * files) operation, which becomes
+    prohibitively slow for large datasets. Building this index once (a single
+    directory scan) and reusing it for every sample makes loading O(files).
+
+    ``_find_image_file(images_dir, stem)`` resolves via
+    ``images_dir.glob(f"{stem}.*")``, which matches on *any* "." in the
+    filename, not just the last one - e.g. "img0001.v1.png" is matched by
+    both ``stem="img0001"`` and ``stem="img0001.v1"``. A single ``Path.stem``
+    (which only strips the final suffix) would miss the "img0001" case, so
+    every filename is registered under *each* prefix ending right before one
+    of its "." characters, not just the last.
+
+    Args:
+        images_dir: The directory containing image files.
+        image_paths: Optional pre-discovered list of image paths. When a
+            caller has already scanned the directory (e.g.
+            ``_load_voc_simple``), passing the already-resolved paths avoids
+            a redundant second filesystem scan.
+    """
+    index: dict[str, Path] = {}
+    if image_paths is not None:
+        iterable = image_paths
+    else:
+        iterable = find_images(str(images_dir))
+    for image_path in sorted(iterable):
+        path = Path(image_path) if isinstance(image_path, str) else image_path
+        name = path.name
+        start = 0
+        while True:
+            dot_pos = name.find(".", start)
+            if dot_pos == -1:
+                break
+            prefix = name[:dot_pos]
+            if prefix:
+                index.setdefault(prefix, path)
+            start = dot_pos + 1
+    return index
+
+
 def _parse_voc_labelmap(labelmap_path: Path) -> list[str]:
     """
     Parse a VOC labelmap file.
@@ -454,6 +502,10 @@ class VocLoadContext:
     segmentation_class_dir: Path | None = None
     segmentation_object_dir: Path | None = None
     colormap: dict[tuple[int, int, int], int] | None = None
+    images_index: dict[str, Path] | None = None
+    # Pre-built stem -> path lookup for ``images_dir`` (see
+    # _build_image_index). When set, avoids re-globbing the directory
+    # for every sample in _create_sample_from_annotation.
 
 
 def _create_sample_from_annotation(
@@ -472,8 +524,11 @@ def _create_sample_from_annotation(
             ImageSets/Main classification files. When the XML annotation does
             not contain any objects these are used as image-level labels.
     """
-    # Find image file
-    image_path = _find_image_file(ctx.images_dir, image_id)
+    # Find image file: prefer the pre-built index (O(1)) over re-globbing
+    # the directory (O(files)) for every sample.
+    image_path = ctx.images_index.get(image_id) if ctx.images_index is not None else None
+    if image_path is None:
+        image_path = _find_image_file(ctx.images_dir, image_id)
     if image_path is None:
         logger.warning("Image not found for ID '%s', skipping", image_id)
         return None
@@ -637,6 +692,7 @@ def _load_voc_from_imagesets(root_path: Path, categories: LabelCategories) -> li
         segmentation_class_dir=segmentation_class_dir,
         segmentation_object_dir=segmentation_object_dir,
         colormap=colormap,
+        images_index=_build_image_index(images_dir),
     )
 
     subsets = _detect_voc_subsets(root_path)
@@ -662,13 +718,23 @@ def _load_voc_simple(
     if not images_dir.exists():
         raise FileNotFoundError(f"Images directory not found: {images_dir}")
 
+    image_files = list(find_images(str(images_dir)))
+    # Reuse `_build_image_index` (rather than re-deriving the same mapping
+    # inline) so tie-breaking for duplicate stems (e.g. "img0001.jpg" and
+    # "img0001.png") stays consistent with `_load_voc_from_imagesets` and
+    # with `_find_image_file`'s original "first match wins" behavior. A
+    # plain `{stem: path for path in image_files}` dict comprehension would
+    # instead silently keep the *last* match.
+    # Pass the already-scanned `image_files` so _build_image_index doesn't
+    # scan the directory a second time.
+    images_index = _build_image_index(images_dir, image_paths=image_files)
+
     ctx = VocLoadContext(
         images_dir=images_dir,
         annotations_dir=annotations_dir,
         categories=categories,
+        images_index=images_index,
     )
-
-    image_files = list(find_images(str(images_dir)))
 
     for image_path in image_files:
         image_id = Path(image_path).stem
