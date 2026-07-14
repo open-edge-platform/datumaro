@@ -181,7 +181,7 @@ impl JsonSectionPageMapper {
         Ok(JsonSectionPageMapper { reader, mapper })
     }
 
-    fn sections(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn sections(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         let dict: HashMap<&str, HashMap<&str, usize>> = self_
             .mapper
             .sections

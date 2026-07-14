@@ -80,7 +80,7 @@ pub fn skip_serde_json_value<R: io::Read>(reader: &mut R) -> Result<(), std::io:
     }
 }
 
-pub fn convert_to_py_object(value: &serde_json::Value, py: Python<'_>) -> PyResult<PyObject> {
+pub fn convert_to_py_object(value: &serde_json::Value, py: Python<'_>) -> PyResult<Py<PyAny>> {
     if value.is_array() {
         let list = PyList::empty(py);
 

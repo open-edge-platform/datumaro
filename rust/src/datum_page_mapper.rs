@@ -180,15 +180,15 @@ impl DatumPageMapper {
         self_.mapper.media_type().clone()
     }
 
-    fn infos(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn infos(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         convert_to_py_object(self_.mapper.infos(), self_.py())
     }
 
-    fn categories(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn categories(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         convert_to_py_object(self_.mapper.categories(), self_.py())
     }
 
-    fn get_item_dict(&mut self, py: Python<'_>, img_id: String) -> PyResult<PyObject> {
+    fn get_item_dict(&mut self, py: Python<'_>, img_id: String) -> PyResult<Py<PyAny>> {
         let item_dict = self.mapper.get_item_dict(&img_id, &mut self.reader)?;
         Ok(convert_to_py_object(&item_dict, py)?)
     }

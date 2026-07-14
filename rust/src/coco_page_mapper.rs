@@ -171,24 +171,24 @@ impl CocoPageMapper {
         Ok(CocoPageMapper { reader, mapper })
     }
 
-    fn licenses(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn licenses(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         convert_to_py_object(self_.mapper.licenses(), self_.py())
     }
 
-    fn info(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn info(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         convert_to_py_object(self_.mapper.info(), self_.py())
     }
 
-    fn categories(self_: PyRef<Self>) -> PyResult<PyObject> {
+    fn categories(self_: PyRef<Self>) -> PyResult<Py<PyAny>> {
         convert_to_py_object(self_.mapper.categories(), self_.py())
     }
 
-    fn get_item_dict(&mut self, py: Python<'_>, img_id: i64) -> PyResult<PyObject> {
+    fn get_item_dict(&mut self, py: Python<'_>, img_id: i64) -> PyResult<Py<PyAny>> {
         let item_dict = self.mapper.get_item_dict(&img_id, &mut self.reader)?;
         Ok(convert_to_py_object(&item_dict, py)?)
     }
 
-    fn get_anns_dict(&mut self, py: Python<'_>, img_id: i64) -> PyResult<PyObject> {
+    fn get_anns_dict(&mut self, py: Python<'_>, img_id: i64) -> PyResult<Py<PyAny>> {
         let anns_list = PyList::new(
             py,
             self.mapper
