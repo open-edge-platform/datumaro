@@ -86,18 +86,57 @@ class MaskTiler(Tiler):
         return pl.DataFrame({column_name: results_data, shape_column: results_shape})
 
 
+def _instance_intersects_tile(instance: np.ndarray, x: int, y: int, width: int, height: int) -> bool:
+    """Return whether an instance mask's bounding box intersects the tile.
+
+    The criterion mirrors :class:`BboxTiler` exactly: using the instance's
+    full-image bounding box ``(x1, y1, x2, y2)`` (derived from its non-zero
+    pixels, with ``x2``/``y2`` exclusive), the instance is kept iff::
+
+        (x2 > tile_x) & (x1 < tile_x2) & (y2 > tile_y) & (y1 < tile_y2)
+
+    An all-zero mask (no pixels) has no bounding box and is dropped.
+
+    Args:
+        instance: Full-image instance mask of shape ``(H, W)``.
+        x: Tile left coordinate.
+        y: Tile top coordinate.
+        width: Tile width.
+        height: Tile height.
+
+    Returns:
+        ``True`` if the instance overlaps the tile rectangle, else ``False``.
+    """
+    rows = np.nonzero(instance.any(axis=1))[0]
+    cols = np.nonzero(instance.any(axis=0))[0]
+    if rows.size == 0 or cols.size == 0:
+        return False
+    y1, y2 = int(rows[0]), int(rows[-1]) + 1
+    x1, x2 = int(cols[0]), int(cols[-1]) + 1
+    return bool((x2 > x) and (x1 < x + width) and (y2 > y) and (y1 < y + height))
+
+
 @TilerRegistry.register(InstanceMaskField)
 class InstanceMaskTiler(Tiler):
     """Tiler for instance segmentation masks.
 
-    Extracts the corresponding region from each instance mask.
-    Adds a keep column to track which instances are present in each tile.
+    Extracts the corresponding region from each instance mask and prunes
+    instances that do not overlap the tile.
+
+    Instance masks are stored as a flattened array plus a separate shape column,
+    a format that the coordinated ``keep``-column filtering mechanism (used by
+    :class:`BboxTiler` and :class:`LabelTiler`) cannot express. To keep masks
+    aligned with the independently filtered bounding boxes and labels, this
+    tiler self-filters instances using the **same tile-intersection criterion**
+    as :class:`BboxTiler` (the instance's full-image mask bounding box must
+    intersect the tile rectangle). Instances are kept in their original order so
+    alignment with boxes/labels is preserved.
     """
 
     field_spec: AttributeSpec[InstanceMaskField]
 
     def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
-        """Extract instance mask regions for each tile."""
+        """Extract and filter instance mask regions for each tile."""
         column_name = self.field_spec.name
         shape_column = f"{column_name}_shape"
         results_data = []
@@ -114,9 +153,20 @@ class InstanceMaskTiler(Tiler):
             width = tile_row["width"]
             height = tile_row["height"]
 
-            # Reshape flattened data and extract tile
-            instances = instances_data.reshape(instances_shape).to_numpy()
-            tile_result = instances[:, y : y + height, x : x + width]  # Shape: (num_instances, tile_height, tile_width)
+            # Reshape flattened data
+            instances = instances_data.reshape(instances_shape).to_numpy()  # (N, H, W)
+
+            # Keep only instances whose full-image bounding box intersects the
+            # tile, mirroring BboxTiler so masks stay aligned with boxes/labels.
+            if instances.shape[0] > 0:
+                keep = np.array(
+                    [_instance_intersects_tile(inst, x, y, width, height) for inst in instances],
+                    dtype=bool,
+                )
+                instances = instances[keep]
+
+            # Extract tile region: shape (num_kept_instances, tile_height, tile_width)
+            tile_result = instances[:, y : y + height, x : x + width]
 
             # Flatten result for storage
             results_data.append(tile_result.reshape(-1))
