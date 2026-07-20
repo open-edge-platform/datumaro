@@ -292,7 +292,7 @@ class PolygonToMaskConverter(Converter):
             ]
         ).map_batches(
             apply_conversion_batch,
-            return_dtype=pl.Struct({"mask": pl.List(pl.UInt8()), "shape": pl.List(pl.Int32())}),
+            return_dtype=pl.Struct({"mask": pl.List(self.output_mask.field.dtype), "shape": pl.List(pl.Int32())}),
         )
 
         return df.with_columns(

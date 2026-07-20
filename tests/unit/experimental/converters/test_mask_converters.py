@@ -176,6 +176,54 @@ def test_polygon_to_mask_converter_normalized():
     assert mask[5, 5] == 0  # Background point
 
 
+def test_polygon_to_mask_converter_honors_configured_dtype():
+    """Test conversion preserves the configured mask dtype."""
+    converter_instance = PolygonToMaskConverter()  # type: ignore[call-arg]
+
+    polygon_coords = [[10.0, 10.0], [30.0, 10.0], [20.0, 30.0]]
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "labels": [[0]],
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=PolygonField(dtype=pl.Float32(), format="xy", normalize=False)),
+    )
+    setattr(
+        converter_instance,
+        "input_labels",
+        AttributeSpec(name="labels", field=LabelField(dtype=pl.UInt32(), multi_label=True)),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=ImageInfoField()),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(name="mask", field=MaskField(dtype=pl.UInt16())),
+    )
+
+    result_df = converter_instance.convert(df)
+
+    mask_data = np.array(result_df["mask"][0])
+    mask_shape = result_df["mask_shape"][0]
+    mask = mask_data.reshape(mask_shape)
+
+    assert result_df.schema["mask"] == pl.List(pl.UInt16())
+    assert mask.dtype == np.uint16
+    assert mask[15, 20] == 1
+    assert mask[5, 5] == 0
+
+
 def test_polygon_to_instance_mask_converter():
     """Test conversion from polygon coordinates to instance mask format."""
     # Create test data with triangle, rectangle, and pentagon polygons
