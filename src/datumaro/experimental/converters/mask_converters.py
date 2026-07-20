@@ -346,9 +346,10 @@ class PolygonToInstanceMaskConverter(Converter):
 
         # Pre-compute dtype and normalize flag once
         _numpy_dtype = polars_to_numpy_dtype(self.output_instance_mask.field.dtype)
+        _numpy_dtype = polars_to_numpy_dtype(self.output_instance_mask.field.dtype)
         _normalize = self.input_polygon.field.normalize
         # Always use uint8 for internal Polars storage (List(Boolean) construction is extremely slow)
-        _use_uint8_storage = self.output_instance_mask.field.dtype == pl.Boolean()
+        _use_uint8_storage = self.output_instance_mask.field.dtype.is_(pl.Boolean)
         _storage_pl_dtype = pl.UInt8() if _use_uint8_storage else self.output_instance_mask.field.dtype
         # For Boolean output, rasterize as uint8 for fast Polars List(UInt8) storage;
         # the cast to Boolean happens after collection.
