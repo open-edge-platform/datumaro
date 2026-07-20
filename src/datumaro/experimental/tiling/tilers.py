@@ -7,7 +7,8 @@ Implementations of tilers for specific field types.
 """
 
 import operator
-from typing import Any
+from collections.abc import Callable
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 import polars as pl
@@ -28,6 +29,43 @@ from datumaro.experimental.fields import (
 from datumaro.experimental.schema import AttributeSpec
 
 from .tiler_registry import Tiler, TilerRegistry
+
+_T = TypeVar("_T")
+
+
+class _LastImageCache(Generic[_T]):
+    """Single-slot cache keyed on the source image index.
+
+    Tiles are generated grouped by source image: ``_calculate_tiles`` iterates
+    images in order and emits every tile of one image before moving on to the
+    next, so a tiler's :meth:`tile` sees tiles contiguously per image. A cache
+    holding only the **last seen** image therefore captures all the reuse
+    (every run of tiles that share a source image) while keeping memory bounded
+    to a single image's derived data.
+
+    This is preferred over a per-image dictionary, which would grow unbounded
+    across the whole dataset and risk out-of-memory errors on large datasets
+    (many images) or memory-heavy per-image payloads (e.g. reshaped mask
+    stacks).
+    """
+
+    __slots__ = ("_image_id", "_value")
+
+    def __init__(self) -> None:
+        self._image_id: int | None = None
+        self._value: _T | None = None
+
+    def get(self, image_id: int, factory: Callable[[], _T]) -> _T:
+        """Return the cached value for ``image_id``, computing it on a miss.
+
+        On a cache miss (a different image than the previous call) the previous
+        entry is evicted before ``factory`` is invoked, so at most one image's
+        data is retained at any time.
+        """
+        if image_id != self._image_id:
+            self._image_id = image_id
+            self._value = factory()
+        return self._value  # type: ignore[return-value]
 
 
 @TilerRegistry.register(SubsetField)
@@ -64,10 +102,18 @@ class MaskTiler(Tiler):
         results_data = []
         results_shape = []
 
+        # Cache the reshaped mask per source image so the O(H*W) reshape +
+        # to_numpy conversion is paid at most once per image instead of once per
+        # tile. Tiles are processed contiguously per image, so a single-slot
+        # cache is sufficient and keeps memory bounded to one image.
+        mask_cache: _LastImageCache[np.ndarray] = _LastImageCache()
+
         for tile_row in tiles_df["tile"]:
             image_id = tile_row["source_sample_idx"] - slice_offset
-            mask_data = df[column_name][image_id]
-            mask_shape = df[shape_column][image_id]
+            mask = mask_cache.get(
+                image_id,
+                lambda: df[column_name][image_id].reshape(df[shape_column][image_id]).to_numpy(),
+            )
 
             # Get tile coordinates
             x = tile_row["x"]
@@ -75,8 +121,7 @@ class MaskTiler(Tiler):
             width = tile_row["width"]
             height = tile_row["height"]
 
-            # Reshape flattened data and extract tile
-            mask = mask_data.reshape(mask_shape).to_numpy()
+            # Extract tile region from the (cached) reshaped mask
             tile_mask = mask[y : y + height, x : x + width]
 
             # Return flattened tile
@@ -173,21 +218,22 @@ class InstanceMaskTiler(Tiler):
         # derivation) is paid at most once per image instead of once per tile.
         # Many tiles typically share the same source image, so this avoids
         # O(num_tiles * num_instances * H * W) work on large / dense images.
-        instances_cache: dict[int, np.ndarray] = {}
-        boxes_cache: dict[int, np.ndarray] = {}
+        # Tiles are processed contiguously per image (see _calculate_tiles), so a
+        # single-slot cache captures all the reuse while keeping memory bounded
+        # to one image -- avoiding the unbounded growth (and OOM risk on large
+        # datasets) of a per-image dictionary.
+        cache: _LastImageCache[tuple[np.ndarray, np.ndarray]] = _LastImageCache()
+
+        def _load(image_id: int) -> tuple[np.ndarray, np.ndarray]:
+            instances_data = df[column_name][image_id]  # Flattened 3D array
+            instances_shape = df[shape_column][image_id]  # (num_instances, height, width)
+            # Reshape flattened data once per image: (N, H, W)
+            instances = instances_data.reshape(instances_shape).to_numpy()
+            return instances, _instance_bounding_boxes(instances)
 
         for tile_row in tiles_df["tile"]:
             image_id = tile_row["source_sample_idx"] - slice_offset
-
-            instances = instances_cache.get(image_id)
-            if instances is None:
-                instances_data = df[column_name][image_id]  # Flattened 3D array
-                instances_shape = df[shape_column][image_id]  # (num_instances, height, width)
-                # Reshape flattened data once per image: (N, H, W)
-                instances = instances_data.reshape(instances_shape).to_numpy()
-                instances_cache[image_id] = instances
-                boxes_cache[image_id] = _instance_bounding_boxes(instances)
-            boxes = boxes_cache[image_id]
+            instances, boxes = cache.get(image_id, lambda: _load(image_id))
 
             # Get tile coordinates
             x = tile_row["x"]
@@ -243,9 +289,28 @@ class BboxTiler(Tiler):
 
         results = []
 
+        # Cache the per-image exploded/split boxes (the part that only depends on
+        # the source image, not the tile) so it is computed once per image rather
+        # than once per tile. Tiles are processed contiguously per image, so a
+        # single-slot cache is sufficient and keeps memory bounded to one image.
+        # NOTE: bbox payloads are small, so this is a modest speedup rather than
+        # an OOM safeguard (unlike the mask tilers), but it keeps the caching
+        # strategy consistent across tilers.
+        boxes_cache: _LastImageCache[pl.DataFrame] = _LastImageCache()
+
+        def _load_boxes(image_id: int) -> pl.DataFrame:
+            boxes = df[image_id].select(column_name).explode(column_name)
+            return boxes.with_columns(
+                x1=pl.col(column_name).arr.get(0),
+                y1=pl.col(column_name).arr.get(1),
+                x2=pl.col(column_name).arr.get(2),
+                y2=pl.col(column_name).arr.get(3),
+            )
+
         for tile_row in tiles_df["tile"]:
             image_id = tile_row["source_sample_idx"] - slice_offset
-            boxes = df[image_id].select(column_name).explode(column_name)
+            # with_columns below returns new frames, so the cached frame is never mutated.
+            boxes = boxes_cache.get(image_id, lambda: _load_boxes(image_id))
 
             # Get tile coordinates
             tile_x = tile_row["x"]
@@ -254,14 +319,6 @@ class BboxTiler(Tiler):
             tile_height = tile_row["height"]
             tile_x2 = tile_x + tile_width
             tile_y2 = tile_y + tile_height
-
-            # Process each bbox
-            boxes = boxes.with_columns(
-                x1=pl.col(column_name).arr.get(0),
-                y1=pl.col(column_name).arr.get(1),
-                x2=pl.col(column_name).arr.get(2),
-                y2=pl.col(column_name).arr.get(3),
-            )
 
             # Check if box intersects with tile
             boxes = boxes.with_columns(

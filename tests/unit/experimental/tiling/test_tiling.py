@@ -471,6 +471,36 @@ def test_instance_bounding_boxes_caches_multiple_instances():
     assert _boxes_intersect_tile(boxes, 50, 50, 50, 50).tolist() == [False, False, True]
 
 
+def test_last_image_cache_reuses_and_evicts():
+    """The single-slot cache reuses within an image and evicts on image change.
+
+    Tiles are generated grouped by source image, so caching only the last seen
+    image captures all reuse while keeping memory bounded to one image.
+    """
+    from datumaro.experimental.tiling.tilers import _LastImageCache
+
+    cache: _LastImageCache[str] = _LastImageCache()
+    calls = []
+
+    def factory(tag: str):
+        def _make() -> str:
+            calls.append(tag)
+            return tag
+
+        return _make
+
+    # First access for image 0 computes.
+    assert cache.get(0, factory("img0-a")) == "img0-a"
+    # Repeated access for the same image reuses the cached value (no recompute).
+    assert cache.get(0, factory("img0-b")) == "img0-a"
+    # Moving to a new image evicts the previous entry and recomputes.
+    assert cache.get(1, factory("img1")) == "img1"
+    # Returning to image 0 is a miss (single slot only holds the last image).
+    assert cache.get(0, factory("img0-c")) == "img0-c"
+
+    assert calls == ["img0-a", "img1", "img0-c"]
+
+
 def test_instance_mask_tiling_stays_aligned_with_bboxes_and_labels():
     """Instance masks must be filtered in sync with bboxes and labels.
 
