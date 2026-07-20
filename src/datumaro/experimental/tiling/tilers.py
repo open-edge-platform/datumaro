@@ -86,34 +86,61 @@ class MaskTiler(Tiler):
         return pl.DataFrame({column_name: results_data, shape_column: results_shape})
 
 
-def _instance_intersects_tile(instance: np.ndarray, x: int, y: int, width: int, height: int) -> bool:
-    """Return whether an instance mask's bounding box intersects the tile.
+def _instance_bounding_boxes(instances: np.ndarray) -> np.ndarray:
+    """Compute per-instance full-image bounding boxes from a mask stack.
 
-    The criterion mirrors :class:`BboxTiler` exactly: using the instance's
-    full-image bounding box ``(x1, y1, x2, y2)`` (derived from its non-zero
-    pixels, with ``x2``/``y2`` exclusive), the instance is kept iff::
+    Scans each instance mask **once** to derive its bounding box
+    ``(x1, y1, x2, y2)`` (from non-zero pixels, with ``x2``/``y2`` exclusive).
+    Instances with no pixels (all-zero masks) yield a degenerate ``(0, 0, 0, 0)``
+    box which never intersects any tile (see :func:`_boxes_intersect_tile`), so
+    they are effectively dropped.
+
+    Args:
+        instances: Full-image instance masks of shape ``(N, H, W)``.
+
+    Returns:
+        Integer array of shape ``(N, 4)`` holding ``(x1, y1, x2, y2)`` per
+        instance.
+    """
+    num_instances = instances.shape[0]
+    boxes = np.zeros((num_instances, 4), dtype=np.int64)
+    if num_instances == 0:
+        return boxes
+
+    # Reduce over the full mask once per instance (the only O(H*W) pass).
+    rows_any = instances.any(axis=2)  # (N, H): rows containing any pixel
+    cols_any = instances.any(axis=1)  # (N, W): cols containing any pixel
+    for i in range(num_instances):
+        rows = np.nonzero(rows_any[i])[0]
+        cols = np.nonzero(cols_any[i])[0]
+        if rows.size == 0 or cols.size == 0:
+            continue
+        boxes[i] = (cols[0], rows[0], cols[-1] + 1, rows[-1] + 1)
+    return boxes
+
+
+def _boxes_intersect_tile(boxes: np.ndarray, x: int, y: int, width: int, height: int) -> np.ndarray:
+    """Vectorized bbox-vs-tile intersection test.
+
+    The criterion mirrors :class:`BboxTiler` exactly: an instance whose
+    full-image bounding box is ``(x1, y1, x2, y2)`` is kept iff::
 
         (x2 > tile_x) & (x1 < tile_x2) & (y2 > tile_y) & (y1 < tile_y2)
 
-    An all-zero mask (no pixels) has no bounding box and is dropped.
-
     Args:
-        instance: Full-image instance mask of shape ``(H, W)``.
+        boxes: Integer array of shape ``(N, 4)`` of ``(x1, y1, x2, y2)`` boxes.
         x: Tile left coordinate.
         y: Tile top coordinate.
         width: Tile width.
         height: Tile height.
 
     Returns:
-        ``True`` if the instance overlaps the tile rectangle, else ``False``.
+        Boolean array of shape ``(N,)`` marking intersecting instances.
     """
-    rows = np.nonzero(instance.any(axis=1))[0]
-    cols = np.nonzero(instance.any(axis=0))[0]
-    if rows.size == 0 or cols.size == 0:
-        return False
-    y1, y2 = int(rows[0]), int(rows[-1]) + 1
-    x1, x2 = int(cols[0]), int(cols[-1]) + 1
-    return bool((x2 > x) and (x1 < x + width) and (y2 > y) and (y1 < y + height))
+    if boxes.shape[0] == 0:
+        return np.zeros((0,), dtype=bool)
+    x1, y1, x2, y2 = boxes[:, 0], boxes[:, 1], boxes[:, 2], boxes[:, 3]
+    return (x2 > x) & (x1 < x + width) & (y2 > y) & (y1 < y + height)
 
 
 @TilerRegistry.register(InstanceMaskField)
@@ -142,10 +169,25 @@ class InstanceMaskTiler(Tiler):
         results_data = []
         results_shape = []
 
+        # Cache per source image so the O(H*W) mask scan (reshape + bbox
+        # derivation) is paid at most once per image instead of once per tile.
+        # Many tiles typically share the same source image, so this avoids
+        # O(num_tiles * num_instances * H * W) work on large / dense images.
+        instances_cache: dict[int, np.ndarray] = {}
+        boxes_cache: dict[int, np.ndarray] = {}
+
         for tile_row in tiles_df["tile"]:
             image_id = tile_row["source_sample_idx"] - slice_offset
-            instances_data = df[column_name][image_id]  # Flattened 3D array
-            instances_shape = df[shape_column][image_id]  # (num_instances, height, width)
+
+            instances = instances_cache.get(image_id)
+            if instances is None:
+                instances_data = df[column_name][image_id]  # Flattened 3D array
+                instances_shape = df[shape_column][image_id]  # (num_instances, height, width)
+                # Reshape flattened data once per image: (N, H, W)
+                instances = instances_data.reshape(instances_shape).to_numpy()
+                instances_cache[image_id] = instances
+                boxes_cache[image_id] = _instance_bounding_boxes(instances)
+            boxes = boxes_cache[image_id]
 
             # Get tile coordinates
             x = tile_row["x"]
@@ -153,20 +195,17 @@ class InstanceMaskTiler(Tiler):
             width = tile_row["width"]
             height = tile_row["height"]
 
-            # Reshape flattened data
-            instances = instances_data.reshape(instances_shape).to_numpy()  # (N, H, W)
-
-            # Keep only instances whose full-image bounding box intersects the
-            # tile, mirroring BboxTiler so masks stay aligned with boxes/labels.
+            # Keep only instances whose (cached) full-image bounding box
+            # intersects the tile, mirroring BboxTiler so masks stay aligned
+            # with boxes/labels. This is a cheap vectorized check per tile.
             if instances.shape[0] > 0:
-                keep = np.array(
-                    [_instance_intersects_tile(inst, x, y, width, height) for inst in instances],
-                    dtype=bool,
-                )
-                instances = instances[keep]
+                keep = _boxes_intersect_tile(boxes, x, y, width, height)
+                kept_instances = instances[keep]
+            else:
+                kept_instances = instances
 
             # Extract tile region: shape (num_kept_instances, tile_height, tile_width)
-            tile_result = instances[:, y : y + height, x : x + width]
+            tile_result = kept_instances[:, y : y + height, x : x + width]
 
             # Flatten result for storage
             results_data.append(tile_result.reshape(-1))
