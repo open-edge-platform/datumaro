@@ -233,11 +233,12 @@ def test_mask_tiling():
     assert np.any(result_df[0, "segmentation"].to_numpy() == 1)  # Should contain class 1
 
     # Check instance segmentation tile
-    assert result_df[0, "instances"].shape == (2 * 50 * 50,)
-    assert tuple(result_df[0, "instances_shape"]) == (2, 50, 50)
-    instances = result_df[0, "instances"].reshape((2, 50, 50)).to_numpy()
+    # Only instance 0 (bbox 20-70) overlaps the top-left tile; the corner
+    # instance 1 (bbox 80-90) is filtered out to stay aligned with boxes/labels.
+    assert result_df[0, "instances"].shape == (1 * 50 * 50,)
+    assert tuple(result_df[0, "instances_shape"]) == (1, 50, 50)
+    instances = result_df[0, "instances"].reshape((1, 50, 50)).to_numpy()
     assert np.any(instances[0])
-    assert not np.any(instances[1])
 
     # Check last tile (bottom-right)
 
@@ -247,6 +248,7 @@ def test_mask_tiling():
     assert np.any(result_df[3, "segmentation"].to_numpy() == 1)  # Should contain class 1
 
     # Check instance segmentation tile
+    # Both instances overlap the bottom-right tile, so both are kept.
     assert result_df[3, "instances"].shape == (2 * 50 * 50,)
     assert tuple(result_df[3, "instances_shape"]) == (2, 50, 50)
     instances = result_df[3, "instances"].reshape((2, 50, 50)).to_numpy()
@@ -402,3 +404,157 @@ def test_tiling_factory_builds_transform_after_unpickling(sample_df, sample_sche
 
     assert isinstance(transform, TilingTransform)
     assert len(transform) == 16  # matches test_apply_tiling
+
+
+def _bbox_tiler_keep(x1, y1, x2, y2, tx, ty, tw, th):
+    """Reference reimplementation of ``BboxTiler``'s keep criterion."""
+    return (x2 > tx) and (x1 < tx + tw) and (y2 > ty) and (y1 < ty + th)
+
+
+def _mask_from_box(x1, y1, x2, y2, h=100, w=100):
+    m = np.zeros((h, w), dtype=np.uint8)
+    m[y1:y2, x1:x2] = 1
+    return m
+
+
+def test_instance_intersects_tile_drops_empty_mask():
+    """An all-zero instance mask has no bounding box and is never kept."""
+    from datumaro.experimental.tiling.tilers import _boxes_intersect_tile, _instance_bounding_boxes
+
+    instances = np.zeros((1, 100, 100), dtype=np.uint8)
+    boxes = _instance_bounding_boxes(instances)
+    # Empty mask yields a degenerate (0, 0, 0, 0) box.
+    assert boxes.tolist() == [[0, 0, 0, 0]]
+    assert _boxes_intersect_tile(boxes, 0, 0, 50, 50).tolist() == [False]
+
+
+@pytest.mark.parametrize(
+    ("box", "tile"),
+    [
+        ((10, 10, 40, 40), (0, 0, 50, 50)),  # fully inside
+        ((45, 45, 60, 60), (0, 0, 50, 50)),  # straddles bottom-right corner
+        ((49, 49, 55, 55), (0, 0, 50, 50)),  # 1px overlap in the tile
+        ((60, 60, 90, 90), (50, 50, 50, 50)),  # inside the second tile
+        ((50, 10, 70, 30), (0, 0, 50, 50)),  # touches right edge (x1==tile_x2) -> dropped
+        ((10, 10, 40, 40), (50, 0, 50, 50)),  # left of the second tile -> dropped
+    ],
+)
+def test_instance_intersects_tile_matches_bbox_tiler(box, tile):
+    """The mask-derived keep decision equals the box-based ``BboxTiler`` decision."""
+    from datumaro.experimental.tiling.tilers import _boxes_intersect_tile, _instance_bounding_boxes
+
+    x1, y1, x2, y2 = box
+    tx, ty, tw, th = tile
+    mask = _mask_from_box(x1, y1, x2, y2)[None]  # (1, H, W)
+    boxes = _instance_bounding_boxes(mask)
+    # The rasterised mask's exclusive bbox equals (x1, y1, x2, y2) for an axis-aligned rectangle.
+    assert boxes.tolist() == [[x1, y1, x2, y2]]
+    expected = _bbox_tiler_keep(x1, y1, x2, y2, tx, ty, tw, th)
+    assert bool(_boxes_intersect_tile(boxes, tx, ty, tw, th)[0]) is expected
+
+
+def test_instance_bounding_boxes_caches_multiple_instances():
+    """Bounding boxes are derived once for a whole instance stack (vectorized)."""
+    from datumaro.experimental.tiling.tilers import _boxes_intersect_tile, _instance_bounding_boxes
+
+    stack = np.stack(
+        [
+            _mask_from_box(10, 10, 40, 40),
+            np.zeros((100, 100), dtype=np.uint8),  # empty -> degenerate box
+            _mask_from_box(60, 60, 90, 90),
+        ]
+    )
+    boxes = _instance_bounding_boxes(stack)
+    assert boxes.tolist() == [[10, 10, 40, 40], [0, 0, 0, 0], [60, 60, 90, 90]]
+    # A single tile check keeps only the first instance for the top-left tile.
+    assert _boxes_intersect_tile(boxes, 0, 0, 50, 50).tolist() == [True, False, False]
+    assert _boxes_intersect_tile(boxes, 50, 50, 50, 50).tolist() == [False, False, True]
+
+
+def test_last_image_cache_reuses_and_evicts():
+    """The single-slot cache reuses within an image and evicts on image change.
+
+    Tiles are generated grouped by source image, so caching only the last seen
+    image captures all reuse while keeping memory bounded to one image.
+    """
+    from datumaro.experimental.tiling.tilers import _LastImageCache
+
+    cache: _LastImageCache[str] = _LastImageCache()
+    calls = []
+
+    def factory(tag: str):
+        def _make() -> str:
+            calls.append(tag)
+            return tag
+
+        return _make
+
+    # First access for image 0 computes.
+    assert cache.get(0, factory("img0-a")) == "img0-a"
+    # Repeated access for the same image reuses the cached value (no recompute).
+    assert cache.get(0, factory("img0-b")) == "img0-a"
+    # Moving to a new image evicts the previous entry and recomputes.
+    assert cache.get(1, factory("img1")) == "img1"
+    # Returning to image 0 is a miss (single slot only holds the last image).
+    assert cache.get(0, factory("img0-c")) == "img0-c"
+
+    assert calls == ["img0-a", "img1", "img0-c"]
+
+
+def test_instance_mask_tiling_stays_aligned_with_bboxes_and_labels():
+    """Instance masks must be filtered in sync with bboxes and labels.
+
+    Regression test: previously ``InstanceMaskTiler`` kept an entry for every
+    source instance in every tile while ``BboxTiler``/``LabelTiler`` pruned
+    non-overlapping instances, leaving ``len(masks) != len(bboxes) == len(labels)``.
+    """
+    schema = Schema(
+        attributes={
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
+            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64())),
+            "labels": AttributeInfo(type=list, field=label_field(is_list=True)),
+            "instances": AttributeInfo(type=list, field=instance_mask_field()),
+        }
+    )
+
+    size = 200
+    # Instances placed to fully-contain, straddle, and sit outside tile boundaries at 100.
+    specs = [(10, 10, 40, 40), (90, 90, 110, 110), (150, 20, 180, 60), (95, 150, 140, 190)]
+
+    def inst(x1, y1, x2, y2):
+        m = np.zeros((size, size), dtype=bool)
+        m[y1:y2, x1:x2] = True
+        return m
+
+    instances = np.stack([inst(*s) for s in specs])
+    bboxes = [[float(v) for v in s] for s in specs]
+
+    polars_schema = schema.attributes["image_info"].field.to_polars_schema("image_info")
+    polars_schema.update(schema.attributes["bboxes"].field.to_polars_schema("bboxes"))
+
+    df = pl.DataFrame(
+        {
+            "image_info": [{"width": size, "height": size}],
+            "bboxes": [bboxes],
+            "labels": [["a", "b", "c", "a"]],
+            "instances": instances.reshape(1, -1),
+            "instances_shape": [list(instances.shape)],
+        },
+        schema={
+            **polars_schema,
+            "labels": pl.List(pl.Utf8()),
+            "instances": pl.List(pl.Boolean()),
+            "instances_shape": pl.List(pl.Int32()),
+        },
+    )
+
+    config = TilingConfig(tile_width=100, tile_height=100)
+    plan = _create_tiling_plan(schema, config, threshold_drop_ann=0.0)
+    result_df, _ = _apply_tiling(df, None, plan, ["bboxes", "labels", "instances"])
+
+    assert len(result_df) == 4
+    for i in range(len(result_df)):
+        n_boxes = len(result_df[i, "bboxes"])
+        n_labels = len(result_df[i, "labels"])
+        n_masks = result_df[i, "instances_shape"][0]
+        assert n_boxes == n_labels == n_masks, f"tile {i}: boxes={n_boxes} labels={n_labels} masks={n_masks}"
