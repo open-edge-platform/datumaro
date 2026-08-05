@@ -1149,10 +1149,10 @@ class BBoxFormatConverter(Converter):
             # Convert cxcywh to x1y1x2y2: [cx, cy, w, h] -> [cx-w/2, cy-h/2, cx+w/2, cy+h/2]
             intermediate_expr = pl.col(input_bbox_name).list.eval(
                 pl.concat_arr(
-                    pl.element().arr.get(0) - pl.element().arr.get(2) / 2,  # x1 = cx - w/2
-                    pl.element().arr.get(1) - pl.element().arr.get(3) / 2,  # y1 = cy - h/2
-                    pl.element().arr.get(0) + pl.element().arr.get(2) / 2,  # x2 = cx + w/2
-                    pl.element().arr.get(1) + pl.element().arr.get(3) / 2,  # y2 = cy + h/2
+                    (pl.element().arr.get(0) - pl.element().arr.get(2) / 2).clip(lower_bound=0),  # x1 = cx - w/2
+                    (pl.element().arr.get(1) - pl.element().arr.get(3) / 2).clip(lower_bound=0),  # y1 = cy - h/2
+                    (pl.element().arr.get(0) + pl.element().arr.get(2) / 2).clip(lower_bound=pl.element().arr.get(2)),  # x2 = cx + w/2
+                    (pl.element().arr.get(1) + pl.element().arr.get(3) / 2).clip(lower_bound=pl.element().arr.get(3)),  # y2 = cy + h/2
                 )
             )
         else:

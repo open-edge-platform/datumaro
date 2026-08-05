@@ -1353,6 +1353,46 @@ def test_bbox_format_converter_cxcywh_to_x1y1x2y2():
     np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [10.0, 20.0, 30.0, 50.0])
 
 
+def test_bbox_format_converter_cxcywh_to_x1y1x2y2_clamps_negative_edge_coords():
+    """Boxes touching the image edge can produce a tiny negative y1/x1 due to
+    float32 precision loss inherent in YOLO's 6-decimal-place normalized format
+    (e.g. 0.033333 * 1080 = 35.99964, not exactly 36.0). BBoxFormatConverter
+    must clamp x1/y1 to >= 0 rather than propagating the negative epsilon.
+
+    Source values: cx=0.605208, cy=0.033333, w=0.066667, h=0.066667 (normalized,
+    1920x1080 image) -> denormalized cxcywh = [1161.9994, 35.99964, 128.00064, 72.00036]
+    which, before clamping, converts to y1 = cy - h/2 = -0.00054.
+    """
+
+    converter_instance = BBoxFormatConverter()
+
+    df = pl.DataFrame(
+        {"bbox": [[[1161.9994, 35.99964, 128.00064, 72.00036]]]},  # cx, cy, w, h (denormalized)
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4))}),
+    )
+
+    input_field = BBoxField(dtype=pl.Float32(), format="cxcywh", normalize=False)
+    output_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    result_df = converter_instance.convert(df)
+    result_bbox = result_df["bbox"][0][0].to_numpy()
+
+    x1, y1, x2, y2 = result_bbox
+
+    # y1 must be clamped to exactly 0, never negative
+    assert y1 == 0.0, f"Expected y1 clamped to 0.0, got {y1}"
+    assert x1 >= 0.0
+
+    # width/height derived from corners must stay non-negative
+    assert (x2 - x1) > 0
+    assert (y2 - y1) > 0
+
+
 def test_bbox_to_polygon_converter():
     """Test BBoxToPolygonConverter converting bbox to polygon."""
 
