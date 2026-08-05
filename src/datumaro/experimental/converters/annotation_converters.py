@@ -1153,12 +1153,8 @@ class BBoxFormatConverter(Converter):
                 pl.concat_arr(
                     (pl.element().arr.get(0) - pl.element().arr.get(2) / 2).clip(lower_bound=0),  # x1 = cx - w/2
                     (pl.element().arr.get(1) - pl.element().arr.get(3) / 2).clip(lower_bound=0),  # y1 = cy - h/2
-                    (pl.element().arr.get(0) + pl.element().arr.get(2) / 2).clip(
-                        lower_bound=pl.element().arr.get(2)
-                    ),  # x2 = cx + w/2
-                    (pl.element().arr.get(1) + pl.element().arr.get(3) / 2).clip(
-                        lower_bound=pl.element().arr.get(3)
-                    ),  # y2 = cy + h/2
+                    pl.element().arr.get(0) + pl.element().arr.get(2) / 2,  # x2 = cx + w/2
+                    pl.element().arr.get(1) + pl.element().arr.get(3) / 2,  # y2 = cy + h/2
                 )
             )
         else:
