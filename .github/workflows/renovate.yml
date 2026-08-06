@@ -91,6 +91,21 @@ jobs:
         with:
           client-id: ${{ secrets.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_APP_PEM }}
+          repositories: ${{ github.event.repository.name }}
+          owner: ${{ github.repository_owner }}
+          # Repository permissions
+          permission-administration: read
+          permission-checks: write
+          permission-statuses: write
+          permission-contents: write
+          permission-vulnerability-alerts: read
+          permission-issues: write
+          permission-metadata: read
+          permission-pull-requests: write
+          permission-workflows: write
+          # Organization permissions
+          permission-organization-administration: read
+          permission-members: read
 
       - name: Self-hosted Renovate
         uses: renovatebot/github-action@316d7cd859606d6039a2182b7d69199e9b036835 # v46.2.1
