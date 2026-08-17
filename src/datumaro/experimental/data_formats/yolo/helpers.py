@@ -194,12 +194,19 @@ def _resolve_within_root(root_path: Path, base_dirs: list[Path], raw_value: Any)
         if not isinstance(candidate, str) or not candidate.strip():
             continue
 
-        pure_path = PurePosixPath(candidate.strip().replace("\\", "/"))
-        if pure_path.is_absolute() or (len(candidate) > 1 and candidate[1] == ":"):
+        candidate_str = candidate.strip()
+        pure_path = PurePosixPath(candidate_str.replace("\\", "/"))
+        has_drive_letter = len(candidate_str) > 1 and candidate_str[1] == ":" and candidate_str[0].isalpha()
+        if pure_path.is_absolute() or has_drive_letter:
             logger.warning("[YOLO] Ignoring absolute path in data.yaml: %s", candidate)
             continue
 
-        parts = [part for part in pure_path.parts if part not in (".", "..")]
+        # Only leading ".."/"." are stripped, so Roboflow-style "../train/images" resolves against
+        # the dataset root. Inner navigation is left to resolve(), and the is_relative_to() check
+        # below rejects anything that ends up outside the root.
+        parts = list(pure_path.parts)
+        while parts and parts[0] in (".", ".."):
+            parts.pop(0)
         if not parts:
             continue
         relative_path = Path(*parts)
