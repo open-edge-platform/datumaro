@@ -1,6 +1,7 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from dataclasses import dataclass
 from typing import Any
 
 import cv2
@@ -812,6 +813,27 @@ class ImagePathToImageInfoConverter(MediaBridgeConverter):
         )
 
 
+@dataclass(frozen=True)
+class _ImagePathLoader:
+    """Picklable callable that lazily loads an image from *path* on demand.
+
+    Used in place of a locally-defined closure so that datasets containing this
+    callable can be passed to ``torch.utils.data.DataLoader`` workers started
+    with the ``spawn`` multiprocessing context, which requires every object
+    reachable from the ``Dataset`` to be picklable. A closure defined inside a
+    function is not picklable by the standard ``pickle`` module, whereas a
+    module-level dataclass instance with simple attributes is.
+    """
+
+    path: str
+    format: str
+
+    def __call__(self) -> np.ndarray:
+        from datumaro.experimental.media import LazyImage
+
+        return LazyImage(path=self.path, format=self.format).data
+
+
 @converter
 class ImagePathToImageCallableConverter(MediaBridgeConverter):
     """
@@ -849,8 +871,6 @@ class ImagePathToImageCallableConverter(MediaBridgeConverter):
         Returns:
             DataFrame with callable column that loads images on demand
         """
-        from datumaro.experimental.media import LazyImage
-
         input_col = self.input_path.name
         output_col = self.output_callable.name
 
@@ -861,12 +881,7 @@ class ImagePathToImageCallableConverter(MediaBridgeConverter):
                 callables.append(None)
                 continue
 
-            def make_loader(p: str, fmt: str) -> callable:
-                def load_image() -> np.ndarray:
-                    return LazyImage(path=p, format=fmt).data
+            callables.append(_ImagePathLoader(str(path), self.input_path.field.format))
 
-                return load_image
-
-            callables.append(make_loader(str(path), self.input_path.field.format))
 
         return df.with_columns(pl.Series(output_col, callables, dtype=pl.Object()))

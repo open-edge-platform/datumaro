@@ -458,23 +458,35 @@ def _parse_object_element(
     )
 
 
-def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> Callable:
-    """Create a lazy loader function for a segmentation mask.
+@dataclass(frozen=True)
+class _VocMaskLoader:
+    """Picklable callable that lazily loads a VOC segmentation mask on demand.
+
+    Used in place of a locally-defined closure so that datasets containing this
+    callable can be passed to ``torch.utils.data.DataLoader`` workers started
+    with the ``spawn`` multiprocessing context, which requires every object
+    reachable from the ``Dataset`` to be picklable. A closure defined inside a
+    function is not picklable by the standard ``pickle`` module, whereas a
+    module-level dataclass instance with simple (picklable) attributes is.
 
     Args:
-        mask_path: Path to the mask PNG file
+        mask_path: Path to the mask PNG file.
         colormap: Optional RGB-to-index mapping. If provided, RGB masks will be
             converted to index masks.
     """
-    from PIL import Image as PILImage
 
-    def load_mask() -> np.ndarray:
+    mask_path: Path
+    colormap: dict[tuple[int, int, int], int] | None = None
+
+    def __call__(self) -> np.ndarray:
         """Load mask from file and convert to numpy array."""
-        with PILImage.open(mask_path) as img:
+        from PIL import Image as PILImage
+
+        with PILImage.open(self.mask_path) as img:
             mask_rgb = np.array(img, dtype=np.uint8)
 
         # If no colormap or already indexed, return as-is
-        if colormap is None or len(mask_rgb.shape) < 3:
+        if self.colormap is None or len(mask_rgb.shape) < 3:
             return mask_rgb
 
         # Convert RGB mask to index mask using colormap
@@ -482,14 +494,23 @@ def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], in
         index_mask = np.zeros((h, w), dtype=np.uint8)
 
         # Create a lookup from RGB tuples to indices
-        for rgb, idx in colormap.items():
+        for rgb, idx in self.colormap.items():
             # Find pixels matching this color
             mask = np.all(mask_rgb[:, :, :3] == np.array(rgb), axis=2)
             index_mask[mask] = idx
 
         return index_mask
 
-    return load_mask
+
+def _create_mask_loader(mask_path: Path, colormap: dict[tuple[int, int, int], int] | None = None) -> Callable:
+    """Create a lazy loader callable for a segmentation mask.
+
+    Args:
+        mask_path: Path to the mask PNG file
+        colormap: Optional RGB-to-index mapping. If provided, RGB masks will be
+            converted to index masks.
+    """
+    return _VocMaskLoader(mask_path, colormap)
 
 
 @dataclass
