@@ -8,7 +8,7 @@ Helper functions for YOLO dataset I/O.
 import logging
 import shutil
 from collections import defaultdict
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Literal
 
 import numpy as np
@@ -168,6 +168,165 @@ def _load_ultralytics_categories(root_path: Path) -> LabelCategories:
 
     logger.warning("[YOLO] No category file found, using empty categories")
     return LabelCategories(labels=())
+
+
+def _resolve_within_root(root_path: Path, base_dirs: list[Path], raw_value: Any) -> Path | None:
+    """
+    Resolve a directory path taken from ``data.yaml`` against the dataset root.
+
+    The value is treated as untrusted input: absolute paths are rejected and leading ``..`` /
+    ``.`` components are dropped, so the result can never escape ``root_path``. The latter also
+    makes Roboflow exports work, as they declare paths such as ``../train/images`` while
+    ``data.yaml`` itself sits at the dataset root.
+
+    Args:
+        root_path: Dataset root directory; the result is guaranteed to be inside it.
+        base_dirs: Directories to try the value against, in order of preference.
+        raw_value: Value read from ``data.yaml``; a string or a list of strings.
+
+    Returns:
+        The resolved existing directory, or None if the value cannot be resolved.
+    """
+    candidates = raw_value if isinstance(raw_value, list | tuple) else [raw_value]
+    resolved_root = root_path.resolve()
+
+    for candidate in candidates:
+        if not isinstance(candidate, str) or not candidate.strip():
+            continue
+
+        candidate_str = candidate.strip()
+        pure_path = PurePosixPath(candidate_str.replace("\\", "/"))
+        has_drive_letter = len(candidate_str) > 1 and candidate_str[1] == ":" and candidate_str[0].isalpha()
+        if pure_path.is_absolute() or has_drive_letter:
+            logger.warning("[YOLO] Ignoring absolute path in data.yaml: %s", candidate)
+            continue
+
+        # Only leading ".."/"." are stripped, so Roboflow-style "../train/images" resolves against
+        # the dataset root. Inner navigation is left to resolve(), and the is_relative_to() check
+        # below rejects anything that ends up outside the root.
+        parts = list(pure_path.parts)
+        while parts and parts[0] in (".", ".."):
+            parts.pop(0)
+        if not parts:
+            continue
+        relative_path = Path(*parts)
+
+        for base_dir in base_dirs:
+            resolved = (base_dir / relative_path).resolve()
+            if not resolved.is_relative_to(resolved_root):
+                logger.warning("[YOLO] Ignoring path in data.yaml pointing outside the dataset: %s", candidate)
+                continue
+            if resolved.is_dir():
+                return resolved
+
+    return None
+
+
+def _derive_labels_dir(images_dir: Path, root_path: Path) -> Path | None:
+    """
+    Find the labels directory matching an images directory.
+
+    Mirrors the Ultralytics convention of swapping the ``images`` path component for ``labels``,
+    which covers both the data-first (``images/train`` -> ``labels/train``) and the split-first
+    (``train/images`` -> ``train/labels``) layouts.
+    """
+    try:
+        relative_parts = list(images_dir.relative_to(root_path.resolve()).parts)
+    except ValueError:
+        relative_parts = []
+
+    for index in range(len(relative_parts) - 1, -1, -1):
+        if relative_parts[index].lower() == "images":
+            relative_parts[index] = "labels"
+            candidate = root_path.resolve().joinpath(*relative_parts)
+            if candidate.is_dir():
+                return candidate
+            break
+
+    candidate = images_dir.parent / "labels"
+    return candidate if candidate.is_dir() else None
+
+
+def _subsets_from_yaml(root_path: Path) -> list[tuple[str, Path, Path | None]]:
+    """Resolve subset directories declared in ``data.yaml``, if any."""
+    yaml_path = root_path / "data.yaml"
+    if not yaml_path.exists():
+        return []
+
+    try:
+        with open(yaml_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f) or {}
+    except (OSError, yaml.YAMLError) as e:
+        logger.warning("[YOLO] Failed to read %s: %s", yaml_path, e)
+        return []
+
+    if not isinstance(config, dict):
+        return []
+
+    base_dirs = [root_path.resolve()]
+    declared_base = _resolve_within_root(root_path, base_dirs, config.get("path"))
+    if declared_base is not None:
+        base_dirs.insert(0, declared_base)
+
+    subsets: list[tuple[str, Path, Path | None]] = []
+    for subset_name in DIR_NAME_TO_SUBSET:
+        if subset_name not in config:
+            continue
+        images_dir = _resolve_within_root(root_path, base_dirs, config[subset_name])
+        if images_dir is None:
+            logger.warning(
+                "[YOLO] Could not resolve the '%s' path declared in %s: %s",
+                subset_name,
+                yaml_path,
+                config[subset_name],
+            )
+            continue
+        subsets.append((subset_name, images_dir, _derive_labels_dir(images_dir, root_path)))
+
+    return subsets
+
+
+def _subsets_from_dir_layout(root_path: Path) -> list[tuple[str, Path, Path | None]]:
+    """
+    Discover subset directories from the on-disk layout.
+
+    Covers the data-first layout (``images/<subset>``) as well as the split-first layout
+    (``<subset>/images``) used by Roboflow exports.
+    """
+    subsets: list[tuple[str, Path, Path | None]] = []
+
+    images_dir = root_path / "images"
+    if images_dir.is_dir():
+        for subset_dir in sorted(images_dir.iterdir()):
+            if subset_dir.is_dir():
+                subsets.append((subset_dir.name, subset_dir, _derive_labels_dir(subset_dir.resolve(), root_path)))
+
+    for subset_name in DIR_NAME_TO_SUBSET:
+        subset_images_dir = root_path / subset_name / "images"
+        if subset_images_dir.is_dir():
+            subsets.append((subset_name, subset_images_dir, _derive_labels_dir(subset_images_dir.resolve(), root_path)))
+
+    return subsets
+
+
+def _resolve_ultralytics_subsets(root_path: Path) -> list[tuple[str, Path, Path | None]]:
+    """
+    Resolve the ``(subset_name, images_dir, labels_dir)`` triples of an Ultralytics dataset.
+
+    Paths declared in ``data.yaml`` take precedence; the on-disk layout is then scanned to pick
+    up any subset the config did not declare, or declared with a path that does not exist.
+    """
+    subsets: list[tuple[str, Path, Path | None]] = []
+    seen_dirs: set[Path] = set()
+
+    for subset_name, images_dir, labels_dir in _subsets_from_yaml(root_path) + _subsets_from_dir_layout(root_path):
+        resolved_images_dir = images_dir.resolve()
+        if resolved_images_dir in seen_dirs:
+            continue
+        seen_dirs.add(resolved_images_dir)
+        subsets.append((subset_name, resolved_images_dir, labels_dir))
+
+    return subsets
 
 
 def _create_sample_from_image(
@@ -405,24 +564,21 @@ def _load_yolo_ultralytics(root_path: Path) -> Dataset:
     categories = _load_ultralytics_categories(root_path)
     dataset = Dataset(YoloSample, categories={"labels": categories})
 
-    images_dir = root_path / "images"
-    labels_dir = root_path / "labels"
+    # Prefer the subset paths declared in data.yaml, and fall back to the on-disk layout.
+    subsets = _resolve_ultralytics_subsets(root_path)
+    if not subsets:
+        raise FileNotFoundError(
+            f"Could not locate any image directory under YOLO root: {root_path}. Expected either an "
+            "'images' directory holding one folder per subset, a '<subset>/images' directory per "
+            "subset, or a 'data.yaml' declaring the train/val/test image directories."
+        )
 
-    if not images_dir.exists():
-        raise FileNotFoundError(f"Missing 'images' directory under YOLO root: {images_dir}")
-
-    # Find subsets by looking at subdirectories in images/
-    for subset_dir in sorted(images_dir.iterdir()):
-        if not subset_dir.is_dir():
-            continue
-
-        subset_name = subset_dir.name
+    for subset_name, images_subset_dir, labels_subset_dir in subsets:
         subset_enum = DIR_NAME_TO_SUBSET.get(subset_name, Subset.UNASSIGNED)
-        labels_subset_dir = labels_dir / subset_name if labels_dir.exists() else None
 
-        logger.info("[YOLO] Loading subset '%s' from '%s'", subset_name, subset_dir)
+        logger.info("[YOLO] Loading subset '%s' from '%s'", subset_name, images_subset_dir)
 
-        image_files = _find_image_files(subset_dir)
+        image_files = _find_image_files(images_subset_dir)
         samples = []
         for image_path in image_files:
             try:
