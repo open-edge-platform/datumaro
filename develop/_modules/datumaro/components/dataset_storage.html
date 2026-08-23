@@ -363,7 +363,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemTransform</span><span class="p">,</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_method_redefined</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DatasetPatch&quot;</span><span class="p">,</span> <span class="s2">&quot;DatasetStorage&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"DatasetPatch"</span><span class="p">,</span> <span class="s2">"DatasetStorage"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="DatasetPatch">
@@ -374,7 +374,7 @@
     <span class="k">class</span><span class="w"> </span><span class="nc">DatasetPatchWrapper</span><span class="p">(</span><span class="n">DatasetItemStorageDatasetView</span><span class="p">):</span>
         <span class="c1"># The purpose of this class is to indicate that the input dataset is</span>
         <span class="c1"># a patch and autofill patch info in Exporter</span>
-        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch</span><span class="p">:</span> <span class="s2">&quot;DatasetPatch&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patch</span><span class="p">:</span> <span class="s2">"DatasetPatch"</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="n">patch</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
                 <span class="n">infos</span><span class="o">=</span><span class="n">parent</span><span class="o">.</span><span class="n">infos</span><span class="p">(),</span>
@@ -477,13 +477,13 @@
         <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use both source and categories&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Can't use both source and categories"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">categories</span>
 
         <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">infos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">infos</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">infos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t use both source and infos&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Can't use both source and infos"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="n">infos</span>
 
         <span class="k">if</span> <span class="n">media_type</span><span class="p">:</span>
@@ -491,7 +491,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">media_type</span><span class="p">():</span>
             <span class="n">media_type</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Media type must be provided for a dataset&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Media type must be provided for a dataset"</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">media_type</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="n">media_type</span>
@@ -546,7 +546,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_iter_init_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># Can&#39;t just return from the method, because it won&#39;t add exception handling</span>
+            <span class="c1"># Can't just return from the method, because it won't add exception handling</span>
             <span class="c1"># It covers cases when we save the null error handler in the source</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_init_cache_unchecked</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">item</span>
@@ -585,7 +585,7 @@
                 <span class="k">if</span> <span class="n">current_status</span> <span class="o">!=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">added</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_updated_items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ItemStatus</span><span class="o">.</span><span class="n">modified</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Unknown status </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">new_status</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Unknown status </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">new_status</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_add_ann_types</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
@@ -620,7 +620,7 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">media_type</span><span class="p">):</span>
                 <span class="c1"># TODO: make it statically available</span>
-                <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Transforms are not allowed to change media type of dataset items&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Transforms are not allowed to change media type of dataset items"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_drop_malformed_transforms</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">malformed_transform_indices</span><span class="p">)</span>
 
@@ -628,8 +628,8 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">media_type</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Unexpected media type of a dataset item &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span>
-                    <span class="s2">&quot;Expected &#39;</span><span class="si">%s</span><span class="s2">&#39;, actual &#39;</span><span class="si">%s</span><span class="s2">&#39; &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">media_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">))</span>
+                    <span class="s2">"Unexpected media type of a dataset item '</span><span class="si">%s</span><span class="s2">'. "</span>
+                    <span class="s2">"Expected '</span><span class="si">%s</span><span class="s2">', actual '</span><span class="si">%s</span><span class="s2">' "</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">media_type</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">))</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">transform</span> <span class="ow">and</span> <span class="n">transform</span><span class="o">.</span><span class="n">is_local</span><span class="p">:</span>
@@ -701,7 +701,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">source_cat</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">source_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Don&#39;t need to override categories if already defined</span>
+            <span class="c1"># Don't need to override categories if already defined</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">source_cat</span>
 
         <span class="k">if</span> <span class="n">transform</span><span class="p">:</span>
@@ -747,7 +747,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">"infos"</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
@@ -766,7 +766,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cache_initialized</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">"categories"</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
@@ -798,8 +798,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Mismatching item media type &#39;</span><span class="si">%s</span><span class="s2">&#39;, &quot;</span>
-                <span class="s2">&quot;the dataset contains &#39;</span><span class="si">%s</span><span class="s2">&#39; items.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">)</span>
+                <span class="s2">"Mismatching item media type '</span><span class="si">%s</span><span class="s2">', "</span>
+                <span class="s2">"the dataset contains '</span><span class="si">%s</span><span class="s2">' items."</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="n">is_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -899,10 +899,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">"infos"</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_method_redefined</span><span class="p">(</span><span class="s2">"categories"</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
@@ -974,8 +974,8 @@
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">transform</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">malformed_transform_indices</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Automatically drop </span><span class="si">{</span><span class="n">transform</span><span class="si">}</span><span class="s2"> from the transform stack because an error is raised. &quot;</span>
-                    <span class="s2">&quot;Therefore, the dataset will not be transformed by this transformation since it is droped.&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Automatically drop </span><span class="si">{</span><span class="n">transform</span><span class="si">}</span><span class="s2"> from the transform stack because an error is raised. "</span>
+                    <span class="s2">"Therefore, the dataset will not be transformed by this transformation since it is droped."</span><span class="p">,</span>
                     <span class="n">exc_info</span><span class="o">=</span><span class="n">malformed_transform_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
@@ -998,7 +998,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StreamSubset</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">is_stream</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;source should be a stream.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"source should be a stream."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span> <span class="o">=</span> <span class="n">subset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1016,13 +1016,13 @@
 <div class="viewcode-block" id="StreamSubset.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamSubset.subsets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Cannot get subsets of the subset.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Cannot get subsets of the subset."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamSubset.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamSubset.get_subset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Cannot get a subset of the subset.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Cannot get a subset of the subset."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamSubset.infos">
@@ -1041,8 +1041,8 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamSubset.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span>
-            <span class="s2">&quot;Random access to the dataset item is not allowed in streaming. &quot;</span>
-            <span class="s2">&quot;You can access to the dataset item only by using its iterator.&quot;</span>
+            <span class="s2">"Random access to the dataset item is not allowed in streaming. "</span>
+            <span class="s2">"You can access to the dataset item only by using its iterator."</span>
         <span class="p">)</span></div>
 
 
@@ -1076,7 +1076,7 @@
         <span class="n">ann_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">is_stream</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;source should be a stream.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"source should be a stream."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subset_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transform_ids_for_latest_subset_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">infos</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">media_type</span><span class="p">,</span> <span class="n">ann_types</span><span class="p">)</span>
@@ -1084,14 +1084,14 @@
 <div class="viewcode-block" id="StreamDatasetStorage.is_cache_initialized">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.is_cache_initialized">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_cache_initialized</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This function has no effect on streaming.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"This function has no effect on streaming."</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.init_cache">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.init_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">init_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This function has no effect on streaming.&quot;</span><span class="p">)</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"This function has no effect on streaming."</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
@@ -1120,22 +1120,22 @@
 <div class="viewcode-block" id="StreamDatasetStorage.put">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.put">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Drop-in replacement is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Drop-in replacement is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span>
-            <span class="s2">&quot;Random access to the dataset item is not allowed in streaming. &quot;</span>
-            <span class="s2">&quot;You can access to the dataset item only by using its iterator.&quot;</span>
+            <span class="s2">"Random access to the dataset item is not allowed in streaming. "</span>
+            <span class="s2">"You can access to the dataset item only by using its iterator."</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.remove">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.remove">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Drop-in removal is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Drop-in removal is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.get_subset">
@@ -1179,25 +1179,25 @@
 <div class="viewcode-block" id="StreamDatasetStorage.get_datasetitem_by_path">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.get_datasetitem_by_path">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_datasetitem_by_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Get dataset item by path is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Get dataset item by path is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.get_patch">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.get_patch">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_patch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Get patch is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Get patch is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.flush_changes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.flush_changes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">flush_changes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Flush changes is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Flush changes is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.update">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.dataset.StreamDatasetStorage.update">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetPatch</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]]):</span>
-        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">&quot;Update is not allowed in streaming.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">NotAvailableError</span><span class="p">(</span><span class="s2">"Update is not allowed in streaming."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StreamDatasetStorage.infos">

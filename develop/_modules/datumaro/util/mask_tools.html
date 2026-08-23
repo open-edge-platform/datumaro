@@ -353,15 +353,15 @@
 <div class="viewcode-block" id="generate_colormap">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.generate_colormap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_colormap</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_background</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generates colors using PASCAL VOC algorithm.</span>
 
 <span class="sd">    If include_background is True, the result will include the item</span>
-<span class="sd">    &quot;0: (0, 0, 0)&quot;, which is typically used as a background color.</span>
+<span class="sd">    "0: (0, 0, 0)", which is typically used as a background color.</span>
 <span class="sd">    Otherwise, indices will start from 0, but (0, 0, 0) is not included.</span>
 
 <span class="sd">    Returns index -&gt; (R, G, B) mapping.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bit</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">number</span> <span class="o">&gt;&gt;</span> <span class="n">index</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span>
@@ -403,13 +403,13 @@
 <div class="viewcode-block" id="unpaint_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.unpaint_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unpaint_mask</span><span class="p">(</span><span class="n">painted_mask</span><span class="p">,</span> <span class="n">inverse_colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">default_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert color mask to index mask</span>
 
 <span class="sd">    mask: HWC BGR [0; 255]</span>
 
 <span class="sd">    colormap: (R, G, B) -&gt; index</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">painted_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">if</span> <span class="n">inverse_colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">inverse_colormap</span> <span class="o">=</span> <span class="n">_default_unpaint_colormap</span>
@@ -430,7 +430,7 @@
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">uvals</span><span class="p">:</span>
         <span class="n">class_id</span> <span class="o">=</span> <span class="n">map_fn</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">class_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Undeclared color </span><span class="si">{</span><span class="p">((</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Undeclared color </span><span class="si">{</span><span class="p">((</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">255</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">class_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">class_id</span> <span class="o">=</span> <span class="n">default_id</span>
         <span class="n">palette</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_id</span><span class="p">)</span>
@@ -442,13 +442,13 @@
 <div class="viewcode-block" id="paint_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.paint_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">paint_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Applies colormap to index mask</span>
 
 <span class="sd">    mask: HW(C) [0; max_index] mask</span>
 
 <span class="sd">    colormap: index -&gt; (R, G, B)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">check_is_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -470,11 +470,11 @@
 <div class="viewcode-block" id="remap_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.remap_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remap_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">map_fn</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Changes mask elements from one colormap to another</span>
 
 <span class="sd">    # mask: HW(C) [0; max_index] mask</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">check_is_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">([</span><span class="n">map_fn</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">)],</span> <span class="mi">256</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)[</span><span class="n">mask</span><span class="p">]</span></div>
@@ -489,7 +489,7 @@
     <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an index mask from a binary mask by filling a given index value.</span>
+<span class="w">    </span><span class="sd">"""Create an index mask from a binary mask by filling a given index value.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        binary_mask: Binary mask to create an index mask.</span>
@@ -514,14 +514,14 @@
 <span class="sd">        &gt;&gt;&gt; print(index_mask)</span>
 <span class="sd">        array([[ 10, 255],</span>
 <span class="sd">               [255,  10]], dtype=uint8)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">min_scalar_type</span><span class="p">(</span><span class="n">ignore_index</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Given dtype is None, &quot;</span>
-                <span class="s2">&quot;but inferred dtypes from the given index and ignore_index are different each other. &quot;</span>
-                <span class="s2">&quot;Please mannually set dtype&quot;</span>
+                <span class="s2">"Given dtype is None, "</span>
+                <span class="s2">"but inferred dtypes from the given index and ignore_index are different each other. "</span>
+                <span class="s2">"Please mannually set dtype"</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">ignore_index</span><span class="p">)</span>
 
@@ -543,7 +543,7 @@
         <span class="k">return</span> <span class="n">mask</span>
 
     <span class="c1"># index == ignore_index</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;index == ignore_index. It will create an index mask filling with a single value, index=</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"index == ignore_index. It will create an index mask filling with a single value, index=</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
@@ -552,7 +552,7 @@
 <div class="viewcode-block" id="make_binary_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.make_binary_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_binary_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"b"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">mask</span>
     <span class="k">return</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
 
@@ -561,7 +561,7 @@
 <div class="viewcode-block" id="bgr2index">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.bgr2index">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bgr2index</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">}</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"b"</span><span class="p">,</span> <span class="s2">"i"</span><span class="p">,</span> <span class="s2">"u"</span><span class="p">}</span> <span class="ow">or</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">img</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span></div>
 
@@ -607,7 +607,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.mask_to_rle_py">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mask_to_rle_py</span><span class="p">(</span><span class="n">binary_mask</span><span class="p">):</span>
     <span class="c1"># walk in row-major order as COCO format specifies</span>
-    <span class="n">bounded</span> <span class="o">=</span> <span class="n">binary_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>
+    <span class="n">bounded</span> <span class="o">=</span> <span class="n">binary_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"F"</span><span class="p">)</span>
 
     <span class="c1"># add borders to sequence</span>
     <span class="c1"># find boundary positions for sequences and compute their lengths</span>
@@ -620,14 +620,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="n">counts</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">binary_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)}</span></div>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"counts"</span><span class="p">:</span> <span class="n">counts</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">binary_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)}</span></div>
 
 
 
 <div class="viewcode-block" id="extract_contours">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.extract_contours">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_contours</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert an instance mask to polygons</span>
 
 <span class="sd">    Args:</span>
@@ -638,7 +638,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of polygons like [[x1,y1, x2,y2 ...], [...]]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
     <span class="n">contours</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">findContours</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">RETR_EXTERNAL</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">CHAIN_APPROX_TC89_KCOS</span><span class="p">)</span>
@@ -661,7 +661,7 @@
 <div class="viewcode-block" id="mask_to_polygons">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.mask_to_polygons">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mask_to_polygons</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">area_threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert an instance mask to polygons</span>
 
 <span class="sd">    Args:</span>
@@ -672,7 +672,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of polygons like [[x1,y1, x2,y2 ...], [...]]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">contours</span> <span class="o">=</span> <span class="n">extract_contours</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
@@ -690,7 +690,7 @@
 <div class="viewcode-block" id="mask_to_bboxes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.mask_to_bboxes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mask_to_bboxes</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Convert an instance mask to bboxes</span>
 
 <span class="sd">    Args:</span>
@@ -698,7 +698,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of bboxes like [[x1,x2,y1,y2], [...]]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">contours</span> <span class="o">=</span> <span class="n">extract_contours</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
@@ -724,7 +724,7 @@
     <span class="n">area_threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">return_masks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Find all segments occluded by others and crop them to the visible part only.</span>
 <span class="sd">    Input segments are expected to be sorted from background to foreground.</span>
 
@@ -734,13 +734,13 @@
 <span class="sd">        height: height of the image</span>
 <span class="sd">        iou_threshold: IoU threshold for objects to be counted as intersected</span>
 <span class="sd">            By default is set to 0 to process any intersected objects</span>
-<span class="sd">        ratio_tolerance: an IoU &quot;handicap&quot; value for a situation</span>
+<span class="sd">        ratio_tolerance: an IoU "handicap" value for a situation</span>
 <span class="sd">            when an object is (almost) fully covered by another one and we</span>
-<span class="sd">            don&#39;t want make a &quot;hole&quot; in the background object</span>
+<span class="sd">            don't want make a "hole" in the background object</span>
 <span class="sd">        area_threshold: minimal area of included segments</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list of input segments&#39; parts (in the same order as input):</span>
+<span class="sd">        A list of input segments' parts (in the same order as input):</span>
 
 <span class="sd">        .. code-block::</span>
 
@@ -750,7 +750,7 @@
 <span class="sd">                [], # when source segment is too small</span>
 <span class="sd">                ...</span>
 <span class="sd">            ]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">segments</span> <span class="o">=</span> <span class="p">[[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">]</span>
     <span class="n">input_rles</span> <span class="o">=</span> <span class="p">[</span><span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">]</span>
 
@@ -817,12 +817,12 @@
 <div class="viewcode-block" id="rle_to_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.rle_to_mask">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rle_to_mask</span><span class="p">(</span><span class="n">rle_uncompressed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode the uncompressed RLE string to the binary mask (2D np.ndarray)</span>
+<span class="w">    </span><span class="sd">"""Decode the uncompressed RLE string to the binary mask (2D np.ndarray)</span>
 
 <span class="sd">    The uncompressed RLE string can be obtained by</span>
 <span class="sd">    the datumaro.util.mask_tools.mask_to_rle() function</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">resulting_mask</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">(</span><span class="n">rle_uncompressed</span><span class="p">,</span> <span class="o">*</span><span class="n">rle_uncompressed</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">])</span>
+<span class="sd">    """</span>
+    <span class="n">resulting_mask</span> <span class="o">=</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">(</span><span class="n">rle_uncompressed</span><span class="p">,</span> <span class="o">*</span><span class="n">rle_uncompressed</span><span class="p">[</span><span class="s2">"size"</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">pycocotools_mask</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">resulting_mask</span><span class="p">)</span></div>
 
 
@@ -841,7 +841,7 @@
 <div class="viewcode-block" id="merge_masks">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.mask_tools.html#datumaro.util.mask_tools.merge_masks">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_masks</span><span class="p">(</span><span class="n">masks</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Merges masks into one, mask order is responsible for z order.</span>
 <span class="sd">    To avoid memory explosion on mask materialization, consider passing</span>
 <span class="sd">    a generator.</span>
@@ -849,7 +849,7 @@
 <span class="sd">    Inputs: a sequence of index masks or (binary mask, index) pairs</span>
 
 <span class="sd">    Outputs: an index mask</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">masks</span> <span class="o">=</span> <span class="n">chain</span><span class="p">([</span><span class="n">start</span><span class="p">],</span> <span class="n">masks</span><span class="p">)</span>
 

@@ -356,20 +356,20 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">YoloLoosePath</span><span class="p">,</span> <span class="n">YoloPath</span><span class="p">,</span> <span class="n">YoloUltralyticsPath</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YoloLooseBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloStrictBase&quot;</span><span class="p">,</span> <span class="s2">&quot;YoloUltralyticsBase&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"YoloLooseBase"</span><span class="p">,</span> <span class="s2">"YoloStrictBase"</span><span class="p">,</span> <span class="s2">"YoloUltralyticsBase"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="localize_path">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.plugins.data_formats.yolo.base.localize_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">localize_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Removes the &quot;data/&quot; prefix from the path</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Removes the "data/" prefix from the path</span>
+<span class="sd">    """</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
-    <span class="n">default_base</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
+    <span class="n">default_base</span> <span class="o">=</span> <span class="s2">"data/"</span>
     <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">default_base</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">default_base</span><span class="p">)</span> <span class="p">:]</span>
     <span class="k">return</span> <span class="n">path</span></div>
@@ -415,7 +415,7 @@
             <span class="n">image_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">item</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span><span class="p">)</span>
 
-            <span class="n">anno_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+            <span class="n">anno_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".txt"</span>
             <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_annotations</span><span class="p">(</span>
                 <span class="n">anno_path</span><span class="p">,</span>
                 <span class="n">image</span><span class="p">,</span>
@@ -439,7 +439,7 @@
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">anno_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">anno_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
@@ -450,26 +450,26 @@
         <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
             <span class="c1"># Use image info as late as possible to avoid unnecessary image loading</span>
             <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find image info for &#39;</span><span class="si">{</span><span class="n">localize_path</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't find image info for '</span><span class="si">{</span><span class="n">localize_path</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
             <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unexpected field count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the bbox description. &quot;</span>
-                    <span class="s2">&quot;Expected 5 fields (label, xc, yc, w, h).&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Unexpected field count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the bbox description. "</span>
+                    <span class="s2">"Expected 5 fields (label, xc, yc, w, h)."</span>
                 <span class="p">)</span>
             <span class="n">label_id</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">parts</span>
 
-            <span class="n">label_id</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;bbox label id&quot;</span><span class="p">)</span>
+            <span class="n">label_id</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"bbox label id"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">label_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">label_categories</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">UndeclaredLabelError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">label_id</span><span class="p">))</span>
 
-            <span class="n">w</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;bbox width&quot;</span><span class="p">)</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;bbox height&quot;</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;bbox center x&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">w</span> <span class="o">*</span> <span class="mf">0.5</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">yc</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;bbox center y&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">0.5</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"bbox width"</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"bbox height"</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"bbox center x"</span><span class="p">)</span> <span class="o">-</span> <span class="n">w</span> <span class="o">*</span> <span class="mf">0.5</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">yc</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"bbox center y"</span><span class="p">)</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">0.5</span>
             <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Bbox</span><span class="p">(</span>
                     <span class="n">x</span> <span class="o">*</span> <span class="n">image_width</span><span class="p">,</span>
@@ -489,7 +489,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">desired_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from '</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">'. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <div class="viewcode-block" id="YoloStrictBase">
@@ -507,7 +507,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t read dataset descriptor file &#39;</span><span class="si">{</span><span class="n">config_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't read dataset descriptor file '</span><span class="si">{</span><span class="n">config_path</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
         <span class="n">rootpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">rootpath</span>
@@ -516,9 +516,9 @@
 
         <span class="n">config</span> <span class="o">=</span> <span class="n">YoloPath</span><span class="o">.</span><span class="n">_parse_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
 
-        <span class="n">names_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">)</span>
+        <span class="n">names_path</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"names"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">names_path</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Failed to parse names file path from config&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">"Failed to parse names file path from config"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">names_path</span><span class="p">)))</span>
@@ -533,7 +533,7 @@
         <span class="c1"># backup = backup/</span>
         <span class="c1">#</span>
         <span class="c1"># To support more subset names, we disallow subsets</span>
-        <span class="c1"># called &#39;classes&#39;, &#39;names&#39; and &#39;backup&#39;.</span>
+        <span class="c1"># called 'classes', 'names' and 'backup'.</span>
         <span class="n">subsets</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">YoloPath</span><span class="o">.</span><span class="n">RESERVED_CONFIG_KEYS</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Subset</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -543,9 +543,9 @@
 
             <span class="n">list_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">list_path</span><span class="p">))</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">list_path</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find &#39;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">&#39; subset list file&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't find '</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">' subset list file"</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">list_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">list_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">items</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">name_from_path</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="n">subset</span> <span class="o">=</span> <span class="n">_Subset</span><span class="p">(</span>
@@ -576,12 +576,12 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.plugins.data_formats.yolo.base.YoloStrictBase.name_from_path">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name_from_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Obtains &lt;image name&gt; from the path like [data/]&lt;subset&gt;_obj/&lt;image_name&gt;.ext</span>
 
 <span class="sd">        &lt;image name&gt; can be &lt;a/b/c/filename&gt;, so it is</span>
-<span class="sd">        more involved than just calling &quot;basename()&quot;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        more involved than just calling "basename()".</span>
+<span class="sd">        """</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">localize_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -599,7 +599,7 @@
 
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">names_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">names_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
@@ -611,7 +611,7 @@
         <span class="n">subsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span>
         <span class="n">pbars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">pbar</span><span class="p">,</span> <span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pbars</span><span class="p">,</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Importing '</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">'"</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">item</span>
 
                 <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
@@ -649,15 +649,15 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config_path</span><span class="si">}</span><span class="s2"> should be a directory.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">config_path</span><span class="si">}</span><span class="s2"> should be a directory."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">urls</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`urls` should be specified for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;if you want to import a dataset with using this </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> directly. &quot;</span>
-                <span class="s2">&quot;In most case, it happens by giving an incorrect format name to the import interface. &quot;</span>
-                <span class="s2">&quot;Please consider to import your dataset with this format name, &#39;yolo&#39;, &quot;</span>
-                <span class="s2">&quot;such as `Dataset.import_from(..., format=&#39;yolo&#39;)`.&quot;</span>
+                <span class="sa">f</span><span class="s2">"`urls` should be specified for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"if you want to import a dataset with using this </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> directly. "</span>
+                <span class="s2">"In most case, it happens by giving an incorrect format name to the import interface. "</span>
+                <span class="s2">"Please consider to import your dataset with this format name, 'yolo', "</span>
+                <span class="s2">"such as `Dataset.import_from(..., format='yolo')`."</span>
             <span class="p">)</span>
 
         <span class="n">rootpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_rootpath</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
@@ -674,10 +674,10 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;label_categories should be not None.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">"label_categories should be not None."</span><span class="p">)</span>
 
         <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span>
-        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_urls</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_urls</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Importing '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">'"</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fname</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
                 <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_img_files</span><span class="p">[</span><span class="n">fname</span><span class="p">])</span>
@@ -746,14 +746,14 @@
 
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">names_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">names_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="n">loaded</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">label_names</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">label_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">"names"</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">label_names</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s2">"names"</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">"names"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">label_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">"names"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t read dataset category file &#39;</span><span class="si">{</span><span class="n">names_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't read dataset category file '</span><span class="si">{</span><span class="n">names_path</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">label_names</span><span class="p">:</span>
             <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>

@@ -370,7 +370,7 @@
 
 
 
-<span class="n">IMAGE_BACKEND</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">ImageBackend</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span><span class="s2">&quot;IMAGE_BACKEND&quot;</span><span class="p">)</span>
+<span class="n">IMAGE_BACKEND</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">ImageBackend</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span><span class="s2">"IMAGE_BACKEND"</span><span class="p">)</span>
 <span class="n">_image_loading_errors</span> <span class="o">=</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,)</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
@@ -389,12 +389,12 @@
 <div class="viewcode-block" id="ImageColorChannel">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageColorChannel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Image color channel</span>
+<span class="w">    </span><span class="sd">"""Image color channel</span>
 
-<span class="sd">    - UNCHANGED: Use the original image&#39;s channel (default)</span>
+<span class="sd">    - UNCHANGED: Use the original image's channel (default)</span>
 <span class="sd">    - COLOR_BGR: Use BGR 3 channels (it can ignore the alpha channel or convert the gray scale image)</span>
 <span class="sd">    - COLOR_RGB: Use RGB 3 channels (it can ignore the alpha channel or convert the gray scale image)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">UNCHANGED</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">COLOR_BGR</span> <span class="o">=</span> <span class="mi">1</span>
@@ -403,7 +403,7 @@
 <div class="viewcode-block" id="ImageColorChannel.decode_by_cv2">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel.decode_by_cv2">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decode_by_cv2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert image color channel for OpenCV image (np.ndarray).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert image color channel for OpenCV image (np.ndarray)."""</span>
         <span class="n">image_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span><span class="p">:</span>
@@ -423,7 +423,7 @@
 <div class="viewcode-block" id="ImageColorChannel.decode_by_pil">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel.decode_by_pil">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decode_by_pil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert image color channel for PIL Image.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert image color channel for PIL Image."""</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span>
@@ -432,11 +432,11 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">COLOR_BGR</span><span class="p">:</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">"RGB"</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">COLOR_RGB</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">"RGB"</span><span class="p">))</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span></div>
 </div>
@@ -444,7 +444,7 @@
 
 
 <span class="n">IMAGE_COLOR_CHANNEL</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">ImageColorChannel</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span>
-    <span class="s2">&quot;IMAGE_COLOR_CHANNEL&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span>
+    <span class="s2">"IMAGE_COLOR_CHANNEL"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span>
 <span class="p">)</span>
 
 
@@ -452,7 +452,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.decode_image_context">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">decode_image_context</span><span class="p">(</span><span class="n">image_backend</span><span class="p">:</span> <span class="n">ImageBackend</span><span class="p">,</span> <span class="n">image_color_channel</span><span class="p">:</span> <span class="n">ImageColorChannel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change Datumaro image color channel while decoding.</span>
+<span class="w">    </span><span class="sd">"""Change Datumaro image color channel while decoding.</span>
 
 <span class="sd">    For model training, it is recommended to use this context manager</span>
 <span class="sd">    to load images in the BGR 3-channel format. For example,</span>
@@ -464,7 +464,7 @@
 <span class="sd">            item: dm.DatasetItem</span>
 <span class="sd">            img_data = item.media_as(dm.Image).data</span>
 <span class="sd">            assert img_data.shape[-1] == 3  # It should be a 3-channel image</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">curr_ctx</span> <span class="o">=</span> <span class="p">(</span><span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">IMAGE_COLOR_CHANNEL</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 
@@ -481,21 +481,21 @@
 <div class="viewcode-block" id="load_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.load_image">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Reads an image in the HWC Grayscale/BGR(A) [0; 255] format (default dtype is uint8).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">:</span>
         <span class="c1"># cv2.imread does not support paths that are not representable</span>
         <span class="c1"># in the locale encoding on Windows, so we read the image bytes</span>
         <span class="c1"># ourselves.</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
@@ -518,10 +518,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">fp</span>
 
-    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_fp</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_fp</span><span class="p">:</span>
         <span class="n">_bytes</span> <span class="o">=</span> <span class="n">src_fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst_fp</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst_fp</span><span class="p">:</span>
         <span class="n">dst_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span></div>
 
 
@@ -539,22 +539,22 @@
     <span class="c1"># NOTE: Check destination path for existence</span>
     <span class="c1"># OpenCV silently fails if target directory does not exist</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">):</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span> <span class="k">if</span> <span class="n">ext</span> <span class="k">else</span> <span class="s2">&quot;.png&quot;</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span> <span class="k">if</span> <span class="n">ext</span> <span class="k">else</span> <span class="s2">".png"</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">create_dir</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Directory does not exist: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"Directory does not exist: '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
         <span class="c1"># file extension and actual encoding can be differ</span>
         <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span> <span class="k">if</span> <span class="n">ext</span> <span class="k">else</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">dst</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c1"># NOTE: OpenCV documentation says &quot;If the image format is not supported,</span>
-    <span class="c1"># the image will be converted to 8-bit unsigned and saved that way&quot;.</span>
+    <span class="c1"># NOTE: OpenCV documentation says "If the image format is not supported,</span>
+    <span class="c1"># the image will be converted to 8-bit unsigned and saved that way".</span>
     <span class="c1"># Conversion from np.int32 to np.uint8 is not working properly</span>
     <span class="n">backend</span> <span class="o">=</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span>
@@ -567,20 +567,20 @@
         <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">encode_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
-        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;subsampling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"quality"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jpeg_quality"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jpeg_quality"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">"subsampling"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}:</span>
@@ -603,27 +603,27 @@
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-            <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">ext</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">ext</span>
 
-        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.JPG&quot;</span><span class="p">,</span> <span class="s2">&quot;.JPEG&quot;</span><span class="p">):</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">IMWRITE_JPEG_QUALITY</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">,</span> <span class="mi">75</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">".JPG"</span><span class="p">,</span> <span class="s2">".JPEG"</span><span class="p">):</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">IMWRITE_JPEG_QUALITY</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jpeg_quality"</span><span class="p">,</span> <span class="mi">75</span><span class="p">)]</span>
 
         <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="n">success</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imencode</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Failed to encode image to &#39;</span><span class="si">%s</span><span class="s2">&#39; format&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Failed to encode image to '</span><span class="si">%s</span><span class="s2">' format"</span> <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
-        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;subsampling&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"quality"</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jpeg_quality"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jpeg_quality"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">"subsampling"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}:</span>
@@ -643,8 +643,8 @@
     <span class="n">ctx_color_scale</span> <span class="o">=</span> <span class="n">IMAGE_COLOR_CHANNEL</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-        <span class="c1"># PIL doesn&#39;t support floating point image loading</span>
-        <span class="c1"># CV doesn&#39;t support floating point image with color channel setting (IMREAD_COLOR)</span>
+        <span class="c1"># PIL doesn't support floating point image loading</span>
+        <span class="c1"># CV doesn't support floating point image with color channel setting (IMREAD_COLOR)</span>
         <span class="k">with</span> <span class="n">decode_image_context</span><span class="p">(</span><span class="n">image_backend</span><span class="o">=</span><span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">,</span> <span class="n">image_color_channel</span><span class="o">=</span><span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span><span class="p">):</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_cv2</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -668,28 +668,28 @@
 
 
 <span class="n">IMAGE_EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;.jpg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.jpe&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.jp2&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.png&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.bmp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.dib&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.tif&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.tiff&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.tga&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.webp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pfm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.sr&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.ras&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.exr&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.hdr&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pic&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pbm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pgm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.ppm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pxm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;.pnm&quot;</span><span class="p">,</span>
+    <span class="s2">".jpg"</span><span class="p">,</span>
+    <span class="s2">".jpeg"</span><span class="p">,</span>
+    <span class="s2">".jpe"</span><span class="p">,</span>
+    <span class="s2">".jp2"</span><span class="p">,</span>
+    <span class="s2">".png"</span><span class="p">,</span>
+    <span class="s2">".bmp"</span><span class="p">,</span>
+    <span class="s2">".dib"</span><span class="p">,</span>
+    <span class="s2">".tif"</span><span class="p">,</span>
+    <span class="s2">".tiff"</span><span class="p">,</span>
+    <span class="s2">".tga"</span><span class="p">,</span>
+    <span class="s2">".webp"</span><span class="p">,</span>
+    <span class="s2">".pfm"</span><span class="p">,</span>
+    <span class="s2">".sr"</span><span class="p">,</span>
+    <span class="s2">".ras"</span><span class="p">,</span>
+    <span class="s2">".exr"</span><span class="p">,</span>
+    <span class="s2">".hdr"</span><span class="p">,</span>
+    <span class="s2">".pic"</span><span class="p">,</span>
+    <span class="s2">".pbm"</span><span class="p">,</span>
+    <span class="s2">".pgm"</span><span class="p">,</span>
+    <span class="s2">".ppm"</span><span class="p">,</span>
+    <span class="s2">".pxm"</span><span class="p">,</span>
+    <span class="s2">".pnm"</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -730,12 +730,12 @@
         <span class="n">cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ImageCache</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DTypeLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Cache:</span>
 <span class="sd">            - False: do not cache</span>
 <span class="sd">            - True: use the global cache</span>
 <span class="sd">            - ImageCache instance: an object to be used as cache</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_loader</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -776,15 +776,15 @@
 
 
 <span class="n">ImageMeta</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
-<span class="sd">&quot;&quot;&quot;filename -&gt; height, width&quot;&quot;&quot;</span>
+<span class="sd">"""filename -&gt; height, width"""</span>
 
-<span class="n">DEFAULT_IMAGE_META_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;images.meta&quot;</span>
+<span class="n">DEFAULT_IMAGE_META_FILE_NAME</span> <span class="o">=</span> <span class="s2">"images.meta"</span>
 
 
 <div class="viewcode-block" id="load_image_meta_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.load_image_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_image_meta_file</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageMeta</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Loads image metadata from a file with the following format:</span>
 
 <span class="sd">        &lt;image name 1&gt; &lt;height 1&gt; &lt;width 1&gt;</span>
@@ -797,15 +797,15 @@
 
 <span class="sd">    This can be useful to support datasets in which image dimensions are</span>
 <span class="sd">    required to interpret annotations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t read image meta file &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">image_meta_path</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"Can't read image meta file '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">image_meta_path</span><span class="p">)</span>
 
     <span class="n">image_meta</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
@@ -822,17 +822,17 @@
 <div class="viewcode-block" id="save_image_meta_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.save_image_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_image_meta_file</span><span class="p">(</span><span class="n">image_meta</span><span class="p">:</span> <span class="n">ImageMeta</span><span class="p">,</span> <span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Saves image_meta to the path specified by image_meta_path in the format</span>
-<span class="sd">    defined in load_image_meta_file&#39;s documentation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    defined in load_image_meta_file's documentation.</span>
+<span class="sd">    """</span>
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="c1"># Add a comment about file syntax</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# &lt;image name&gt; &lt;height&gt; &lt;width&gt;&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"# &lt;image name&gt; &lt;height&gt; &lt;width&gt;"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">image_name</span><span class="p">,</span> <span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span> <span class="ow">in</span> <span class="n">image_meta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">image_name</span><span class="p">),</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>

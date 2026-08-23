@@ -602,7 +602,7 @@
 </li>
 <li><p>Rename images in a dataset by a regex from <code class="docutils literal notranslate"><span class="pre">frame_XXX</span></code> to <code class="docutils literal notranslate"><span class="pre">XXX</span></code></p>
 <p><strong>NOTE:</strong> Please use double quotes (<code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) for regex representation. Check <a class="reference external" href="https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd">Reason to use double quotes</a>.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e &quot;|^frame_||&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"</span>
 <span class="go">```ified during preparation for model training and</span>
 </pre></div>
 </div>
@@ -653,7 +653,7 @@ option to print parameter info.</p></li>
 </li>
 <li><p>Rename images in a dataset by a regex from <code class="docutils literal notranslate"><span class="pre">frame_XXX</span></code> to <code class="docutils literal notranslate"><span class="pre">XXX</span></code></p>
 <p><strong>NOTE:</strong> Please use double quotes (<code class="docutils literal notranslate"><span class="pre">&quot;</span></code>) for regex representation. Check <a class="reference external" href="https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd">Reason to use double quotes</a>.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e &quot;|^frame_||&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"</span>
 </pre></div>
 </div>
 </li>
@@ -735,22 +735,22 @@ contain <code class="docutils literal notranslate"><span class="pre">str.format<
 <p>Examples:</p>
 <ul>
 <li><p>Replace ‘pattern’ with ‘replacement’</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|pattern|replacement|&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e "|pattern|replacement|"</span>
 </pre></div>
 </div>
 </li>
 <li><p>Remove the <code class="docutils literal notranslate"><span class="pre">frame_</span></code> prefix from item ids</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|^frame_|&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e "|^frame_|"</span>
 </pre></div>
 </div>
 </li>
 <li><p>Collect images from subdirectories into the base image directory using regex</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|^((.+[/\\])*)?(.+)$|\2|&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e "|^((.+[/\\])*)?(.+)$|\2|"</span>
 </pre></div>
 </div>
 </li>
 <li><p>Add subset prefix to images</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e &quot;|(.*)|{item.subset}_\1|&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t rename -- -e "|(.*)|{item.subset}_\1|"</span>
 </pre></div>
 </div>
 </li>
@@ -819,7 +819,7 @@ but this can be adjusted with the ‘suffix_length’ parameter.</p>
 <p>Examples:</p>
 <ul>
 <li><p>Sort by id converted into integer</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t ndr -- --key &quot;lambda item: int(item.id)&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t ndr -- --key "lambda item: int(item.id)"</span>
 </pre></div>
 </div>
 </li>
@@ -1064,7 +1064,7 @@ Supports upscaling, downscaling and mixed variants.</p>
 <p>Examples:</p>
 <ul>
 <li><p>Remove specific images from the dataset</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_images -- --id &#39;image1:train&#39; --id &#39;image2:test&#39;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_images -- --id 'image1:train' --id 'image2:test'</span>
 </pre></div>
 </div>
 </li>
@@ -1087,7 +1087,7 @@ If not specified, removes all annotations (repeatable)</p></li>
 <p>Examples:</p>
 <ul>
 <li><p>Remove annotations from specific items in the dataset</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_annotations -- --id &#39;image1:train&#39; --id &#39;image2:test&#39;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_annotations -- --id 'image1:train' --id 'image2:test'</span>
 </pre></div>
 </div>
 </li>
@@ -1113,14 +1113,14 @@ removes all attributes (repeatable)</p></li>
 <ul>
 <li><p>Remove the <code class="docutils literal notranslate"><span class="pre">is_crowd</span></code> attribute from dataset</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_attributes -- \</span>
-<span class="go">  --attr &#39;is_crowd&#39;</span>
+<span class="go">  --attr 'is_crowd'</span>
 </pre></div>
 </div>
 </li>
 <li><p>Remove the <code class="docutils literal notranslate"><span class="pre">occluded</span></code> attribute from annotations of
 the <code class="docutils literal notranslate"><span class="pre">2010_001705</span></code> item in the <code class="docutils literal notranslate"><span class="pre">train</span></code> subset</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t remove_attributes -- \</span>
-<span class="go">  --id &#39;2010_001705:train&#39; --attr &#39;occluded&#39;</span>
+<span class="go">  --id '2010_001705:train' --attr 'occluded'</span>
 </pre></div>
 </div>
 </li>
@@ -1146,7 +1146,7 @@ If you specifically set mapping, change annotation types based on the mapping.</
 <ul>
 <li><p>Convert type of <code class="docutils literal notranslate"><span class="pre">title</span></code> and <code class="docutils literal notranslate"><span class="pre">rating</span></code> annotation</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum transform -t astype_annotations -- \</span>
-<span class="go">  --mapping &#39;title:text,rating:label&#39;</span>
+<span class="go">  --mapping 'title:text,rating:label'</span>
 </pre></div>
 </div>
 </li>
@@ -1490,7 +1490,7 @@ the corresponding number of separate annotations joined into a group.</p>
 <span class="go">Examples:</span>
 <span class="go">- Assign pseudo-labels based on predefined labels</span>
 <span class="go">  ```console</span>
-<span class="go">  datum transform -t pseudo_labeling -- --labels &#39;label1,label2&#39;</span>
+<span class="go">  datum transform -t pseudo_labeling -- --labels 'label1,label2'</span>
 </pre></div>
 </div>
 </section>

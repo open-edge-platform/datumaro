@@ -395,7 +395,7 @@
 <span class="o">!</span>unzip<span class="w"> </span>-q<span class="w"> </span>coco_dataset/annotations_trainval2017.zip<span class="w"> </span>-d<span class="w"> </span>coco_dataset
 <span class="o">!</span>unzip<span class="w"> </span>-q<span class="w"> </span>coco_dataset/panoptic_annotations_trainval2017.zip<span class="w"> </span>-d<span class="w"> </span>coco_dataset
 <span class="o">!</span>unzip<span class="w"> </span>-q<span class="w"> </span>coco_dataset/annotations/panoptic_val2017.zip<span class="w"> </span>-d<span class="w"> </span>coco_dataset/annotations
-<span class="o">!</span>find<span class="w"> </span>coco_dataset<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*_train2017.json&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>rm
+<span class="o">!</span>find<span class="w"> </span>coco_dataset<span class="w"> </span>-name<span class="w"> </span><span class="s2">"*_train2017.json"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>rm
 </pre></div>
 </div>
 </div>
@@ -415,10 +415,10 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;coco_dataset&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;coco_instances&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Subset candidates:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">"coco_dataset"</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"coco_instances"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Subset candidates:"</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 <span class="n">subset</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># val2017</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Subset:&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Subset:"</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -455,7 +455,7 @@ Subset: val2017
 
 
 <span class="n">ids</span> <span class="o">=</span> <span class="n">get_ids</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DatasetItem ids:&quot;</span><span class="p">,</span> <span class="n">ids</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"DatasetItem ids:"</span><span class="p">,</span> <span class="n">ids</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -545,9 +545,9 @@ DatasetItem ids: [&#39;000000397133&#39;, &#39;000000037777&#39;, &#39;000000252
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;coco_dataset&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;coco_panoptic&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">"coco_dataset"</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"coco_panoptic"</span><span class="p">)</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="n">get_ids</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DatasetItem ids:&quot;</span><span class="p">,</span> <span class="n">ids</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"DatasetItem ids:"</span><span class="p">,</span> <span class="n">ids</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
 
 <span class="n">visualizer</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Visualizer</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">visualizer</span><span class="o">.</span><span class="n">vis_gallery</span><span class="p">(</span><span class="n">ids</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">9</span><span class="p">],</span> <span class="n">subset</span><span class="p">,</span> <span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
@@ -587,9 +587,9 @@ DatasetItem ids: [&#39;000000403385&#39;, &#39;000000006818&#39;, &#39;000000480
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;coco_dataset&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;coco_captions&quot;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">"coco_dataset"</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"coco_captions"</span><span class="p">)</span>
 <span class="n">ids</span> <span class="o">=</span> <span class="n">get_ids</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DatasetItem ids:&quot;</span><span class="p">,</span> <span class="n">ids</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"DatasetItem ids:"</span><span class="p">,</span> <span class="n">ids</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">])</span>
 
 <span class="n">visualizer</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Visualizer</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">visualizer</span><span class="o">.</span><span class="n">vis_gallery</span><span class="p">(</span><span class="n">ids</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span> <span class="n">subset</span><span class="p">,</span> <span class="n">grid_size</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>

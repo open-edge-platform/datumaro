@@ -350,20 +350,20 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKS</span><span class="p">,</span> <span class="n">approximate_line</span><span class="p">,</span> <span class="n">bbox_iou</span><span class="p">,</span> <span class="n">max_bbox</span><span class="p">,</span> <span class="n">mean_bbox</span><span class="p">,</span> <span class="n">segment_iou</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;AnnotationMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;BboxMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CaptionsMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Cuboid2DMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Cuboid3dMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImageAnnotationMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LabelMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LineMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MaskMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PointsMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PolygonMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ShapeMatcher&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;match_segments_more_than_pair&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;match_segments_pair&quot;</span><span class="p">,</span>
+    <span class="s2">"AnnotationMatcher"</span><span class="p">,</span>
+    <span class="s2">"BboxMatcher"</span><span class="p">,</span>
+    <span class="s2">"CaptionsMatcher"</span><span class="p">,</span>
+    <span class="s2">"Cuboid2DMatcher"</span><span class="p">,</span>
+    <span class="s2">"Cuboid3dMatcher"</span><span class="p">,</span>
+    <span class="s2">"ImageAnnotationMatcher"</span><span class="p">,</span>
+    <span class="s2">"LabelMatcher"</span><span class="p">,</span>
+    <span class="s2">"LineMatcher"</span><span class="p">,</span>
+    <span class="s2">"MaskMatcher"</span><span class="p">,</span>
+    <span class="s2">"PointsMatcher"</span><span class="p">,</span>
+    <span class="s2">"PolygonMatcher"</span><span class="p">,</span>
+    <span class="s2">"ShapeMatcher"</span><span class="p">,</span>
+    <span class="s2">"match_segments_more_than_pair"</span><span class="p">,</span>
+    <span class="s2">"match_segments_pair"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -376,13 +376,13 @@
     <span class="n">dist_thresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">label_matcher</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Match segments and return pairs of the two matched segments&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Match segments and return pairs of the two matched segments"""</span>
 
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">distance</span><span class="p">),</span> <span class="n">distance</span>
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">label_matcher</span><span class="p">),</span> <span class="n">label_matcher</span>
 
-    <span class="n">a_segms</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ann</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">b_segms</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ann</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">a_segms</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ann</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">b_segms</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ann</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="c1"># a_matches: indices of b_segms matched to a bboxes</span>
     <span class="c1"># b_matches: indices of a_segms matched to b bboxes</span>
@@ -402,7 +402,7 @@
             <span class="n">matched_b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">max_dist</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
             <span class="n">b_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span>
-                <span class="p">[</span><span class="ow">not</span> <span class="n">label_matcher</span><span class="p">(</span><span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span><span class="p">)</span> <span class="k">for</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">b_segms</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span>
+                <span class="p">[</span><span class="ow">not</span> <span class="n">label_matcher</span><span class="p">(</span><span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span><span class="p">)</span> <span class="k">for</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">b_segms</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"stable"</span>
             <span class="p">)</span>  <span class="c1"># prioritize those with same label, keep score order</span>
             <span class="k">for</span> <span class="n">b_idx</span> <span class="ow">in</span> <span class="n">b_indices</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">b_matches</span><span class="p">[</span><span class="n">b_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># assign a_segm with max conf</span>
@@ -442,7 +442,7 @@
     <span class="n">dist_thresh</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">label_matcher</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Match segments and return sets of the matched segments which can be more than two&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Match segments and return sets of the matched segments which can be more than two"""</span>
 
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">distance</span><span class="p">),</span> <span class="n">distance</span>
     <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">label_matcher</span><span class="p">),</span> <span class="n">label_matcher</span>
@@ -463,7 +463,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_segms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">a_segm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a_segms</span><span class="p">):</span>
             <span class="n">b_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span>
-                <span class="p">[</span><span class="ow">not</span> <span class="n">label_matcher</span><span class="p">(</span><span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span><span class="p">)</span> <span class="k">for</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">b_segms</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stable&quot;</span>
+                <span class="p">[</span><span class="ow">not</span> <span class="n">label_matcher</span><span class="p">(</span><span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span><span class="p">)</span> <span class="k">for</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">b_segms</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"stable"</span>
             <span class="p">)</span>  <span class="c1"># prioritize those with same label, keep score order</span>
             <span class="k">for</span> <span class="n">b_idx</span> <span class="ow">in</span> <span class="n">b_indices</span><span class="p">:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">a_idx</span><span class="p">,</span> <span class="n">b_idx</span><span class="p">]</span>
@@ -674,7 +674,7 @@
         <span class="c1"># Compute inter-line area by using the Trapezoid formulae</span>
         <span class="c1"># https://en.wikipedia.org/wiki/Trapezoidal_rule</span>
         <span class="c1"># Normalize by common bbox and get the bbox fill ratio</span>
-        <span class="c1"># Call this ratio the &quot;distance&quot;</span>
+        <span class="c1"># Call this ratio the "distance"</span>
 
         <span class="c1"># The box area is an early-exit filter for non-intersected figures</span>
         <span class="n">bbox</span> <span class="o">=</span> <span class="n">max_bbox</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
@@ -696,11 +696,11 @@
         <span class="n">a_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">a</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">b_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="c1"># For the common bbox we can&#39;t use</span>
+        <span class="c1"># For the common bbox we can't use</span>
         <span class="c1"># - the AABB (axis-alinged bbox) of a point set</span>
         <span class="c1"># - the exterior of a point set</span>
         <span class="c1"># - the convex hull of a point set</span>
-        <span class="c1"># because these soultions won&#39;t be correctly normalized.</span>
+        <span class="c1"># because these soultions won't be correctly normalized.</span>
         <span class="c1"># The lines can have multiple self-intersections, which can give</span>
         <span class="c1"># the inter-line area more than internal area of the options above,</span>
         <span class="c1"># producing the value of the distance outside of the [0; 1] range.</span>

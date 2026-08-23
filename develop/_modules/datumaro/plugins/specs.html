@@ -344,7 +344,7 @@
 
 <span class="n">_SOURCE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
 <span class="n">_SOURCE_DIR</span> <span class="o">=</span> <span class="n">_SOURCE_PATH</span><span class="o">.</span><span class="n">parent</span>
-<span class="n">_SPECS_JSON_PATH</span> <span class="o">=</span> <span class="n">_SOURCE_DIR</span> <span class="o">/</span> <span class="s2">&quot;specs.json&quot;</span>
+<span class="n">_SPECS_JSON_PATH</span> <span class="o">=</span> <span class="n">_SOURCE_DIR</span> <span class="o">/</span> <span class="s2">"specs.json"</span>
 
 
 <div class="viewcode-block" id="get_lazy_plugins">
@@ -354,11 +354,11 @@
         <span class="n">plugin</span>
         <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="n">get_lazy_plugin</span><span class="p">(</span>
-                <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;import_path&quot;</span><span class="p">],</span>
-                <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;plugin_name&quot;</span><span class="p">],</span>
-                <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;plugin_type&quot;</span><span class="p">],</span>
-                <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_deps&quot;</span><span class="p">,</span> <span class="p">[]),</span>
-                <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="n">spec</span><span class="p">[</span><span class="s2">"import_path"</span><span class="p">],</span>
+                <span class="n">spec</span><span class="p">[</span><span class="s2">"plugin_name"</span><span class="p">],</span>
+                <span class="n">spec</span><span class="p">[</span><span class="s2">"plugin_type"</span><span class="p">],</span>
+                <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra_deps"</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{}),</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_SPECS_JSON_PATH</span><span class="p">))</span>
         <span class="p">]</span>
@@ -367,7 +367,7 @@
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Environment</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span>
 
@@ -383,27 +383,27 @@
             <span class="n">plugin_name</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">NAME</span>
             <span class="n">extra_deps</span> <span class="o">=</span> <span class="n">get_extra_deps</span><span class="p">(</span><span class="n">plugin</span><span class="p">)</span>
             <span class="n">plugin_spec</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;import_path&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;plugin_name&quot;</span><span class="p">:</span> <span class="n">plugin_name</span><span class="p">,</span>
-                <span class="s2">&quot;plugin_type&quot;</span><span class="p">:</span> <span class="n">plugin_type</span><span class="p">,</span>
+                <span class="s2">"import_path"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"plugin_name"</span><span class="p">:</span> <span class="n">plugin_name</span><span class="p">,</span>
+                <span class="s2">"plugin_type"</span><span class="p">:</span> <span class="n">plugin_type</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="k">if</span> <span class="n">extra_deps</span><span class="p">:</span>
-                <span class="n">plugin_spec</span><span class="p">[</span><span class="s2">&quot;extra_deps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_deps</span>
+                <span class="n">plugin_spec</span><span class="p">[</span><span class="s2">"extra_deps"</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_deps</span>
             <span class="c1"># Setting metadata for importers</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="s2">&quot;get_file_extensions&quot;</span><span class="p">):</span>
-                <span class="n">plugin_spec</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file_extensions&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_file_extensions</span><span class="p">())}</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="s2">"get_file_extensions"</span><span class="p">):</span>
+                <span class="n">plugin_spec</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"file_extensions"</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">get_file_extensions</span><span class="p">())}</span>
             <span class="n">plugin_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plugin_spec</span><span class="p">)</span>
 
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">extractors</span><span class="p">,</span> <span class="s2">&quot;DatasetBase&quot;</span><span class="p">)</span>
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">importers</span><span class="p">,</span> <span class="s2">&quot;Importer&quot;</span><span class="p">)</span>
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">,</span> <span class="s2">&quot;Exporter&quot;</span><span class="p">)</span>
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">generators</span><span class="p">,</span> <span class="s2">&quot;DatasetGenerator&quot;</span><span class="p">)</span>
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">transforms</span><span class="p">,</span> <span class="s2">&quot;Transform&quot;</span><span class="p">)</span>
-    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">validators</span><span class="p">,</span> <span class="s2">&quot;Validator&quot;</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">extractors</span><span class="p">,</span> <span class="s2">"DatasetBase"</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">importers</span><span class="p">,</span> <span class="s2">"Importer"</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">,</span> <span class="s2">"Exporter"</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">generators</span><span class="p">,</span> <span class="s2">"DatasetGenerator"</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">transforms</span><span class="p">,</span> <span class="s2">"Transform"</span><span class="p">)</span>
+    <span class="n">_enroll_to_plugin_specs</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">validators</span><span class="p">,</span> <span class="s2">"Validator"</span><span class="p">)</span>
 
     <span class="n">dump_json_file</span><span class="p">(</span>
         <span class="n">_SPECS_JSON_PATH</span><span class="p">,</span>
-        <span class="nb">sorted</span><span class="p">(</span><span class="n">plugin_specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;import_path&quot;</span><span class="p">]),</span>
+        <span class="nb">sorted</span><span class="p">(</span><span class="n">plugin_specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s2">"import_path"</span><span class="p">]),</span>
         <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">append_newline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>

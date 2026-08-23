@@ -459,13 +459,13 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_tile_not_support</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type(ann)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not support tiling.&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"type(ann)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not support tiling."</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Tile">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.tile.html#datumaro.plugins.tiling.Tile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tile</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Apply tile transformation to items in the dataset.</span>
 <span class="sd">    This transformation is useful for detecting small objects [1]_.</span>
 <span class="sd">    The high-resolution input images are divided into overlapping small tile images</span>
@@ -488,10 +488,10 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] F. Ozge Unel, Burak O. Ozkalayci, and Cevahir Cigla.</span>
-<span class="sd">       &quot;The power of tiling for small object detection.&quot;</span>
+<span class="sd">       "The power of tiling for small object detection."</span>
 <span class="sd">       Proceedings of the IEEE/CVF Conference on Computer Vision</span>
 <span class="sd">       and Pattern Recognition Workshops. 2019.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_tile_ann_func_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">_tile_by_copy</span><span class="p">,</span>
@@ -512,31 +512,31 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--grid-size&quot;</span><span class="p">,</span>
+            <span class="s2">"--grid-size"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;N_ROWS&quot;</span><span class="p">,</span> <span class="s2">&quot;N_COLS&quot;</span><span class="p">),</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Grid size, e.g. &#39;--grid-size 2 3&#39; will produce 2x3 tiled images.&quot;</span><span class="p">,</span>
+            <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">"N_ROWS"</span><span class="p">,</span> <span class="s2">"N_COLS"</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Grid size, e.g. '--grid-size 2 3' will produce 2x3 tiled images."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--overlap&quot;</span><span class="p">,</span>
+            <span class="s2">"--overlap"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
             <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-            <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;PERC_HEIGHT&quot;</span><span class="p">,</span> <span class="s2">&quot;PERC_WIDTH&quot;</span><span class="p">),</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Percentage of overlaps between tiled images, e.g.&quot;</span>
-            <span class="s2">&quot; &#39;--overlap 0.1 0.2&#39; will create overlaps of 10</span><span class="si">% x</span><span class="s2"> height of tiled image&quot;</span>
-            <span class="s2">&quot; and 20</span><span class="si">% x</span><span class="s2"> width of tiled image.&quot;</span><span class="p">,</span>
+            <span class="n">metavar</span><span class="o">=</span><span class="p">(</span><span class="s2">"PERC_HEIGHT"</span><span class="p">,</span> <span class="s2">"PERC_WIDTH"</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Percentage of overlaps between tiled images, e.g."</span>
+            <span class="s2">" '--overlap 0.1 0.2' will create overlaps of 10</span><span class="si">% x</span><span class="s2"> height of tiled image"</span>
+            <span class="s2">" and 20</span><span class="si">% x</span><span class="s2"> width of tiled image."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--threshold-drop-ann&quot;</span><span class="p">,</span>
+            <span class="s2">"--threshold-drop-ann"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Threshold for dropping Polygon and Bbox annotations when tiling.&quot;</span>
-            <span class="s2">&quot; Polygon and Bbox should be cropped if they exist on the edge of the tiled image.&quot;</span>
-            <span class="s2">&quot; If an area of the cropped annotation / an area of the original annoation &lt; `threshold_drop_ann`,&quot;</span>
-            <span class="s2">&quot; drop the corresponding annotation.&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Threshold for dropping Polygon and Bbox annotations when tiling."</span>
+            <span class="s2">" Polygon and Bbox should be cropped if they exist on the edge of the tiled image."</span>
+            <span class="s2">" If an area of the cropped annotation / an area of the original annoation &lt; `threshold_drop_ann`,"</span>
+            <span class="s2">" drop the corresponding annotation."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -564,7 +564,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.tile.html#datumaro.plugins.tiling.Tile.transform_item">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item.media should be Image, but type(item.media)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"item.media should be Image, but type(item.media)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">rois</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_rois</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span>
@@ -572,7 +572,7 @@
             <span class="n">items</span> <span class="o">+=</span> <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span>
                     <span class="n">item</span><span class="p">,</span>
-                    <span class="nb">id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;_tile_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"_tile_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                     <span class="n">media</span><span class="o">=</span><span class="n">RoIImage</span><span class="o">.</span><span class="n">from_image</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">roi</span><span class="p">),</span>
                     <span class="n">attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_tiled_attributes</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">roi</span><span class="p">),</span>
                     <span class="n">annotations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_tiled_annotations</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">roi</span><span class="p">),</span>
@@ -583,7 +583,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_extract_rois</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BboxIntCoords</span><span class="p">]:</span>
-        <span class="k">assert</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;image.size is None.&quot;</span>
+        <span class="k">assert</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"image.size is None."</span>
 
         <span class="n">max_h</span><span class="p">,</span> <span class="n">max_w</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
         <span class="n">n_row</span><span class="p">,</span> <span class="n">n_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grid_size</span>
@@ -607,9 +607,9 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_tiled_attributes</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">roi</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;tile_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;tile_idx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
-        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;roi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s2">"tile_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s2">"tile_idx"</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s2">"roi"</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi</span>
         <span class="k">return</span> <span class="n">attributes</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_tiled_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">roi</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>

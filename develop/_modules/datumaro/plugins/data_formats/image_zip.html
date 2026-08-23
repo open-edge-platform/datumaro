@@ -365,7 +365,7 @@
 <div class="viewcode-block" id="ImageZipPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.image_zip.html#datumaro.plugins.data_formats.image_zip.ImageZipPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageZipPath</span><span class="p">:</span>
-    <span class="n">DEFAULT_ARCHIVE_NAME</span> <span class="o">=</span> <span class="s2">&quot;default.zip&quot;</span>
+    <span class="n">DEFAULT_ARCHIVE_NAME</span> <span class="o">=</span> <span class="s2">"default.zip"</span>
     <span class="n">DEFAULT_COMPRESSION</span> <span class="o">=</span> <span class="n">Compression</span><span class="o">.</span><span class="n">ZIP_STORED</span></div>
 
 
@@ -382,9 +382,9 @@
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">Image</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">),</span> <span class="n">url</span>
+        <span class="k">assert</span> <span class="n">url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".zip"</span><span class="p">),</span> <span class="n">url</span>
 
-        <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">zf</span><span class="o">.</span><span class="n">filelist</span><span class="p">:</span>
                 <span class="n">item_id</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">:</span>
@@ -399,13 +399,13 @@
 <div class="viewcode-block" id="ImageZipImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.image_zip.html#datumaro.plugins.data_formats.image_zip.ImageZipImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageZipImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.zip&quot;</span>
+    <span class="n">_FORMAT_EXT</span> <span class="o">=</span> <span class="s2">".zip"</span>
 
 <div class="viewcode-block" id="ImageZipImporter.find_sources">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.image_zip.html#datumaro.plugins.data_formats.image_zip.ImageZipImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="p">,</span> <span class="s2">&quot;image_zip&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="p">,</span> <span class="s2">"image_zip"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ImageZipImporter.get_file_extensions">
@@ -420,7 +420,7 @@
 <div class="viewcode-block" id="ImageZipExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.image_zip.html#datumaro.plugins.data_formats.image_zip.ImageZipExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageZipExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".jpg"</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_compression_method</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -438,18 +438,18 @@
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--name&quot;</span><span class="p">,</span>
+            <span class="s2">"--name"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">ImageZipPath</span><span class="o">.</span><span class="n">DEFAULT_ARCHIVE_NAME</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of output zipfile (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Name of output zipfile (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--compression&quot;</span><span class="p">,</span>
+            <span class="s2">"--compression"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_compression_method</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">ImageZipPath</span><span class="o">.</span><span class="n">DEFAULT_COMPRESSION</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Archive compression method.</span><span class="se">\n</span><span class="s2">Available methods: </span><span class="si">{}</span><span class="s2"> (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">Compression</span><span class="p">)</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Archive compression method.</span><span class="se">\n</span><span class="s2">Available methods: </span><span class="si">{}</span><span class="s2"> (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">Compression</span><span class="p">)</span>
             <span class="p">),</span>
         <span class="p">)</span>
 
@@ -474,19 +474,19 @@
 
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">archive_path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
-                <span class="s2">&quot;Zip file: </span><span class="si">%s</span><span class="s2">, already exist, specify archive name with --name extra argument&quot;</span> <span class="o">%</span> <span class="n">archive_path</span>
+                <span class="s2">"Zip file: </span><span class="si">%s</span><span class="s2">, already exist, specify archive name with --name extra argument"</span> <span class="o">%</span> <span class="n">archive_path</span>
             <span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compression</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">ZipFile</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compression</span><span class="p">)</span> <span class="k">as</span> <span class="n">zf</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_archive_image</span><span class="p">(</span><span class="n">zf</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39; has no image info&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Item '</span><span class="si">%s</span><span class="s2">' has no image info"</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_archive_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zipfile</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">image_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">zipfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">image_name</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>

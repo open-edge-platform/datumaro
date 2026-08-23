@@ -363,10 +363,10 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.ade20k2020.html#datumaro.plugins.data_formats.ade20k2020.Ade20k2020Path">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ade20k2020Path</span><span class="p">:</span>
     <span class="n">MASK_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;.+_seg</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">""".+_seg</span>
 <span class="sd">        | .+_parts_\d+</span>
 <span class="sd">        | instance_.+</span>
-<span class="sd">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="sd">    """</span><span class="p">,</span>
         <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -377,12 +377,12 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Ade20k2020Base</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">"Can't find dataset directory"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="c1"># exclude dataset meta file</span>
-        <span class="n">subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">subset</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">subset</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;.json&quot;</span><span class="p">]</span>
+        <span class="n">subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">subset</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">subset</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">".json"</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find subsets in directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find subsets in directory"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subsets</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">subsets</span><span class="p">),</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
@@ -419,20 +419,20 @@
             <span class="n">item_annotations</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">item_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_item_info</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_info</span><span class="p">:</span>
-                <span class="n">label_idx</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;label_name&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">label_idx</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"label_name"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">label_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">labels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;label_name&quot;</span><span class="p">])</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"label_name"</span><span class="p">])</span>
 
-            <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_seg.png&quot;</span>
-            <span class="n">max_part_level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;part_level&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item_info</span><span class="p">])</span>
+            <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_seg.png"</span>
+            <span class="n">max_part_level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="s2">"part_level"</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item_info</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">part_level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_part_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mask_path</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can`t find part level </span><span class="si">%s</span><span class="s2"> mask for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part_level</span><span class="p">,</span> <span class="n">image_path</span><span class="p">))</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Can`t find part level </span><span class="si">%s</span><span class="s2"> mask for </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">part_level</span><span class="p">,</span> <span class="n">image_path</span><span class="p">))</span>
                     <span class="k">continue</span>
 
                 <span class="n">mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span><span class="n">mask_path</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_class_mask</span><span class="p">)</span>
 
-                <span class="n">classes</span> <span class="o">=</span> <span class="p">{(</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;class_idx&quot;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;label_name&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item_info</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;part_level&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">part_level</span><span class="p">}</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="p">{(</span><span class="n">v</span><span class="p">[</span><span class="s2">"class_idx"</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s2">"label_name"</span><span class="p">])</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item_info</span> <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">"part_level"</span><span class="p">]</span> <span class="o">==</span> <span class="n">part_level</span><span class="p">}</span>
 
                 <span class="k">for</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
                     <span class="n">label_id</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -447,20 +447,20 @@
                         <span class="p">)</span>
                     <span class="p">)</span>
 
-                <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_parts_</span><span class="si">%s</span><span class="s2">.png&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_parts_</span><span class="si">%s</span><span class="s2">.png"</span> <span class="o">%</span> <span class="p">(</span><span class="n">part_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_info</span><span class="p">:</span>
-                <span class="n">instance_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">image_path</span><span class="p">),</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;instance_mask&quot;</span><span class="p">])</span>
+                <span class="n">instance_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">image_path</span><span class="p">),</span> <span class="n">item</span><span class="p">[</span><span class="s2">"instance_mask"</span><span class="p">])</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">instance_path</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can`t find instance mask: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">instance_path</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Can`t find instance mask: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">instance_path</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="n">mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span><span class="n">instance_path</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_instance_mask</span><span class="p">)</span>
 
-                <span class="n">label_id</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;label_name&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">instance_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-                <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="kc">True</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]}</span>
-                <span class="n">polygon_points</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;polygon_points&quot;</span><span class="p">]</span>
+                <span class="n">label_id</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"label_name"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">instance_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="kc">True</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s2">"attributes"</span><span class="p">]}</span>
+                <span class="n">polygon_points</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"polygon_points"</span><span class="p">]</span>
 
                 <span class="n">item_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Mask</span><span class="p">(</span>
@@ -468,19 +468,19 @@
                         <span class="n">image</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_instance_mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">),</span>
                         <span class="nb">id</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span>
                         <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
-                        <span class="n">z_order</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;part_level&quot;</span><span class="p">],</span>
+                        <span class="n">z_order</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">"part_level"</span><span class="p">],</span>
                         <span class="n">group</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;polygon_points&quot;</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;polygon_points&quot;</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"polygon_points"</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"polygon_points"</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
                     <span class="n">item_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="n">Polygon</span><span class="p">(</span>
                             <span class="n">polygon_points</span><span class="p">,</span>
                             <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
                             <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
                             <span class="nb">id</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span>
-                            <span class="n">z_order</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;part_level&quot;</span><span class="p">],</span>
+                            <span class="n">z_order</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">"part_level"</span><span class="p">],</span>
                             <span class="n">group</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
@@ -497,34 +497,34 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_item_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="n">json_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+        <span class="n">json_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">".json"</span>
         <span class="n">item_info</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">json_path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find annotation file for image </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="n">json_path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find annotation file for image </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">path</span><span class="p">,</span> <span class="n">json_path</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;latin-1&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">item_objects</span> <span class="o">=</span> <span class="n">parse_json</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())[</span><span class="s2">&quot;annotation&quot;</span><span class="p">][</span><span class="s2">&quot;object&quot;</span><span class="p">]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"latin-1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">item_objects</span> <span class="o">=</span> <span class="n">parse_json</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())[</span><span class="s2">"annotation"</span><span class="p">][</span><span class="s2">"object"</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">item_objects</span><span class="p">:</span>
                 <span class="n">polygon_points</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;polygon&quot;</span><span class="p">][</span><span class="s2">&quot;y&quot;</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">"polygon"</span><span class="p">][</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"polygon"</span><span class="p">][</span><span class="s2">"y"</span><span class="p">]):</span>
                     <span class="n">polygon_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                     <span class="n">polygon_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-                <span class="n">attributes</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"attributes"</span><span class="p">]</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attributes</span><span class="p">]</span>
 
                 <span class="n">item_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;class_idx&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;name_ndx&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;part_level&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;parts&quot;</span><span class="p">][</span><span class="s2">&quot;part_level&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;occluded&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;occluded&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">),</span>
-                        <span class="s2">&quot;crop&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;crop&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;label_name&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;raw_name&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;attributes&quot;</span><span class="p">:</span> <span class="n">attributes</span><span class="p">,</span>
-                        <span class="s2">&quot;instance_mask&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;instance_mask&quot;</span><span class="p">],</span>
-                        <span class="s2">&quot;polygon_points&quot;</span><span class="p">:</span> <span class="n">polygon_points</span><span class="p">,</span>
+                        <span class="s2">"id"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
+                        <span class="s2">"class_idx"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"name_ndx"</span><span class="p">],</span>
+                        <span class="s2">"part_level"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"parts"</span><span class="p">][</span><span class="s2">"part_level"</span><span class="p">],</span>
+                        <span class="s2">"occluded"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">"occluded"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"yes"</span><span class="p">),</span>
+                        <span class="s2">"crop"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"crop"</span><span class="p">],</span>
+                        <span class="s2">"label_name"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"raw_name"</span><span class="p">],</span>
+                        <span class="s2">"attributes"</span><span class="p">:</span> <span class="n">attributes</span><span class="p">,</span>
+                        <span class="s2">"instance_mask"</span><span class="p">:</span> <span class="n">obj</span><span class="p">[</span><span class="s2">"instance_mask"</span><span class="p">],</span>
+                        <span class="s2">"polygon_points"</span><span class="p">:</span> <span class="n">polygon_points</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
 
@@ -550,23 +550,23 @@
 <div class="viewcode-block" id="Ade20k2020Importer">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.ade20k2020.html#datumaro.plugins.data_formats.ade20k2020.Ade20k2020Importer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ade20k2020Importer</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
+    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">".json"</span>
 
 <div class="viewcode-block" id="Ade20k2020Importer.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.ade20k2020.html#datumaro.plugins.data_formats.ade20k2020.Ade20k2020Importer.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">annot_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*/**/*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">annot_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*/**/*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
             <span class="n">annot_path</span><span class="p">,</span>
-            <span class="s1">&#39;must be a JSON object with an &quot;annotation&quot; key&#39;</span><span class="p">,</span>
+            <span class="s1">'must be a JSON object with an "annotation" key'</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="n">fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">annot_path</span><span class="p">)</span>
             <span class="n">page_mapper</span> <span class="o">=</span> <span class="n">JsonSectionPageMapper</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
             <span class="n">sections</span> <span class="o">=</span> <span class="n">page_mapper</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="s2">&quot;annotation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"annotation"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span></div>
 
 
@@ -575,12 +575,12 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="n">i</span><span class="p">))):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">"*"</span> <span class="o">*</span> <span class="n">i</span><span class="p">))):</span>
                 <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">:</span>
                     <span class="k">return</span> <span class="p">[</span>
                         <span class="p">{</span>
-                            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
-                            <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">Ade20k2020Base</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+                            <span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+                            <span class="s2">"format"</span><span class="p">:</span> <span class="n">Ade20k2020Base</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
                         <span class="p">}</span>
                     <span class="p">]</span>
         <span class="k">return</span> <span class="p">[]</span></div>

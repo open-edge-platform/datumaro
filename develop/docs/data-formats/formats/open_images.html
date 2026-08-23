@@ -805,8 +805,8 @@ sizes without loading the images themselves.</p>
 <p>Here’s one way to create the <code class="docutils literal notranslate"><span class="pre">images.meta</span></code> file using ImageMagick,
 assuming that the images are present on the current machine:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run this from the dataset directory</span>
-find<span class="w"> </span>images<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.jpg&#39;</span><span class="w"> </span>-exec<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>identify<span class="w"> </span>-format<span class="w"> </span><span class="s1">&#39;&quot;%[basename]&quot; %[height] %[width]\n&#39;</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span><span class="se">\</span>
+find<span class="w"> </span>images<span class="w"> </span>-name<span class="w"> </span><span class="s1">'*.jpg'</span><span class="w"> </span>-exec<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>identify<span class="w"> </span>-format<span class="w"> </span><span class="s1">'"%[basename]" %[height] %[width]\n'</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>&gt;<span class="w"> </span>annotations/images.meta
 </pre></div>
 </div>
@@ -824,8 +824,8 @@ There are several ways to convert OID to other dataset formats:</p>
 <p>Or, using Python API:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;open_images&#39;</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;save_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;cvat&#39;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">'&lt;path/to/dataset&gt;'</span><span class="p">,</span> <span class="s1">'open_images'</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'save_dir'</span><span class="p">,</span> <span class="s1">'cvat'</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -870,17 +870,17 @@ particular problems with the Open Images dataset:</p>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span>
     <span class="n">dm</span><span class="o">.</span><span class="n">DatasetItem</span><span class="p">(</span>
-        <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;0000000000000001&#39;</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s1">'0000000000000001'</span><span class="p">,</span>
         <span class="n">image</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
-        <span class="n">subset</span><span class="o">=</span><span class="s1">&#39;validation&#39;</span><span class="p">,</span>
+        <span class="n">subset</span><span class="o">=</span><span class="s1">'validation'</span><span class="p">,</span>
         <span class="n">annotations</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
-            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">'score'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">'score'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
         <span class="p">],</span>
     <span class="p">),</span>
-<span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;/m/0&#39;</span><span class="p">,</span> <span class="s1">&#39;/m/1&#39;</span><span class="p">])</span>
+<span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">'/m/0'</span><span class="p">,</span> <span class="s1">'/m/1'</span><span class="p">])</span>
 
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;./dataset&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;open_images&#39;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'./dataset'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'open_images'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Examples of using this format from the code can be found in

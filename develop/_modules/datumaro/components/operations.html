@@ -368,9 +368,9 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_MeanStdCounter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Computes unbiased mean and std. dev. for dataset images, channel-wise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># (id, subset) -&gt; (pixel count, mean vec, std vec)</span>
@@ -379,7 +379,7 @@
         <span class="n">size</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
         <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t detect image size, the image will be skipped from pixel statistics&quot;</span><span class="p">,</span>
+                <span class="s2">"Item </span><span class="si">%s</span><span class="s2">: can't detect image size, the image will be skipped from pixel statistics"</span><span class="p">,</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
@@ -432,14 +432,14 @@
     <span class="c1"># https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Parallel_algorithm</span>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_pairwise_stats</span><span class="p">(</span><span class="n">count_a</span><span class="p">,</span> <span class="n">mean_a</span><span class="p">,</span> <span class="n">var_a</span><span class="p">,</span> <span class="n">count_b</span><span class="p">,</span> <span class="n">mean_b</span><span class="p">,</span> <span class="n">var_b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Computes vector mean and variance.</span>
 
 <span class="sd">        Needed do avoid catastrophic cancellation in floating point computations</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple (total count, mean, variance)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># allow long arithmetics</span>
         <span class="n">count_a</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count_a</span><span class="p">)</span>
@@ -454,7 +454,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">mean_accessor</span><span class="p">,</span> <span class="n">variance_accessor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Recursively computes total count, mean and variance,</span>
 <span class="sd">        does O(log(N)) calls.</span>
 
@@ -466,7 +466,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple (total count, mean, variance)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">m</span> <span class="o">=</span> <span class="n">mean_accessor</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">variance_accessor</span>
@@ -486,13 +486,13 @@
 
 
 <span class="n">IMAGE_STATS_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;images count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;unique images count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;repeated images count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;repeated images&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># [[id1, id2], [id3, id4, id5], ...]</span>
+    <span class="s2">"dataset"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"images count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"unique images count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"repeated images count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"repeated images"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># [[id1, id2], [id3, id4, id5], ...]</span>
     <span class="p">},</span>
-    <span class="s2">&quot;subsets&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s2">"subsets"</span><span class="p">:</span> <span class="p">{},</span>
 <span class="p">}</span>
 
 
@@ -501,7 +501,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_image_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">Image</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Your dataset&#39;s media_type is </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="s2">, but only Image media_type is allowed.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Your dataset's media_type is </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="s2">, but only Image media_type is allowed."</span>
         <span class="p">)</span>
 
     <span class="n">stats</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">IMAGE_STATS_SCHEMA</span><span class="p">)</span>
@@ -517,8 +517,8 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;item (id: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, subset: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="si">}</span><span class="s2">)&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; has media_type, </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="si">}</span><span class="s2"> but only Image media_type is allowed.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"item (id: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, subset: </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="si">}</span><span class="s2">)"</span>
+                    <span class="sa">f</span><span class="s2">" has media_type, </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="si">}</span><span class="s2"> but only Image media_type is allowed."</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -534,7 +534,7 @@
         <span class="n">available</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_counter</span><span class="o">.</span><span class="n">_stats</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
 
         <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;images count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_counter</span><span class="p">),</span>
+            <span class="s2">"images count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_counter</span><span class="p">),</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">available</span><span class="p">:</span>
@@ -542,31 +542,31 @@
 
             <span class="n">stats</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mean</span><span class="p">],</span>
-                    <span class="s2">&quot;image std (RGB)&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">std</span><span class="p">],</span>
+                    <span class="s2">"image mean (RGB)"</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mean</span><span class="p">],</span>
+                    <span class="s2">"image std (RGB)"</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">std</span><span class="p">],</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">stats</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">:</span> <span class="s2">&quot;n/a&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;image std (RGB)&quot;</span><span class="p">:</span> <span class="s2">&quot;n/a&quot;</span><span class="p">,</span>
+                    <span class="s2">"image mean (RGB)"</span><span class="p">:</span> <span class="s2">"n/a"</span><span class="p">,</span>
+                    <span class="s2">"image std (RGB)"</span><span class="p">:</span> <span class="s2">"n/a"</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">stats</span>
 
     <span class="k">for</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">subsets</span><span class="p">():</span>
-        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">][</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_extractor_stats</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">"subsets"</span><span class="p">][</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_extractor_stats</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span>
 
     <span class="n">unique_items</span> <span class="o">=</span> <span class="n">unique_counter</span><span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
     <span class="n">repeated_items</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">unique_items</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">&quot;images count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats_counter</span><span class="p">),</span>
-            <span class="s2">&quot;unique images count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_items</span><span class="p">),</span>
-            <span class="s2">&quot;repeated images count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">repeated_items</span><span class="p">),</span>
-            <span class="s2">&quot;repeated images&quot;</span><span class="p">:</span> <span class="n">repeated_items</span><span class="p">,</span>  <span class="c1"># [[id1, id2], [id3, id4, id5], ...]</span>
+            <span class="s2">"images count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats_counter</span><span class="p">),</span>
+            <span class="s2">"unique images count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_items</span><span class="p">),</span>
+            <span class="s2">"repeated images count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">repeated_items</span><span class="p">),</span>
+            <span class="s2">"repeated images"</span><span class="p">:</span> <span class="n">repeated_items</span><span class="p">,</span>  <span class="c1"># [[id1, id2], [id3, id4, id5], ...]</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -578,9 +578,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.operations.html#datumaro.components.operations.compute_ann_statistics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_ann_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s2">&quot;We are planning to change the type of stats[&#39;annotations&#39;][&#39;labels&#39;][&#39;distribution&#39;] &quot;</span>
-        <span class="s2">&quot;and stats[&#39;annotations&#39;][&#39;segments&#39;][&#39;pixel distribution&#39;] from `list` to `(named) tuple`. &quot;</span>
-        <span class="s2">&quot;If you are checking the types in your code, please revisit it after upgrading datumaro&gt;=2.0.0.&quot;</span><span class="p">,</span>
+        <span class="s2">"We are planning to change the type of stats['annotations']['labels']['distribution'] "</span>
+        <span class="s2">"and stats['annotations']['segments']['pixel distribution'] from `list` to `(named) tuple`. "</span>
+        <span class="s2">"If you are checking the types in your code, please revisit it after upgrading datumaro&gt;=2.0.0."</span><span class="p">,</span>
         <span class="ne">FutureWarning</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">LabelCategories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
@@ -589,61 +589,61 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;annotation(</span><span class="si">{</span><span class="n">ann</span><span class="si">}</span><span class="s2">) has undefined label(</span><span class="si">{</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"annotation(</span><span class="si">{</span><span class="n">ann</span><span class="si">}</span><span class="s2">) has undefined label(</span><span class="si">{</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
 
     <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;images count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;annotations count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;unannotated images count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;unannotated images&quot;</span><span class="p">:</span> <span class="p">[],</span>
-        <span class="s2">&quot;annotations by type&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"images count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"annotations count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"unannotated images count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"unannotated images"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"annotations by type"</span><span class="p">:</span> <span class="p">{</span>
             <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">"count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span>
         <span class="p">},</span>
-        <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">"annotations"</span><span class="p">:</span> <span class="p">{},</span>
     <span class="p">}</span>
-    <span class="n">by_type</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;annotations by type&quot;</span><span class="p">]</span>
+    <span class="n">by_type</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">"annotations by type"</span><span class="p">]</span>
 
     <span class="n">attr_template</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;values count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;values present&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
-        <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># value -&gt; (count, total%)</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"values count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"values present"</span><span class="p">:</span> <span class="nb">set</span><span class="p">(),</span>
+        <span class="s2">"distribution"</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># value -&gt; (count, total%)</span>
     <span class="p">}</span>
     <span class="n">label_stat</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>  <span class="c1"># label -&gt; (count, total%)</span>
-        <span class="s2">&quot;attributes&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"distribution"</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>  <span class="c1"># label -&gt; (count, total%)</span>
+        <span class="s2">"attributes"</span><span class="p">:</span> <span class="p">{},</span>
     <span class="p">}</span>
 
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_stat</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">][</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_stat</span>
     <span class="n">segm_stat</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;avg. area&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;area distribution&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># a histogram with 10 bins</span>
+        <span class="s2">"avg. area"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"area distribution"</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># a histogram with 10 bins</span>
         <span class="c1"># (min, min+10%), ..., (min+90%, max) -&gt; (count, total%)</span>
-        <span class="s2">&quot;pixel distribution&quot;</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>  <span class="c1"># label -&gt; (count, total%)</span>
+        <span class="s2">"pixel distribution"</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>  <span class="c1"># label -&gt; (count, total%)</span>
     <span class="p">}</span>
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;segments&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">segm_stat</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">][</span><span class="s2">"segments"</span><span class="p">]</span> <span class="o">=</span> <span class="n">segm_stat</span>
     <span class="n">segm_areas</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">pixel_dist</span> <span class="o">=</span> <span class="n">segm_stat</span><span class="p">[</span><span class="s2">&quot;pixel distribution&quot;</span><span class="p">]</span>
+    <span class="n">pixel_dist</span> <span class="o">=</span> <span class="n">segm_stat</span><span class="p">[</span><span class="s2">"pixel distribution"</span><span class="p">]</span>
     <span class="n">total_pixels</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
-        <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">label_stat</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">][</span><span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">pixel_dist</span><span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;unannotated images&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">stats</span><span class="p">[</span><span class="s2">"unannotated images"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
             <span class="k">continue</span>
 
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-            <span class="n">by_type</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">by_type</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">}:</span>
@@ -651,48 +651,48 @@
                 <span class="n">segm_areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
                 <span class="n">pixel_dist</span><span class="p">[</span><span class="n">get_label</span><span class="p">(</span><span class="n">ann</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
 
-            <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">][</span><span class="n">get_label</span><span class="p">(</span><span class="n">ann</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">label_stat</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">label_stat</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">][</span><span class="n">get_label</span><span class="p">(</span><span class="n">ann</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="s2">&quot;visibility&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;track_id&quot;</span><span class="p">}:</span>
+                <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"occluded"</span><span class="p">,</span> <span class="s2">"visibility"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="s2">"track_id"</span><span class="p">}:</span>
                     <span class="k">continue</span>
-                <span class="n">attrs_stat</span> <span class="o">=</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">attr_template</span><span class="p">))</span>
-                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">&quot;values present&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">attrs_stat</span> <span class="o">=</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">"attributes"</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">attr_template</span><span class="p">))</span>
+                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">"values present"</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                <span class="n">attrs_stat</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;images count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"images count"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;annotations count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;annotations by type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;unannotated images count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;unannotated images&quot;</span><span class="p">])</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"annotations count"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">[</span><span class="s2">"annotations by type"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">"unannotated images count"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">"unannotated images"</span><span class="p">])</span>
 
-    <span class="k">for</span> <span class="n">label_info</span> <span class="ow">in</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">label_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label_info</span> <span class="ow">in</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">label_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">label_stat</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">label_attr</span> <span class="ow">in</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;values count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;values present&quot;</span><span class="p">])</span>
-        <span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;values present&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;values present&quot;</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">attr_info</span> <span class="ow">in</span> <span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">attr_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label_attr</span> <span class="ow">in</span> <span class="n">label_stat</span><span class="p">[</span><span class="s2">"attributes"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">label_attr</span><span class="p">[</span><span class="s2">"values count"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">"values present"</span><span class="p">])</span>
+        <span class="n">label_attr</span><span class="p">[</span><span class="s2">"values present"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">"values present"</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">attr_info</span> <span class="ow">in</span> <span class="n">label_attr</span><span class="p">[</span><span class="s2">"distribution"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">attr_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">label_attr</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># numpy.sum might be faster, but could overflow with large datasets.</span>
-    <span class="c1"># Python&#39;s int can transparently mutate to be of indefinite precision (long)</span>
+    <span class="c1"># Python's int can transparently mutate to be of indefinite precision (long)</span>
     <span class="n">total_pixels</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">segm_areas</span><span class="p">)</span>
 
-    <span class="n">segm_stat</span><span class="p">[</span><span class="s2">&quot;avg. area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_pixels</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">)</span> <span class="ow">or</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">segm_stat</span><span class="p">[</span><span class="s2">"avg. area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_pixels</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">)</span> <span class="ow">or</span> <span class="mf">1.0</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">label_info</span> <span class="ow">in</span> <span class="n">segm_stat</span><span class="p">[</span><span class="s2">&quot;pixel distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">label_info</span> <span class="ow">in</span> <span class="n">segm_stat</span><span class="p">[</span><span class="s2">"pixel distribution"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">label_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_pixels</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">hist</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">)</span>
-        <span class="n">segm_stat</span><span class="p">[</span><span class="s2">&quot;area distribution&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">segm_stat</span><span class="p">[</span><span class="s2">"area distribution"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_min</span><span class="p">),</span>
-                <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_max</span><span class="p">),</span>
-                <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">),</span>
-                <span class="s2">&quot;percent&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">),</span>
+                <span class="s2">"min"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_min</span><span class="p">),</span>
+                <span class="s2">"max"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">bin_max</span><span class="p">),</span>
+                <span class="s2">"count"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">),</span>
+                <span class="s2">"percent"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">segm_areas</span><span class="p">),</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="p">(</span><span class="n">bin_min</span><span class="p">,</span> <span class="n">bin_max</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">pairwise</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
         <span class="p">]</span>
@@ -705,10 +705,10 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_default_item_hash</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">):</span>
                 <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">) has no image info, counted as unique&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Item (</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">) has no image info, counted as unique"</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="c1"># Disable B303:md5, because the hash is not used in a security context</span>

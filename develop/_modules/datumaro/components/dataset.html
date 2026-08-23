@@ -385,9 +385,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.log_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_disabled</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">on_error_do</span><span class="p">,</span> <span class="n">scoped</span>
 
-<span class="n">DEFAULT_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;datumaro&quot;</span>
+<span class="n">DEFAULT_FORMAT</span> <span class="o">=</span> <span class="s2">"datumaro"</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;eager_mode&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Dataset"</span><span class="p">,</span> <span class="s2">"eager_mode"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="DatasetSubset">
@@ -474,11 +474,11 @@
 <div class="viewcode-block" id="DatasetSubset.get_annotations">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset.html#datumaro.components.dataset.DatasetSubset.get_annotations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">annotations_by_type</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span>
+        <span class="n">annotations_by_type</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">"count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-                <span class="n">annotations_by_type</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">annotations_by_type</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+                <span class="n">annotations_by_type</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">annotations_by_type</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DatasetSubset.as_dataset">
@@ -495,7 +495,7 @@
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a dataset, contains metainfo about labels and dataset items.</span>
 <span class="sd">    Provides iteration and access options to dataset elements.</span>
 
@@ -506,7 +506,7 @@
 <span class="sd">    Dataset is supposed to have a single media type for its items. If the</span>
 <span class="sd">    dataset is filled manually or from extractors, and media type does not</span>
 <span class="sd">    match, an error is raised.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_global_eager</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">_stream</span> <span class="o">=</span> <span class="kc">False</span>
@@ -524,7 +524,7 @@
         <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]</span> <span class="o">=</span> <span class="n">Image</span><span class="p">,</span>
         <span class="n">ann_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a new dataset from an iterable object producing dataset items -</span>
 <span class="sd">        a generator, a list etc. It is a convenient way to create and fill</span>
 <span class="sd">        a custom dataset.</span>
@@ -543,7 +543,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dataset: A new dataset with specified contents</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">infos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">infos</span> <span class="o">=</span> <span class="p">{}</span>
@@ -560,7 +560,7 @@
         <span class="k">class</span><span class="w"> </span><span class="nc">_extractor</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
             <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-                    <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="s2">"__len__"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span>
                     <span class="n">ann_types</span><span class="o">=</span><span class="n">ann_types</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -586,7 +586,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">merge_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a new dataset from one or several `Extractor`s.</span>
 
 <span class="sd">        In case of a single input, creates a lazy wrapper around the input.</span>
@@ -598,11 +598,11 @@
 <span class="sd">            env: A context for plugins, which will be used for this dataset.</span>
 <span class="sd">                If not specified, the builtin plugins will be used.</span>
 <span class="sd">            merge_policy: Policy on how to merge multiple datasets.</span>
-<span class="sd">                Possible options are &quot;exact&quot;, &quot;intersect&quot;, and &quot;union&quot;.</span>
+<span class="sd">                Possible options are "exact", "intersect", and "union".</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dataset: A new dataset with contents produced by input extractors</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -646,21 +646,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">separator</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Dataset</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">size=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">source_path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">media_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">ann_types=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">annotated_items_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_annotated_items</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">annotations_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;subsets</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset_info</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;infos</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_infos</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;categories</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_categories_info</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Dataset</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">size=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">source_path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">media_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">ann_types=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">annotated_items_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_annotated_items</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">annotations_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"subsets</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset_info</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"infos</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_infos</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"categories</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">separator</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_categories_info</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="Dataset.define_infos">
@@ -759,9 +759,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.get_subset_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_subset_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">: # of items=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">))</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;# of annotated items=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_annotated_items</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;# of annotations=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">: # of items=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">))</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"# of annotated items=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_annotated_items</span><span class="p">()</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"# of annotations=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_annotations</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="k">for</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="p">)</span></div>
 
@@ -770,8 +770,8 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.get_infos">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,)</span></div>
+            <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,)</span></div>
 
 
 <div class="viewcode-block" id="Dataset.get_categories_info">
@@ -786,7 +786,7 @@
                 <span class="n">category_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">_indices_by_name</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
                 <span class="n">category_dict</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">category_names</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">category_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">,</span><span class="w"> </span><span class="p">[]))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">category_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">,</span><span class="w"> </span><span class="p">[]))</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="k">for</span> <span class="n">annotation_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="p">)</span></div>
 
@@ -803,9 +803,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">overrides</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+            <span class="n">overrides</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
         <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">overrides</span><span class="p">[</span><span class="s2">&quot;subset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset</span>
+            <span class="n">overrides</span><span class="p">[</span><span class="s2">"subset"</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset</span>
         <span class="k">if</span> <span class="n">overrides</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="o">**</span><span class="n">overrides</span><span class="p">)</span>
 
@@ -826,7 +826,7 @@
         <span class="n">filter_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Filters out some dataset items or annotations, using a custom filter</span>
 <span class="sd">        expression.</span>
 
@@ -834,15 +834,15 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            expr: XPath-formatted filter expression</span>
-<span class="sd">                (e.g. `/item[subset = &#39;train&#39;]`,</span>
-<span class="sd">                `/item/annotation[label = &#39;cat&#39;]`)</span>
+<span class="sd">                (e.g. `/item[subset = 'train']`,</span>
+<span class="sd">                `/item/annotation[label = 'cat']`)</span>
 <span class="sd">            filter_annotations: Indicates if the filter should be</span>
 <span class="sd">                applied to items or annotations</span>
 <span class="sd">            remove_empty: When filtering annotations, allows to</span>
 <span class="sd">                exclude empty items from the resulting dataset</span>
 
 <span class="sd">        Returns: self</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span>
@@ -852,7 +852,7 @@
         <span class="n">filter_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Filters out some dataset items or annotations, using a user-provided filter</span>
 <span class="sd">        Python function.</span>
 
@@ -902,7 +902,7 @@
 <span class="sd">                filtered = dataset.filter(filter_func=filter_func, filter_annotations=True)</span>
 <span class="sd">                # No bounding boxes with a size greater than 50% of their image</span>
 <span class="sd">                filtered_items = [item for item in filtered]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
 <div class="viewcode-block" id="Dataset.filter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.filter">[docs]</a>
@@ -937,7 +937,7 @@
 <div class="viewcode-block" id="Dataset.update">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.update">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetPatch</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Updates items of the current dataset from another dataset or an</span>
 <span class="sd">        iterable (the source). Items from the source overwrite matching</span>
 <span class="sd">        items in the current dataset. Unmatched items are just appended.</span>
@@ -950,7 +950,7 @@
 <span class="sd">        the current dataset label order during updating.</span>
 
 <span class="sd">        Returns: self</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -959,7 +959,7 @@
 <div class="viewcode-block" id="Dataset.transform">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.transform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Transform</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Applies some function to dataset items.</span>
 
 <span class="sd">        Results are stored in-place. Modifications are applied lazily.</span>
@@ -972,13 +972,13 @@
 <span class="sd">            **kwargs: Parameters for the transformation</span>
 
 <span class="sd">        Returns: self</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">Transform</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unexpected &#39;method&#39; argument type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Unexpected 'method' argument type: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">method</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_eager</span><span class="p">:</span>
@@ -1042,13 +1042,13 @@
 <div class="viewcode-block" id="Dataset.bind">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.bind">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Binds the dataset to a speific directory.</span>
 <span class="sd">        Allows to set default saving parameters.</span>
 
 <span class="sd">        The following saves will be done to this directory by default and will</span>
 <span class="sd">        use the saved parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_format</span> <span class="o">=</span> <span class="nb">format</span> <span class="ow">or</span> <span class="n">DEFAULT_FORMAT</span>
@@ -1073,7 +1073,7 @@
         <span class="n">error_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExportErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Saves the dataset in some format.</span>
 
 <span class="sd">        Args:</span>
@@ -1084,10 +1084,10 @@
 <span class="sd">            progress_reporter: An object to report progress</span>
 <span class="sd">            error_policy: An object to report format-related errors</span>
 <span class="sd">            **kwargs: Parameters for the format</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">save_dir</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dataset export path is not specified&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Dataset export path is not specified"</span><span class="p">)</span>
 
         <span class="n">inplace</span> <span class="o">=</span> <span class="n">save_dir</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span> <span class="ow">and</span> <span class="nb">format</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span>
 
@@ -1097,7 +1097,7 @@
             <span class="n">exporter</span> <span class="o">=</span> <span class="nb">format</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">exporter</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exporter</span><span class="p">,</span> <span class="n">Exporter</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unexpected &#39;format&#39; argument type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">exporter</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Unexpected 'format' argument type: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">exporter</span><span class="p">))</span>
 
         <span class="n">save_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
@@ -1110,10 +1110,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">progress_reporter</span><span class="p">:</span>
             <span class="n">progress_reporter</span> <span class="o">=</span> <span class="n">NullProgressReporter</span><span class="p">()</span>
 
-        <span class="k">assert</span> <span class="s2">&quot;ctx&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span>
+        <span class="k">assert</span> <span class="s2">"ctx"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span>
         <span class="n">exporter_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">exporter_kwargs</span><span class="p">[</span><span class="s2">&quot;stream&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span>
-        <span class="n">exporter_kwargs</span><span class="p">[</span><span class="s2">&quot;ctx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ExportContext</span><span class="p">(</span><span class="n">progress_reporter</span><span class="o">=</span><span class="n">progress_reporter</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
+        <span class="n">exporter_kwargs</span><span class="p">[</span><span class="s2">"stream"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span>
+        <span class="n">exporter_kwargs</span><span class="p">[</span><span class="s2">"ctx"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ExportContext</span><span class="p">(</span><span class="n">progress_reporter</span><span class="o">=</span><span class="n">progress_reporter</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span><span class="p">:</span>
@@ -1121,17 +1121,17 @@
                     <span class="n">exporter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">exporter_kwargs</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># TODO: for backward compatibility. To be removed after 0.3</span>
-                    <span class="k">if</span> <span class="s2">&quot;unexpected keyword argument &#39;ctx&#39;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">"unexpected keyword argument 'ctx'"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                         <span class="k">raise</span>
 
                     <span class="k">if</span> <span class="n">has_ctx_args</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;It seems that &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&#39; exporter &quot;</span>
-                            <span class="s2">&quot;does not support progress and error reporting, &quot;</span>
-                            <span class="s2">&quot;It will be disabled in datumaro==1.5.0.&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">"It seems that '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">' exporter "</span>
+                            <span class="s2">"does not support progress and error reporting, "</span>
+                            <span class="s2">"It will be disabled in datumaro==1.5.0."</span><span class="p">,</span>
                             <span class="ne">DeprecationWarning</span><span class="p">,</span>
                         <span class="p">)</span>
-                    <span class="n">exporter_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ctx&quot;</span><span class="p">)</span>
+                    <span class="n">exporter_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"ctx"</span><span class="p">)</span>
 
                     <span class="n">exporter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">exporter_kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1139,17 +1139,17 @@
                     <span class="n">exporter</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_patch</span><span class="p">(),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">exporter_kwargs</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># TODO: for backward compatibility. To be removed after 0.3</span>
-                    <span class="k">if</span> <span class="s2">&quot;unexpected keyword argument &#39;ctx&#39;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">"unexpected keyword argument 'ctx'"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                         <span class="k">raise</span>
 
                     <span class="k">if</span> <span class="n">has_ctx_args</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;It seems that &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&#39; exporter &quot;</span>
-                            <span class="s2">&quot;does not support progress and error reporting, &quot;</span>
-                            <span class="s2">&quot;It will be disabled in datumaro==1.5.0.&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">"It seems that '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">' exporter "</span>
+                            <span class="s2">"does not support progress and error reporting, "</span>
+                            <span class="s2">"It will be disabled in datumaro==1.5.0."</span><span class="p">,</span>
                             <span class="ne">DeprecationWarning</span><span class="p">,</span>
                         <span class="p">)</span>
-                    <span class="n">exporter_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ctx&quot;</span><span class="p">)</span>
+                    <span class="n">exporter_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"ctx"</span><span class="p">)</span>
 
                     <span class="n">exporter</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_patch</span><span class="p">(),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">exporter_kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">_ExportFail</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -1189,7 +1189,7 @@
         <span class="n">error_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportErrorPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a `Dataset` instance from a dataset on the disk.</span>
 
 <span class="sd">        Args:</span>
@@ -1205,7 +1205,7 @@
 <span class="sd">            error_policy - An object to report format-related errors.</span>
 <span class="sd">                Implies earger loading.</span>
 <span class="sd">            **kwargs - Parameters for the format</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
@@ -1223,7 +1223,7 @@
                 <span class="p">)</span>
             <span class="n">extractor_merger</span> <span class="o">=</span> <span class="n">importer</span><span class="o">.</span><span class="n">get_extractor_merger</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">extractors</span><span class="p">:</span>
-            <span class="n">detected_sources</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="nb">format</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">}]</span>
+            <span class="n">detected_sources</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="nb">format</span><span class="p">,</span> <span class="s2">"options"</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">}]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnknownFormatError</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
 
@@ -1246,26 +1246,26 @@
 
                 <span class="n">extractor_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">src_conf</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
 
-                <span class="k">assert</span> <span class="s2">&quot;ctx&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extractor_kwargs</span>
-                <span class="n">extractor_kwargs</span><span class="p">[</span><span class="s2">&quot;ctx&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ImportContext</span><span class="p">(</span><span class="n">progress_reporter</span><span class="o">=</span><span class="n">pbar</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="s2">"ctx"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extractor_kwargs</span>
+                <span class="n">extractor_kwargs</span><span class="p">[</span><span class="s2">"ctx"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ImportContext</span><span class="p">(</span><span class="n">progress_reporter</span><span class="o">=</span><span class="n">pbar</span><span class="p">,</span> <span class="n">error_policy</span><span class="o">=</span><span class="n">error_policy</span><span class="p">)</span>
 
-                <span class="n">merge_policy</span> <span class="o">=</span> <span class="n">extractor_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;merge_policy&quot;</span><span class="p">,</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">)</span>
+                <span class="n">merge_policy</span> <span class="o">=</span> <span class="n">extractor_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"merge_policy"</span><span class="p">,</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">extractors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">make_extractor</span><span class="p">(</span><span class="n">src_conf</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">src_conf</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">extractor_kwargs</span><span class="p">))</span>
                 <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># TODO: for backward compatibility. To be removed after 0.3</span>
-                    <span class="k">if</span> <span class="s2">&quot;unexpected keyword argument &#39;ctx&#39;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">"unexpected keyword argument 'ctx'"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
                         <span class="k">raise</span>
 
                     <span class="k">if</span> <span class="n">has_ctx_args</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;It seems that &#39;</span><span class="si">{</span><span class="n">src_conf</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">&#39; extractor &quot;</span>
-                            <span class="s2">&quot;does not support progress and error reporting. &quot;</span>
-                            <span class="s2">&quot;It will be disabled in datumaro==1.5.0.&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">"It seems that '</span><span class="si">{</span><span class="n">src_conf</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">' extractor "</span>
+                            <span class="s2">"does not support progress and error reporting. "</span>
+                            <span class="s2">"It will be disabled in datumaro==1.5.0."</span><span class="p">,</span>
                             <span class="ne">DeprecationWarning</span><span class="p">,</span>
                         <span class="p">)</span>
-                    <span class="n">extractor_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ctx&quot;</span><span class="p">)</span>
+                    <span class="n">extractor_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"ctx"</span><span class="p">)</span>
 
                     <span class="n">extractors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">make_extractor</span><span class="p">(</span><span class="n">src_conf</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">src_conf</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">extractor_kwargs</span><span class="p">))</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="p">(</span>
@@ -1276,15 +1276,15 @@
             <span class="k">if</span> <span class="n">eager</span><span class="p">:</span>
                 <span class="n">dataset</span><span class="o">.</span><span class="n">init_cache</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">_ImportFail</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">cause</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;__cause__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">e</span>
+            <span class="n">cause</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"__cause__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">e</span>
             <span class="n">cause</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to import dataset &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&#39; at &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">cause</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to import dataset '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">' at '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">cause</span>
         <span class="k">except</span> <span class="n">DatumaroError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">cause</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;__cause__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">e</span>
+            <span class="n">cause</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">"__cause__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">e</span>
             <span class="n">cause</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to import dataset &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&#39; at &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">cause</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to import dataset '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">' at '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">cause</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to import dataset &#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&#39; at &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to import dataset '</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">' at '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="n">dataset</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="n">dataset</span><span class="o">.</span><span class="n">_format</span> <span class="o">=</span> <span class="nb">format</span>
@@ -1296,10 +1296,10 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.detect">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Attempts to detect dataset format of a given directory.</span>
 
-<span class="sd">        This function tries to detect a single format and fails if it&#39;s not</span>
+<span class="sd">        This function tries to detect a single format and fails if it's not</span>
 <span class="sd">        possible. Check Environment.detect_dataset() for a function that</span>
 <span class="sd">        reports status for each format checked.</span>
 
@@ -1307,13 +1307,13 @@
 <span class="sd">            path: The directory to check</span>
 <span class="sd">            depth: The maximum depth for recursive search</span>
 <span class="sd">            env: A plugin collection. If not set, the built-in plugins are used</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Depth cannot be less than zero&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Depth cannot be less than zero"</span><span class="p">)</span>
 
         <span class="n">matches</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
@@ -1329,12 +1329,12 @@
 
 <div class="viewcode-block" id="Dataset.clone">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Dataset.clone">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a deep copy of this dataset.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Dataset"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a deep copy of this dataset.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A cloned instance of the `Dataset`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
@@ -1388,7 +1388,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">merge_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a new dataset from one or several `Extractor`s.</span>
 
 <span class="sd">        In case of a single input, creates a lazy wrapper around the input.</span>
@@ -1400,11 +1400,11 @@
 <span class="sd">            env: A context for plugins, which will be used for this dataset.</span>
 <span class="sd">                If not specified, the builtin plugins will be used.</span>
 <span class="sd">            merge_policy: Policy on how to merge multiple datasets.</span>
-<span class="sd">                Possible options are &quot;exact&quot;, &quot;intersect&quot;, and &quot;union&quot;.</span>
+<span class="sd">                Possible options are "exact", "intersect", and "union".</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dataset: A new dataset with contents produced by input extractors</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

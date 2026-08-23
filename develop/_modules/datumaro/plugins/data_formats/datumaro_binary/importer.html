@@ -357,11 +357,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--num-workers&quot;</span><span class="p">,</span>
+            <span class="s2">"--num-workers"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of multi-processing workers for import. &quot;</span>
-            <span class="s2">&quot;If num_workers = 0, do not use multiprocessing (default: </span><span class="si">%(default)s</span><span class="s2">).&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"The number of multi-processing workers for import. "</span>
+            <span class="s2">"If num_workers = 0, do not use multiprocessing (default: </span><span class="si">%(default)s</span><span class="s2">)."</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -374,13 +374,13 @@
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FormatDetectionConfidence</span><span class="p">]:</span>
         <span class="n">annot_files</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_files</span><span class="p">(</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">)</span>
+            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">"*"</span> <span class="o">+</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">annot_file</span> <span class="ow">in</span> <span class="n">annot_files</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
                 <span class="n">annot_file</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">annot_file</span><span class="si">}</span><span class="s2"> has no Datumaro binary format signature&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">annot_file</span><span class="si">}</span><span class="s2"> has no Datumaro binary format signature"</span><span class="p">,</span>
                 <span class="n">is_binary_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">signature</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">SIGNATURE_LEN</span><span class="p">)</span>

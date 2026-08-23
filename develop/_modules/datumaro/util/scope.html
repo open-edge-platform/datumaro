@@ -352,15 +352,15 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">optional_arg_decorator</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Scope">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Scope</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A context manager that allows to register error and exit callbacks.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_thread_locals</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
 
@@ -395,12 +395,12 @@
         <span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Registers a function to be called on scope exit because of an error.</span>
 
 <span class="sd">        If ignore_errors is True, the errors from this function call</span>
 <span class="sd">        will be ignored.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ErrorHandler</span><span class="p">,</span>
@@ -420,9 +420,9 @@
         <span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ignore_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Registers a function to be called on scope exit.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_callback</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ExitHandler</span><span class="p">,</span>
@@ -449,11 +449,11 @@
 <div class="viewcode-block" id="Scope.add">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.add">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Enters a context manager and adds it to the exit stack.</span>
 
 <span class="sd">        Returns: cm.__enter__() result</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span></div>
 
@@ -497,7 +497,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.Scope.as_current">[docs]</a>
     <span class="nd">@contextmanager</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">previous</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_locals</span><span class="p">,</span> <span class="s2">&quot;current&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_locals</span><span class="p">,</span> <span class="s2">"current"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_locals</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">yield</span>
@@ -511,10 +511,10 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.scope.html#datumaro.components.dataset.scoped">[docs]</a>
 <span class="nd">@optional_arg_decorator</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">scoped</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">arg_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A function decorator, which allows to do actions with the current scope,</span>
 <span class="sd">    such as registering error and exit callbacks and context managers.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

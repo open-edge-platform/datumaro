@@ -388,12 +388,12 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Annotation">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Annotation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A base annotation class.</span>
 
-<span class="sd">    Derived classes must define the &#39;_type&#39; class variable with a value</span>
+<span class="sd">    Derived classes must define the '_type' class variable with a value</span>
 <span class="sd">    from the AnnotationType enum.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Describes an identifier of the annotation</span>
     <span class="c1"># Is not required to be unique within DatasetItem annotations or dataset</span>
@@ -405,8 +405,8 @@
     <span class="c1"># builtin types (int, float, bool, str) to increase compatibility with</span>
     <span class="c1"># different formats.</span>
     <span class="c1"># There are some established names for common attributes like:</span>
-    <span class="c1"># - &quot;occluded&quot; (bool)</span>
-    <span class="c1"># - &quot;visible&quot; (bool)</span>
+    <span class="c1"># - "occluded" (bool)</span>
+    <span class="c1"># - "visible" (bool)</span>
     <span class="c1"># Possible dataset attributes can be described in Categories.attributes.</span>
     <span class="n">attributes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
 
@@ -415,8 +415,8 @@
     <span class="n">group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">NO_GROUP</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
 
     <span class="c1"># obeject identifier over the multiple items</span>
-    <span class="c1"># e.g.) in a video, person &#39;A&#39; could be annotated on the multiple frame images</span>
-    <span class="c1">#   the user could assign &gt;=0 value as id of person &#39;A&#39;.</span>
+    <span class="c1"># e.g.) in a video, person 'A' could be annotated on the multiple frame images</span>
+    <span class="c1">#   the user could assign &gt;=0 value as id of person 'A'.</span>
     <span class="n">object_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">NO_OBJECT_ID</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">unknown</span>
@@ -428,14 +428,14 @@
 <div class="viewcode-block" id="Annotation.as_dict">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Annotation.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="s2">&quot;Returns a dictionary { field_name: value }&quot;</span>
+        <span class="s2">"Returns a dictionary { field_name: value }"</span>
         <span class="k">return</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Annotation.wrap">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Annotation.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="s2">&quot;Returns a modified copy of the object&quot;</span>
+        <span class="s2">"Returns a modified copy of the object"</span>
         <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
@@ -445,11 +445,11 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.Categories">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Categories</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A base class for annotation metainfo. It is supposed to include</span>
 <span class="sd">    dataset-wide metainfo like available labels, label colors,</span>
 <span class="sd">    label attributes etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Describes the list of possible annotation-type specific attributes</span>
     <span class="c1"># in a dataset.</span>
@@ -477,7 +477,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">[</span><span class="n">text</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid GroupType: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid GroupType: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 </div>
 
 
@@ -491,7 +491,7 @@
     <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">Category</span><span class="p">:</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">not_empty</span><span class="p">)</span>
-        <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+        <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
         <span class="n">attributes</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">set</span><span class="p">))</span></div>
 
 
@@ -522,7 +522,7 @@
             <span class="p">]</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LabelCategories</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a LabelCategories from iterable.</span>
 
 <span class="sd">        Args:</span>
@@ -533,7 +533,7 @@
 <span class="sd">                  with these arguments</span>
 
 <span class="sd">        Returns: a LabelCategories object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">temp_categories</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
@@ -624,27 +624,27 @@
 <span class="n">RgbColor</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 
 <span class="n">Colormap</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">RgbColor</span><span class="p">]</span>
-<span class="sd">&quot;&quot;&quot;Represents { index -&gt; color } mapping for segmentation masks&quot;&quot;&quot;</span>
+<span class="sd">"""Represents { index -&gt; color } mapping for segmentation masks"""</span>
 
 
 <div class="viewcode-block" id="MaskCategories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.MaskCategories">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MaskCategories</span><span class="p">(</span><span class="n">Categories</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Describes a color map for segmentation masks.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="MaskCategories.generate">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.MaskCategories.generate">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">255</span><span class="p">,</span> <span class="n">include_background</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaskCategories</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generates MaskCategories with the specified size.</span>
 
 <span class="sd">        If include_background is True, the result will include the item</span>
-<span class="sd">            &quot;0: (0, 0, 0)&quot;, which is typically used as a background color.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            "0: (0, 0, 0)", which is typically used as a background color.</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_colormap</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">generate_colormap</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">include_background</span><span class="o">=</span><span class="n">include_background</span><span class="p">))</span></div>
@@ -691,9 +691,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mask</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents a 2d single-instance binary segmentation mask.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span>
     <span class="n">_image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BinaryMaskImage</span><span class="p">,</span> <span class="n">BinaryMaskImageCallable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
@@ -719,7 +719,7 @@
         <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IndexMaskImage</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a class index mask based on the binary mask.</span>
+<span class="w">        </span><span class="sd">"""Produces a class index mask based on the binary mask.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            label_id: Scalar value to represent the class index of the mask.</span>
@@ -733,7 +733,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            IndexMaskImage: Class index mask generated from the binary mask.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">label_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_index_mask</span>
@@ -749,7 +749,7 @@
         <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IndexMaskImage</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces an instance index mask based on the binary mask.</span>
+<span class="w">        </span><span class="sd">"""Produces an instance index mask based on the binary mask.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            instance_id: Scalar value to represent the instance id.</span>
@@ -762,7 +762,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            IndexMaskImage: Instance index mask generated from the binary mask.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_index_mask</span>
 
         <span class="k">return</span> <span class="n">make_index_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">instance_id</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="n">ignore_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
@@ -777,11 +777,11 @@
 <div class="viewcode-block" id="Mask.get_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Computes the bounding box of the mask.</span>
 
 <span class="sd">        Returns: [x, y, w, h]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_mask_bbox</span>
 
         <span class="k">return</span> <span class="n">find_mask_bbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
@@ -790,9 +790,9 @@
 <div class="viewcode-block" id="Mask.paint">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.paint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="n">Colormap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Applies a colormap to the mask and produces the resulting image.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">paint_mask</span>
 
         <span class="k">return</span> <span class="n">paint_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_class_mask</span><span class="p">(),</span> <span class="n">colormap</span><span class="p">)</span></div>
@@ -813,9 +813,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.RleMask">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RleMask</span><span class="p">(</span><span class="n">Mask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An RLE-encoded instance segmentation mask.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_rle</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>  <span class="c1"># uses pycocotools RLE representation</span>
 
@@ -865,7 +865,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.ExtractedMask">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ExtractedMask</span><span class="p">(</span><span class="n">Mask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mask annotation (binary mask) extracted from an index mask (integer 2D Numpy array).</span>
+<span class="w">    </span><span class="sd">"""Mask annotation (binary mask) extracted from an index mask (integer 2D Numpy array).</span>
 
 <span class="sd">    This class can extract a binary mask with given index mask and index value.</span>
 <span class="sd">    The advantage of this class is that we can create multiple binary mask but they share a single index mask source.</span>
@@ -889,7 +889,7 @@
 <span class="sd">        np.array([0, 1])</span>
 <span class="sd">        &gt;&gt;&gt; mask1.index_mask == mask2.index_mask  # They share the same source</span>
 <span class="sd">        True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">index_mask</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IndexMaskImage</span><span class="p">,</span> <span class="n">IndexMaskImageCallable</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
@@ -909,10 +909,10 @@
 <div class="viewcode-block" id="CompiledMask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.CompiledMask">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CompiledMask</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents class- and instance- segmentation masks with</span>
 <span class="sd">    all the instances (opposed to single-instance masks).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="CompiledMask.from_instance_masks">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.CompiledMask.from_instance_masks">[docs]</a>
@@ -922,7 +922,7 @@
         <span class="n">instance_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">instance_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CompiledMask</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Joins instance masks into a single mask. Masks are sorted by</span>
 <span class="sd">        z_order (ascending) prior to merging.</span>
 
@@ -931,7 +931,7 @@
 <span class="sd">                By default, mask positions are used.</span>
 <span class="sd">            instance_labels: Instance label id values for the produced class</span>
 <span class="sd">                mask. By default, mask labels are used.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_index_mask</span>
 
@@ -1016,11 +1016,11 @@
 <div class="viewcode-block" id="CompiledMask.get_instance_labels">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.CompiledMask.get_instance_labels">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_instance_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Matches the class and instance masks.</span>
 
 <span class="sd">        Returns: { instance id: class id }</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">class_shift</span> <span class="o">=</span> <span class="mi">16</span>
         <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">class_shift</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
@@ -1033,9 +1033,9 @@
 <div class="viewcode-block" id="CompiledMask.extract">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.CompiledMask.extract">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IndexMaskImage</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Extracts a single-instance mask from the compiled mask.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask</span> <span class="o">==</span> <span class="n">instance_id</span></div>
 
@@ -1052,7 +1052,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Shape">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Base class for shape annotations. This class defines the common attributes and methods</span>
 <span class="sd">    for different types of shape annotations.</span>
 
@@ -1066,7 +1066,7 @@
 <span class="sd">        as_polygon: Abstract method to convert the shape into a polygon representation.</span>
 <span class="sd">        get_bbox: Returns the bounding box of the shape as [x, y, w, h].</span>
 <span class="sd">        get_points: Returns the points of the shape as a list of (x, y) tuples.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -1079,30 +1079,30 @@
 <div class="viewcode-block" id="Shape.get_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Shape.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the area of the shape.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Shape.as_polygon">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Shape.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert the shape into a polygon representation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Shape.get_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Shape.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate and return the bounding box of the shape.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Tuple[float, float, float, float]: The bounding box as [x, y, w, h].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="p">:</span>
@@ -1120,17 +1120,17 @@
 <div class="viewcode-block" id="Shape.get_points">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Shape.get_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert and return the points of the shape as a list of (x, y) tuples.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Optional[List[Tuple[float, float]]]: List of points as (x, y) tuples, or None if no points.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">points</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;points should have (2 x points) number of float values.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"points should have (2 x points) number of float values."</span>
 
         <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]]</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]]</span>
@@ -1144,7 +1144,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.PolyLine">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PolyLine</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    PolyLine annotation class. This class represents a polyline shape, which is a series of connected line segments.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1153,7 +1153,7 @@
 <span class="sd">    Methods:</span>
 <span class="sd">        as_polygon: Returns the points of the polyline as a polygon.</span>
 <span class="sd">        get_area: Returns the area of the polyline, which is always 0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span>
 
@@ -1175,7 +1175,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Cuboid3d">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Cuboid3d</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Cuboid3d annotation class. This class represents a 3D cuboid annotation with position, rotation, and scale.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1188,7 +1188,7 @@
 <span class="sd">        position: Property to get and set the position of the cuboid.</span>
 <span class="sd">        rotation: Property to get and set the rotation of the cuboid.</span>
 <span class="sd">        scale: Property to get and set the scale of the cuboid.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span>
     <span class="n">_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1196,13 +1196,13 @@
 
     <span class="nd">@_points</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_points_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validate and round the points representing the cuboid&#39;s position, rotation, and scale.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate and round the points representing the cuboid's position, rotation, and scale.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            attribute: The attribute being validated.</span>
 <span class="sd">            points: The list of float values to validate.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1213,84 +1213,84 @@
 <div class="viewcode-block" id="Cuboid3d.__init__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Cuboid3d.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the Cuboid3d with position, rotation, and scale.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            position (List[float]): List of 3 float values representing the position [x, y, z].</span>
 <span class="sd">            rotation (List[float], optional): List of 3 float values representing the rotation [rx, ry, rz].</span>
 <span class="sd">            scale (List[float], optional): List of 3 float values representing the scale [sx, sy, sz].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="n">position</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rotation</span><span class="p">:</span>
             <span class="n">rotation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">scale</span><span class="p">:</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">position</span><span class="p">,</span> <span class="o">*</span><span class="n">rotation</span><span class="p">,</span> <span class="o">*</span><span class="n">scale</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the position of the cuboid.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The position [x, y, z] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="nd">@position</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_poistion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set the position of the cuboid.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (List[float]): The new position [x, y, z] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># TODO: fix the issue with separate coordinate rounding:</span>
         <span class="c1"># self.position[0] = 12.345676</span>
-        <span class="c1"># - the number assigned won&#39;t be rounded.</span>
+        <span class="c1"># - the number assigned won't be rounded.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the rotation of the cuboid.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The rotation [rx, ry, rz] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
 
     <span class="nd">@rotation</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set the rotation of the cuboid.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (List[float]): The new rotation [rx, ry, rz] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the scale of the cuboid.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The scale [sx, sy, sz] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
 
     <span class="nd">@scale</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set the scale of the cuboid.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (List[float]): The new scale [sx, sy, sz] of the cuboid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
 
@@ -1299,7 +1299,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Polygon</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Polygon annotation class. This class represents a polygon shape defined by a series of points.</span>
 
 <span class="sd">    Attributes:</span>
@@ -1311,32 +1311,32 @@
 <span class="sd">        as_polygon: Returns the points of the polygon.</span>
 <span class="sd">        __eq__: Compares this polygon with another for equality.</span>
 <span class="sd">        _get_shoelace_area: Helper method to calculate the area of the polygon using the shoelace formula.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span>
 
 <div class="viewcode-block" id="Polygon.__attrs_post_init__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.__attrs_post_init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Validate the points to ensure they form a valid polygon.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AssertionError: If the number of points is not even or less than 3 pairs of coordinates.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># keep the message on a single line to produce informative output</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Wrong polygon points: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span></div>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Wrong polygon points: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span></div>
 
 
 <div class="viewcode-block" id="Polygon.get_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the area of the polygon using the shoelace formula.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The area of the polygon.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># import pycocotools.mask as mask_utils</span>
 
         <span class="c1"># x, y, w, h = self.get_bbox()</span>
@@ -1348,19 +1348,19 @@
 <div class="viewcode-block" id="Polygon.as_polygon">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return the points of the polygon.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The points of the polygon.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span></div>
 
 
 <div class="viewcode-block" id="Polygon.__eq__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.__eq__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compare this polygon with another for equality.</span>
 
 <span class="sd">        Args:</span>
@@ -1368,7 +1368,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: True if the polygons are equal, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Annotation</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_order</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">z_order</span><span class="p">:</span>
@@ -1388,12 +1388,12 @@
 <div class="viewcode-block" id="Polygon._get_shoelace_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon._get_shoelace_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_shoelace_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the area of the polygon using the shoelace formula.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The area of the polygon.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_points</span><span class="p">()</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
         <span class="c1"># Not a polygon</span>
@@ -1415,7 +1415,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bbox</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Bbox annotation class. This class represents a bounding box defined by its top-left corner (x, y)</span>
 <span class="sd">    and its width and height (w, h).</span>
 
@@ -1433,14 +1433,14 @@
 <span class="sd">        as_polygon: Returns the bounding box as a list of points forming a polygon.</span>
 <span class="sd">        iou: Calculates the Intersection over Union (IoU) with another shape.</span>
 <span class="sd">        wrap: Creates a new Bbox instance with updated attributes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span>
 
 <div class="viewcode-block" id="Bbox.__init__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the Bbox with its top-left corner (x, y) and its width and height (w, h).</span>
 
 <span class="sd">        Args:</span>
@@ -1448,84 +1448,84 @@
 <span class="sd">            y (float): The y-coordinate of the top-left corner.</span>
 <span class="sd">            w (float): The width of the bounding box.</span>
 <span class="sd">            h (float): The height of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
+<span class="sd">        """</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the x-coordinate of the top-left corner of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The x-coordinate of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the y-coordinate of the top-left corner of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The y-coordinate of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the width of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The width of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the height of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The height of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="Bbox.get_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the area of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The area of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span></div>
 
 
 <div class="viewcode-block" id="Bbox.get_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the bounding box coordinates and dimensions.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The bounding box as [x, y, w, h].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Bbox.as_polygon">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert the bounding box into a polygon representation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The bounding box as a polygon.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">]</span></div>
 
@@ -1533,7 +1533,7 @@
 <div class="viewcode-block" id="Bbox.iou">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.iou">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iou</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the Intersection over Union (IoU) with another shape.</span>
 
 <span class="sd">        Args:</span>
@@ -1541,7 +1541,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Union[float, Literal[-1]]: The IoU value or -1 if not applicable.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">bbox_iou</span>
 
         <span class="k">return</span> <span class="n">bbox_iou</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">(),</span> <span class="n">other</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">())</span></div>
@@ -1550,7 +1550,7 @@
 <div class="viewcode-block" id="Bbox.wrap">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a new Bbox instance with updated attributes.</span>
 
 <span class="sd">        Args:</span>
@@ -1559,8 +1559,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Bbox: A new Bbox instance with updated attributes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">h</span><span class="p">}</span>
+<span class="sd">        """</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">h</span><span class="p">}</span>
         <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span></div>
 </div>
@@ -1571,7 +1571,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RotatedBbox</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    RotatedBbox annotation class. This class represents a rotated bounding box defined</span>
 <span class="sd">    by its center (cx, cy), width (w), height (h), and rotation angle (r).</span>
 
@@ -1592,14 +1592,14 @@
 <span class="sd">        as_polygon: Converts the rotated bounding box into a list of corner points.</span>
 <span class="sd">        iou: Calculates the Intersection over Union (IoU) with another shape.</span>
 <span class="sd">        wrap: Creates a new RotatedBbox instance with updated attributes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span>
 
 <div class="viewcode-block" id="RotatedBbox.__init__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the RotatedBbox with its center (cx, cy), width (w), height (h), and rotation angle (r).</span>
 
 <span class="sd">        Args:</span>
@@ -1608,8 +1608,8 @@
 <span class="sd">            w (float): The width of the bounding box.</span>
 <span class="sd">            h (float): The height of the bounding box.</span>
 <span class="sd">            r (float): The rotation angle of the bounding box in degrees.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
+<span class="sd">        """</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">([</span><span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">r</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1617,7 +1617,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.from_rectangle">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_rectangle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a RotatedBbox from a list of four corner points.</span>
 
 <span class="sd">        Args:</span>
@@ -1627,8 +1627,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            RotatedBbox: A new RotatedBbox instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;polygon for a rotated bbox should have only 4 coordinates.&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"polygon for a rotated bbox should have only 4 coordinates."</span>
 
         <span class="c1"># Calculate rotation angle</span>
         <span class="n">rot</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -1646,75 +1646,75 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the x-coordinate of the center of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The x-coordinate of the center.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the y-coordinate of the center of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The y-coordinate of the center.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">w</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the width of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The width of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">h</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the height of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The height of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the rotation angle of the bounding box in degrees.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The rotation angle of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RotatedBbox.get_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the area of the bounding box.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The area of the bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span></div>
 
 
 <div class="viewcode-block" id="RotatedBbox.get_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the bounding box coordinates and dimensions.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The bounding box as [x, y, w, h].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">polygon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_polygon</span><span class="p">()</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">]</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">]</span>
@@ -1725,27 +1725,27 @@
 <div class="viewcode-block" id="RotatedBbox.get_rotated_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.get_rotated_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rotated_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the rotated bounding box parameters.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The rotated bounding box as [cx, cy, w, h, r].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="RotatedBbox.as_polygon">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert the rotated bounding box into a list of corner points.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[Tuple[float, float]]: The bounding box as a list of four corner points.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_rotate_point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""</span>
 <span class="sd">            Rotate a point around another point.</span>
 
 <span class="sd">            Args:</span>
@@ -1755,7 +1755,7 @@
 
 <span class="sd">            Returns:</span>
 <span class="sd">                Tuple[float, float]: The rotated point coordinates.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="n">angle_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
             <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
             <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_rad</span><span class="p">)</span>
@@ -1781,7 +1781,7 @@
 <div class="viewcode-block" id="RotatedBbox.iou">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.iou">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iou</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the Intersection over Union (IoU) with another shape.</span>
 
 <span class="sd">        Args:</span>
@@ -1789,7 +1789,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Union[float, Literal[-1]]: The IoU value or -1 if not applicable.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">bbox_iou</span>
 
         <span class="k">return</span> <span class="n">bbox_iou</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">(),</span> <span class="n">other</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">())</span></div>
@@ -1798,7 +1798,7 @@
 <div class="viewcode-block" id="RotatedBbox.wrap">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.RotatedBbox.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a new RotatedBbox instance with updated attributes.</span>
 
 <span class="sd">        Args:</span>
@@ -1807,8 +1807,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            RotatedBbox: A new RotatedBbox instance with updated attributes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cx&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">cx</span><span class="p">,</span> <span class="s2">&quot;cy&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">cy</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">r</span><span class="p">}</span>
+<span class="sd">        """</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"cx"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">cx</span><span class="p">,</span> <span class="s2">"cy"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">cy</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="s2">"h"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">r</span><span class="p">}</span>
         <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span></div>
 </div>
@@ -1819,7 +1819,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Cuboid2D">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Cuboid2D</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Cuboid2D annotation class. This class represents a 3D bounding box defined by its point coordinates</span>
 <span class="sd">    in the following way:</span>
 <span class="sd">    [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5), (x6, y6), (x7, y7), (x8, y8)].</span>
@@ -1838,7 +1838,7 @@
 <span class="sd">    Methods:</span>
 <span class="sd">        __init__: Initializes the Cuboid2D with its coordinates.</span>
 <span class="sd">        wrap: Creates a new Cuboid2D instance with updated attributes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_2d</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -1854,13 +1854,13 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">(</span><span class="n">points</span><span class="o">=</span><span class="n">_points</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_plane_equation</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates coefficients of the plane equation from three points.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Calculates coefficients of the plane equation from three points."""</span>
         <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
         <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">z2</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
         <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span><span class="p">,</span> <span class="n">z3</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
@@ -1878,11 +1878,11 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_denorm</span><span class="p">(</span><span class="n">Tr_velo_to_cam_homo</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates the denormalized vector perpendicular to the image plane.</span>
+<span class="w">        </span><span class="sd">"""Calculates the denormalized vector perpendicular to the image plane.</span>
 <span class="sd">        Args:</span>
 <span class="sd">            Tr_velo_to_cam_homo (np.ndarray): Homogeneous (4x4) LiDAR-to-camera transformation matrix</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            np.ndarray: vector&quot;&quot;&quot;</span>
+<span class="sd">            np.ndarray: vector"""</span>
         <span class="n">ground_points_lidar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
         <span class="n">ground_points_lidar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">ground_points_lidar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ground_points_lidar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ground_points_cam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Tr_velo_to_cam_homo</span><span class="p">,</span> <span class="n">ground_points_lidar</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -1890,7 +1890,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_3d_points</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">rotation_y</span><span class="p">,</span> <span class="n">denorm</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get corner points according to the 3D bounding box parameters.</span>
+<span class="w">        </span><span class="sd">"""Get corner points according to the 3D bounding box parameters.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dim (List[float]): The dimensions of the 3D bounding box as [l, w, h].</span>
@@ -1899,7 +1899,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: The corner points of the 3D bounding box.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">rotation_y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">rotation_y</span><span class="p">)</span>
         <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -1924,7 +1924,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_project_to_2d</span><span class="p">(</span><span class="n">pts_3d</span><span class="p">,</span> <span class="n">P</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Project 3D points to 2D image plane.</span>
+<span class="w">        </span><span class="sd">"""Project 3D points to 2D image plane.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pts_3d (np.ndarray): The 3D points to project.</span>
@@ -1932,7 +1932,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: The 2D points projected to the image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Convert to homogeneous coordinates</span>
         <span class="n">pts_3d</span> <span class="o">=</span> <span class="n">pts_3d</span><span class="o">.</span><span class="n">T</span>
         <span class="n">pts_3d_homo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">pts_3d</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pts_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
@@ -1952,7 +1952,7 @@
         <span class="n">P</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">Tr_velo_to_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cuboid2D</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an instance of Cuboid2D class from 3D bounding box parameters.</span>
+<span class="w">        </span><span class="sd">"""Creates an instance of Cuboid2D class from 3D bounding box parameters.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dim (np.ndarray): 3 scalars describing length, width and height of a 3D bounding box</span>
@@ -1963,7 +1963,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Cuboid2D: Projection points for the given bounding box</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">Tr_velo_to_cam_homo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="n">Tr_velo_to_cam_homo</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">Tr_velo_to_cam</span>
         <span class="n">denorm</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_denorm</span><span class="p">(</span><span class="n">Tr_velo_to_cam_homo</span><span class="p">)</span>
@@ -1977,14 +1977,14 @@
 <div class="viewcode-block" id="Cuboid2D.to_3d">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Cuboid2D.to_3d">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P_inv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstructs 3D object Velodyne coordinates (dimensions, location and rotation along the Y-axis)</span>
+<span class="w">        </span><span class="sd">"""Reconstructs 3D object Velodyne coordinates (dimensions, location and rotation along the Y-axis)</span>
 <span class="sd">        from the given Cuboid2D instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            P_inv (np.ndarray): Pseudo-inverse of Camera-to-Image projection matrix</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: dimensions, location and rotation along the Y-axis</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">recon_3d</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">coord_2d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">):</span>
             <span class="n">coord_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coord_2d</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -2040,9 +2040,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.PointsCategories">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PointsCategories</span><span class="p">(</span><span class="n">Categories</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Describes (key-)point metainfo such as point names and joints.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="PointsCategories.Category">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.PointsCategories.Category">[docs]</a>
@@ -2062,7 +2062,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.abstracts.merger.PointsCategories.Category.positions_validator">[docs]</a>
         <span class="nd">@positions</span><span class="o">.</span><span class="n">validator</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">positions_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span><span class="o">.</span><span class="n">Attribute</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span> <span class="n">positions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""</span>
 <span class="sd">            Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].</span>
 
 <span class="sd">            To be used as an attrs validator for the positions field of PointsCategories.Category.</span>
@@ -2074,7 +2074,7 @@
 <span class="sd">            Raises:</span>
 <span class="sd">                ValueError: If the provided value cannot be converted to a list of floats,</span>
 <span class="sd">                    or if the number of positions is invalid.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="k">if</span> <span class="n">positions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -2082,16 +2082,16 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">positions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">positions</span><span class="p">))</span>
                 <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot convert positions to list of floats. Check your input data.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Cannot convert positions to list of floats. Check your input data."</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="c1"># check if number of coordinates is even</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;positions must have an even number of elements&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">"positions must have an even number of elements"</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c1"># check if the number of positions is equal to the number of labels</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;The number of positions should be equal to the number of labels&quot;</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"The number of positions should be equal to the number of labels"</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="c1"># normalize the positions</span>
                     <span class="n">positions</span> <span class="o">=</span> <span class="n">normalize_points</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
@@ -2112,7 +2112,7 @@
             <span class="n">Iterable</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointsCategories</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create PointsCategories from an iterable.</span>
 
 <span class="sd">        Args:</span>
@@ -2123,7 +2123,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PointsCategories: PointsCategories object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">temp_categories</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
@@ -2161,7 +2161,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Points">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Points</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents an ordered set of points.</span>
 
 <span class="sd">    Attributes:</span>
@@ -2178,19 +2178,19 @@
 <span class="sd">        __attrs_post_init__: Validates that the number of points is even.</span>
 <span class="sd">        get_area: Returns the area covered by the points, always zero.</span>
 <span class="sd">        get_bbox: Returns the bounding box containing all visible or hidden points.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="Points.Visibility">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Points.Visibility">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Visibility</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Enum representing the visibility state of points.</span>
 
 <span class="sd">        Attributes:</span>
 <span class="sd">            absent (int): Point is absent (0).</span>
 <span class="sd">            hidden (int): Point is hidden (1).</span>
 <span class="sd">            visible (int): Point is visible (2).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">absent</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">hidden</span> <span class="o">=</span> <span class="mi">1</span>
@@ -2203,7 +2203,7 @@
 
     <span class="nd">@visibility</span><span class="o">.</span><span class="n">validator</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_visibility_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">visibility</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Validates and initializes the visibility list.</span>
 
 <span class="sd">        Args:</span>
@@ -2212,7 +2212,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AssertionError: If the length of the visibility list does not match half the length of the points list.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">visibility</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">visibility</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">visible</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2225,36 +2225,36 @@
 <div class="viewcode-block" id="Points.__attrs_post_init__">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Points.__attrs_post_init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Validates that the number of points is even after initialization.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AssertionError: If the number of points is not even.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span></div>
 
 
 <div class="viewcode-block" id="Points.get_area">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Points.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the area covered by the points.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: Always returns 0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="Points.get_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Points.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the bounding box containing all visible or hidden points.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: The bounding box as [x0, y0, width, height].</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span><span class="p">]</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">visibility</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="vm">__class__</span><span class="o">.</span><span class="n">Visibility</span><span class="o">.</span><span class="n">absent</span><span class="p">]</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -2270,9 +2270,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Caption">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Caption</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents arbitrary text annotations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span>
     <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span></div>
@@ -2293,9 +2293,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.SuperResolutionAnnotation">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SuperResolutionAnnotation</span><span class="p">(</span><span class="n">_ImageAnnotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents high resolution images.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">super_resolution_annotation</span></div>
 
@@ -2305,9 +2305,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.DepthAnnotation">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DepthAnnotation</span><span class="p">(</span><span class="n">_ImageAnnotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents depth images.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">depth_annotation</span></div>
 
@@ -2317,7 +2317,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Ellipse">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ellipse</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Ellipse represents an ellipse that is encapsulated by a rectangle.</span>
 
 <span class="sd">    - x1 and y1 represent the top-left coordinate of the encapsulating rectangle</span>
@@ -2334,12 +2334,12 @@
 <span class="sd">        right x coordinate of encapsulating rectangle</span>
 <span class="sd">    y2: float</span>
 <span class="sd">        bottom y coordinate of encapsulating rectangle</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">y2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"points"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># comes from wrap()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -2389,7 +2389,7 @@
 <div class="viewcode-block" id="Ellipse.get_points">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Ellipse.get_points">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">720</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return points as a list of tuples, e.g. [(x0, y0), (x1, y1), ...].</span>
 
 <span class="sd">        Parameters</span>
@@ -2397,7 +2397,7 @@
 <span class="sd">        num_points: int</span>
 <span class="sd">            The number of boundary points of the ellipse.</span>
 <span class="sd">            By default, one point is created for every 1 degree of interior angle (num_points=360).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_polygon</span><span class="p">(</span><span class="n">num_points</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">])]</span></div>
@@ -2406,7 +2406,7 @@
 <div class="viewcode-block" id="Ellipse.as_polygon">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Ellipse.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">720</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return a polygon as a list of tuples, e.g. [x0, y0, x1, y1, ...].</span>
 
 <span class="sd">        Parameters</span>
@@ -2414,7 +2414,7 @@
 <span class="sd">        num_points: int</span>
 <span class="sd">            The number of boundary points of the ellipse.</span>
 <span class="sd">            By default, one point is created for every 1 degree of interior angle (num_points=360).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">num_points</span><span class="p">)</span>
 
         <span class="n">l1</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span>
@@ -2440,23 +2440,23 @@
 <div class="viewcode-block" id="Ellipse.wrap">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Ellipse.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Ellipse</span><span class="p">:</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y2</span><span class="p">}</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"x1"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="s2">"y1"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="s2">"x2"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">x2</span><span class="p">,</span> <span class="s2">"y2"</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">y2</span><span class="p">}</span>
         <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">)</span></div>
 </div>
 
 
 
-<span class="n">TableDtype</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TableDtype&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="n">TableDtype</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"TableDtype"</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TabularCategories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset.html#datumaro.components.abstracts.merger.TabularCategories">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularCategories</span><span class="p">(</span><span class="n">Categories</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Describes tabular data metainfo such as column names and types.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="TabularCategories.Category">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset.html#datumaro.components.abstracts.merger.TabularCategories.Category">[docs]</a>
@@ -2473,7 +2473,7 @@
             <span class="k">return</span> <span class="n">same_name</span> <span class="ow">and</span> <span class="n">same_dtype</span> <span class="ow">and</span> <span class="n">same_labels</span>
 
         <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, dtype: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, labels: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="si">}</span><span class="s2">&quot;</span></div>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, dtype: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, labels: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="si">}</span><span class="s2">"</span></div>
 
 
     <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Category</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
@@ -2486,14 +2486,14 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TabularCategories</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates a TabularCategories from iterable.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            iterable: a list of (Category name, type) or (Category name, type, set of labels)</span>
 
 <span class="sd">        Returns: a TabularCategories object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">temp_categories</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
@@ -2511,7 +2511,7 @@
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">],</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Add a Tabular Category.</span>
 
 <span class="sd">        Args:</span>
@@ -2521,7 +2521,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: A index of added category.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">name</span>
         <span class="k">assert</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices_by_name</span>
         <span class="k">assert</span> <span class="n">dtype</span>
@@ -2536,7 +2536,7 @@
 <div class="viewcode-block" id="TabularCategories.find">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset.html#datumaro.components.abstracts.merger.TabularCategories.find">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Category</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Find Category information for the given column name.</span>
 
 <span class="sd">        Args:</span>
@@ -2544,7 +2544,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple(int, Category): A index and Category information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span></div>
 
@@ -2572,9 +2572,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.Tabular">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tabular</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Represents values of target columns in a tabular dataset.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">tabular</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TableDtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
@@ -2584,12 +2584,12 @@
 <div class="viewcode-block" id="Annotations">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.Annotations">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Annotations</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List of `Annotation` equipped with additional utility functions.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""List of `Annotation` equipped with additional utility functions."""</span>
 
 <div class="viewcode-block" id="Annotations.get_semantic_seg_mask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.Annotations.get_semantic_seg_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_seg_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract semantic segmentation mask from a collection of Datumaro `Mask`s.</span>
+<span class="w">        </span><span class="sd">"""Extract semantic segmentation mask from a collection of Datumaro `Mask`s.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            ignore_index: Scalar value to fill in the zeros in each binary mask</span>
@@ -2602,14 +2602,14 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If there are no mask annotations or if there is an inconsistency in mask sizes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Mask</span><span class="p">)]</span>
         <span class="c1"># Mask with a lower z_order value will come first</span>
         <span class="n">masks</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">mask</span><span class="p">:</span> <span class="n">mask</span><span class="o">.</span><span class="n">z_order</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">masks</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;There is no mask annotations.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"There is no mask annotations."</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Dispatching for better performance</span>
@@ -2640,7 +2640,7 @@
 
         <span class="k">for</span> <span class="n">class_mask</span> <span class="ow">in</span> <span class="n">class_masks</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">class_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">semantic_seg_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;There is inconsistency in mask size: </span><span class="si">{</span><span class="n">class_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!=</span><span class="si">{</span><span class="n">semantic_seg_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"There is inconsistency in mask size: </span><span class="si">{</span><span class="n">class_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">!=</span><span class="si">{</span><span class="n">semantic_seg_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">."</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">class_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">semantic_seg_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
             <span class="n">ignore_index_mask</span> <span class="o">=</span> <span class="n">class_mask</span> <span class="o">==</span> <span class="n">ignore_index</span>

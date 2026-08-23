@@ -356,10 +356,10 @@
 <div class="viewcode-block" id="MpiiJsonPath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mpii.mpii_json.html#datumaro.plugins.data_formats.mpii.mpii_json.MpiiJsonPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MpiiJsonPath</span><span class="p">:</span>
-    <span class="n">ANNOTATION_FILE</span> <span class="o">=</span> <span class="s2">&quot;mpii_annotations.json&quot;</span>
-    <span class="n">HEADBOXES_FILE</span> <span class="o">=</span> <span class="s2">&quot;mpii_headboxes.npy&quot;</span>
-    <span class="n">VISIBILITY_FILE</span> <span class="o">=</span> <span class="s2">&quot;jnt_visible.npy&quot;</span>
-    <span class="n">POS_GT_FILE</span> <span class="o">=</span> <span class="s2">&quot;mpii_pos_gt.npy&quot;</span></div>
+    <span class="n">ANNOTATION_FILE</span> <span class="o">=</span> <span class="s2">"mpii_annotations.json"</span>
+    <span class="n">HEADBOXES_FILE</span> <span class="o">=</span> <span class="s2">"mpii_headboxes.npy"</span>
+    <span class="n">VISIBILITY_FILE</span> <span class="o">=</span> <span class="s2">"jnt_visible.npy"</span>
+    <span class="n">POS_GT_FILE</span> <span class="o">=</span> <span class="s2">"mpii_pos_gt.npy"</span></div>
 
 
 
@@ -374,12 +374,12 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find annotations file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find annotations file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="s2">&quot;human&quot;</span><span class="p">]),</span>
+            <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="s2">"human"</span><span class="p">]),</span>
             <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">:</span> <span class="n">PointsCategories</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="n">MPII_POINTS_LABELS</span><span class="p">,</span> <span class="n">MPII_POINTS_JOINTS</span><span class="p">)]),</span>
         <span class="p">}</span>
 
@@ -409,10 +409,10 @@
             <span class="n">gt_pose</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parse_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">)):</span>
-            <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;img_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"img_paths"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="n">center</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;objpos&quot;</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scale_provided&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"objpos"</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"scale_provided"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">gt_pose</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">points</span> <span class="o">=</span> <span class="n">gt_pose</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -422,7 +422,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">vis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">keypoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joint_self&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+                <span class="n">keypoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"joint_self"</span><span class="p">,</span> <span class="p">[]))</span>
                 <span class="n">points</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
                 <span class="n">vis</span> <span class="o">=</span> <span class="n">keypoints</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
@@ -439,7 +439,7 @@
                     <span class="n">vis</span><span class="p">,</span>
                     <span class="n">label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="n">group</span><span class="o">=</span><span class="n">group_num</span><span class="p">,</span>
-                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;center&quot;</span><span class="p">:</span> <span class="n">center</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="n">scale</span><span class="p">},</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"center"</span><span class="p">:</span> <span class="n">center</span><span class="p">,</span> <span class="s2">"scale"</span><span class="p">:</span> <span class="n">scale</span><span class="p">},</span>
                 <span class="p">)</span>
             <span class="p">]</span>
 
@@ -458,11 +458,11 @@
 
             <span class="n">group_num</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="n">joint_others</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joint_others&quot;</span><span class="p">)</span>
+            <span class="n">joint_others</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"joint_others"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">joint_others</span><span class="p">:</span>
-                <span class="n">num_others</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;numOtherPeople&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="n">center</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;objpos_other&quot;</span><span class="p">,</span> <span class="p">[])</span>
-                <span class="n">scale</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scale_provided_other&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">num_others</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"numOtherPeople"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"objpos_other"</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"scale_provided_other"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">num_others</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">center</span><span class="p">]</span>
@@ -477,9 +477,9 @@
 
                     <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">center</span><span class="p">):</span>
-                        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">attributes</span><span class="p">[</span><span class="s2">"center"</span><span class="p">]</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">scale</span><span class="p">):</span>
-                        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="n">attributes</span><span class="p">[</span><span class="s2">"scale"</span><span class="p">]</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Points</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group_num</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">))</span>
 
@@ -488,7 +488,7 @@
             <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
                 <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span>
-                <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;img_paths&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))),</span>
+                <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"img_paths"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))),</span>
                 <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -506,7 +506,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mpii.mpii_json.html#datumaro.plugins.data_formats.mpii.mpii_json.MpiiJsonImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;mpii_json&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">".json"</span><span class="p">,</span> <span class="s2">"mpii_json"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MpiiJsonImporter.detect">

@@ -355,34 +355,34 @@
 <div class="viewcode-block" id="MultilineFormatter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.util.MultilineFormatter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MultilineFormatter</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Keeps line breaks introduced with &#39;|n&#39; separator</span>
-<span class="sd">    and spaces introduced with &#39;|s&#39;,</span>
-<span class="sd">    also removes the &#39;code-block&#39; directives.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Keeps line breaks introduced with '|n' separator</span>
+<span class="sd">    and spaces introduced with '|s',</span>
+<span class="sd">    also removes the 'code-block' directives.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_keep_natural</span> <span class="o">=</span> <span class="n">keep_natural</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">indent</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_whitespace_matcher</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;|s&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.. code-block::&quot;</span><span class="p">,</span> <span class="s2">&quot;|n&quot;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_whitespace_matcher</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"|s"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">".. code-block::"</span><span class="p">,</span> <span class="s2">"|n"</span><span class="p">)</span>
 
-        <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|n &quot;</span><span class="p">)</span>
+        <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"|n "</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep_natural</span><span class="p">:</span>
-            <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">),</span> <span class="p">[])</span>
+            <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2"> "</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">),</span> <span class="p">[])</span>
 
-        <span class="n">multiline_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">multiline_text</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="k">for</span> <span class="n">paragraph</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">:</span>
             <span class="n">formatted_paragraph</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">multiline_text</span> <span class="o">+=</span> <span class="n">formatted_paragraph</span>
         <span class="k">return</span> <span class="n">multiline_text</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This requires to remove an ugly curly braced list generated by add_subparsers().</span>
 <span class="sd">        Please see the following example.</span>
 
@@ -396,10 +396,10 @@
 <span class="sd">            Commands:</span>
 <span class="sd">                get           Download a publicly available dataset</span>
 <span class="sd">                describe      Print information about downloadable datasets</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_format_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">nargs</span> <span class="o">==</span> <span class="n">argparse</span><span class="o">.</span><span class="n">PARSER</span><span class="p">:</span>
-            <span class="n">parts</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="k">return</span> <span class="n">parts</span></div>
 
 
@@ -413,13 +413,13 @@
         <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(((</span><span class="n">nmin</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nmin</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmin</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">nmax</span> <span class="ow">and</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">nmax</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmax</span><span class="p">)):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Argument &#39;</span><span class="si">%s</span><span class="s2">&#39; requires&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">"Argument '</span><span class="si">%s</span><span class="s2">' requires"</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span>
                 <span class="k">if</span> <span class="n">nmin</span> <span class="ow">and</span> <span class="n">nmax</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2"> arguments&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nmin</span><span class="p">,</span> <span class="n">nmax</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">" from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2"> arguments"</span> <span class="o">%</span> <span class="p">(</span><span class="n">nmin</span><span class="p">,</span> <span class="n">nmax</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">nmin</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; at least </span><span class="si">%s</span><span class="s2"> arguments&quot;</span> <span class="o">%</span> <span class="n">nmin</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">" at least </span><span class="si">%s</span><span class="s2"> arguments"</span> <span class="o">%</span> <span class="n">nmin</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; no more </span><span class="si">%s</span><span class="s2"> arguments&quot;</span> <span class="o">%</span> <span class="n">nmax</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">" no more </span><span class="si">%s</span><span class="s2"> arguments"</span> <span class="o">%</span> <span class="n">nmax</span>
                 <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
 
@@ -437,7 +437,7 @@
 <div class="viewcode-block" id="join_cli_args">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.util.join_cli_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-    <span class="s2">&quot;Merges arg values in a list&quot;</span>
+    <span class="s2">"Merges arg values in a list"</span>
 
     <span class="n">joined</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -454,9 +454,9 @@
 <div class="viewcode-block" id="make_subcommands_help">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.util.make_subcommands_help">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_subcommands_help</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">help_line_start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="k">for</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">command_type</span><span class="p">,</span> <span class="n">command_help</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;  %-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">help_line_start</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;s</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"  %-"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">help_line_start</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"s</span><span class="si">%s</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">command_name</span><span class="p">,</span>
             <span class="n">command_help</span><span class="p">,</span>
         <span class="p">)</span>

@@ -352,8 +352,8 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.util.html#datumaro.cli.contexts.util.build_split_video_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_split_video_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Split video into frames&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Split video into frames"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"""</span>
 <span class="s2">        Splits a video into separate frames and saves them in a directory.</span>
 <span class="s2">        |n</span>
 <span class="s2">        This command is useful for making a dataset from a video file.</span>
@@ -368,30 +368,30 @@
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Split a video into frames, use each 30-rd frame:|n</span>
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -i video.mp4 -o video.mp4-frames --step 30|n</span>
-<span class="s2">        - Split a video into frames, save as &#39;frame_xxxxxx.png&#39; files:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -i video.mp4 --image-ext=.png --name-pattern=&#39;frame_</span><span class="si">%%</span><span class="s2">06d&#39;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s2">        - Split a video into frames, save as 'frame_xxxxxx.png' files:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -i video.mp4 --image-ext=.png --name-pattern='frame_</span><span class="si">%%</span><span class="s2">06d'</span>
+<span class="s2">        """</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--input-path&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;src_path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the video file&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-i"</span><span class="p">,</span> <span class="s2">"--input-path"</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">"src_path"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Path to the video file"</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory to save output (default: a subdir in the current one)&quot;</span><span class="p">,</span>
+        <span class="s2">"-o"</span><span class="p">,</span>
+        <span class="s2">"--output-dir"</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">"dst_dir"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Directory to save output (default: a subdir in the current one)"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite existing files in the save directory&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--overwrite"</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Overwrite existing files in the save directory"</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--name-pattern&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%06d</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name pattern for the produced images (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="s2">"-n"</span><span class="p">,</span>
+        <span class="s2">"--name-pattern"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"</span><span class="si">%06d</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Name pattern for the produced images (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--step&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Frame step (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="s2">&quot;--start-frame&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Starting frame (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;--end-frame&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Finishing frame (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-x&quot;</span><span class="p">,</span> <span class="s2">&quot;--image-ext&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output image extension (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-s"</span><span class="p">,</span> <span class="s2">"--step"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Frame step (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-b"</span><span class="p">,</span> <span class="s2">"--start-frame"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Starting frame (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-e"</span><span class="p">,</span> <span class="s2">"--end-frame"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Finishing frame (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-x"</span><span class="p">,</span> <span class="s2">"--image-ext"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">".jpg"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output image extension (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">split_video_command</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
@@ -402,7 +402,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.util.html#datumaro.cli.contexts.util.get_split_video_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_split_video_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">split_video_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;src_path&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;name_pattern&quot;</span><span class="p">],</span>
+        <span class="n">split_video_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">"src_path"</span><span class="p">,</span> <span class="s2">"dst_dir"</span><span class="p">,</span> <span class="s2">"name_pattern"</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
@@ -415,26 +415,26 @@
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span>
     <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists (pass --overwrite to overwrite)&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">"Directory '</span><span class="si">%s</span><span class="s2">' already exists (pass --overwrite to overwrite)"</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">basename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-frames&quot;</span> <span class="o">%</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
-        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="n">basename</span><span class="p">)</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">-frames"</span> <span class="o">%</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
+        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">"."</span><span class="p">),</span> <span class="n">basename</span><span class="p">)</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exporting frames...&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Exporting frames..."</span><span class="p">)</span>
 
     <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span>
         <span class="n">src_path</span><span class="p">,</span>
-        <span class="s2">&quot;video_frames&quot;</span><span class="p">,</span>
+        <span class="s2">"video_frames"</span><span class="p">,</span>
         <span class="n">name_pattern</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">name_pattern</span><span class="p">,</span>
         <span class="n">step</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">step</span><span class="p">,</span>
         <span class="n">start_frame</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">start_frame</span><span class="p">,</span>
         <span class="n">end_frame</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">end_frame</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;image_dir&quot;</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">image_ext</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">image_ext</span><span class="p">)</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">"image_dir"</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">image_ext</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">image_ext</span><span class="p">)</span>
 
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Frames are exported into &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Frames are exported into '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="mi">0</span></div>
 
@@ -446,7 +446,7 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">()</span>
 
     <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">()</span>
-    <span class="n">add_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">,</span> <span class="s2">&quot;split_video&quot;</span><span class="p">,</span> <span class="n">build_split_video_parser</span><span class="p">)</span>
+    <span class="n">add_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">,</span> <span class="s2">"split_video"</span><span class="p">,</span> <span class="n">build_split_video_parser</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
 

@@ -356,8 +356,8 @@
 <div class="viewcode-block" id="CommonSemanticSegmentationPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_semantic_segmentation.html#datumaro.plugins.data_formats.common_semantic_segmentation.CommonSemanticSegmentationPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CommonSemanticSegmentationPath</span><span class="p">:</span>
-    <span class="n">MASKS_DIR</span> <span class="o">=</span> <span class="s2">&quot;masks&quot;</span>
-    <span class="n">IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span></div>
+    <span class="n">MASKS_DIR</span> <span class="o">=</span> <span class="s2">"masks"</span>
+    <span class="n">IMAGES_DIR</span> <span class="o">=</span> <span class="s2">"images"</span></div>
 
 
 
@@ -396,13 +396,13 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">image_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">mask_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">image_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">mask_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">"Can't find dataset directory"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
@@ -416,7 +416,7 @@
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">parse_meta_file</span><span class="p">(</span><span class="n">meta_file</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">make_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Dataset meta info file was not found&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Dataset meta info file was not found"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
@@ -427,7 +427,7 @@
 
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">image_dir</span><span class="p">):</span>
             <span class="n">images</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_prefix</span><span class="p">)</span> <span class="p">:]:</span> <span class="n">p</span>
+                <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_prefix</span><span class="p">)</span> <span class="p">:]:</span> <span class="n">p</span>
                 <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">image_dir</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_prefix</span><span class="p">)</span>
             <span class="p">}</span>
@@ -476,7 +476,7 @@
 <div class="viewcode-block" id="CommonSemanticSegmentationImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_semantic_segmentation.html#datumaro.plugins.data_formats.common_semantic_segmentation.CommonSemanticSegmentationImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CommonSemanticSegmentationImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;CommonSemanticSegmentation is introduced in the accuracy checker tool of OpenVINO™</span>
+<span class="w">    </span><span class="sd">"""CommonSemanticSegmentation is introduced in the accuracy checker tool of OpenVINO™</span>
 <span class="sd">    to cover a general format of datasets for semantic segmentation task.</span>
 <span class="sd">    This should have the following structure:</span>
 <span class="sd">        - Dataset/</span>
@@ -489,15 +489,15 @@
 <span class="sd">                - &lt;img1&gt;.png</span>
 <span class="sd">                - &lt;img2&gt;.png</span>
 <span class="sd">                - ...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="CommonSemanticSegmentationImporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_semantic_segmentation.html#datumaro.plugins.data_formats.common_semantic_segmentation.CommonSemanticSegmentationImporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--image-prefix&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Image prefix (default: &#39;&#39;)&quot;</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--mask-prefix&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Mask prefix (default: &#39;&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--image-prefix"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Image prefix (default: '')"</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--mask-prefix"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Mask prefix (default: '')"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -507,8 +507,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
         <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">DATASET_META_FILE</span><span class="p">)</span>
 
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CommonSemanticSegmentationPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CommonSemanticSegmentationPath</span><span class="o">.</span><span class="n">MASKS_DIR</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CommonSemanticSegmentationPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"*"</span><span class="p">))</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CommonSemanticSegmentationPath</span><span class="o">.</span><span class="n">MASKS_DIR</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"*"</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
 
@@ -517,7 +517,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_semantic_segmentation.html#datumaro.plugins.data_formats.common_semantic_segmentation.CommonSemanticSegmentationImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;common_semantic_segmentation&quot;</span><span class="p">}]</span></div>
+        <span class="k">return</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"common_semantic_segmentation"</span><span class="p">}]</span></div>
 
 
 <div class="viewcode-block" id="CommonSemanticSegmentationImporter.get_file_extensions">
@@ -533,7 +533,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_semantic_segmentation.html#datumaro.plugins.data_formats.common_semantic_segmentation.CommonSemanticSegmentationWithSubsetDirsImporter">[docs]</a>
 <span class="nd">@with_subset_dirs</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CommonSemanticSegmentationWithSubsetDirsImporter</span><span class="p">(</span><span class="n">CommonSemanticSegmentationImporter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It supports the following subset sub-directory structure for CommonSemanticSegmentation.</span>
+<span class="w">    </span><span class="sd">"""It supports the following subset sub-directory structure for CommonSemanticSegmentation.</span>
 
 <span class="sd">    .. code-block::</span>
 
@@ -550,7 +550,7 @@
 <span class="sd">                └── ...</span>
 
 <span class="sd">    Then, the imported dataset will have train, val, ... CommonSemanticSegmentation subsets.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 </pre></div>
 

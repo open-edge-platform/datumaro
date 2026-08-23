@@ -376,10 +376,10 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
-    <span class="n">pd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+    <span class="n">pd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">"pandas"</span><span class="p">)</span>
 
 
-<span class="n">AnyData</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;AnyData&quot;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="n">AnyData</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"AnyData"</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MediaType">
@@ -442,7 +442,7 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span> <span class="n">value</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="p">}</span></div>
 
 
@@ -471,7 +471,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">other_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">other_type</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">other_type</span>
 
 <div class="viewcode-block" id="MediaElement.save">
@@ -490,19 +490,19 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">FromFileMixin</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;Path can&#39;t be empty&quot;</span>
+        <span class="k">assert</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"Path can't be empty"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the media file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Path to the media file"""</span>
         <span class="c1"># TODO: do we need this replace?</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -511,7 +511,7 @@
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(path=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(path=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span></div>
 
 
 
@@ -541,7 +541,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(data=&quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;...)&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(data="</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"...)"</span></div>
 
 
 
@@ -550,7 +550,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Image</span><span class="p">(</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span>
 
-    <span class="n">_DEFAULT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.png&quot;</span>
+    <span class="n">_DEFAULT_EXT</span> <span class="o">=</span> <span class="s2">".png"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -560,21 +560,21 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">Image</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Please use one of fractory functions (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_file(), &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_numpy(), </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_bytes()).&quot;</span>
+            <span class="sa">f</span><span class="s2">"Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. "</span>
+            <span class="sa">f</span><span class="s2">"Please use one of fractory functions (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_file(), "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_numpy(), </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_bytes())."</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
 
         <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-                <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">ext</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">ext</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ext</span> <span class="o">=</span> <span class="n">ext</span>
 
         <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid image size info &#39;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Invalid image size info '</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">'"</span>
             <span class="n">size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">size</span>  <span class="c1"># (H, W)</span>
 
@@ -611,12 +611,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Indicates that size info is cached and won&#39;t require image loading&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Indicates that size info is cached and won't require image loading"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns (H, W)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns (H, W)"""</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -629,12 +629,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Media file extension (with the leading dot)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Media file extension (with the leading dot)"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ext</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_ext_to_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">],</span> <span class="n">ext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&#39;ext&#39; must be empty if string is given.&quot;</span>
+            <span class="k">assert</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"'ext' must be empty if string is given."</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fp</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span> <span class="k">if</span> <span class="n">ext</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_EXT</span>
@@ -666,7 +666,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -677,13 +677,13 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">&quot;An image should have 2 (gray) or 3 (bgra) dims.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">"An image should have 2 (gray) or 3 (bgra) dims."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns (H, W)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns (H, W)"""</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -719,7 +719,7 @@
 <div class="viewcode-block" id="ImageFromFile.get_data_as_dtype">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.ImageFromFile.get_data_as_dtype">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_data_as_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get image data with a specific data type&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get image data with a specific data type"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 </div>
@@ -738,7 +738,7 @@
     <span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
         <span class="n">new_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ext_to_save</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fp</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -760,7 +760,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
 
@@ -768,19 +768,19 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">255.0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">&quot;An image should have 2 (gray) or 3 (bgra) dims.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">"An image should have 2 (gray) or 3 (bgra) dims."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Indicates that size info is cached and won&#39;t require image loading&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Indicates that size info is cached and won't require image loading"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImageFromNumpy.get_data_as_dtype">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.ImageFromNumpy.get_data_as_dtype">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_data_as_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get image data with a specific data type&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get image data with a specific data type"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 </div>
@@ -791,9 +791,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.ImageFromBytes">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageFromBytes</span><span class="p">(</span><span class="n">ImageFromData</span><span class="p">):</span>
     <span class="n">_FORMAT_MAGICS</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x89</span><span class="s2">PNG</span><span class="se">\r\n\x1a\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;</span><span class="se">\xff\xd8\xff</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;.jpg&quot;</span><span class="p">),</span>
-        <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;BM&quot;</span><span class="p">,</span> <span class="s2">&quot;.bmp&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\x89</span><span class="s2">PNG</span><span class="se">\r\n\x1a\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">".png"</span><span class="p">),</span>
+        <span class="p">(</span><span class="sa">b</span><span class="s2">"</span><span class="se">\xff\xd8\xff</span><span class="s2">"</span><span class="p">,</span> <span class="s2">".jpg"</span><span class="p">),</span>
+        <span class="p">(</span><span class="sa">b</span><span class="s2">"BM"</span><span class="p">,</span> <span class="s2">".bmp"</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -816,7 +816,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
 
@@ -824,17 +824,17 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">decode_image</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">&quot;An image should have 2 (gray) or 3 (bgra) dims.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">"An image should have 2 (gray) or 3 (bgra) dims."</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="ImageFromBytes.get_data_as_dtype">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.ImageFromBytes.get_data_as_dtype">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_data_as_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get image data with a specific data type&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get image data with a specific data type"""</span>
 
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ImageFromBytes only support `dtype=np.uint8`.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ImageFromBytes only support `dtype=np.uint8`."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 </div>
@@ -859,8 +859,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;video&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;video&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">],</span>
+            <span class="s2">"video"</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"video"</span><span class="p">],</span>
+            <span class="s2">"index"</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"index"</span><span class="p">],</span>
         <span class="p">}</span></div>
 
 
@@ -884,9 +884,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.VideoFrame.from_self">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_self</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
-        <span class="k">if</span> <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;video&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">from_self</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)})</span>
-            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"path"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"video"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video</span><span class="o">.</span><span class="n">from_self</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)})</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span>
         <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">**</span><span class="n">attrs</span><span class="p">)</span></div>
 
@@ -894,11 +894,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Return only the picklable parts of the state.</span>
         <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;_data&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">state</span><span class="p">[</span><span class="s2">"_data"</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">state</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="c1"># Restore the objects&#39; state.</span>
+        <span class="c1"># Restore the objects' state.</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="c1"># Reinitialize unpichlable attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">get_frame_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span></div>
@@ -906,9 +906,9 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_VideoFrameIterator</span><span class="p">(</span><span class="n">Iterator</span><span class="p">[</span><span class="n">VideoFrame</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Provides sequential access to the video frames.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_video</span><span class="p">:</span> <span class="n">Video</span>
     <span class="n">_iterator</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">VideoFrame</span><span class="p">]</span>
@@ -926,9 +926,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_data</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">VideoFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Decodes video frames using opencv</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
@@ -945,8 +945,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_frame_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_end_frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_end_frame</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_frame_count</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The end_frame value(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_end_frame</span><span class="si">}</span><span class="s2">) of the video &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;must be less than the frame count(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_frame_count</span><span class="si">}</span><span class="s2">).&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The end_frame value(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_end_frame</span><span class="si">}</span><span class="s2">) of the video "</span>
+                    <span class="sa">f</span><span class="s2">"must be less than the frame count(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_frame_count</span><span class="si">}</span><span class="s2">)."</span>
                 <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_make_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoFrame</span><span class="p">:</span>
@@ -957,7 +957,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_video</span><span class="o">.</span><span class="n">_includes_frame</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Video doesn&#39;t contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Video doesn't contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_navigate_to</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
@@ -966,9 +966,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_navigate_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Iterates over frames to the required position.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span>
@@ -993,9 +993,9 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Video</span><span class="p">(</span><span class="n">MediaElement</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">VideoFrame</span><span class="p">]):</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">VIDEO</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Provides random access to the video frames.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1012,7 +1012,7 @@
         <span class="k">assert</span> <span class="n">start_frame</span> <span class="o">&gt;=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">end_frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">start_frame</span> <span class="o">&lt;=</span> <span class="n">end_frame</span>
-            <span class="c1"># we can&#39;t know the video length here,</span>
+            <span class="c1"># we can't know the video length here,</span>
             <span class="c1"># so we cannot validate if the end_frame is valid.</span>
         <span class="k">assert</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="n">step</span>
@@ -1023,7 +1023,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_iterator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_VideoFrameIterator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># We don&#39;t provide frame count unless we have a reliable source of</span>
+        <span class="c1"># We don't provide frame count unless we have a reliable source of</span>
         <span class="c1"># this information.</span>
         <span class="c1"># - Not all videos provide length / duration metainfo</span>
         <span class="c1"># - We can get an estimation based on metadata, but it</span>
@@ -1046,7 +1046,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_includes_frame</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Video doesn&#39;t contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Video doesn't contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_iterator</span><span class="p">()[</span><span class="n">idx</span><span class="p">]</span>
 
@@ -1054,15 +1054,15 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Video.get_frame_data">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_frame_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoFrame</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_includes_frame</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Video doesn&#39;t contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Video doesn't contain frame #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_iterator</span><span class="p">()</span><span class="o">.</span><span class="n">get_frame_data</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">VideoFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Iterates over frames lazily, if possible.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Decoding is not necessary to get frame pointers</span>
@@ -1076,7 +1076,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns frame count of the closed interval [start_frame, end_frame],</span>
 <span class="sd">        if video provides such information.</span>
 
@@ -1089,7 +1089,7 @@
 
 <span class="sd">        The count is affected by the frame filtering options of the object,</span>
 <span class="sd">        i.e. start frame, end frame and frame step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">end_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_end_frame</span><span class="p">()</span>
@@ -1098,9 +1098,9 @@
                 <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_frame</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_frame</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step</span>
                 <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;There is no valid frame for the closed interval&quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;[start_frame(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_frame</span><span class="si">}</span><span class="s2">),&quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot; end_frame(</span><span class="si">{</span><span class="n">end_frame</span><span class="si">}</span><span class="s2">)] with step(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="si">}</span><span class="s2">).&quot;</span>
+                        <span class="s2">"There is no valid frame for the closed interval"</span>
+                        <span class="sa">f</span><span class="s2">"[start_frame(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_frame</span><span class="si">}</span><span class="s2">),"</span>
+                        <span class="sa">f</span><span class="s2">" end_frame(</span><span class="si">{</span><span class="n">end_frame</span><span class="si">}</span><span class="s2">)] with step(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_step</span><span class="si">}</span><span class="s2">)."</span>
                     <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="n">length</span>
 
@@ -1108,7 +1108,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">frame_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns (H, W)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns (H, W)"""</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_frame_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_frame_size</span><span class="p">()</span>
@@ -1222,18 +1222,18 @@
             <span class="k">if</span> <span class="n">fp</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_video</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_video</span><span class="p">:</span>
                 <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f_video</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the media file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Path to the media file"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Media file extension (with the leading dot)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Media file extension (with the leading dot)"""</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span></div>
 
 
@@ -1250,9 +1250,9 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Please use one of fractory function (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_file(), &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_bytes()).&quot;</span>
+            <span class="sa">f</span><span class="s2">"Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. "</span>
+            <span class="sa">f</span><span class="s2">"Please use one of fractory function (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_file(), "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_bytes())."</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extra_images</span> <span class="o">=</span> <span class="n">extra_images</span> <span class="ow">or</span> <span class="p">[]</span>
@@ -1300,7 +1300,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -1314,11 +1314,11 @@
         <span class="n">cur_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">cur_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cur_path</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cur_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cur_path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="n">_bytes</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fp</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
@@ -1343,10 +1343,10 @@
     <span class="p">):</span>
         <span class="n">_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fp</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
@@ -1401,12 +1401,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Path to the media file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Path to the media file"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Media file extension (with the leading dot)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Media file extension (with the leading dot)"""</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span></div>
 
 
@@ -1423,8 +1423,8 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">RoIImage</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Please use a fractory function &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image()&#39;. &quot;</span>
+            <span class="sa">f</span><span class="s2">"Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. "</span>
+            <span class="sa">f</span><span class="s2">"Please use a fractory function '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image()'. "</span>
         <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">roi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">roi</span><span class="p">)</span>
@@ -1436,7 +1436,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.RoIImage.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
-        <span class="n">attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attrs</span></div>
 
 
@@ -1444,7 +1444,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.RoIImage.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image'."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RoIImage.from_image">
@@ -1452,7 +1452,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_image</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">roi</span><span class="p">:</span> <span class="n">BboxIntCoords</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type(image)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> should be Image.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"type(image)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> should be Image."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ImageFromFile</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">RoIImageFromFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">roi</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">_ext</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -1467,14 +1467,14 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.RoIImage.from_numpy">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_numpy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image'."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RoIImage.from_bytes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.RoIImage.from_bytes">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_bytes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image'."</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
@@ -1494,7 +1494,7 @@
     <span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
         <span class="n">new_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ext_to_save</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fp</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1518,7 +1518,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">()</span>
@@ -1547,7 +1547,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -1571,7 +1571,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Image data in BGRA HWC [0; 255] (uint8) format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Image data in BGRA HWC [0; 255] (uint8) format"""</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -1593,8 +1593,8 @@
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">MosaicImage</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Please use a fractory function &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs()&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. "</span>
+            <span class="sa">f</span><span class="s2">"Please use a fractory function '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs()'."</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -1602,7 +1602,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.MosaicImage.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs'."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MosaicImage.from_image_roi_pairs">
@@ -1616,14 +1616,14 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.MosaicImage.from_numpy">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_numpy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs'."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MosaicImage.from_bytes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.MosaicImage.from_bytes">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_bytes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please use a factory function &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Please use a factory function '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_image_roi_pairs'."</span><span class="p">)</span></div>
 </div>
 
 
@@ -1640,7 +1640,7 @@
     <span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
         <span class="n">new_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ext_to_save</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fp</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1657,7 +1657,7 @@
             <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
             <span class="n">mosaic_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">img</span><span class="p">,</span> <span class="n">roi</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">Image</span><span class="p">),</span> <span class="s2">&quot;MosaicImage can only take a list of Images.&quot;</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">Image</span><span class="p">),</span> <span class="s2">"MosaicImage can only take a list of Images."</span>
                 <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">roi</span>
                 <span class="n">mosaic_img</span><span class="p">[</span><span class="n">y</span> <span class="p">:</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">data</span>
             <span class="k">return</span> <span class="n">mosaic_img</span>
@@ -1670,14 +1670,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data_in&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">],</span>
+            <span class="s2">"data"</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"data_in"</span><span class="p">],</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"size"</span><span class="p">],</span>
         <span class="p">}</span></div>
 </div>
 
 
 
-<span class="n">TableDtype</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TableDtype&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="n">TableDtype</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"TableDtype"</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Table">
@@ -1686,16 +1686,16 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Table data with multiple rows and columns.</span>
 <span class="sd">        This provides random access to the table row.</span>
 
 <span class="sd">        Initialization must be done in the child class.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">Table</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Please use one of fractory functions (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_csv(), &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_dataframe(), or (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_list()).&quot;</span>
+            <span class="sa">f</span><span class="s2">"Directly initalizing </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not supported. "</span>
+            <span class="sa">f</span><span class="s2">"Please use one of fractory functions (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_csv(), "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_dataframe(), or (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.from_list())."</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -1703,12 +1703,12 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.Table.from_csv">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_csv</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns Table instance creating from a csv file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (str) : Path to csv file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">TableFromCSV</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1721,12 +1721,12 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns Table instance creating from a pandas DataFrame.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (DataFrame) : Data in pandas DataFrame format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">TableFromDataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1739,12 +1739,12 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns Table instance creating from a list of dicts.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (list(dict(str,str|int|float))) : A list of table row data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">TableFromListOfDict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1754,34 +1754,34 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TableRow</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Random access to a specific row by index.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Table doesn&#39;t contain row #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Table doesn't contain row #</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">TableRow</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TableRow</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Iterates over rows.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="k">yield</span> <span class="n">TableRow</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns table size as (#rows, #cols)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns table size as (#rows, #cols)"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns column names&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns column names"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Table.dtype">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.Table.dtype">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns native python type for a given column&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns native python type for a given column"""</span>
         <span class="n">numpy_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtypes</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>  <span class="c1"># TODO</span>
             <span class="c1"># Convert to CategoricalDtype for efficient storage and categorical analysis</span>
@@ -1794,7 +1794,7 @@
 <div class="viewcode-block" id="Table.features">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.Table.features">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unique</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get features for a given column name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get features for a given column name."""</span>
         <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span></div>
@@ -1806,12 +1806,12 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save table instance to a &#39;.csv&#39; file.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Save table instance to a '.csv' file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (str) : Path to the output csv file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
@@ -1831,32 +1831,32 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read a &#39;.csv&#39; file and compose a Table instance.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Read a '.csv' file and compose a Table instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (str) : Path to csv file.</span>
-<span class="sd">            dtype (optional, dict(str,str)) : Dictionay of column name -&gt; type str (&#39;str&#39;, &#39;int&#39;, or &#39;float&#39;).</span>
+<span class="sd">            dtype (optional, dict(str,str)) : Dictionay of column name -&gt; type str ('str', 'int', or 'float').</span>
 <span class="sd">            sep (optional, str) : Delimiter to use.</span>
-<span class="sd">            encoding (optional, str) : Encoding to use for UTF when reading/writing (ex. &#39;utf-8&#39;).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            encoding (optional, str) : Encoding to use for UTF when reading/writing (ex. 'utf-8').</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># assumes that the 1st row is a header.</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-            <span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">"python"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t read csv File from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't read csv File from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">&quot;A table should have 1 or more columns.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">"A table should have 1 or more columns."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Table data in pandas DataFrame format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Table data in pandas DataFrame format"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span>
 
 <div class="viewcode-block" id="TableFromCSV.select">
@@ -1877,27 +1877,27 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Read a pandas DataFrame and compose a Table instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (DataFrame) : Data in pandas DataFrame format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;data&#39; can&#39;t be None&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'data' can't be None"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">&quot;A table should have 1 or more columns.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaShapeError</span><span class="p">(</span><span class="s2">"A table should have 1 or more columns."</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;A table should have column names as a list of str values&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"A table should have column names as a list of str values"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Table data in pandas DataFrame format&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Table data in pandas DataFrame format"""</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">data</span></div>
 
 
@@ -1911,13 +1911,13 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Read a list of table row data and compose a Table instance.</span>
 <span class="sd">        The table row data is in dictionary format.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (list(dict(str,str|int|float))) : A list of table row data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1928,28 +1928,28 @@
     <span class="n">_type</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">TABLE_ROW</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        TableRow media refers to a Table instance and its row index.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            table (Table) : Table instance.</span>
 <span class="sd">            index (int) : Row index.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;table&#39; can&#39;t be None&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'table' can't be None"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;index(</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">)&#39; is out of range.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'index(</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">)' is out of range."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">index</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Table instance&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Table instance"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Row index&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Row index"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
 
     <span class="nd">@property</span>
@@ -1963,14 +1963,14 @@
 <div class="viewcode-block" id="TableRow.data">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.TableRow.data">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Row data in dict format.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            targets (optional, list(str)) : If this is specified,</span>
 <span class="sd">                the values corresponding to target colums will be returned.</span>
 <span class="sd">                Otherwise, whole row data will be returned.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">targets</span><span class="p">:</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">targets</span><span class="p">]</span>
@@ -1978,7 +1978,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;TableRow(row_idx:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">, data:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"TableRow(row_idx:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">, data:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span>
 
 <div class="viewcode-block" id="TableRow.from_data">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.media.html#datumaro.components.abstracts.merger.TableRow.from_data">[docs]</a>

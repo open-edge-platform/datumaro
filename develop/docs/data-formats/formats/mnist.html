@@ -701,8 +701,8 @@ etc.)</p>
 <p>Or, using Python API:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;mnist&#39;</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;save_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;imagenet&#39;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">'&lt;path/to/dataset&gt;'</span><span class="p">,</span> <span class="s1">'mnist'</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'save_dir'</span><span class="p">,</span> <span class="s1">'imagenet'</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>These steps also will work for MNIST in CSV, if you use <code class="docutils literal notranslate"><span class="pre">mnist_csv</span></code>
@@ -748,7 +748,7 @@ particular problems with MNIST dataset:</p>
     <span class="p">)</span>
 <span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
 
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;./dataset&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;mnist&#39;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'./dataset'</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'mnist'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -761,7 +761,7 @@ presented:</p>
 <span class="c1"># https://ossci-datasets.s3.amazonaws.com/mnist/train-labels-idx1-ubyte.gz</span>
 datum<span class="w"> </span>convert<span class="w"> </span>--input-format<span class="w"> </span>mnist<span class="w"> </span>--input-path<span class="w"> </span>&lt;path/to/mnist&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">              </span>--output-format<span class="w"> </span>imagenet<span class="w"> </span><span class="se">\</span>
-<span class="w">              </span>--filter<span class="w"> </span><span class="s1">&#39;/item[annotation/label=&quot;3&quot;]&#39;</span>
+<span class="w">              </span>--filter<span class="w"> </span><span class="s1">'/item[annotation/label="3"]'</span>
 </pre></div>
 </div>
 <p>Examples of using this format from the code can be found in

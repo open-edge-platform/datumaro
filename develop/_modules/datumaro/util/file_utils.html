@@ -351,32 +351,32 @@
         <span class="k">return</span> <span class="n">size</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([\d\.]+)\s*([a-zA-Z]{0,3})$&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^([\d\.]+)\s*([a-zA-Z]{0,3})$"</span><span class="p">,</span> <span class="n">size</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot parse </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> string.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot parse </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> string."</span><span class="p">)</span>
 
     <span class="n">units</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;KIB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span>
-        <span class="s2">&quot;MIB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span>
-        <span class="s2">&quot;GIB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span>
-        <span class="s2">&quot;TIB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">40</span><span class="p">,</span>
-        <span class="s2">&quot;KB&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
-        <span class="s2">&quot;MB&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span>
-        <span class="s2">&quot;GB&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">,</span>
-        <span class="s2">&quot;TB&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">,</span>
-        <span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span>
-        <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span>
-        <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span>
-        <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">40</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"B"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"KIB"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span>
+        <span class="s2">"MIB"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span>
+        <span class="s2">"GIB"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span>
+        <span class="s2">"TIB"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">40</span><span class="p">,</span>
+        <span class="s2">"KB"</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+        <span class="s2">"MB"</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span>
+        <span class="s2">"GB"</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">,</span>
+        <span class="s2">"TB"</span><span class="p">:</span> <span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">,</span>
+        <span class="s2">"K"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span>
+        <span class="s2">"M"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span>
+        <span class="s2">"G"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span>
+        <span class="s2">"T"</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">40</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">number</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">unit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> has disallowed unit (</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> has disallowed unit (</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">)."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">number</span> <span class="o">*</span> <span class="n">units</span><span class="p">[</span><span class="n">unit</span><span class="p">]</span></div>
 

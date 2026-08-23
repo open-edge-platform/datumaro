@@ -349,15 +349,15 @@
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_VocImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_TASKS</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc&quot;</span><span class="p">,</span> <span class="s2">&quot;Main&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_classification</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_classification&quot;</span><span class="p">,</span> <span class="s2">&quot;Main&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_detection</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_detection&quot;</span><span class="p">,</span> <span class="s2">&quot;Main&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_segmentation&quot;</span><span class="p">,</span> <span class="s2">&quot;Segmentation&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_instance_segmentation&quot;</span><span class="p">,</span> <span class="s2">&quot;Segmentation&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_layout</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_layout&quot;</span><span class="p">,</span> <span class="s2">&quot;Layout&quot;</span><span class="p">),</span>
-        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_action</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;voc_action&quot;</span><span class="p">,</span> <span class="s2">&quot;Action&quot;</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc"</span><span class="p">,</span> <span class="s2">"Main"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_classification</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_classification"</span><span class="p">,</span> <span class="s2">"Main"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_detection</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_detection"</span><span class="p">,</span> <span class="s2">"Main"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_segmentation"</span><span class="p">,</span> <span class="s2">"Segmentation"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_instance_segmentation"</span><span class="p">,</span> <span class="s2">"Segmentation"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_layout</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_layout"</span><span class="p">,</span> <span class="s2">"Layout"</span><span class="p">),</span>
+        <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_action</span><span class="p">:</span> <span class="p">(</span><span class="s2">"voc_action"</span><span class="p">,</span> <span class="s2">"Action"</span><span class="p">),</span>
     <span class="p">}</span>
-    <span class="n">ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">ANNO_EXT</span> <span class="o">=</span> <span class="s2">".txt"</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -370,7 +370,7 @@
             <span class="n">task_dirs</span> <span class="o">=</span> <span class="p">{</span><span class="n">task_dir</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
             <span class="k">for</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">task_dirs</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                    <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">,</span> <span class="n">task_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+                    <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">,</span> <span class="n">task_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANNO_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -384,10 +384,10 @@
 
             <span class="n">task_subsets</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
                 <span class="n">root_path</span> <span class="ow">or</span> <span class="n">path</span><span class="p">,</span>
-                <span class="s2">&quot;txt&quot;</span><span class="p">,</span>
+                <span class="s2">"txt"</span><span class="p">,</span>
                 <span class="n">extractor_type</span><span class="p">,</span>
                 <span class="n">dirname</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">,</span> <span class="n">task_dir</span><span class="p">),</span>
-                <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="s2">&quot;_&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+                <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="s2">"_"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
                 <span class="n">max_depth</span><span class="o">=</span><span class="mi">0</span> <span class="k">if</span> <span class="n">root_path</span> <span class="k">else</span> <span class="mi">3</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -397,7 +397,7 @@
             <span class="n">subsets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">task_subsets</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_path</span><span class="p">:</span>
-                <span class="n">root_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">task_subsets</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;url&quot;</span><span class="p">])))</span>
+                <span class="n">root_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">task_subsets</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"url"</span><span class="p">])))</span>
 
         <span class="k">return</span> <span class="n">subsets</span>
 

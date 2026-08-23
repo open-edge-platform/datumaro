@@ -360,7 +360,7 @@
 
     <span class="c1"># Disable B603:subprocess_without_shell_equals_true - the command line is controlled</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>  <span class="c1"># nosec B603</span>
-        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;import tensorflow&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">"-c"</span><span class="p">,</span> <span class="s2">"import tensorflow"</span><span class="p">],</span>
         <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
         <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># use text mode for output stream</span>
         <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
@@ -370,13 +370,13 @@
     <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Can&#39;t import tensorflow. Test process exit code: </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_instruction_set</span><span class="p">(</span><span class="s2">&quot;avx&quot;</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">"Can't import tensorflow. Test process exit code: </span><span class="si">%s</span><span class="s2">."</span> <span class="o">%</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_instruction_set</span><span class="p">(</span><span class="s2">"avx"</span><span class="p">):</span>
                 <span class="c1"># The process has probably crashed for AVX unavalability</span>
                 <span class="n">message</span> <span class="o">+=</span> <span class="p">(</span>
-                    <span class="s2">&quot; This is likely because your CPU does not &quot;</span>
-                    <span class="s2">&quot;support AVX instructions, &quot;</span>
-                    <span class="s2">&quot;which are required for tensorflow.&quot;</span>
+                    <span class="s2">" This is likely because your CPU does not "</span>
+                    <span class="s2">"support AVX instructions, "</span>
+                    <span class="s2">"which are required for tensorflow."</span>
                 <span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
@@ -389,7 +389,7 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
     <span class="n">not_found</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
-    <span class="n">tf</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tensorflow&quot;</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tensorflow"</span><span class="p">,</span> <span class="n">not_found</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>  <span class="c1"># emit default error</span>
     <span class="k">elif</span> <span class="n">tf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">not_found</span><span class="p">:</span>
@@ -398,7 +398,7 @@
     <span class="c1"># Reduce output noise, https://stackoverflow.com/questions/38073432/how-to-suppress-verbose-tensorflow-logging</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TF_CPP_MIN_LOG_LEVEL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"TF_CPP_MIN_LOG_LEVEL"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"2"</span>
 
     <span class="k">if</span> <span class="n">check</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">check</span> <span class="o">=</span> <span class="n">enable_tf_check</span>
@@ -407,13 +407,13 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">check_import</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;tensorflow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># prevent further import</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">"tensorflow"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># prevent further import</span>
             <span class="k">raise</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">tf</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">&quot;WARNING&quot;</span><span class="p">)</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s2">"WARNING"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
         <span class="k">pass</span>
     <span class="k">try</span><span class="p">:</span>
@@ -451,7 +451,7 @@
             <span class="n">_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse_single_example</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span>
             <span class="n">has_feature</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset doesn&#39;t have a feature: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Dataset doesn't have a feature: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">has_feature</span></div>
 

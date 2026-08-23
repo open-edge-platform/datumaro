@@ -353,7 +353,7 @@
 <div class="viewcode-block" id="VottCsvPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_csv.html#datumaro.plugins.data_formats.vott_csv.VottCsvPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VottCsvPath</span><span class="p">:</span>
-    <span class="n">ANNO_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;-export.csv&quot;</span></div>
+    <span class="n">ANNO_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">"-export.csv"</span></div>
 
 
 
@@ -368,10 +368,10 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find annotations file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find annotations file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
-            <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
@@ -387,24 +387,24 @@
 
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">content</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">content</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-                <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"image"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">item_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
                     <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
                         <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
                         <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span>
-                        <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">])),</span>
+                        <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="s2">"image"</span><span class="p">])),</span>
                     <span class="p">)</span>
 
                 <span class="n">annotations</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
 
-                <span class="n">label_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-                <span class="n">x_min</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;xmin&quot;</span><span class="p">)</span>
-                <span class="n">y_min</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ymin&quot;</span><span class="p">)</span>
-                <span class="n">x_max</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;xmax&quot;</span><span class="p">)</span>
-                <span class="n">y_max</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ymax&quot;</span><span class="p">)</span>
+                <span class="n">label_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"label"</span><span class="p">)</span>
+                <span class="n">x_min</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"xmin"</span><span class="p">)</span>
+                <span class="n">y_min</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ymin"</span><span class="p">)</span>
+                <span class="n">x_max</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"xmax"</span><span class="p">)</span>
+                <span class="n">y_max</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ymax"</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">label_name</span> <span class="ow">and</span> <span class="n">x_min</span> <span class="ow">and</span> <span class="n">y_min</span> <span class="ow">and</span> <span class="n">x_max</span> <span class="ow">and</span> <span class="n">y_max</span><span class="p">:</span>
                     <span class="n">label_idx</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -430,14 +430,14 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_csv.html#datumaro.plugins.data_formats.vott_csv.VottCsvImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;vott_csv&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">,</span> <span class="s2">"vott_csv"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VottCsvImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_csv.html#datumaro.plugins.data_formats.vott_csv.VottCsvImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">VottCsvPath</span><span class="o">.</span><span class="n">ANNO_FILE_SUFFIX</span><span class="p">)</span></div>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"*"</span> <span class="o">+</span> <span class="n">VottCsvPath</span><span class="o">.</span><span class="n">ANNO_FILE_SUFFIX</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VottCsvImporter.get_file_extensions">

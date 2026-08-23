@@ -381,29 +381,29 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_cls</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IntersectMerge&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"IntersectMerge"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="IntersectMerge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge">[docs]</a>
 <span class="nd">@attrs</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntersectMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Merge several datasets with &quot;intersect&quot; policy:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Merge several datasets with "intersect" policy:</span>
 
 <span class="sd">    - If there are two or more dataset items whose (id, subset) pairs match each other,</span>
 <span class="sd">    we can consider this as having an intersection in our dataset. This method merges</span>
 <span class="sd">    the annotations of the corresponding :class:`DatasetItem` into one :class:`DatasetItem`</span>
 <span class="sd">    to handle this intersection. The rule to handle merging annotations is provided by</span>
 <span class="sd">    :class:`AnnotationMerger` according to their annotation types. For example,</span>
-<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]) from Dataset-A and</span>
-<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(.5, .5, 1, 1)]) from Dataset-B can be</span>
-<span class="sd">    merged into DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]).</span>
+<span class="sd">    DatasetItem(id="item_1", subset="train", annotations=[Bbox(0, 0, 1, 1)]) from Dataset-A and</span>
+<span class="sd">    DatasetItem(id="item_1", subset="train", annotations=[Bbox(.5, .5, 1, 1)]) from Dataset-B can be</span>
+<span class="sd">    merged into DatasetItem(id="item_1", subset="train", annotations=[Bbox(0, 0, 1, 1)]).</span>
 
 <span class="sd">    - Label categories are merged according to the union of their label names</span>
-<span class="sd">    (Same as `UnionMerge`). For example, if Dataset-A has {&quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;}</span>
-<span class="sd">    and Dataset-B has {&quot;car&quot;, &quot;bus&quot;, &quot;truck&quot;} labels, the merged dataset will have</span>
-<span class="sd">    {&quot;bust&quot;, &quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;, &quot;truck&quot;} labels.</span>
+<span class="sd">    (Same as `UnionMerge`). For example, if Dataset-A has {"car", "cat", "dog"}</span>
+<span class="sd">    and Dataset-B has {"car", "bus", "truck"} labels, the merged dataset will have</span>
+<span class="sd">    {"bust", "car", "cat", "dog", "truck"} labels.</span>
 
 <span class="sd">    - This merge has configuration parameters (`conf`) to control the annotation merge behaviors.</span>
 
@@ -421,7 +421,7 @@
 <span class="sd">    ```</span>
 
 <span class="sd">    For more details for the parameters, please refer to :class:`IntersectMerge.Conf`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
@@ -430,7 +430,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.Conf">[docs]</a>
     <span class="nd">@attrs</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">Conf</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        pairwise_dist</span>
@@ -446,11 +446,11 @@
 <span class="sd">            Attributes to be ignored in the merged :class:`DatasetItem`</span>
 <span class="sd">        groups</span>
 <span class="sd">            A comma-separated list of labels in annotation groups to check.</span>
-<span class="sd">            &#39;?&#39; postfix can be added to a label to make it optional in the group (repeatable)</span>
+<span class="sd">            '?' postfix can be added to a label to make it optional in the group (repeatable)</span>
 <span class="sd">        close_distance</span>
 <span class="sd">            Distance threshold between annotations to decide their closeness. If they are decided</span>
 <span class="sd">            to be close, it will be enrolled to the error tracker.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">pairwise_dist</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -464,7 +464,7 @@
             <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">rg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
                 <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
-                    <span class="n">optional</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
+                    <span class="n">optional</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"?"</span><span class="p">)</span>
                     <span class="n">name</span> <span class="o">=</span> <span class="n">label</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">optional</span> <span class="k">else</span> <span class="n">label</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">rg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">optional</span><span class="p">))</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rg</span><span class="p">)</span>
@@ -547,7 +547,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="c1"># TODO: This is a temporary workaround to minimize code changes.</span>
         <span class="c1"># We have to revisit it to make this class stateless.</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_categories&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_categories"</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
 
         <span class="n">dst_categories</span> <span class="o">=</span> <span class="p">{}</span>
@@ -578,11 +578,11 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">id</span><span class="p">(</span><span class="n">a</span><span class="p">):</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">})</span>
             <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Merging item </span><span class="si">%s</span><span class="s2">: source annotations </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">sources</span><span class="p">))))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Merging item </span><span class="si">%s</span><span class="s2">: source annotations </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">sources</span><span class="p">))))</span>
 
         <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
 
-        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">output_conf_thresh</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">output_conf_thresh</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
 
@@ -674,8 +674,8 @@
                     <span class="k">if</span> <span class="n">dst_label</span> <span class="o">!=</span> <span class="n">src_label</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span> <span class="ow">and</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
-                                <span class="s2">&quot;Can&#39;t merge label category </span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): &quot;</span>
-                                <span class="s2">&quot;parent label conflict: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span>
+                                <span class="s2">"Can't merge label category </span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): "</span>
+                                <span class="s2">"parent label conflict: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">"</span>
                                 <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span><span class="p">),</span>
                                 <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
                             <span class="p">)</span>
@@ -704,8 +704,8 @@
                 <span class="k">if</span> <span class="n">dst_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">dst_cat</span> <span class="o">!=</span> <span class="n">src_cat</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
-                            <span class="s2">&quot;Can&#39;t merge point category for label &quot;</span>
-                            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
+                            <span class="s2">"Can't merge point category for label "</span>
+                            <span class="s2">"</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
                             <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -732,8 +732,8 @@
                 <span class="k">if</span> <span class="n">dst_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">dst_cat</span> <span class="o">!=</span> <span class="n">src_cat</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
-                            <span class="s2">&quot;Can&#39;t merge mask category for label &quot;</span>
-                            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
+                            <span class="s2">"Can't merge mask category for label "</span>
+                            <span class="s2">"</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
                             <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -794,7 +794,7 @@
                 <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">RotatedBboxMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_2d</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">Cuboid2DMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Type </span><span class="si">%s</span><span class="s2"> is not supported&quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Type </span><span class="si">%s</span><span class="s2"> is not supported"</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
 
         <span class="n">instance_map</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
@@ -921,7 +921,7 @@
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
             <span class="n">group_labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_name</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
@@ -966,8 +966,8 @@
                 <span class="n">_</span><span class="p">,</span> <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;Datasets do not contain &quot;</span>
-                        <span class="s2">&quot;label &#39;</span><span class="si">%s</span><span class="s2">&#39;, available labels </span><span class="si">%s</span><span class="s2">&quot;</span>
+                        <span class="s2">"Datasets do not contain "</span>
+                        <span class="s2">"label '</span><span class="si">%s</span><span class="s2">', available labels </span><span class="si">%s</span><span class="s2">"</span>
                         <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">])</span>
                     <span class="p">)</span></div>
 

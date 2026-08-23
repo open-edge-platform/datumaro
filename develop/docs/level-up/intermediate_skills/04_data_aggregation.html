@@ -612,21 +612,21 @@ The Cityscapes dataset is available for free <a class="reference external" href=
 Python</label><div class="sd-tab-content docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/cityscapes&#39;</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;cityscapes&#39;</span><span class="p">)</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="s1">'/path/to/cityscapes'</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">'cityscapes'</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.hl_ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">HLOps</span>
 
-<span class="n">aggregated</span> <span class="o">=</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">from_subsets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="n">to_subset</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+<span class="n">aggregated</span> <span class="o">=</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">from_subsets</span><span class="o">=</span><span class="p">[</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">],</span> <span class="n">to_subset</span><span class="o">=</span><span class="s2">"default"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(Optional) Through <a class="reference internal" href="../../jupyter_notebook_examples/transform.html#transform"><span class="std std-ref">splitter</span></a>, we can reorganize the aggregated dataset with respect to the number of annotations in each subset.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.splitter</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">splitter</span>
 
-<span class="n">splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)]</span>
+<span class="n">splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"train"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">"val"</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)]</span>
 <span class="n">task</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">SplitTask</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">name</span>
 
-<span class="n">resplitted</span> <span class="o">=</span> <span class="n">aggregated</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">)</span>
+<span class="n">resplitted</span> <span class="o">=</span> <span class="n">aggregated</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"split"</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

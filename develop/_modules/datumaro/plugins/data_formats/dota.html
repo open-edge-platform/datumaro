@@ -354,14 +354,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMAGE_EXTENSIONS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_files</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DotaFormat">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.dota.html#datumaro.plugins.data_formats.dota.DotaFormat">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DotaFormat</span><span class="p">:</span>
-    <span class="n">ANNOTATION_DIR</span> <span class="o">=</span> <span class="s2">&quot;labelTxt&quot;</span>
-    <span class="n">IMAGE_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span></div>
+    <span class="n">ANNOTATION_DIR</span> <span class="o">=</span> <span class="s2">"labelTxt"</span>
+    <span class="n">IMAGE_DIR</span> <span class="o">=</span> <span class="s2">"images"</span></div>
 
 
 
@@ -379,7 +379,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find annotation directory </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't find annotation directory </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
 
@@ -426,7 +426,7 @@
         <span class="n">only_label_names</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
@@ -437,12 +437,12 @@
             <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unexpected field count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the bbox description. &quot;</span>
-                    <span class="s2">&quot;Expected 10 fields (8 coordinates for rectangle, category, and difficulty).&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Unexpected field count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="si">}</span><span class="s2"> in the bbox description. "</span>
+                    <span class="s2">"Expected 10 fields (8 coordinates for rectangle, category, and difficulty)."</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="n">label_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;label_name&quot;</span><span class="p">)</span>
+            <span class="n">label_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">"label_name"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">only_label_names</span><span class="p">:</span>
                 <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
@@ -451,15 +451,15 @@
             <span class="n">label_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"coords"</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">"coords"</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
             <span class="p">]</span>
-            <span class="n">difficulty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;difficulty&quot;</span><span class="p">)</span>
+            <span class="n">difficulty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">"difficulty"</span><span class="p">)</span>
 
             <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">RotatedBbox</span><span class="o">.</span><span class="n">from_rectangle</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="n">difficulty</span><span class="p">})</span>
+                <span class="n">RotatedBbox</span><span class="o">.</span><span class="n">from_rectangle</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"difficulty"</span><span class="p">:</span> <span class="n">difficulty</span><span class="p">})</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">)</span>
 
@@ -470,20 +470,20 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">desired_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't parse </span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2"> from '</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">'. Expected </span><span class="si">{</span><span class="n">desired_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
 
 <div class="viewcode-block" id="DotaImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.dota.html#datumaro.plugins.data_formats.dota.DotaImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DotaImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">".txt"</span>
 
 <div class="viewcode-block" id="DotaImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.dota.html#datumaro.plugins.data_formats.dota.DotaImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">ANNOTATION_DIR</span> <span class="o">+</span> <span class="s2">&quot;/*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"**/"</span> <span class="o">+</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">ANNOTATION_DIR</span> <span class="o">+</span> <span class="s2">"/*"</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
 
 
@@ -495,22 +495,22 @@
             <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
             <span class="n">ext</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">,</span>
             <span class="n">dirname</span><span class="o">=</span><span class="n">DotaFormat</span><span class="o">.</span><span class="n">ANNOTATION_DIR</span><span class="p">,</span>
-            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">&quot;dota&quot;</span><span class="p">,</span>
+            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">"dota"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">data_paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
-            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">],</span> <span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">data_paths</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">ann_dir</span><span class="p">,</span>
-                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;dota&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
-                    <span class="s2">&quot;img_path&quot;</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">IMAGE_DIR</span><span class="p">),</span>
+                <span class="s2">"url"</span><span class="p">:</span> <span class="n">ann_dir</span><span class="p">,</span>
+                <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"dota"</span><span class="p">,</span>
+                <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                    <span class="s2">"img_path"</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">IMAGE_DIR</span><span class="p">),</span>
                 <span class="p">},</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_dir</span> <span class="ow">in</span> <span class="n">data_paths</span>
@@ -529,14 +529,14 @@
 <div class="viewcode-block" id="DotaExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.dota.html#datumaro.plugins.data_formats.dota.DotaExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DotaExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.png&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".png"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">extractor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span>
         <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not an image"</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -561,7 +561,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_export_media</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="ow">not</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_data</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Failed to export item &#39;</span><span class="si">%s</span><span class="s2">&#39;: item has no image info&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">"Failed to export item '</span><span class="si">%s</span><span class="s2">': item has no image info"</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
             <span class="n">image_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="n">image_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">IMAGE_DIR</span><span class="p">,</span> <span class="n">image_name</span><span class="p">)</span>
@@ -574,20 +574,20 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_export_item_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">annotations</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">RotatedBbox</span><span class="p">)</span> <span class="ow">or</span> <span class="n">bbox</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="n">coords</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">as_polygon</span><span class="p">()</span>
-                <span class="n">coords</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2"> </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">)</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"</span><span class="si">%.2f</span><span class="s2"> </span><span class="si">%.2f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">)</span>
                 <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">bbox</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-                <span class="n">difficulty</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;difficulty&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="n">annotations</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">)</span>
+                <span class="n">difficulty</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"difficulty"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">annotations</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">)</span>
 
-            <span class="n">annotation_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">ANNOTATION_DIR</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.txt&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">annotation_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">DotaFormat</span><span class="o">.</span><span class="n">ANNOTATION_DIR</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">.txt"</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">annotation_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>

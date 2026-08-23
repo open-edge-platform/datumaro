@@ -352,7 +352,7 @@
     <span class="nd">@staticmethod</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert an object to bytes.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Convert an object to bytes."""</span></div>
 
 
 <div class="viewcode-block" id="Mapper.backward">
@@ -360,7 +360,7 @@
     <span class="nd">@staticmethod</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build an object from bytes.&quot;&quot;&quot;</span></div>
+<span class="w">        </span><span class="sd">"""Build an object from bytes."""</span></div>
 </div>
 
 
@@ -374,16 +374,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
         <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;I</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;I</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StringMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.StringMapper.backward">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">"&lt;I"</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
-        <span class="n">string</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">string</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">length</span></div>
 </div>
 
@@ -392,23 +392,23 @@
 <div class="viewcode-block" id="ListMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.ListMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ListMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
-    <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">_format</span> <span class="o">=</span> <span class="s2">""</span>
 
 <div class="viewcode-block" id="ListMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.ListMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I</span><span class="si">{</span><span class="n">length</span><span class="si">}{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="o">*</span><span class="n">obj</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I</span><span class="si">{</span><span class="n">length</span><span class="si">}{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_format</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="o">*</span><span class="n">obj</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ListMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.ListMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="p">(</span><span class="n">length</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">length</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">"&lt;I"</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">length</span><span class="si">}{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="n">length</span><span class="si">}{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_format</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">length</span>
         <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="n">offset</span></div>
 </div>
@@ -418,14 +418,14 @@
 <div class="viewcode-block" id="IntListMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.IntListMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IntListMapper</span><span class="p">(</span><span class="n">ListMapper</span><span class="p">):</span>
-    <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;i&quot;</span></div>
+    <span class="n">_format</span> <span class="o">=</span> <span class="s2">"i"</span></div>
 
 
 
 <div class="viewcode-block" id="FloatListMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.FloatListMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FloatListMapper</span><span class="p">(</span><span class="n">ListMapper</span><span class="p">):</span>
-    <span class="n">_format</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span></div>
+    <span class="n">_format</span> <span class="o">=</span> <span class="s2">"f"</span></div>
 
 
 
@@ -437,18 +437,18 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">dump_json</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;I</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;I</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DictMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.common.html#datumaro.plugins.data_formats.arrow.mapper.DictMapper.backward">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">"&lt;I"</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
         <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">parsed_dict</span> <span class="o">=</span> <span class="p">{}</span>

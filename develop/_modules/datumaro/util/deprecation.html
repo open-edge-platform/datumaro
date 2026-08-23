@@ -347,7 +347,7 @@
 <div class="viewcode-block" id="deprecated">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.deprecation.html#datumaro.components.filter.deprecated">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">removed_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class decorator that marks a class as deprecated.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class decorator that marks a class as deprecated."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">original_init</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span>
@@ -355,8 +355,8 @@
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">original_init</span><span class="p">)</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">new_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> class will be deprecated in version </span><span class="si">{</span><span class="n">deprecated_version</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;and will be removed in version </span><span class="si">{</span><span class="n">removed_version</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"The </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> class will be deprecated in version </span><span class="si">{</span><span class="n">deprecated_version</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="sa">f</span><span class="s2">"and will be removed in version </span><span class="si">{</span><span class="n">removed_version</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
                 <span class="ne">DeprecationWarning</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>

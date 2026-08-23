@@ -626,19 +626,19 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="n">root_dir</span> <span class="o">=</span> <span class="s2">&quot;d6-dice&quot;</span>
+<span class="n">root_dir</span> <span class="o">=</span> <span class="s2">"d6-dice"</span>
 
-<span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">names</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">dice1</span>
 <span class="s2">dice2</span>
 <span class="s2">dice3</span>
 <span class="s2">dice4</span>
 <span class="s2">dice5</span>
 <span class="s2">dice6</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
-<span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="s2">&quot;obj.names&quot;</span><span class="p">)</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+<span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="s2">"obj.names"</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
     <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -654,7 +654,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;./d6-dice&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;yolo&quot;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">"./d6-dice"</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"yolo"</span><span class="p">)</span>
 <span class="n">dataset</span>
 </pre></div>
 </div>
@@ -686,7 +686,7 @@ infos
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;random_split&quot;</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">"random_split"</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="p">[(</span><span class="s2">"train"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">"val"</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)])</span>
 <span class="n">splited_dataset</span>
 </pre></div>
 </div>
@@ -717,7 +717,7 @@ infos
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;d6-dice-ultralytics&quot;</span><span class="p">,</span> <span class="s2">&quot;yolo_ultralytics&quot;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splited_dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">"d6-dice-ultralytics"</span><span class="p">,</span> <span class="s2">"yolo_ultralytics"</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -741,8 +741,8 @@ infos
 
 <span class="c1"># To give the Ultralytics YOLO trainer an arbitrary dataset path,</span>
 <span class="c1"># you must provide its absolute path.</span>
-<span class="n">data_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;d6-dice-ultralytics&quot;</span><span class="p">,</span> <span class="s2">&quot;data.yaml&quot;</span><span class="p">))</span>
-<span class="n">model_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;d6-dice-project&quot;</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="s2">&quot;best.pt&quot;</span><span class="p">))</span>
+<span class="n">data_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"d6-dice-ultralytics"</span><span class="p">,</span> <span class="s2">"data.yaml"</span><span class="p">))</span>
+<span class="n">model_fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"d6-dice-project"</span><span class="p">,</span> <span class="s2">"train"</span><span class="p">,</span> <span class="s2">"weights"</span><span class="p">,</span> <span class="s2">"best.pt"</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>

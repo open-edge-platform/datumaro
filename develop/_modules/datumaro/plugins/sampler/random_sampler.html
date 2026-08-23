@@ -352,7 +352,7 @@
 <div class="viewcode-block" id="RandomSampler">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.random_sampler.html#datumaro.plugins.sampler.random_sampler.RandomSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomSampler</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Sampler that keeps no more than required number of items in the dataset.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Notes:|n</span>
@@ -366,26 +366,26 @@
 
 <span class="sd">    |s|s%(prog)s -k 20 |n</span>
 <span class="sd">    |n</span>
-<span class="sd">    Example: select subset of 20 images, modify only &#39;train&#39; subset|n</span>
+<span class="sd">    Example: select subset of 20 images, modify only 'train' subset|n</span>
 
 <span class="sd">    .. code-block::</span>
 
 <span class="sd">    |s|s%(prog)s -k 20 -s train</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="RandomSampler.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.random_sampler.html#datumaro.plugins.sampler.random_sampler.RandomSampler.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="s2">&quot;--count&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum number of items to sample&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-k"</span><span class="p">,</span> <span class="s2">"--count"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Maximum number of items to sample"</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--subset&quot;</span><span class="p">,</span>
+            <span class="s2">"-s"</span><span class="p">,</span>
+            <span class="s2">"--subset"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Limit changes to this subset (default: affect all dataset)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Limit changes to this subset (default: affect all dataset)"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Initial value for random number generator&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--seed"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Initial value for random number generator"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -449,11 +449,11 @@
 <div class="viewcode-block" id="LabelRandomSampler">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.random_sampler.html#datumaro.plugins.sampler.random_sampler.LabelRandomSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LabelRandomSampler</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Sampler that keeps at least the required number of annotations of</span>
 <span class="sd">    each class in the dataset for each subset separately.|n</span>
 <span class="sd">    |n</span>
-<span class="sd">    Consider using the &quot;stats&quot; command to get class distribution in</span>
+<span class="sd">    Consider using the "stats" command to get class distribution in</span>
 <span class="sd">    the dataset.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Notes:|n</span>
@@ -472,22 +472,22 @@
 <span class="sd">    .. code-block::</span>
 
 <span class="sd">    |s|s%(prog)s -k 5 |n |n</span>
-<span class="sd">    Example: select at least 5 images with &quot;cat&quot; annotations and 3 &quot;person&quot;|n</span>
+<span class="sd">    Example: select at least 5 images with "cat" annotations and 3 "person"|n</span>
 
 <span class="sd">    .. code-block::</span>
 
-<span class="sd">    |s|s%(prog)s -l &quot;cat:5&quot; -l &quot;person:3&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    |s|s%(prog)s -l "cat:5" -l "person:3"</span>
+<span class="sd">    """</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_label_count</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="n">label</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">label</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">count</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Class name cannot be empty&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"Class name cannot be empty"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">count</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Class &#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39; count is invalid&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Class '</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">' count is invalid"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">label</span><span class="p">,</span> <span class="n">count</span>
 
@@ -497,23 +497,23 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-k&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--count&quot;</span><span class="p">,</span>
+            <span class="s2">"-k"</span><span class="p">,</span>
+            <span class="s2">"--count"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Minimum number of annotations of each class&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Minimum number of annotations of each class"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--label&quot;</span><span class="p">,</span>
-            <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;label_counts&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+            <span class="s2">"-l"</span><span class="p">,</span>
+            <span class="s2">"--label"</span><span class="p">,</span>
+            <span class="n">dest</span><span class="o">=</span><span class="s2">"label_counts"</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"append"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_parse_label_count</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Minimum number of annotations of a specific class. &quot;</span>
-            <span class="s2">&quot;Overrides the `-k/--count` setting for the class. &quot;</span>
-            <span class="s2">&quot;The format is &#39;label_name:count&#39; (repeatable)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Minimum number of annotations of a specific class. "</span>
+            <span class="s2">"Overrides the `-k/--count` setting for the class. "</span>
+            <span class="s2">"The format is 'label_name:count' (repeatable)"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Initial value for random number generator&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--seed"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Initial value for random number generator"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -561,7 +561,7 @@
         <span class="n">rng</span> <span class="o">=</span> <span class="n">Random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>  <span class="c1"># nosec B311</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">):</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
             <span class="n">labels</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">][</span><span class="n">label</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_counts</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>

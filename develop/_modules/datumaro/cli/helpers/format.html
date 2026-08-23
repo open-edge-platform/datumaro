@@ -347,8 +347,8 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.helpers.format.html#datumaro.cli.helpers.format.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List supported import/export data formats&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"List supported import/export data formats"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"""</span>
 <span class="s2">        List supported import/export data format names.</span>
 <span class="s2">        For more detailed guides on each data format,</span>
 <span class="s2">        please visit our documentation website:</span>
@@ -366,8 +366,8 @@
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> --list-export|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - List with comma delimiter:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> --delimiter &#39;,&#39;</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> --delimiter ','</span>
+<span class="s2">        """</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -375,23 +375,23 @@
     <span class="n">exclusive_group</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">exclusive_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-li&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--list-import&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List all supported import data format names&quot;</span><span class="p">,</span>
+        <span class="s2">"-li"</span><span class="p">,</span>
+        <span class="s2">"--list-import"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"List all supported import data format names"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">exclusive_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-le&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--list-export&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List all supported export data format names&quot;</span><span class="p">,</span>
+        <span class="s2">"-le"</span><span class="p">,</span>
+        <span class="s2">"--list-export"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"List all supported export data format names"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--delimiter&quot;</span><span class="p">,</span>
+        <span class="s2">"-d"</span><span class="p">,</span>
+        <span class="s2">"--delimiter"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Seperator used to list data format names (default: </span><span class="se">\\</span><span class="s2">n)&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Seperator used to list data format names (default: </span><span class="se">\\</span><span class="s2">n)"</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">format_command</span><span class="p">)</span>
@@ -403,7 +403,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.helpers.format.html#datumaro.cli.helpers.format.get_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">format_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">],</span>
+        <span class="n">format_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">"list"</span><span class="p">,</span> <span class="s2">"show"</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
@@ -427,8 +427,8 @@
 
     <span class="n">builtin_readers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">importers</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">extractors</span><span class="p">))</span>
     <span class="n">builtin_writers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">exporters</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Supported import formats:</span><span class="se">\n</span><span class="si">{</span><span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_readers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Supported export formats:</span><span class="se">\n</span><span class="si">{</span><span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_writers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Supported import formats:</span><span class="se">\n</span><span class="si">{</span><span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_readers</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Supported export formats:</span><span class="se">\n</span><span class="si">{</span><span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_writers</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -362,7 +362,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SubsetWriter</span><span class="p">(</span><span class="n">__SubsetWriter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -375,16 +375,16 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">,</span> <span class="n">export_context</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BufferedWriter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">ApplyResult</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">ApplyResult</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">"items"</span><span class="p">]:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">ApplyResult</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">ApplyResult</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">"items"</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_cnt</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">media_type</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;media_type&quot;</span><span class="p">:</span> <span class="n">media_type</span><span class="o">.</span><span class="n">_type</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"media_type"</span><span class="p">:</span> <span class="n">media_type</span><span class="o">.</span><span class="n">_type</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="n">max_blob_size</span> <span class="o">!=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MAX_BLOB_SIZE</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;You provide max_blob_size=</span><span class="si">{</span><span class="n">max_blob_size</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="s2">&quot;but it is not recommended to provide an arbitrary max_blob_size.&quot;</span>
+                <span class="sa">f</span><span class="s2">"You provide max_blob_size=</span><span class="si">{</span><span class="n">max_blob_size</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="s2">"but it is not recommended to provide an arbitrary max_blob_size."</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span> <span class="o">=</span> <span class="n">max_blob_size</span>
@@ -394,21 +394,21 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dump_encryption_field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="c1"># Encrypted files are no longer supported in this version of Datumaro.</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">msg</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
 
-        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">"I"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dump_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dump_header</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;dm_format_version&quot;</span><span class="p">:</span> <span class="n">DATUMARO_FORMAT_VERSION</span><span class="p">,</span>
-                <span class="s2">&quot;media_encryption&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"dm_format_version"</span><span class="p">:</span> <span class="n">DATUMARO_FORMAT_VERSION</span><span class="p">,</span>
+                <span class="s2">"media_encryption"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
@@ -470,17 +470,17 @@
         <span class="c1"># Dump blob sizes first</span>
         <span class="n">blob_sizes</span> <span class="o">=</span> <span class="n">IntListMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">])</span>
         <span class="n">n_blob_sizes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">blob_sizes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;I</span><span class="si">{</span><span class="n">n_blob_sizes</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">n_blob_sizes</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;I</span><span class="si">{</span><span class="n">n_blob_sizes</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">n_blob_sizes</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">))</span>
 
         <span class="c1"># Dump blobs</span>
         <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
             <span class="n">items_bytes</span> <span class="o">=</span> <span class="n">blob</span>
             <span class="n">n_items_bytes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items_bytes</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">n_items_bytes</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">items_bytes</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="n">n_items_bytes</span><span class="si">}</span><span class="s2">s"</span><span class="p">,</span> <span class="n">items_bytes</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="n">fp</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_sign</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dump_version</span><span class="p">()</span>
@@ -506,11 +506,11 @@
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--num-workers&quot;</span><span class="p">,</span>
+            <span class="s2">"--num-workers"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of multi-processing workers for export. &quot;</span>
-            <span class="s2">&quot;If num_workers = 0, do not use multiprocessing (default: </span><span class="si">%(default)s</span><span class="s2">).&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"The number of multi-processing workers for export. "</span>
+            <span class="s2">"If num_workers = 0, do not use multiprocessing (default: </span><span class="si">%(default)s</span><span class="s2">)."</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parser</span></div>
@@ -530,17 +530,17 @@
         <span class="n">max_blob_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MAX_BLOB_SIZE</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        num_workers</span>
 <span class="sd">            The number of multi-processing workers for export. If num_workers = 0, do not use multiprocessing.</span>
 <span class="sd">        max_blob_size</span>
 <span class="sd">            The maximum size of DatasetItem serialization blob. Changing from the default is not recommended.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span> <span class="o">=</span> <span class="n">max_blob_size</span>

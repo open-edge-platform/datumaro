@@ -357,8 +357,8 @@
 <div class="viewcode-block" id="ImagenetTxtPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet_txt.html#datumaro.plugins.data_formats.imagenet_txt.ImagenetTxtPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetTxtPath</span><span class="p">:</span>
-    <span class="n">LABELS_FILE</span> <span class="o">=</span> <span class="s2">&quot;synsets.txt&quot;</span>
-    <span class="n">IMAGE_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span></div>
+    <span class="n">LABELS_FILE</span> <span class="o">=</span> <span class="s2">"synsets.txt"</span>
+    <span class="n">IMAGE_DIR</span> <span class="o">=</span> <span class="s2">"images"</span></div>
 
 
 
@@ -368,7 +368,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_annotation_line</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-    <span class="n">item</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -376,7 +376,7 @@
             <span class="n">image</span> <span class="o">=</span> <span class="n">item_id</span> <span class="o">+</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">label_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes in filename&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">"Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes in filename"</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">item</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
@@ -400,7 +400,7 @@
         <span class="n">image_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find dataset file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
@@ -425,7 +425,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_labels</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Unhandled labels source </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">labels_source</span>
+                <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"Unhandled labels source </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">labels_source</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">)</span>
 
@@ -435,7 +435,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_labels</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">labels_file</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
@@ -444,7 +444,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">item_id</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">label_ids</span> <span class="o">=</span> <span class="n">_parse_annotation_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
@@ -453,14 +453,14 @@
 
                 <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_ids</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">label</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&#39;: invalid label id &#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image '</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">': invalid label id '</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">label</span><span class="p">:</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_labels</span><span class="p">:</span>
                             <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">label</span><span class="p">:</span>
-                                <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;class-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">"class-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">&#39;: unknown label id &#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Image '</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">': unknown label id '</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
                     <span class="n">anno</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
@@ -478,24 +478,24 @@
 <div class="viewcode-block" id="ImagenetTxtImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet_txt.html#datumaro.plugins.data_formats.imagenet_txt.ImagenetTxtImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetTxtImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
+    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">".txt"</span>
 
 <div class="viewcode-block" id="ImagenetTxtImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet_txt.html#datumaro.plugins.data_formats.imagenet_txt.ImagenetTxtImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">annot_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">)</span>
+        <span class="n">annot_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
             <span class="n">annot_path</span><span class="p">,</span>
-            <span class="s2">&quot;must be an ImageNet-like annotation file&quot;</span><span class="p">,</span>
+            <span class="s2">"must be an ImageNet-like annotation file"</span><span class="p">,</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">label_ids</span> <span class="o">=</span> <span class="n">_parse_annotation_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">label_ids</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># If there are no labels in the entire file, it&#39;s probably</span>
+                <span class="c1"># If there are no labels in the entire file, it's probably</span>
                 <span class="c1"># not actually an ImageNet file.</span>
                 <span class="k">raise</span> <span class="ne">Exception</span></div>
 
@@ -506,17 +506,17 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--labels&quot;</span><span class="p">,</span>
+            <span class="s2">"--labels"</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="n">_LabelsSource</span><span class="o">.</span><span class="n">__members__</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">_LabelsSource</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Where to get label descriptions from (use &quot;</span>
-            <span class="s2">&quot;&#39;file&#39; to load from the file specified by --labels-file; &quot;</span>
-            <span class="s2">&quot;&#39;generate&#39; to create generic ones)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Where to get label descriptions from (use "</span>
+            <span class="s2">"'file' to load from the file specified by --labels-file; "</span>
+            <span class="s2">"'generate' to create generic ones)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--labels-file&quot;</span><span class="p">,</span>
+            <span class="s2">"--labels-file"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the file with label descriptions (synsets.txt)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Path to the file with label descriptions (synsets.txt)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -525,8 +525,8 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet_txt.html#datumaro.plugins.data_formats.imagenet_txt.ImagenetTxtImporter.find_sources_with_params">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources_with_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_params</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;labels&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_params</span> <span class="ow">or</span> <span class="n">extra_params</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_LabelsSource</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="n">labels_file_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">extra_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;labels_file&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"labels"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_params</span> <span class="ow">or</span> <span class="n">extra_params</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">==</span> <span class="n">_LabelsSource</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">labels_file_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">extra_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"labels_file"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">)</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">file_filter</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="n">labels_file_name</span>
@@ -534,7 +534,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">file_filter</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;imagenet_txt&quot;</span><span class="p">,</span> <span class="n">file_filter</span><span class="o">=</span><span class="n">file_filter</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">".txt"</span><span class="p">,</span> <span class="s2">"imagenet_txt"</span><span class="p">,</span> <span class="n">file_filter</span><span class="o">=</span><span class="n">file_filter</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ImagenetTxtImporter.get_file_extensions">
@@ -549,43 +549,43 @@
 <div class="viewcode-block" id="ImagenetTxtExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet_txt.html#datumaro.plugins.data_formats.imagenet_txt.ImagenetTxtExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetTxtExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".jpg"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not an image"</span><span class="p">)</span>
 
         <span class="n">subset_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">extractor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span>
         <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.txt&quot;</span> <span class="o">%</span> <span class="n">subset_name</span><span class="p">)</span>
+            <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">.txt"</span> <span class="o">%</span> <span class="n">subset_name</span><span class="p">)</span>
 
             <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
                 <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">item_id</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">item_id</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+                    <span class="n">item_id</span> <span class="o">=</span> <span class="s1">'"'</span> <span class="o">+</span> <span class="n">item_id</span> <span class="o">+</span> <span class="s1">'"'</span>
                 <span class="n">item_id</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_image_ext</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="n">labels</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">IMAGE_DIR</span><span class="p">)</span>
 
-            <span class="n">annotation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">annotation</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_labels</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">item_labels</span><span class="p">))</span>
+                <span class="n">annotation</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">item_labels</span><span class="p">))</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dataset_meta</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_meta_file</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">labels_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">ImagenetTxtPath</span><span class="o">.</span><span class="n">LABELS_FILE</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">labels_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">()))</span></div>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">labels_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">()))</span></div>
 
 </pre></div>
 

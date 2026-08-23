@@ -353,7 +353,7 @@
 <div class="viewcode-block" id="VottJsonPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_json.html#datumaro.plugins.data_formats.vott_json.VottJsonPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VottJsonPath</span><span class="p">:</span>
-    <span class="n">ANNO_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">&quot;-export.json&quot;</span></div>
+    <span class="n">ANNO_FILE_SUFFIX</span> <span class="o">=</span> <span class="s2">"-export.json"</span></div>
 
 
 
@@ -368,10 +368,10 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find annotations file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find annotations file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
-            <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
@@ -386,47 +386,47 @@
         <span class="n">anno_dict</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
-        <span class="n">tags</span> <span class="o">=</span> <span class="n">anno_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">anno_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
-            <span class="n">label_name</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+            <span class="n">label_name</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
             <span class="n">label_idx</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">label_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">label_idx</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_name</span><span class="p">)</span>
 
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">anno_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;asset&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">anno_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"assets"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"asset"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;regions&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-                <span class="n">tags</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"regions"</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="n">tags</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">tags</span><span class="p">:</span>
-                    <span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                    <span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"boundingBox"</span><span class="p">,</span> <span class="p">{})</span>
                     <span class="k">if</span> <span class="n">bbox</span><span class="p">:</span>
                         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">Bbox</span><span class="p">(</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]),</span>
-                                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)},</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"left"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"top"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"width"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]),</span>
+                                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)},</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
 
-                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">,</span> <span class="p">[]):</span>
                     <span class="n">label_idx</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">label_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">label_idx</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
 
-                    <span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                    <span class="n">bbox</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"boundingBox"</span><span class="p">,</span> <span class="p">{})</span>
                     <span class="k">if</span> <span class="n">bbox</span><span class="p">:</span>
                         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                             <span class="n">Bbox</span><span class="p">(</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]),</span>
-                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"left"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"top"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"width"</span><span class="p">]),</span>
+                                <span class="nb">float</span><span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]),</span>
                                 <span class="n">label</span><span class="o">=</span><span class="n">label_idx</span><span class="p">,</span>
-                                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)},</span>
+                                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">region</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)},</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
@@ -434,8 +434,8 @@
             <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
                 <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span>
-                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span><span class="p">},</span>
-                <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;asset&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">))),</span>
+                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">id</span><span class="p">},</span>
+                <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"asset"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"path"</span><span class="p">))),</span>
                 <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -450,14 +450,14 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_json.html#datumaro.plugins.data_formats.vott_json.VottJsonImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;vott_json&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">".json"</span><span class="p">,</span> <span class="s2">"vott_json"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VottJsonImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.vott_json.html#datumaro.plugins.data_formats.vott_json.VottJsonImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">VottJsonPath</span><span class="o">.</span><span class="n">ANNO_FILE_SUFFIX</span><span class="p">)</span></div>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"*"</span> <span class="o">+</span> <span class="n">VottJsonPath</span><span class="o">.</span><span class="n">ANNO_FILE_SUFFIX</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VottJsonImporter.get_file_extensions">

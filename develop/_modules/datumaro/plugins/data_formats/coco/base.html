@@ -377,7 +377,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">CocoImporterType</span><span class="p">,</span> <span class="n">CocoPath</span><span class="p">,</span> <span class="n">CocoTask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.page_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">COCOPageMapper</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DirPathExtracter">
@@ -387,14 +387,14 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.DirPathExtracter.find_rootpath">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_rootpath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find root path from annotation json file path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Find root path from annotation json file path."""</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Annotation path (</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">) should be under the directory which is named </span><span class="si">{</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;If not, Datumaro fails to find the root path for this dataset. &quot;</span>
-            <span class="s2">&quot;Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt&quot;</span>
+            <span class="sa">f</span><span class="s2">"Annotation path (</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">) should be under the directory which is named </span><span class="si">{</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="s2">"If not, Datumaro fails to find the root path for this dataset. "</span>
+            <span class="s2">"Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt"</span>
         <span class="p">)</span></div>
 
 
@@ -402,7 +402,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.DirPathExtracter.find_images_dir">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_images_dir</span><span class="p">(</span><span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find images directory from the root path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Find images directory from the root path."""</span>
 
         <span class="k">if</span> <span class="n">rootpath</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)):</span>
             <span class="n">images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
@@ -411,10 +411,10 @@
             <span class="k">return</span> <span class="n">images_dir</span>
 
         <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;We found the rootpath (</span><span class="si">{</span><span class="n">rootpath</span><span class="si">}</span><span class="s2">) for this dataset. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;However, there should exist a directory for images as </span><span class="si">{</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span><span class="w"> </span><span class="n">CocoPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;If not, Datumaro fails to find the image directory path. &quot;</span>
-            <span class="s2">&quot;Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt&quot;</span>
+            <span class="sa">f</span><span class="s2">"We found the rootpath (</span><span class="si">{</span><span class="n">rootpath</span><span class="si">}</span><span class="s2">) for this dataset. "</span>
+            <span class="sa">f</span><span class="s2">"However, there should exist a directory for images as </span><span class="si">{</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span><span class="w"> </span><span class="n">CocoPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="s2">"If not, Datumaro fails to find the image directory path. "</span>
+            <span class="s2">"Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt"</span>
         <span class="p">)</span></div>
 </div>
 
@@ -448,14 +448,14 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.MmdetDirPathExtracter.find_rootpath">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_rootpath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find root path from annotation json file path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Find root path from annotation json file path."""</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Annotation path (</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">) should be under the directory which is named </span><span class="si">{</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;If not, Datumaro fails to find the root path for this dataset. &quot;</span>
-            <span class="s2">&quot;Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt&quot;</span>
+            <span class="sa">f</span><span class="s2">"Annotation path (</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">) should be under the directory which is named </span><span class="si">{</span><span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">. "</span>
+            <span class="s2">"If not, Datumaro fails to find the root path for this dataset. "</span>
+            <span class="s2">"Please follow this instruction, https://github.com/cocodataset/cocoapi/blob/master/README.txt"</span>
         <span class="p">)</span></div>
 
 
@@ -463,17 +463,17 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.MmdetDirPathExtracter.find_images_dir">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_images_dir</span><span class="p">(</span><span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find images directory from the root path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Find images directory from the root path."""</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span></div>
 </div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_CocoBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Parses COCO annotations written in the following format:</span>
 <span class="sd">    https://cocodataset.org/#format-data</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -488,11 +488,11 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find JSON file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find JSON file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
-            <span class="n">parts</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
@@ -506,7 +506,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_rootpath</span> <span class="o">=</span> <span class="n">MmdetDirPathExtracter</span><span class="o">.</span><span class="n">find_rootpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span> <span class="o">=</span> <span class="n">MmdetDirPathExtracter</span><span class="o">.</span><span class="n">find_images_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rootpath</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not supported type: </span><span class="si">{</span><span class="n">coco_importer_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Not supported type: </span><span class="si">{</span><span class="n">coco_importer_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">task</span>
 
@@ -538,7 +538,7 @@
             <span class="n">categories_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_page_mapper</span><span class="o">.</span><span class="n">stream_parse_categories_data</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="n">categories_data</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="n">categories_data</span><span class="p">},</span>
                 <span class="n">keep_original_ids</span><span class="o">=</span><span class="n">keep_original_category_ids</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -576,26 +576,26 @@
             <span class="n">CocoTask</span><span class="o">.</span><span class="n">panoptic</span><span class="p">,</span>
         <span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_label_categories</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">"categories"</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
                 <span class="n">keep_original_ids</span><span class="o">=</span><span class="n">keep_original_ids</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">==</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_load_person_kp_categories</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_load_person_kp_categories</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">"categories"</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
 
         <span class="c1"># informs users if 0 is found as category id sicne 0 is reserved for no class</span>
         <span class="n">found</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">][</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
             <span class="k">for</span> <span class="n">cat_id</span><span class="p">,</span> <span class="n">label_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">cat_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">][</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;background&quot;</span>
+            <span class="k">if</span> <span class="n">cat_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">][</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"background"</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
             <span class="n">category_name</span> <span class="o">=</span> <span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Category id of &#39;0&#39; is reserved for no class (background) but &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;category named &#39;</span><span class="si">{</span><span class="n">category_name</span><span class="si">}</span><span class="s2">&#39; with id of &#39;0&#39; is found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="s2">&quot;Please be warned that annotations with category id of &#39;0&#39; would have `None` as label. &quot;</span>
-                <span class="s2">&quot;(https://open-edge-platform.github.io/datumaro/latest/docs/explanation/formats/coco.html#import-coco-dataset)&quot;</span>
+                <span class="s2">"Category id of '0' is reserved for no class (background) but "</span>
+                <span class="sa">f</span><span class="s2">"category named '</span><span class="si">{</span><span class="n">category_name</span><span class="si">}</span><span class="s2">' with id of '0' is found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="s2">"Please be warned that annotations with category id of '0' would have `None` as label. "</span>
+                <span class="s2">"(https://open-edge-platform.github.io/datumaro/latest/docs/explanation/formats/coco.html#import-coco-dataset)"</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_cat</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">keep_original_ids</span><span class="p">):</span>
@@ -605,27 +605,27 @@
         <span class="n">cats</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
-                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
-                    <span class="s2">&quot;supercategory&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supercategory&quot;</span><span class="p">),</span>
+                    <span class="s2">"id"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+                    <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+                    <span class="s2">"supercategory"</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"supercategory"</span><span class="p">),</span>
                 <span class="p">}</span>
                 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">json_cat</span>
             <span class="p">),</span>
-            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">cat</span><span class="p">:</span> <span class="n">cat</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">cat</span><span class="p">:</span> <span class="n">cat</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">keep_original_ids</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">cats</span><span class="p">:</span>
-                <span class="n">label_map</span><span class="p">[</span><span class="n">cat</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+                <span class="n">label_map</span><span class="p">[</span><span class="n">cat</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
 
-                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cat</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span>
-                    <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;class-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cat</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]:</span>
+                    <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">"class-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-                <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cat</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supercategory&quot;</span><span class="p">))</span>
+                <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cat</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"supercategory"</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cats</span><span class="p">):</span>
-                <span class="n">label_map</span><span class="p">[</span><span class="n">cat</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">idx</span>
-                <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cat</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supercategory&quot;</span><span class="p">))</span>
+                <span class="n">label_map</span><span class="p">[</span><span class="n">cat</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cat</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"supercategory"</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">categories</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span> <span class="o">=</span> <span class="n">label_map</span>
@@ -633,11 +633,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_person_kp_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_cat</span><span class="p">):</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="n">PointsCategories</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">json_cat</span><span class="p">:</span>
-            <span class="n">label_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)]</span>
+            <span class="n">label_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)]</span>
             <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                 <span class="n">label_id</span><span class="p">,</span>
-                <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">&quot;keypoints&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
-                <span class="n">joints</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">&quot;skeleton&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+                <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">"keypoints"</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+                <span class="n">joints</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="s2">"skeleton"</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span> <span class="o">=</span> <span class="n">categories</span>
@@ -648,7 +648,7 @@
 
         <span class="k">for</span> <span class="n">img_info</span><span class="p">,</span> <span class="n">ann_infos</span> <span class="ow">in</span> <span class="n">pbars</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_page_mapper</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Importing '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">'"</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="n">parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_item</span><span class="p">(</span><span class="n">img_info</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -673,7 +673,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_load_panoptic_ann</span><span class="p">(</span><span class="n">ann_info</span><span class="p">,</span> <span class="n">parsed_annotations</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_data</span><span class="p">):</span>
         <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span>
@@ -684,7 +684,7 @@
 
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">img_infos</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">img_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">img_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">"images"</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">img_info</span> <span class="ow">in</span> <span class="n">_gen_ann</span><span class="p">(</span><span class="n">img_lists</span><span class="p">):</span>
             <span class="n">parsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_item</span><span class="p">(</span><span class="n">img_info</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">parsed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -696,16 +696,16 @@
             <span class="n">items</span><span class="p">[</span><span class="n">img_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
             <span class="n">img_infos</span><span class="p">[</span><span class="n">img_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_info</span>
 
-        <span class="n">ann_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">ann_lists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s2">"annotations"</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ann_info</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span>
             <span class="n">_gen_ann</span><span class="p">(</span><span class="n">ann_lists</span><span class="p">),</span>
-            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Importing &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Importing '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">'"</span><span class="p">,</span>
             <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">ann_lists</span><span class="p">),</span>
         <span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">img_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann_info</span><span class="p">,</span> <span class="s2">&quot;image_id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                <span class="n">img_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann_info</span><span class="p">,</span> <span class="s2">"image_id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">img_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">img_infos</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown image id &#39;</span><span class="si">{</span><span class="n">img_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown image id '</span><span class="si">{</span><span class="n">img_id</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="c1"># Retrieve item (DatasetItem) and img_info (Dict) from the integer key dictionary</span>
@@ -715,32 +715,32 @@
                 <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_annotation_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">ann_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">items</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">]]:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">img_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="n">img_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"height"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"width"</span><span class="p">):</span>
                 <span class="n">image_size</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">image_size</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">&quot;file_name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">img_info</span><span class="p">,</span> <span class="s2">"file_name"</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">img_id</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span>
                 <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">image_size</span><span class="p">),</span>
                 <span class="n">annotations</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">img_id</span><span class="p">},</span>
+                <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">img_id</span><span class="p">},</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">img_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_panoptic_ann</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">parsed_annotations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">parsed_annotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -748,14 +748,14 @@
 
         <span class="c1"># For the panoptic task, each annotation struct is a per-image</span>
         <span class="c1"># annotation rather than a per-object annotation.</span>
-        <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;file_name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+        <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mask_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"file_name"</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">lazy_image</span><span class="p">(</span><span class="n">mask_path</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_pan_mask</span><span class="p">)</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">CompiledMask</span><span class="p">(</span><span class="n">instance_mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">segm_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;segments_info&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">segm_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"segments_info"</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">cat_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_id</span><span class="p">(</span><span class="n">segm_info</span><span class="p">)</span>
-            <span class="n">segm_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segm_info</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-            <span class="n">attributes</span> <span class="o">=</span> <span class="n">segm_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;is_crowd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segm_info</span><span class="p">,</span> <span class="s2">&quot;iscrowd&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+            <span class="n">segm_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segm_info</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="n">segm_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"attributes"</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">"is_crowd"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segm_info</span><span class="p">,</span> <span class="s2">"iscrowd"</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
             <span class="n">parsed_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Mask</span><span class="p">(</span>
                     <span class="n">image</span><span class="o">=</span><span class="n">mask</span><span class="o">.</span><span class="n">lazy_extract</span><span class="p">(</span><span class="n">segm_id</span><span class="p">),</span>
@@ -784,7 +784,7 @@
             <span class="k">return</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
-        <span class="n">cat_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;category_id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">cat_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"category_id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cat_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -812,25 +812,25 @@
         <span class="k">if</span> <span class="n">parsed_annotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parsed_annotations</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">ann_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">ann_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
-        <span class="n">attributes</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="k">if</span> <span class="s2">&quot;score&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"attributes"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="s2">"score"</span> <span class="ow">in</span> <span class="n">ann</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
 
-        <span class="n">group</span> <span class="o">=</span> <span class="n">ann_id</span>  <span class="c1"># make sure all tasks&#39; annotations are merged</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">ann_id</span>  <span class="c1"># make sure all tasks' annotations are merged</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">is</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">instances</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">is</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">is</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span><span class="p">:</span>
             <span class="n">label_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_id</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
 
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;is_crowd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;iscrowd&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">"is_crowd"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"iscrowd"</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">is</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span><span class="p">:</span>
-                <span class="n">keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;keypoints&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="n">keypoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"keypoints"</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keypoints</span><span class="p">)</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Keypoints have invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">keypoints</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-                        <span class="s2">&quot;which is not divisible by 3. Expected (x, y, visibility) triplets.&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Keypoints have invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">keypoints</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+                        <span class="s2">"which is not divisible by 3. Expected (x, y, visibility) triplets."</span>
                     <span class="p">)</span>
 
                 <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
@@ -852,7 +852,7 @@
                 <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">segmentation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;segmentation&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
+                <span class="n">segmentation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"segmentation"</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">))</span>
             <span class="k">except</span> <span class="n">MissingFieldError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="n">segmentation</span> <span class="o">=</span> <span class="kc">None</span>
@@ -866,13 +866,13 @@
                         <span class="k">for</span> <span class="n">polygon_points</span> <span class="ow">in</span> <span class="n">segmentation</span><span class="p">:</span>
                             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                                    <span class="sa">f</span><span class="s2">&quot;Polygon has invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-                                    <span class="s2">&quot;which is not divisible by 2.&quot;</span>
+                                    <span class="sa">f</span><span class="s2">"Polygon has invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+                                    <span class="s2">"which is not divisible by 2."</span>
                                 <span class="p">)</span>
                             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                                    <span class="sa">f</span><span class="s2">&quot;Polygon has invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-                                    <span class="s2">&quot;Expected at least 3 (x, y) pairs.&quot;</span>
+                                    <span class="sa">f</span><span class="s2">"Polygon has invalid value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">polygon_points</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+                                    <span class="s2">"Expected at least 3 (x, y) pairs."</span>
                                 <span class="p">)</span>
 
                             <span class="n">parsed_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -886,24 +886,24 @@
                             <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># merge all parts into a single mask RLE</span>
-                        <span class="n">img_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-                        <span class="n">img_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                        <span class="n">img_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                        <span class="n">img_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
                         <span class="n">rle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_merged_mask</span><span class="p">(</span><span class="n">segmentation</span><span class="p">,</span> <span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">segmentation</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">segmentation</span><span class="p">[</span><span class="s2">"counts"</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
                     <span class="c1"># uncompressed RLE</span>
-                    <span class="n">img_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-                    <span class="n">img_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                    <span class="n">img_h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                    <span class="n">img_w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">image_info</span><span class="p">,</span> <span class="s2">"width"</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
-                    <span class="n">mask_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segmentation</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                    <span class="n">mask_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">segmentation</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask_size</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Mask size has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask_size</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 2 values.&quot;</span>
+                            <span class="sa">f</span><span class="s2">"Mask size has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask_size</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 2 values."</span>
                         <span class="p">)</span>
                     <span class="n">mask_h</span><span class="p">,</span> <span class="n">mask_w</span> <span class="o">=</span> <span class="n">mask_size</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="n">img_h</span> <span class="o">==</span> <span class="n">mask_h</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">img_w</span> <span class="o">==</span> <span class="n">mask_w</span><span class="p">)):</span>
                         <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                            <span class="s2">&quot;Mask #</span><span class="si">%s</span><span class="s2"> does not match image size: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ann_id</span><span class="p">,</span> <span class="p">(</span><span class="n">mask_h</span><span class="p">,</span> <span class="n">mask_w</span><span class="p">),</span> <span class="p">(</span><span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span><span class="p">))</span>
+                            <span class="s2">"Mask #</span><span class="si">%s</span><span class="s2"> does not match image size: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">ann_id</span><span class="p">,</span> <span class="p">(</span><span class="n">mask_h</span><span class="p">,</span> <span class="n">mask_w</span><span class="p">),</span> <span class="p">(</span><span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span><span class="p">))</span>
                         <span class="p">)</span>
                     <span class="n">rle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_merged_mask</span><span class="p">([</span><span class="n">segmentation</span><span class="p">],</span> <span class="n">mask_h</span><span class="p">,</span> <span class="n">mask_w</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -915,10 +915,10 @@
                         <span class="n">RleMask</span><span class="p">(</span><span class="n">rle</span><span class="o">=</span><span class="n">rle</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
                     <span class="p">)</span>
 
-            <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;bbox&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="n">bbox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"bbox"</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">bbox</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bbox has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 4 values.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Bbox has wrong value count </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bbox</span><span class="p">)</span><span class="si">}</span><span class="s2">. Expected 4 values."</span><span class="p">)</span>
                 <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">bbox</span>
                 <span class="n">parsed_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">Bbox</span><span class="p">(</span>
@@ -937,7 +937,7 @@
             <span class="n">label_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_id</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
             <span class="n">parsed_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="ow">is</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">captions</span><span class="p">:</span>
-            <span class="n">caption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;caption&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">caption</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"caption"</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="n">parsed_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Caption</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -975,7 +975,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoImageInfoBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoImageInfoBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">image_info</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">image_info</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -984,7 +984,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoCaptionsBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoCaptionsBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">captions</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">captions</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -993,7 +993,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoInstancesBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoInstancesBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">instances</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">instances</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1002,7 +1002,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoPersonKeypointsBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoPersonKeypointsBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1011,7 +1011,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoLabelsBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoLabelsBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">labels</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">labels</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1020,7 +1020,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoPanopticBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoPanopticBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">panoptic</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">panoptic</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -1029,7 +1029,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.base.html#datumaro.plugins.data_formats.coco.base.CocoStuffBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CocoStuffBase</span><span class="p">(</span><span class="n">_CocoBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"task"</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 </pre></div>

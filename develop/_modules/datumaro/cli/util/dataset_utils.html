@@ -352,13 +352,13 @@
 
 <div class="viewcode-block" id="generate_next_file_name">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.util.dataset_utils.generate_next_file_name">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">generate_next_file_name</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_next_file_name</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    If basedir does not contain basename, returns basename,</span>
 <span class="sd">    otherwise generates a name by appending sep to the basename</span>
 <span class="sd">    and the number, next to the last used number in the basedir for</span>
 <span class="sd">    files with basename prefix. Optionally, appends ext.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">basedir</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span></div>
 
 
@@ -366,26 +366,26 @@
 <div class="viewcode-block" id="parse_dataset_pathspec">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.util.dataset_utils.parse_dataset_pathspec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_dataset_pathspec</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Parses Dataset paths. The syntax is:</span>
 <span class="sd">        - &lt;dataset path&gt;[ :&lt;format&gt; ]</span>
 
 <span class="sd">    Returns: a dataset from the parsed path</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">        (?P&lt;dataset_path&gt;(?: [^:] | :[/\\] )+)</span>
 <span class="sd">        (:(?P&lt;format&gt;.+))?</span>
-<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="sd">        """</span><span class="p">,</span>
         <span class="n">s</span><span class="p">,</span>
         <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Failed to recognize dataset pathspec in &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Failed to recognize dataset pathspec in '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">s</span><span class="p">)</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]</span>
-    <span class="nb">format</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;format&quot;</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">"dataset_path"</span><span class="p">]</span>
+    <span class="nb">format</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">"format"</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span> <span class="ow">or</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="p">)</span></div>
 
 
@@ -410,7 +410,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"+"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">FilterModes</span><span class="p">[</span><span class="n">s</span><span class="p">]</span></div>
 
 
@@ -421,11 +421,11 @@
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;filter_annotations&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"filter_annotations"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">items_annotations</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;filter_annotations&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="s2">&quot;remove_empty&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"filter_annotations"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"remove_empty"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -434,7 +434,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.util.dataset_utils.FilterModes.list_options">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">list_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">"+"</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">]</span></div>
 </div>
 
 </pre></div>

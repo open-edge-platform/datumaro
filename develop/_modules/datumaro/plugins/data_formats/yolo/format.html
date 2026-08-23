@@ -345,19 +345,19 @@
 <div class="viewcode-block" id="YoloPath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.format.html#datumaro.plugins.data_formats.yolo.base.YoloPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YoloPath</span><span class="p">:</span>
-    <span class="n">DEFAULT_SUBSET_NAME</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
-    <span class="n">SUBSET_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">]</span>
-    <span class="n">RESERVED_CONFIG_KEYS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;backup&quot;</span><span class="p">,</span> <span class="s2">&quot;classes&quot;</span><span class="p">,</span> <span class="s2">&quot;names&quot;</span><span class="p">}</span>
+    <span class="n">DEFAULT_SUBSET_NAME</span> <span class="o">=</span> <span class="s2">"train"</span>
+    <span class="n">SUBSET_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"valid"</span><span class="p">]</span>
+    <span class="n">RESERVED_CONFIG_KEYS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"backup"</span><span class="p">,</span> <span class="s2">"classes"</span><span class="p">,</span> <span class="s2">"names"</span><span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_config</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">config_lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
         <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config_lines</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\s*(\w+)\s*=\s*(.+)$&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^\s*(\w+)\s*=\s*(.+)$"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -372,14 +372,14 @@
 <div class="viewcode-block" id="YoloLoosePath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.format.html#datumaro.plugins.data_formats.yolo.base.YoloLoosePath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YoloLoosePath</span><span class="p">:</span>
-    <span class="n">NAMES_FILE</span> <span class="o">=</span> <span class="s2">&quot;obj.names&quot;</span></div>
+    <span class="n">NAMES_FILE</span> <span class="o">=</span> <span class="s2">"obj.names"</span></div>
 
 
 
 <div class="viewcode-block" id="YoloUltralyticsPath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.format.html#datumaro.plugins.data_formats.yolo.base.YoloUltralyticsPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YoloUltralyticsPath</span><span class="p">:</span>
-    <span class="n">META_FILE</span> <span class="o">=</span> <span class="s2">&quot;data.yaml&quot;</span></div>
+    <span class="n">META_FILE</span> <span class="o">=</span> <span class="s2">"data.yaml"</span></div>
 
 
 

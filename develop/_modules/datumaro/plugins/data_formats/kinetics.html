@@ -359,15 +359,15 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">KineticsBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">"Can't find dataset directory"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">media_type</span><span class="o">=</span><span class="n">Video</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="n">find_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="n">find_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="s2">"csv"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">]):</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">ann_file</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">filename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"json"</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">ann_file</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{}</span>
@@ -376,7 +376,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">ann_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ann_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"csv"</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_load_items_from_csv</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_load_items_from_json</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
@@ -409,7 +409,7 @@
         <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">subset_path</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                 <span class="n">key</span><span class="p">,</span> <span class="n">file_extension</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">VIDEO_EXTENSIONS</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">file_extension</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span> <span class="ow">in</span> <span class="n">VIDEO_EXTENSIONS</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_subset_media_files</span><span class="p">[</span><span class="n">subset</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset_media_files</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span>
@@ -439,7 +439,7 @@
             <span class="n">annotations</span><span class="o">=</span><span class="p">[</span>
                 <span class="n">Label</span><span class="p">(</span>
                     <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
-                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_start</span><span class="p">),</span> <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_end</span><span class="p">)},</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"time_start"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_start</span><span class="p">),</span> <span class="s2">"time_end"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time_end</span><span class="p">)},</span>
                 <span class="p">)</span>
             <span class="p">],</span>
             <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
@@ -447,15 +447,15 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_items_from_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">item_desc</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_create_item</span><span class="p">(</span>
-                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;youtube_id&quot;</span><span class="p">],</span>
-                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span>
-                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;time_start&quot;</span><span class="p">],</span>
-                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;time_end&quot;</span><span class="p">],</span>
-                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">],</span>
+                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">"youtube_id"</span><span class="p">],</span>
+                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">"label"</span><span class="p">],</span>
+                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">"time_start"</span><span class="p">],</span>
+                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">"time_end"</span><span class="p">],</span>
+                        <span class="n">item_desc</span><span class="p">[</span><span class="s2">"split"</span><span class="p">],</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
 
@@ -465,10 +465,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_create_item</span><span class="p">(</span>
                     <span class="n">item_id</span><span class="p">,</span>
-                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">],</span>
-                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;segment&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">][</span><span class="s2">&quot;segment&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">&quot;subset&quot;</span><span class="p">],</span>
+                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">][</span><span class="s2">"label"</span><span class="p">],</span>
+                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">][</span><span class="s2">"segment"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">"annotations"</span><span class="p">][</span><span class="s2">"segment"</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">item_desc</span><span class="p">[</span><span class="s2">"subset"</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="p">)</span></div>
 
@@ -477,7 +477,7 @@
 <div class="viewcode-block" id="KineticsImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kinetics.html#datumaro.plugins.data_formats.kinetics.KineticsImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KineticsImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_ANNO_EXTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;.csv&quot;</span><span class="p">]</span>
+    <span class="n">_ANNO_EXTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".json"</span><span class="p">,</span> <span class="s2">".csv"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="KineticsImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kinetics.html#datumaro.plugins.data_formats.kinetics.KineticsImporter.detect">[docs]</a>
@@ -485,35 +485,35 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">():</span>
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                <span class="n">ann_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXTS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ann_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXTS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
                     <span class="n">ann_file</span><span class="p">,</span>
-                    <span class="s2">&quot;JSON file must contain an youtube &#39;url&#39; key&quot;</span><span class="p">,</span>
+                    <span class="s2">"JSON file must contain an youtube 'url' key"</span><span class="p">,</span>
                 <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">)</span>
                     <span class="n">page_mapper</span> <span class="o">=</span> <span class="n">JsonSectionPageMapper</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
                     <span class="n">sections</span> <span class="o">=</span> <span class="n">page_mapper</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span>
 
                     <span class="n">page_map</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">sections</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-                    <span class="n">offset</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">page_map</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">],</span> <span class="n">page_map</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span>
+                    <span class="n">offset</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">page_map</span><span class="p">[</span><span class="s2">"offset"</span><span class="p">],</span> <span class="n">page_map</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span>
 
                     <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                     <span class="n">contents</span> <span class="o">=</span> <span class="n">parse_json</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">Exception</span>
-                    <span class="k">if</span> <span class="s2">&quot;youtube&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">"youtube"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">contents</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">Exception</span>
 
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                <span class="n">ann_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXTS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ann_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXTS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
                     <span class="n">ann_file</span><span class="p">,</span>
-                    <span class="s2">&quot;CSV file must contain &#39;youtube_id&#39; in header&quot;</span><span class="p">,</span>
+                    <span class="s2">"CSV file must contain 'youtube_id' in header"</span><span class="p">,</span>
                 <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">header</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="s2">&quot;youtube_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">"youtube_id"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">Exception</span></div>
 
 
@@ -521,8 +521,8 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kinetics.html#datumaro.plugins.data_formats.kinetics.KineticsImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">find_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">]):</span>
-            <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">KineticsBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
+        <span class="k">if</span> <span class="n">find_files</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="s2">"csv"</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="n">KineticsBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
         <span class="k">return</span> <span class="p">[]</span></div>
 
 

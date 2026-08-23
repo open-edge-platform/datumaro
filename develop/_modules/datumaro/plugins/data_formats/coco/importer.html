@@ -374,7 +374,7 @@
         <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span><span class="p">:</span> <span class="n">CocoStuffBase</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">_IMPORTER_TYPE</span> <span class="o">=</span> <span class="n">CocoImporterType</span><span class="o">.</span><span class="n">default</span>
-    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
+    <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">".json"</span>
 
 <div class="viewcode-block" id="CocoImporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.importer.html#datumaro.plugins.data_formats.coco.importer.CocoImporter.build_cmdline_parser">[docs]</a>
@@ -382,11 +382,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--keep-original-category-ids&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Add dummy label categories so that category indices &quot;</span>
-            <span class="s2">&quot;correspond to the category IDs in the original annotation &quot;</span>
-            <span class="s2">&quot;file&quot;</span><span class="p">,</span>
+            <span class="s2">"--keep-original-category-ids"</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Add dummy label categories so that category indices "</span>
+            <span class="s2">"correspond to the category IDs in the original annotation "</span>
+            <span class="s2">"file"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -401,12 +401,12 @@
         <span class="n">num_tasks</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">require_files</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;annotations/</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">require_files</span><span class="p">(</span><span class="sa">f</span><span class="s2">"annotations/</span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="n">num_tasks</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">if</span> <span class="n">num_tasks</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Multiple COCO tasks are detected. The detected format will be `coco` instead.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Multiple COCO tasks are detected. The detected format will be `coco` instead."</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span>
         <span class="n">context</span><span class="o">.</span><span class="n">raise_unsupported</span><span class="p">()</span></div>
 
@@ -430,31 +430,31 @@
             <span class="n">selected_ann_type</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ann_types</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Not implemented: &quot;</span>
-                <span class="s2">&quot;Found potentially conflicting source types with labels: </span><span class="si">%s</span><span class="s2">. &quot;</span>
-                <span class="s2">&quot;Only one type will be used: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ann_types</span><span class="p">),</span> <span class="n">selected_ann_type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="s2">"Not implemented: "</span>
+                <span class="s2">"Found potentially conflicting source types with labels: </span><span class="si">%s</span><span class="s2">. "</span>
+                <span class="s2">"Only one type will be used: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ann_types</span><span class="p">),</span> <span class="n">selected_ann_type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_files</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">ann_type</span><span class="p">,</span> <span class="n">ann_file</span> <span class="ow">in</span> <span class="n">ann_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">conflicting_types</span> <span class="ow">and</span> <span class="n">ann_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">selected_ann_type</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not implemented: conflicting source &#39;</span><span class="si">%s</span><span class="s2">&#39; is skipped.&quot;</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Not implemented: conflicting source '</span><span class="si">%s</span><span class="s2">' is skipped."</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found a dataset at &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Found a dataset at '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">ann_file</span><span class="p">)</span>
 
                 <span class="n">options</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extra_params</span><span class="p">)</span>
-                <span class="n">options</span><span class="p">[</span><span class="s2">&quot;coco_importer_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IMPORTER_TYPE</span>
-                <span class="n">options</span><span class="p">[</span><span class="s2">&quot;subset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset</span>
+                <span class="n">options</span><span class="p">[</span><span class="s2">"coco_importer_type"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_IMPORTER_TYPE</span>
+                <span class="n">options</span><span class="p">[</span><span class="s2">"subset"</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset</span>
 
                 <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
-                    <span class="n">options</span><span class="p">[</span><span class="s2">&quot;stream&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">options</span><span class="p">[</span><span class="s2">"stream"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">ann_file</span><span class="p">,</span>
-                        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
-                        <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
+                        <span class="s2">"url"</span><span class="p">:</span> <span class="n">ann_file</span><span class="p">,</span>
+                        <span class="s2">"format"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
+                        <span class="s2">"options"</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
 
@@ -466,17 +466,17 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">detect_coco_task</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">CocoTask</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_"</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">task</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">)):</span> <span class="n">path</span><span class="p">}}</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">""</span><span class="p">:</span> <span class="p">{</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">)):</span> <span class="n">path</span><span class="p">}}</span>
 
-            <span class="n">subset_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="n">subset_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*_*.json&quot;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"*_*.json"</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">subsets</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">subset_path</span> <span class="ow">in</span> <span class="n">subset_paths</span><span class="p">:</span>
@@ -484,12 +484,12 @@
 
             <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;File &#39;</span><span class="si">%s</span><span class="s2">&#39; was skipped, could&#39;t match this file &quot;</span>
-                    <span class="s2">&quot;with any of these tasks: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">NAME</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                    <span class="s2">"File '</span><span class="si">%s</span><span class="s2">' was skipped, could't match this file "</span>
+                    <span class="s2">"with any of these tasks: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">NAME</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="n">parts</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">subset_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ann_type</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">subset_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ann_type</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"_"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">subset_name</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">DEFAULT_SUBSET_NAME</span>
             <span class="n">subsets</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="p">{})[</span><span class="n">ann_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">subset_path</span>
 
@@ -528,7 +528,7 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;annotations/</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_TASK</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"annotations/</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_TASK</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">LOW</span></div>
 </div>
 

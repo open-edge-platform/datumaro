@@ -387,33 +387,33 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">extractors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetBaseRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_extractors&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_extractors"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">importers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImporterRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_importers&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_importers"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">exporters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExporterRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_exporters&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_exporters"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">generators</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeneratorRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_generators&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_generators"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_transforms&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_transforms"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validators</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidatorRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_validators&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">"_validators"</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">):</span>
         <span class="n">plugins</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">,</span> <span class="s2">&quot;*/*.py&quot;</span><span class="p">,</span> <span class="s2">&quot;*/*/*.py&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"*.py"</span><span class="p">,</span> <span class="s2">"*/*.py"</span><span class="p">,</span> <span class="s2">"*/*/*.py"</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">),</span> <span class="n">pattern</span><span class="p">)):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                     <span class="k">continue</span>
@@ -421,26 +421,26 @@
                 <span class="n">path_rel</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">plugins_dir</span><span class="p">)</span>
                 <span class="n">name_parts</span> <span class="o">=</span> <span class="n">split_path</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path_rel</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-                <span class="c1"># a module with a dot in the name won&#39;t load correctly</span>
-                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">name_parts</span><span class="p">):</span>
+                <span class="c1"># a module with a dot in the name won't load correctly</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">"."</span> <span class="ow">in</span> <span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">name_parts</span><span class="p">):</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Python file &#39;</span><span class="si">%s</span><span class="s2">&#39; in directory &#39;</span><span class="si">%s</span><span class="s2">&#39; can&#39;t be imported due to a dot in the name; skipping.&quot;</span><span class="p">,</span>
+                        <span class="s2">"Python file '</span><span class="si">%s</span><span class="s2">' in directory '</span><span class="si">%s</span><span class="s2">' can't be imported due to a dot in the name; skipping."</span><span class="p">,</span>
                         <span class="n">path_rel</span><span class="p">,</span>
                         <span class="n">plugins_dir</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="n">plugins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_parts</span><span class="p">))</span>
+                <span class="n">plugins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"."</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">name_parts</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">plugins</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_plugin_exports</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
         <span class="n">exports</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;exports&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">"exports"</span><span class="p">):</span>
             <span class="n">exports</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">exports</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">symbol</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">symbol</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="n">exports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">symbol</span><span class="p">))</span>
 
@@ -452,7 +452,7 @@
             <span class="ow">and</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">types</span>
             <span class="ow">and</span> <span class="p">(</span>
                 <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Custom plugin (in the Datumaro project) can be a single file and have no module</span>
-                <span class="ow">or</span> <span class="ow">not</span> <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">__package__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;datumaro.components&quot;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">getmodule</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">__package__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"datumaro.components"</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="p">]</span>
 
@@ -468,7 +468,7 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">module_search_error</span> <span class="o">=</span> <span class="ne">ModuleNotFoundError</span>
 
-                <span class="n">message</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Failed to import module &#39;</span><span class="si">%s</span><span class="s2">&#39;: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">e</span><span class="p">]</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Failed to import module '</span><span class="si">%s</span><span class="s2">': </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">e</span><span class="p">]</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">module_search_error</span><span class="p">):</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="o">*</span><span class="n">message</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -476,7 +476,7 @@
                 <span class="k">continue</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Imported the following symbols from </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">exports</span><span class="p">))</span>
+                <span class="s2">"Imported the following symbols from </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">exports</span><span class="p">))</span>
             <span class="p">)</span>
             <span class="n">all_exports</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">exports</span><span class="p">)</span>
 
@@ -484,7 +484,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_builtin_plugins</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load builtin plugins which will be imported lazily using plugin spec files&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Load builtin plugins which will be imported lazily using plugin spec files"""</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.specs</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_lazy_plugins</span>
 
@@ -493,12 +493,12 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_builtin_plugins_from_importlib</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load builtin plugins from importlib, not lazy import from plugin spec files&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Load builtin plugins from importlib, not lazy import from plugin spec files"""</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins</span>
 
             <span class="n">plugins_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
-            <span class="n">module_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">)]</span>
+            <span class="n">module_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">datumaro</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_plugins</span><span class="p">(</span><span class="n">plugins_dir</span><span class="p">)]</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_plugins</span><span class="p">(</span><span class="n">module_names</span><span class="p">,</span> <span class="n">importer</span><span class="o">=</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_builtin_plugins</span>
 
@@ -568,10 +568,10 @@
         <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">rejection_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RejectionReason</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="n">ignore_dirs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;__MSOSX&quot;</span><span class="p">,</span> <span class="s2">&quot;__MACOSX&quot;</span><span class="p">}</span>
+        <span class="n">ignore_dirs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"__MSOSX"</span><span class="p">,</span> <span class="s2">"__MACOSX"</span><span class="p">}</span>
         <span class="n">all_matched_formats</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-        <span class="n">extensions</span> <span class="o">=</span> <span class="n">get_all_file_extensions</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ignore_dirs</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="n">get_all_file_extensions</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ignore_dirs</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span>
 
         <span class="n">importers</span> <span class="o">=</span> <span class="p">{</span>
             <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">importer</span><span class="o">.</span><span class="n">get_plugin_cls</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_lazy_import</span> <span class="k">else</span> <span class="n">importer</span><span class="p">)</span>
@@ -588,8 +588,8 @@
             <span class="k">if</span> <span class="n">detected_formats</span><span class="p">:</span>
                 <span class="n">all_matched_formats</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">detected_formats</span><span class="p">)</span>
 
-            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"*"</span><span class="p">))</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ignore_dirs</span><span class="p">:</span>
                 <span class="k">break</span>
 
@@ -606,7 +606,7 @@
 <div class="viewcode-block" id="Environment.merge">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Environment.merge">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">envs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="s2">&quot;Environment&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Environment&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">envs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="s2">"Environment"</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"Environment"</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">env</span> <span class="o">==</span> <span class="n">DEFAULT_ENVIRONMENT</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">]):</span>
             <span class="k">return</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 

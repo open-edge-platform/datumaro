@@ -365,13 +365,13 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HLOps&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"HLOps"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="HLOps">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.hl_ops.HLOps">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HLOps</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;High-level dataset operations for Python API.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""High-level dataset operations for Python API."""</span>
 
 <div class="viewcode-block" id="HLOps.compare">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.hl_ops.HLOps.compare">[docs]</a>
@@ -380,47 +380,47 @@
         <span class="n">first_dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">second_dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">report_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;table&quot;</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"table"</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compare two datasets and optionally save a comparison report.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            first_dataset (IDataset): The first dataset to compare.</span>
 <span class="sd">            second_dataset (IDataset): The second dataset to compare.</span>
 <span class="sd">            report_dir (Optional[str], optional): The directory path to save the comparison report. Defaults to None.</span>
-<span class="sd">            method (str, optional): The comparison method to use. Possible values are &quot;table&quot;, &quot;equality&quot;, &quot;distance&quot;.</span>
-<span class="sd">                Defaults to &quot;table&quot;.</span>
+<span class="sd">            method (str, optional): The comparison method to use. Possible values are "table", "equality", "distance".</span>
+<span class="sd">                Defaults to "table".</span>
 <span class="sd">            **kwargs: Additional keyword arguments that can be passed to the comparison method.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            IDataset: The result of the comparison.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            ValueError: If the method is &quot;distance&quot; and report_dir is not specified.</span>
+<span class="sd">            ValueError: If the method is "distance" and report_dir is not specified.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            comparator = Comparator()</span>
-<span class="sd">            result = comparator.compare(first_dataset, second_dataset, report_dir=&quot;./comparison_report&quot;)</span>
+<span class="sd">            result = comparator.compare(first_dataset, second_dataset, report_dir="./comparison_report")</span>
 <span class="sd">            print(result)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;table&quot;</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"table"</span><span class="p">:</span>
             <span class="n">comparator</span> <span class="o">=</span> <span class="n">TableComparator</span><span class="p">()</span>
             <span class="n">h_table</span><span class="p">,</span> <span class="n">m_table</span><span class="p">,</span> <span class="n">l_table</span><span class="p">,</span> <span class="n">result_dict</span> <span class="o">=</span> <span class="n">comparator</span><span class="o">.</span><span class="n">compare_datasets</span><span class="p">(</span><span class="n">first_dataset</span><span class="p">,</span> <span class="n">second_dataset</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">report_dir</span><span class="p">:</span>
                 <span class="n">comparator</span><span class="o">.</span><span class="n">save_compare_report</span><span class="p">(</span><span class="n">h_table</span><span class="p">,</span> <span class="n">m_table</span><span class="p">,</span> <span class="n">l_table</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">report_dir</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;equality&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"equality"</span><span class="p">:</span>
             <span class="n">comparator</span> <span class="o">=</span> <span class="n">EqualityComparator</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">comparator</span><span class="o">.</span><span class="n">compare_datasets</span><span class="p">(</span><span class="n">first_dataset</span><span class="p">,</span> <span class="n">second_dataset</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">report_dir</span><span class="p">:</span>
                 <span class="n">comparator</span><span class="o">.</span><span class="n">save_compare_report</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">report_dir</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;distance&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"distance"</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">report_dir</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please specify report_dir to save comparison result for DistanceComparator.&quot;</span><span class="p">)</span>
-            <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output_format&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Please specify report_dir to save comparison result for DistanceComparator."</span><span class="p">)</span>
+            <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"simple"</span><span class="p">)</span>
             <span class="n">comparator</span> <span class="o">=</span> <span class="n">DistanceComparator</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.compare</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistanceCompareVisualizer</span>
 
@@ -444,7 +444,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Applies some function to dataset items.</span>
 
 <span class="sd">        Results are computed lazily, if the transform supports this.</span>
@@ -454,12 +454,12 @@
 <span class="sd">            method: The transformation to be applied to the dataset.</span>
 <span class="sd">                If a string is passed, it is treated as a plugin name,</span>
 <span class="sd">                which is searched for in the environment</span>
-<span class="sd">                set by the &#39;env&#39; argument</span>
+<span class="sd">                set by the 'env' argument</span>
 <span class="sd">            env: A plugin collection. If not set, the built-in plugins are used</span>
 <span class="sd">            **kwargs: Parameters for the transformation</span>
 
 <span class="sd">        Returns: a wrapper around the input dataset</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -467,7 +467,7 @@
             <span class="n">method</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">method</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">Transform</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected &#39;method&#39; argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">method</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected 'method' argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">method</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">produced</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -483,14 +483,14 @@
         <span class="n">filter_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Filters out some dataset items or annotations, using a custom filter</span>
 <span class="sd">        expression.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dataset: The dataset to be filtered</span>
 <span class="sd">            expr: XPath-formatted filter expression</span>
-<span class="sd">                (e.g. `/item[subset = &#39;train&#39;]`, `/item/annotation[label = &#39;cat&#39;]`)</span>
+<span class="sd">                (e.g. `/item[subset = 'train']`, `/item/annotation[label = 'cat']`)</span>
 <span class="sd">            filter_annotations: Indicates if the filter should be</span>
 <span class="sd">                applied to items or annotations</span>
 <span class="sd">            remove_empty: When filtering annotations, allows to</span>
@@ -498,7 +498,7 @@
 
 <span class="sd">        Returns: a wrapper around the input dataset, which is computed lazily</span>
 <span class="sd">            during iteration</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
     <span class="nd">@overload</span>
     <span class="nd">@staticmethod</span>
@@ -509,7 +509,7 @@
         <span class="n">filter_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Filters out some dataset items or annotations, using a user-provided filter</span>
 <span class="sd">        Python function.</span>
 
@@ -568,7 +568,7 @@
 <span class="sd">                )</span>
 <span class="sd">                # No bounding boxes with a size greater than 50% of their image</span>
 <span class="sd">                filtered_items = [item for item in filtered]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
 <div class="viewcode-block" id="HLOps.filter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.hl_ops.HLOps.filter">[docs]</a>
@@ -610,11 +610,11 @@
         <span class="n">report_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Merge `datasets` according to `merge_policy`. You have to choose an appropriate `merge_policy`</span>
-<span class="sd">        for your purpose. The available merge policies are &quot;union&quot;, &quot;intersect&quot;, and &quot;exact&quot;.</span>
+<span class="sd">        for your purpose. The available merge policies are "union", "intersect", and "exact".</span>
 <span class="sd">        For more details about the merge policies, please refer to :func:`get_merger`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">merger</span> <span class="o">=</span> <span class="n">get_merger</span><span class="p">(</span><span class="n">merge_policy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="n">merger</span><span class="p">(</span><span class="o">*</span><span class="n">datasets</span><span class="p">)</span>
@@ -622,10 +622,10 @@
             <span class="p">[</span>
                 <span class="n">dataset</span><span class="o">.</span><span class="n">env</span>
                 <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;env&quot;</span><span class="p">)</span>
-                <span class="c1"># TODO: Sometimes, there is dataset which is not exactly &quot;Dataset&quot;,</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">)</span>
+                <span class="c1"># TODO: Sometimes, there is dataset which is not exactly "Dataset",</span>
                 <span class="c1"># e.g., VocClassificationBase. this should be fixed and every object from</span>
-                <span class="c1"># Dataset.import_from should have &quot;Dataset&quot; type.</span>
+                <span class="c1"># Dataset.import_from should have "Dataset" type.</span>
             <span class="p">]</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">report_path</span><span class="p">:</span>
@@ -645,7 +645,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Saves the input dataset in some format.</span>
 
 <span class="sd">        Args:</span>
@@ -653,10 +653,10 @@
 <span class="sd">            path: The output directory</span>
 <span class="sd">            format: The desired output format for the dataset.</span>
 <span class="sd">                If a string is passed, it is treated as a plugin name,</span>
-<span class="sd">                which is searched for in the environment set by the &#39;env&#39; argument</span>
+<span class="sd">                which is searched for in the environment set by the 'env' argument</span>
 <span class="sd">            env: A plugin collection. If not set, the built-in plugins are used</span>
 <span class="sd">            **kwargs: Parameters for the export format</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -666,7 +666,7 @@
             <span class="n">exporter</span> <span class="o">=</span> <span class="nb">format</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">exporter</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exporter</span><span class="p">,</span> <span class="n">Exporter</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected &#39;format&#39; argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exporter</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected 'format' argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exporter</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -686,7 +686,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks dataset annotations for correctness relatively to a task type.</span>
 
 <span class="sd">        Args:</span>
@@ -696,7 +696,7 @@
 <span class="sd">            **kwargs: Parameters for the validator</span>
 
 <span class="sd">        Returns: a dictionary with validation results</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">task</span> <span class="o">=</span> <span class="n">parse_str_enum_value</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">TaskType</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
@@ -715,9 +715,9 @@
 
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">from_subsets</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">subset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subset_names</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2"> is not found in the subset names (</span><span class="si">{</span><span class="n">subset_names</span><span class="si">}</span><span class="s2">) in the dataset.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2"> is not found in the subset names (</span><span class="si">{</span><span class="n">subset_names</span><span class="si">}</span><span class="s2">) in the dataset."</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;map_subsets&quot;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="n">subset</span><span class="p">:</span> <span class="n">to_subset</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">from_subsets</span><span class="p">})</span></div>
+        <span class="k">return</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">"map_subsets"</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="p">{</span><span class="n">subset</span><span class="p">:</span> <span class="n">to_subset</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">from_subsets</span><span class="p">})</span></div>
 </div>
 
 </pre></div>

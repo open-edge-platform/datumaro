@@ -345,25 +345,25 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="n">DEFAULT_SUBSET_NAME</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+<span class="n">DEFAULT_SUBSET_NAME</span> <span class="o">=</span> <span class="s2">"default"</span>
 <span class="n">BboxIntCoords</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>  <span class="c1"># (x, y, w, h)</span>
-<span class="n">SUBSET_NAME_BLACKLIST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">,</span> <span class="s2">&quot;instances&quot;</span><span class="p">}</span>
-<span class="n">SUBSET_NAME_WHITELIST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">}</span>
+<span class="n">SUBSET_NAME_BLACKLIST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"labels"</span><span class="p">,</span> <span class="s2">"images"</span><span class="p">,</span> <span class="s2">"annotations"</span><span class="p">,</span> <span class="s2">"instances"</span><span class="p">}</span>
+<span class="n">SUBSET_NAME_WHITELIST</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">}</span>
 
 
 <div class="viewcode-block" id="get_datumaro_cache_dir">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.definitions.html#datumaro.util.definitions.get_datumaro_cache_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_datumaro_cache_dir</span><span class="p">(</span>
-    <span class="n">_CACHE_DIR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;XDG_CACHE_HOME&quot;</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">,</span> <span class="s2">&quot;.cache&quot;</span><span class="p">))),</span>
+    <span class="n">_CACHE_DIR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"XDG_CACHE_HOME"</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"~"</span><span class="p">,</span> <span class="s2">".cache"</span><span class="p">))),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get DATUMARO_CACHE_DIR. If it does not exists, create it.&quot;&quot;&quot;</span>
-    <span class="n">DATUMARO_CACHE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_CACHE_DIR</span><span class="p">,</span> <span class="s2">&quot;datumaro&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Get DATUMARO_CACHE_DIR. If it does not exists, create it."""</span>
+    <span class="n">DATUMARO_CACHE_DIR</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_CACHE_DIR</span><span class="p">,</span> <span class="s2">"datumaro"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATUMARO_CACHE_DIR</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">DATUMARO_CACHE_DIR</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot create DATUMARO_CACHE_DIR=</span><span class="si">{</span><span class="n">DATUMARO_CACHE_DIR</span><span class="si">}</span><span class="s2"> since </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot create DATUMARO_CACHE_DIR=</span><span class="si">{</span><span class="n">DATUMARO_CACHE_DIR</span><span class="si">}</span><span class="s2"> since </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">DATUMARO_CACHE_DIR</span></div>
 

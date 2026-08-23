@@ -356,8 +356,8 @@
 <div class="viewcode-block" id="RoboflowCocoImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowCocoImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_coco&quot;</span>
-    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_annotations.coco.json&quot;</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_coco"</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">"_annotations.coco.json"</span>
 
 <div class="viewcode-block" id="RoboflowCocoImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.detect">[docs]</a>
@@ -366,7 +366,7 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">))</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
 
 
@@ -374,12 +374,12 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCocoImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_FILE_NAME</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">subset_path</span> <span class="ow">in</span> <span class="n">subset_paths</span><span class="p">:</span>
             <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">subset_path</span><span class="p">))</span>
-            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">subset_path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset_name</span><span class="p">}})</span>
+            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">subset_path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span> <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset_name</span><span class="p">}})</span>
 
         <span class="k">return</span> <span class="n">sources</span></div>
 
@@ -406,34 +406,34 @@
 <div class="viewcode-block" id="RoboflowVocImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowVocImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_voc&quot;</span>
-    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.xml&quot;</span>
-    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_voc"</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">".xml"</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">""</span>
 
 <div class="viewcode-block" id="RoboflowVocImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowVocImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">(),</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"**/"</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">"*"</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span></div>
 
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;Requirements for the annotation file of voc format&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"Requirements for the annotation file of voc format"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Roboflow VOC format xml file should have the annotation tag.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">"annotation"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">"Roboflow VOC format xml file should have the annotation tag."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;source/database&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;roboflow.ai&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Roboflow VOC format xml file should have the source/database with `roboflow.ai`.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"source/database"</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">"roboflow.ai"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">"Roboflow VOC format xml file should have the source/database with `roboflow.ai`."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -441,7 +441,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_filter_ann_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">DatasetImportError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -449,10 +449,10 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
             <span class="n">path</span><span class="p">,</span>
             <span class="n">ext</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">,</span>
-            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
             <span class="n">dirname</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span><span class="p">,</span>
             <span class="n">file_filter</span><span class="o">=</span><span class="n">_filter_ann_file</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">"**/*"</span><span class="p">,</span>
             <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
@@ -469,15 +469,15 @@
 
         <span class="n">subsets</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
-                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
-                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                <span class="s2">"url"</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                <span class="s2">"format"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+                <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -496,28 +496,28 @@
 <div class="viewcode-block" id="RoboflowYoloImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowYoloImporter</span><span class="p">(</span><span class="n">RoboflowVocImporter</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_yolo&quot;</span>
-    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
-    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;labels/&quot;</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_yolo"</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">".txt"</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">"labels/"</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Roboflow Yolo format txt file should have 5 fields for each line, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Roboflow Yolo format txt file should have 5 fields for each line, "</span>
+                    <span class="sa">f</span><span class="s2">"but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Each field should be a number but fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Each field should be a number but fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
             <span class="c1"># Check the first line only</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">"Empty file is not allowed."</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RoboflowYoloImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloImporter.find_sources">[docs]</a>
@@ -527,16 +527,16 @@
 
         <span class="n">subsets</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+            <span class="n">subset_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">subsets</span><span class="p">[</span><span class="n">subset_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
-                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
-                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
-                    <span class="s2">&quot;urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">,</span>
+                <span class="s2">"url"</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+                <span class="s2">"format"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+                <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                    <span class="s2">"urls"</span><span class="p">:</span> <span class="n">urls</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">urls</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -548,21 +548,21 @@
 <div class="viewcode-block" id="RoboflowYoloObbImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloObbImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowYoloObbImporter</span><span class="p">(</span><span class="n">RoboflowYoloImporter</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_yolo_obb&quot;</span>
-    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
-    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;labelTxt/&quot;</span>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_yolo_obb"</span>
+    <span class="n">FORMAT_EXT</span> <span class="o">=</span> <span class="s2">".txt"</span>
+    <span class="n">ANN_DIR_NAME</span> <span class="o">=</span> <span class="s2">"labelTxt/"</span>
 
 <div class="viewcode-block" id="RoboflowYoloObbImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowYoloObbImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;FormatDetectionConfidence of &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="si">}</span><span class="s2">&#39; is lowered because of &#39;dota&#39; format support. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;It will be deprecated in datumaro==1.8.0.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"FormatDetectionConfidence of '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="si">}</span><span class="s2">' is lowered because of 'dota' format support. "</span>
+            <span class="sa">f</span><span class="s2">"It will be deprecated in datumaro==1.8.0."</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">(),</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"**/"</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ANN_DIR_NAME</span> <span class="o">+</span> <span class="s2">"*"</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT_EXT</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">LOW</span></div>
 
@@ -570,33 +570,33 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Roboflow Yolo OBB format txt file should have 10 fields for each line, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Roboflow Yolo OBB format txt file should have 10 fields for each line, "</span>
+                    <span class="sa">f</span><span class="s2">"but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
             <span class="c1"># Check the first line only</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Empty file is not allowed.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">"Empty file is not allowed."</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="RoboflowCreateMlImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowCreateMlImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowCreateMlImporter</span><span class="p">(</span><span class="n">RoboflowCocoImporter</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_create_ml&quot;</span>
-    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_annotations.createml.json&quot;</span></div>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_create_ml"</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">"_annotations.createml.json"</span></div>
 
 
 
 <div class="viewcode-block" id="RoboflowMulticlassImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.roboflow.importer.html#datumaro.plugins.data_formats.roboflow.importer.RoboflowMulticlassImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RoboflowMulticlassImporter</span><span class="p">(</span><span class="n">RoboflowCocoImporter</span><span class="p">):</span>
-    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">&quot;roboflow_multiclass&quot;</span>
-    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;_classes.csv&quot;</span></div>
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="s2">"roboflow_multiclass"</span>
+    <span class="n">ANN_FILE_NAME</span> <span class="o">=</span> <span class="s2">"_classes.csv"</span></div>
 
 </pre></div>
 

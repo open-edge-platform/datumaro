@@ -348,27 +348,27 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemStorage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Merger</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;UnionMerge&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"UnionMerge"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="UnionMerge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.merge.union_merge.UnionMerge">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UnionMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Merge several datasets with &quot;union&quot; policy:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Merge several datasets with "union" policy:</span>
 
 <span class="sd">    - Label categories are merged according to the union of their label names.</span>
-<span class="sd">    For example, if Dataset-A has {&quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;} and Dataset-B has</span>
-<span class="sd">    {&quot;car&quot;, &quot;bus&quot;, &quot;truck&quot;} labels, the merged dataset will have</span>
-<span class="sd">    {&quot;bust&quot;, &quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;, &quot;truck&quot;} labels.</span>
+<span class="sd">    For example, if Dataset-A has {"car", "cat", "dog"} and Dataset-B has</span>
+<span class="sd">    {"car", "bus", "truck"} labels, the merged dataset will have</span>
+<span class="sd">    {"bust", "car", "cat", "dog", "truck"} labels.</span>
 
 <span class="sd">    - If there are two or more dataset items whose (id, subset) pairs match each other,</span>
 <span class="sd">    both are included in the merged dataset. At this time, since the same (id, subset)</span>
 <span class="sd">    pair cannot be duplicated in the dataset, we add a suffix to the id of each source item.</span>
-<span class="sd">    For example, if Dataset-A has DatasetItem(id=&quot;magic&quot;, subset=&quot;train&quot;) and Dataset-B has</span>
-<span class="sd">    also DatasetItem(id=&quot;magic&quot;, subset=&quot;train&quot;), the merged dataset will have</span>
-<span class="sd">    DatasetItem(id=&quot;magic-0&quot;, subset=&quot;train&quot;) and DatasetItem(id=&quot;magic-1&quot;, subset=&quot;train&quot;).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    For example, if Dataset-A has DatasetItem(id="magic", subset="train") and Dataset-B has</span>
+<span class="sd">    also DatasetItem(id="magic", subset="train"), the merged dataset will have</span>
+<span class="sd">    DatasetItem(id="magic-0", subset="train") and DatasetItem(id="magic-1", subset="train").</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
@@ -394,7 +394,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
                     <span class="c1"># Add prefix</span>
-                    <span class="n">item_storage</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+                    <span class="n">item_storage</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">item_storage</span></div>
 

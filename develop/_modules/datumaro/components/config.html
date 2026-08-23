@@ -404,7 +404,7 @@
         <span class="n">default</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">default</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Key &quot;</span><span class="si">%s</span><span class="s1">&quot; does not exist&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">'Key "</span><span class="si">%s</span><span class="s1">" does not exist'</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
         <span class="k">return</span> <span class="n">value</span>
 
 <div class="viewcode-block" id="Schema.get">
@@ -431,7 +431,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.config.html#datumaro.components.config.SchemaBuilder.add">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ctor</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">internal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Key &quot;</span><span class="si">%s</span><span class="s1">&quot; already exists&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">'Key "</span><span class="si">%s</span><span class="s1">" already exists'</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">Schema</span><span class="o">.</span><span class="n">Item</span><span class="p">(</span><span class="n">ctor</span><span class="p">,</span> <span class="n">internal</span><span class="o">=</span><span class="n">internal</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -450,17 +450,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="c1"># schema should be established first</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_mutable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_schema"</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_mutable"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_config"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">fallback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fallback</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">allow_fallback</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_mutable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_mutable"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mutable</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_fallback</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_internal</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">all_config</span> <span class="o">=</span> <span class="p">{}</span>
@@ -506,7 +506,7 @@
         <span class="n">default</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
         <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">default</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Key &quot;</span><span class="si">%s</span><span class="s1">&quot; does not exist&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">'Key "</span><span class="si">%s</span><span class="s1">" does not exist'</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
         <span class="k">return</span> <span class="n">value</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -579,7 +579,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Can not set key &#39;</span><span class="si">%s</span><span class="s2">&#39; - schema mismatch: unknown key&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"Can not set key '</span><span class="si">%s</span><span class="s2">' - schema mismatch: unknown key"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,))</span>
 
             <span class="n">schema_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="n">schema_entry_instance</span> <span class="o">=</span> <span class="n">schema_entry</span><span class="p">()</span>
@@ -589,8 +589,8 @@
                 <span class="n">value</span> <span class="o">=</span> <span class="n">schema_entry_instance</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Can not set key &#39;</span><span class="si">%s</span><span class="s2">&#39; - schema mismatch:&quot;</span>
-                    <span class="s2">&quot;unexpected value type </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">))</span>
+                    <span class="s2">"Can not set key '</span><span class="si">%s</span><span class="s2">' - schema mismatch:"</span>
+                    <span class="s2">"unexpected value type </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">))</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -602,7 +602,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IO</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -619,7 +619,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.config.html#datumaro.components.config.Config.dump">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IO</span><span class="p">]):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
@@ -636,7 +636,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">DictConfig</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;_default&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"_default"</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
 
 <div class="viewcode-block" id="DictConfig.set">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.config.html#datumaro.components.config.DictConfig.set">[docs]</a>
@@ -648,8 +648,8 @@
                 <span class="n">value</span> <span class="o">=</span> <span class="n">schema_entry_instance</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Can not set key &#39;</span><span class="si">%s</span><span class="s2">&#39; - schema mismatch:&quot;</span>
-                    <span class="s2">&quot;unexpected value type </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">))</span>
+                    <span class="s2">"Can not set key '</span><span class="si">%s</span><span class="s2">' - schema mismatch:"</span>
+                    <span class="s2">"unexpected value type </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">schema_entry_instance</span><span class="p">))</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>

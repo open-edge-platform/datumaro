@@ -374,14 +374,14 @@
     <span class="n">_pose_version</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="c1"># XML headers</span>
-    <span class="n">_header</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;&quot;&quot;&quot;</span>
-    <span class="n">_doctype</span> <span class="o">=</span> <span class="s2">&quot;&lt;!DOCTYPE boost_serialization&gt;&quot;</span>
+    <span class="n">_header</span> <span class="o">=</span> <span class="s2">"""&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;"""</span>
+    <span class="n">_doctype</span> <span class="o">=</span> <span class="s2">"&lt;!DOCTYPE boost_serialization&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">tracklets</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="n">file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tracklets</span> <span class="o">=</span> <span class="n">tracklets</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span> <span class="o">=</span> <span class="n">XMLGenerator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span> <span class="o">=</span> <span class="n">XMLGenerator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># See reference for section headers here:</span>
@@ -393,8 +393,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">newline</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">"  "</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header</span><span class="p">)</span>
@@ -404,32 +404,32 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;boost_serialization&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="s2">&quot;serialization::archive&quot;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"boost_serialization"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"version"</span><span class="p">:</span> <span class="s2">"9"</span><span class="p">,</span> <span class="s2">"signature"</span><span class="p">:</span> <span class="s2">"serialization::archive"</span><span class="p">})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_serialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;boost_serialization&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"boost_serialization"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"count"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"count"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_item_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;item_version&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"item_version"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;item_version&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"item_version"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_tracklets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracklets</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span>
-            <span class="s2">&quot;tracklets&quot;</span><span class="p">,</span>
+            <span class="s2">"tracklets"</span><span class="p">,</span>
             <span class="p">{</span>
-                <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklets_version</span><span class="p">),</span>
-                <span class="s2">&quot;tracking_level&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
-                <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklets_class_id</span><span class="p">),</span>
+                <span class="s2">"version"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklets_version</span><span class="p">),</span>
+                <span class="s2">"tracking_level"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
+                <span class="s2">"class_id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklets_class_id</span><span class="p">),</span>
             <span class="p">},</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -439,36 +439,36 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_tracklets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;tracklets&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"tracklets"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_tracklet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_tracklet_header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span>
-                <span class="s2">&quot;item&quot;</span><span class="p">,</span>
+                <span class="s2">"item"</span><span class="p">,</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklet_class_id</span><span class="p">),</span>
-                    <span class="s2">&quot;tracking_level&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
-                    <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklet_class_id</span><span class="p">),</span>
+                    <span class="s2">"version"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklet_class_id</span><span class="p">),</span>
+                    <span class="s2">"tracking_level"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
+                    <span class="s2">"class_id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracklet_class_id</span><span class="p">),</span>
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_tracklet_header</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"item"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_tracklet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"item"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_tracklet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracklet</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_tracklet</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tracklet</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;poses&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"poses"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_poses</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;attributes&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"attributes"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_attributes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -482,16 +482,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_poses_header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span>
-                <span class="s2">&quot;poses&quot;</span><span class="p">,</span>
+                <span class="s2">"poses"</span><span class="p">,</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poses_version</span><span class="p">),</span>
-                    <span class="s2">&quot;tracking_level&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
-                    <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poses_class_id</span><span class="p">),</span>
+                    <span class="s2">"version"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poses_version</span><span class="p">),</span>
+                    <span class="s2">"tracking_level"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
+                    <span class="s2">"class_id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poses_class_id</span><span class="p">),</span>
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_poses_header</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;poses&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"poses"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_count</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">poses</span><span class="p">))</span>
@@ -500,7 +500,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;poses&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"poses"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">poses</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_poses</span><span class="p">(</span><span class="n">poses</span><span class="p">)</span>
@@ -514,30 +514,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_pose_header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span>
-                <span class="s2">&quot;item&quot;</span><span class="p">,</span>
+                <span class="s2">"item"</span><span class="p">,</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pose_version</span><span class="p">),</span>
-                    <span class="s2">&quot;tracking_level&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
-                    <span class="s2">&quot;class_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pose_class_id</span><span class="p">),</span>
+                    <span class="s2">"version"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pose_version</span><span class="p">),</span>
+                    <span class="s2">"tracking_level"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tracking_level</span><span class="p">),</span>
+                    <span class="s2">"class_id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pose_class_id</span><span class="p">),</span>
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_pose_header</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"item"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"item"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_pose</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pose</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;attributes&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"attributes"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_add_attributes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;frame_id&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">"frame_id"</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
@@ -547,13 +547,13 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"attributes"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"attributes"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_attributes</span><span class="p">()</span>
@@ -565,25 +565,25 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_open_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;attribute&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"attribute"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_close_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;attribute&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"attribute"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_attribute</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">(</span><span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">"value"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">"value"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_attribute</span><span class="p">()</span>
 
@@ -604,7 +604,7 @@
 <div class="viewcode-block" id="KittiRawExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kitti_raw.exporter.html#datumaro.plugins.data_formats.kitti_raw.exporter.KittiRawExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KittiRawExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".jpg"</span>
 
 <div class="viewcode-block" id="KittiRawExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kitti_raw.exporter.html#datumaro.plugins.data_formats.kitti_raw.exporter.KittiRawExporter.build_cmdline_parser">[docs]</a>
@@ -612,15 +612,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--reindex&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Assign new indices to frames and tracks. &quot;</span>
-            <span class="s2">&quot;Allows annotations without &#39;track_id&#39; (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">"--reindex"</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Assign new indices to frames and tracks. "</span>
+            <span class="s2">"Allows annotations without 'track_id' (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--allow-attrs&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Allow writing annotation attributes (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">"--allow-attrs"</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Allow writing annotation attributes (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -640,7 +640,7 @@
             <span class="n">frame_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">frame_id</span> <span class="ow">in</span> <span class="n">name_mapping</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: frame id </span><span class="si">%s</span><span class="s2"> is repeated in the dataset&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">"Item </span><span class="si">%s</span><span class="s2">: frame id </span><span class="si">%s</span><span class="s2"> is repeated in the dataset"</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">))</span>
             <span class="n">name_mapping</span><span class="p">[</span><span class="n">frame_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
 
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
@@ -649,16 +649,16 @@
 
                 <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: skipping a </span><span class="si">%s%s</span><span class="s2"> with no label&quot;</span><span class="p">,</span>
+                        <span class="s2">"Item </span><span class="si">%s</span><span class="s2">: skipping a </span><span class="si">%s%s</span><span class="s2"> with no label"</span><span class="p">,</span>
                         <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                         <span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                        <span class="s2">&quot;(#</span><span class="si">%s</span><span class="s2">) &quot;</span> <span class="o">%</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="s2">"(#</span><span class="si">%s</span><span class="s2">) "</span> <span class="o">%</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
-                <span class="n">track_id</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;track_id&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">track_id</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"track_id"</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span> <span class="ow">and</span> <span class="n">track_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># In this format, track id is not used for anything except</span>
                     <span class="c1"># annotation grouping. So we only need to pick a definitely</span>
@@ -666,73 +666,73 @@
                     <span class="n">track_id</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">track_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                        <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: expected track annotations &quot;</span>
-                        <span class="s2">&quot;having &#39;track_id&#39; (integer) attribute. &quot;</span>
-                        <span class="s2">&quot;Use --reindex to export single shapes.&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+                        <span class="s2">"Item </span><span class="si">%s</span><span class="s2">: expected track annotations "</span>
+                        <span class="s2">"having 'track_id' (integer) attribute. "</span>
+                        <span class="s2">"Use --reindex to export single shapes."</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
                     <span class="p">)</span>
 
                 <span class="n">track</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">track_id</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">track</span><span class="p">:</span>
                     <span class="n">track</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="s2">&quot;objectType&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
-                        <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                        <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                        <span class="s2">&quot;first_frame&quot;</span><span class="p">:</span> <span class="n">frame_id</span><span class="p">,</span>
-                        <span class="s2">&quot;poses&quot;</span><span class="p">:</span> <span class="p">[],</span>
-                        <span class="s2">&quot;finished&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># keep last</span>
+                        <span class="s2">"objectType"</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                        <span class="s2">"h"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s2">"w"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s2">"l"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                        <span class="s2">"first_frame"</span><span class="p">:</span> <span class="n">frame_id</span><span class="p">,</span>
+                        <span class="s2">"poses"</span><span class="p">:</span> <span class="p">[],</span>
+                        <span class="s2">"finished"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># keep last</span>
                     <span class="p">}</span>
                     <span class="n">tracks</span><span class="p">[</span><span class="n">track_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">track</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s2">"h"</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">"w"</span><span class="p">],</span> <span class="n">track</span><span class="p">[</span><span class="s2">"l"</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">ann</span><span class="o">.</span><span class="n">scale</span><span class="p">:</span>
                         <span class="c1"># Tracks have fixed scale in the format</span>
-                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching track shapes, track id </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">))</span>
+                        <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span><span class="s2">"Item </span><span class="si">%s</span><span class="s2">: mismatching track shapes, track id </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">))</span>
 
-                    <span class="k">if</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;objectType&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">label</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">track</span><span class="p">[</span><span class="s2">"objectType"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">label</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
-                            <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching track labels, &quot;</span>
-                            <span class="s2">&quot;track id </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">,</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;objectType&quot;</span><span class="p">],</span> <span class="n">label</span><span class="p">)</span>
+                            <span class="s2">"Item </span><span class="si">%s</span><span class="s2">: mismatching track labels, "</span>
+                            <span class="s2">"track id </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track_id</span><span class="p">,</span> <span class="n">track</span><span class="p">[</span><span class="s2">"objectType"</span><span class="p">],</span> <span class="n">label</span><span class="p">)</span>
                         <span class="p">)</span>
 
                     <span class="c1"># If there is a skip in track frames, add missing as outside</span>
-                    <span class="k">if</span> <span class="n">frame_id</span> <span class="o">!=</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;poses&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;frame_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">last_key_pose</span> <span class="o">=</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;poses&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                        <span class="n">last_keyframe_id</span> <span class="o">=</span> <span class="n">last_key_pose</span><span class="p">[</span><span class="s2">&quot;frame_id&quot;</span><span class="p">]</span>
-                        <span class="n">last_key_pose</span><span class="p">[</span><span class="s2">&quot;occlusion_kf&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">frame_id</span> <span class="o">!=</span> <span class="n">track</span><span class="p">[</span><span class="s2">"poses"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"frame_id"</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">last_key_pose</span> <span class="o">=</span> <span class="n">track</span><span class="p">[</span><span class="s2">"poses"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">last_keyframe_id</span> <span class="o">=</span> <span class="n">last_key_pose</span><span class="p">[</span><span class="s2">"frame_id"</span><span class="p">]</span>
+                        <span class="n">last_key_pose</span><span class="p">[</span><span class="s2">"occlusion_kf"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">last_keyframe_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">frame_id</span><span class="p">):</span>
                             <span class="n">pose</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">last_key_pose</span><span class="p">)</span>
-                            <span class="n">pose</span><span class="p">[</span><span class="s2">&quot;occlusion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">OCCLUSION_UNSET</span>
-                            <span class="n">pose</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="o">.</span><span class="n">OUT_IMAGE</span>
-                            <span class="n">pose</span><span class="p">[</span><span class="s2">&quot;frame_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
-                            <span class="n">track</span><span class="p">[</span><span class="s2">&quot;poses&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
+                            <span class="n">pose</span><span class="p">[</span><span class="s2">"occlusion"</span><span class="p">]</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">OCCLUSION_UNSET</span>
+                            <span class="n">pose</span><span class="p">[</span><span class="s2">"truncation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="o">.</span><span class="n">OUT_IMAGE</span>
+                            <span class="n">pose</span><span class="p">[</span><span class="s2">"frame_id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">track</span><span class="p">[</span><span class="s2">"poses"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
 
                 <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">VISIBLE</span>
-                <span class="k">if</span> <span class="s2">&quot;occlusion&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
-                    <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;occlusion&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
-                <span class="k">elif</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">"occlusion"</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                    <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">"occlusion"</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"occluded"</span><span class="p">):</span>
                     <span class="n">occlusion</span> <span class="o">=</span> <span class="n">OcclusionStates</span><span class="o">.</span><span class="n">PARTLY</span>
 
                 <span class="n">truncation</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="o">.</span><span class="n">IN_IMAGE</span>
-                <span class="k">if</span> <span class="s2">&quot;truncation&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
-                    <span class="n">truncation</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+                <span class="k">if</span> <span class="s2">"truncation"</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                    <span class="n">truncation</span> <span class="o">=</span> <span class="n">TruncationStates</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">"truncation"</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
 
                 <span class="n">pose</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;tx&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="s2">&quot;ty&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="s2">&quot;tz&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="s2">&quot;rx&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="s2">&quot;ry&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="s2">&quot;rz&quot;</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                    <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">PoseStates</span><span class="o">.</span><span class="n">LABELED</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;occlusion&quot;</span><span class="p">:</span> <span class="n">occlusion</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;occlusion_kf&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">),</span>
-                    <span class="s2">&quot;truncation&quot;</span><span class="p">:</span> <span class="n">truncation</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="s2">&quot;amt_occlusion&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;amt_border_l&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;amt_border_r&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;amt_occlusion_kf&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;amt_border_kf&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="s2">&quot;frame_id&quot;</span><span class="p">:</span> <span class="n">frame_id</span><span class="p">,</span>
+                    <span class="s2">"tx"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s2">"ty"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">"tz"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s2">"rx"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s2">"ry"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">"rz"</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="s2">"state"</span><span class="p">:</span> <span class="n">PoseStates</span><span class="o">.</span><span class="n">LABELED</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">"occlusion"</span><span class="p">:</span> <span class="n">occlusion</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">"occlusion_kf"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"keyframe"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">),</span>
+                    <span class="s2">"truncation"</span><span class="p">:</span> <span class="n">truncation</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">"amt_occlusion"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"amt_border_l"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"amt_border_r"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"amt_occlusion_kf"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"amt_border_kf"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"frame_id"</span><span class="p">:</span> <span class="n">frame_id</span><span class="p">,</span>
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allow_attrs</span><span class="p">:</span>
@@ -742,54 +742,54 @@
                             <span class="k">continue</span>
 
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-                            <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="s2">"true"</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">"false"</span>
                         <span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-                    <span class="n">pose</span><span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">attributes</span>
+                    <span class="n">pose</span><span class="p">[</span><span class="s2">"attributes"</span><span class="p">]</span> <span class="o">=</span> <span class="n">attributes</span>
 
-                <span class="n">track</span><span class="p">[</span><span class="s2">&quot;poses&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
+                <span class="n">track</span><span class="p">[</span><span class="s2">"poses"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_name_mapping</span><span class="p">(</span><span class="n">name_mapping</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_name_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_mapping</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">NAME_MAPPING_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">NAME_MAPPING_FILE</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">name_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">label_cat</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"frame"</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_point_cloud</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">KittiRawPath</span><span class="o">.</span><span class="n">PCD_DIR</span><span class="p">)</span>
 
-            <span class="n">images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">extra_images</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">img</span><span class="p">:</span> <span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">extra_images</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">img</span><span class="p">:</span> <span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
                     <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
                         <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
-                            <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">IMG_DIR_PREFIX</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">),</span>
-                            <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                            <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">IMG_DIR_PREFIX</span> <span class="o">+</span> <span class="p">(</span><span class="s2">"</span><span class="si">%02d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">),</span>
+                            <span class="s2">"data"</span><span class="p">,</span>
                             <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_image_ext</span><span class="p">(</span><span class="n">image</span><span class="p">),</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39; has no image info&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Item '</span><span class="si">%s</span><span class="s2">' has no image info"</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">index</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PointCloud</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not a point cloud&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not a point cloud"</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -797,10 +797,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_meta_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Kitti RAW format supports only a single subset. Subset information will be ignored on export.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Kitti RAW format supports only a single subset. Subset information will be ignored on export."</span><span class="p">)</span>
 
         <span class="n">tracklets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_tracklets</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">ANNO_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">KittiRawPath</span><span class="o">.</span><span class="n">ANNO_FILE</span><span class="p">),</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">_XmlAnnotationWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">tracklets</span><span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
 
@@ -826,7 +826,7 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">pcd_path</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
-                <span class="n">image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="n">image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">KittiRawPath</span><span class="o">.</span><span class="n">IMG_DIR_PREFIX</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">image_dir</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">image_dir</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>

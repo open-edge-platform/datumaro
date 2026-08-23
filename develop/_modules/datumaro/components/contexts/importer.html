@@ -357,10 +357,10 @@
 <div class="viewcode-block" id="ImportErrorPolicy.report_item_error">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy.report_item_error">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Allows to report a problem with a dataset item.</span>
 <span class="sd">        If this function returns, the extractor must skip the item.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">_ImportFail</span><span class="p">):</span>
             <span class="n">ie</span> <span class="o">=</span> <span class="n">ItemImportError</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
@@ -372,10 +372,10 @@
 <div class="viewcode-block" id="ImportErrorPolicy.report_annotation_error">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy.report_annotation_error">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">report_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Allows to report a problem with a dataset item annotation.</span>
 <span class="sd">        If this function returns, the extractor must skip the annotation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">_ImportFail</span><span class="p">):</span>
             <span class="n">ie</span> <span class="o">=</span> <span class="n">AnnotationImportError</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
@@ -385,11 +385,11 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_handle_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">ItemImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function must either call fail() or return.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""This function must either call fail() or return."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_handle_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">AnnotationImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function must either call fail() or return.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""This function must either call fail() or return."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImportErrorPolicy.fail">

@@ -342,49 +342,49 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.intersect_merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntersectMerge</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.union_merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnionMerge</span>
 
-<span class="n">DEFAULT_MERGE_POLICY</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span>
+<span class="n">DEFAULT_MERGE_POLICY</span> <span class="o">=</span> <span class="s2">"exact"</span>
 
 
 <div class="viewcode-block" id="get_merger">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.html#datumaro.components.hl_ops.get_merger">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_merger</span><span class="p">(</span><span class="n">merge_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Merger</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get :class:`Merger` according to `merge_policy`. You have to choose an appropriate `Merger`</span>
-<span class="sd">    for your purpose. The available merge policies are &quot;union&quot;, &quot;intersect&quot;, and &quot;exact&quot;.</span>
+<span class="sd">    for your purpose. The available merge policies are "union", "intersect", and "exact".</span>
 
 <span class="sd">    1. :class:`UnionMerge`</span>
 
-<span class="sd">    Merge several datasets with &quot;union&quot; policy:</span>
+<span class="sd">    Merge several datasets with "union" policy:</span>
 
 <span class="sd">    - Label categories are merged according to the union of their label names.</span>
-<span class="sd">    For example, if Dataset-A has {&quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;} and Dataset-B has</span>
-<span class="sd">    {&quot;car&quot;, &quot;bus&quot;, &quot;truck&quot;} labels, the merged dataset will have</span>
-<span class="sd">    {&quot;bust&quot;, &quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;, &quot;truck&quot;} labels.</span>
+<span class="sd">    For example, if Dataset-A has {"car", "cat", "dog"} and Dataset-B has</span>
+<span class="sd">    {"car", "bus", "truck"} labels, the merged dataset will have</span>
+<span class="sd">    {"bust", "car", "cat", "dog", "truck"} labels.</span>
 
 <span class="sd">    - If there are two or more dataset items whose (id, subset) pairs match each other,</span>
 <span class="sd">    both are included in the merged dataset. At this time, since the same (id, subset)</span>
 <span class="sd">    pair cannot be duplicated in the dataset, we add a suffix to the id of each source item.</span>
-<span class="sd">    For example, if Dataset-A has DatasetItem(id=&quot;magic&quot;, subset=&quot;train&quot;) and Dataset-B has</span>
-<span class="sd">    also DatasetItem(id=&quot;magic&quot;, subset=&quot;train&quot;), the merged dataset will have</span>
-<span class="sd">    DatasetItem(id=&quot;magic-0&quot;, subset=&quot;train&quot;) and DatasetItem(id=&quot;magic-1&quot;, subset=&quot;train&quot;).</span>
+<span class="sd">    For example, if Dataset-A has DatasetItem(id="magic", subset="train") and Dataset-B has</span>
+<span class="sd">    also DatasetItem(id="magic", subset="train"), the merged dataset will have</span>
+<span class="sd">    DatasetItem(id="magic-0", subset="train") and DatasetItem(id="magic-1", subset="train").</span>
 
 <span class="sd">    2. :class:`IntersectMerge`</span>
 
-<span class="sd">    Merge several datasets with &quot;intersect&quot; policy:</span>
+<span class="sd">    Merge several datasets with "intersect" policy:</span>
 
 <span class="sd">    - If there are two or more dataset items whose (id, subset) pairs match each other,</span>
 <span class="sd">    we can consider this as having an intersection in our dataset. This method merges</span>
 <span class="sd">    the annotations of the corresponding :class:`DatasetItem` into one :class:`DatasetItem`</span>
 <span class="sd">    to handle this intersection. The rule to handle merging annotations is provided by</span>
 <span class="sd">    :class:`AnnotationMerger` according to their annotation types. For example,</span>
-<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]) from Dataset-A and</span>
-<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(.5, .5, 1, 1)]) from Dataset-B can be</span>
-<span class="sd">    merged into DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]).</span>
+<span class="sd">    DatasetItem(id="item_1", subset="train", annotations=[Bbox(0, 0, 1, 1)]) from Dataset-A and</span>
+<span class="sd">    DatasetItem(id="item_1", subset="train", annotations=[Bbox(.5, .5, 1, 1)]) from Dataset-B can be</span>
+<span class="sd">    merged into DatasetItem(id="item_1", subset="train", annotations=[Bbox(0, 0, 1, 1)]).</span>
 
 <span class="sd">    - Label categories are merged according to the union of their label names</span>
-<span class="sd">    (Same as `UnionMerge`). For example, if Dataset-A has {&quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;}</span>
-<span class="sd">    and Dataset-B has {&quot;car&quot;, &quot;bus&quot;, &quot;truck&quot;} labels, the merged dataset will have</span>
-<span class="sd">    {&quot;bust&quot;, &quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;, &quot;truck&quot;} labels.</span>
+<span class="sd">    (Same as `UnionMerge`). For example, if Dataset-A has {"car", "cat", "dog"}</span>
+<span class="sd">    and Dataset-B has {"car", "bus", "truck"} labels, the merged dataset will have</span>
+<span class="sd">    {"bust", "car", "cat", "dog", "truck"} labels.</span>
 
 <span class="sd">    - This merge has configuration parameters (`conf`) to control the annotation merge behaviors.</span>
 
@@ -405,7 +405,7 @@
 
 <span class="sd">    3. :class:`ExactMerge`</span>
 
-<span class="sd">    Merges several datasets using the &quot;simple&quot; algorithm:</span>
+<span class="sd">    Merges several datasets using the "simple" algorithm:</span>
 
 <span class="sd">    - All datasets should have the same categories</span>
 <span class="sd">    - items are matched by (id, subset) pairs</span>
@@ -415,15 +415,15 @@
 <span class="sd">        - something A + something B = conflict</span>
 <span class="sd">    - annotations are matched by value and shared</span>
 <span class="sd">    - in case of conflicts, throws an error</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">&quot;union&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">"union"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">UnionMerge</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">&quot;intersect&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">"intersect"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">IntersectMerge</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">&quot;exact&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">"exact"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ExactMerge</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">merge_policy</span><span class="si">}</span><span class="s2"> is invalid Merger name.&quot;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">merge_policy</span><span class="si">}</span><span class="s2"> is invalid Merger name."</span><span class="p">)</span></div>
 
 </pre></div>
 

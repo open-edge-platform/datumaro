@@ -653,9 +653,9 @@ is well-structured for a classification task.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
-<span class="n">dataset_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/sooah/data/emotion-detection-fer&quot;</span>
+<span class="n">dataset_dir</span> <span class="o">=</span> <span class="s2">"/home/sooah/data/emotion-detection-fer"</span>
 <span class="n">formats</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected data format is &#39;</span><span class="si">{</span><span class="n">formats</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Detected data format is '</span><span class="si">{</span><span class="n">formats</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="n">formats</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
@@ -710,20 +710,20 @@ respective subset names and the classification task. Finally, we can check the n
 
 <span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()])</span>
 
-<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
+<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">"train"</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"classification"</span><span class="p">)</span>
 <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">multi_framework_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
-    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">"torch"</span><span class="p">,</span>
     <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
+<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">"test"</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">"classification"</span><span class="p">)</span>
 <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">multi_framework_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
-    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">"torch"</span><span class="p">,</span>
     <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted train dataset len is &#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted train dataset len is &#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Converted train dataset len is '</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Converted train dataset len is '</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -766,8 +766,8 @@ iteration. With these loaders in place, we can seamlessly feed our datasets into
 <span class="n">training_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">validation_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">training_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Training Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">training_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Validation Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -795,7 +795,7 @@ images. Finally, we transfer the model to the GPU, enabling efficient training a
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">mobilenet_v2</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">mobilenet_v2</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">&quot;IMAGENET1K_V1&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">mobilenet_v2</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">"IMAGENET1K_V1"</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="c1"># Get the number of input features for the last layer</span>
 <span class="n">num_features</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">in_features</span>
@@ -819,7 +819,7 @@ insights into the model’s learning progress. After each epoch, we evaluate the
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">top_k_accuracy</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the top-k accuracy given model output and labels.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Compute the top-k accuracy given model output and labels."""</span>
     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
@@ -835,7 +835,7 @@ insights into the model’s learning progress. After each epoch, we evaluate the
 
 <span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EPOCH </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"EPOCH </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
 
     <span class="c1"># Training phase</span>
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
@@ -854,7 +854,7 @@ insights into the model’s learning progress. After each epoch, we evaluate the
         <span class="c1"># Gather data and report</span>
         <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> [TRAIN] batch </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> loss: </span><span class="si">{</span><span class="n">running_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2"> [TRAIN] batch </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> loss: </span><span class="si">{</span><span class="n">running_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
 
     <span class="c1"># Validation phase</span>
@@ -870,7 +870,7 @@ insights into the model’s learning progress. After each epoch, we evaluate the
             <span class="n">accs</span> <span class="o">+=</span> <span class="n">top1_acc</span>
 
     <span class="n">avg_accs</span> <span class="o">=</span> <span class="n">accs</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> [VAL] validation accuracy: </span><span class="si">{</span><span class="n">avg_accs</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2"> [VAL] validation accuracy: </span><span class="si">{</span><span class="n">avg_accs</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

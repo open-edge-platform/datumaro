@@ -612,26 +612,26 @@ reading, exporting and iteration capabilities, simplifying integration of custom
 formats and providing high performance operations:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;path/&#39;</span><span class="p">,</span> <span class="s1">&#39;voc&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">'path/'</span><span class="p">,</span> <span class="s1">'voc'</span><span class="p">)</span>
 
 <span class="c1"># keep only annotated images</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="c1"># change dataset labels and corresponding annotations</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;remap_labels&#39;</span><span class="p">,</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">'remap_labels'</span><span class="p">,</span>
     <span class="n">mapping</span><span class="o">=</span><span class="p">{</span>
-      <span class="s1">&#39;cat&#39;</span><span class="p">:</span> <span class="s1">&#39;dog&#39;</span><span class="p">,</span> <span class="c1"># rename cat to dog</span>
-      <span class="s1">&#39;truck&#39;</span><span class="p">:</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="c1"># rename truck to car</span>
-      <span class="s1">&#39;person&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="c1"># remove this label</span>
+      <span class="s1">'cat'</span><span class="p">:</span> <span class="s1">'dog'</span><span class="p">,</span> <span class="c1"># rename cat to dog</span>
+      <span class="s1">'truck'</span><span class="p">:</span> <span class="s1">'car'</span><span class="p">,</span> <span class="c1"># rename truck to car</span>
+      <span class="s1">'person'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span> <span class="c1"># remove this label</span>
     <span class="p">},</span>
-    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;delete&#39;</span><span class="p">)</span> <span class="c1"># remove everything else</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">'delete'</span><span class="p">)</span> <span class="c1"># remove everything else</span>
 
 <span class="c1"># iterate over the dataset elements</span>
 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
 
 <span class="c1"># export the resulting dataset in COCO format</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;dst/dir&#39;</span><span class="p">,</span> <span class="s1">&#39;coco&#39;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'dst/dir'</span><span class="p">,</span> <span class="s1">'coco'</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

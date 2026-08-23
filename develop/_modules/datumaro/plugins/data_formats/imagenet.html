@@ -358,8 +358,8 @@
 <div class="viewcode-block" id="ImagenetPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet.html#datumaro.plugins.data_formats.imagenet.ImagenetPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetPath</span><span class="p">:</span>
-    <span class="n">IMAGE_DIR_NO_LABEL</span> <span class="o">=</span> <span class="s2">&quot;no_label&quot;</span>
-    <span class="n">SEP_TOKEN</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span></div>
+    <span class="n">IMAGE_DIR_NO_LABEL</span> <span class="o">=</span> <span class="s2">"no_label"</span>
+    <span class="n">SEP_TOKEN</span> <span class="o">=</span> <span class="s2">":"</span></div>
 
 
 
@@ -376,7 +376,7 @@
         <span class="n">max_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">"Can't find dataset directory"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_depth</span> <span class="o">=</span> <span class="n">min_depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
@@ -386,7 +386,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()):</span>
             <span class="n">dirname</span> <span class="o">=</span> <span class="n">dirname</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="n">level</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dirname</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ImagenetPath</span><span class="o">.</span><span class="n">IMAGE_DIR_NO_LABEL</span><span class="p">:</span>
@@ -407,7 +407,7 @@
 
         <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">find_images</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_depth</span><span class="p">,</span> <span class="n">min_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_depth</span><span class="p">):</span>
             <span class="n">label</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>  <span class="c1"># image is located in the root directory</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">"."</span><span class="p">:</span>  <span class="c1"># image is located in the root directory</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">ImagenetPath</span><span class="o">.</span><span class="n">IMAGE_DIR_NO_LABEL</span>
             <span class="n">image_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
             <span class="n">item_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">+</span> <span class="n">ImagenetPath</span><span class="o">.</span><span class="n">SEP_TOKEN</span> <span class="o">+</span> <span class="n">image_name</span>
@@ -439,7 +439,7 @@
 <div class="viewcode-block" id="ImagenetImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet.html#datumaro.plugins.data_formats.imagenet.ImagenetImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        Multi-level version of ImagenetImporter.</span>
 <span class="sd">        For example, it imports the following directory structure.</span>
 
@@ -454,7 +454,7 @@
 <span class="sd">        └── label_1</span>
 <span class="sd">            └── img3.jpg</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_MIN_DEPTH</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_MAX_DEPTH</span> <span class="o">=</span> <span class="kc">None</span>
@@ -468,19 +468,19 @@
         <span class="c1"># Images must not be under a directory whose name is blacklisted.</span>
         <span class="k">for</span> <span class="n">dname</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">dname</span> <span class="ow">in</span> <span class="n">SUBSET_NAME_WHITELIST</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Following directory names are not permitted: </span><span class="si">{</span><span class="n">SUBSET_NAME_WHITELIST</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Following directory names are not permitted: </span><span class="si">{</span><span class="n">SUBSET_NAME_WHITELIST</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">rel_dname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">)</span>
             <span class="n">level</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rel_dname</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MIN_DEPTH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">level</span> <span class="o">&lt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MIN_DEPTH</span> <span class="ow">and</span> <span class="n">filenames</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Found files out of the directory level bounds.&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Found files out of the directory level bounds."</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MAX_DEPTH</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">level</span> <span class="o">&gt;</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_MAX_DEPTH</span> <span class="ow">and</span> <span class="n">filenames</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Found files out of the directory level bounds.&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Found files out of the directory level bounds."</span><span class="p">)</span>
             <span class="n">dpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">)</span> <span class="o">/</span> <span class="n">rel_dname</span>
             <span class="k">if</span> <span class="n">dpath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">rel_dname</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">SUBSET_NAME_BLACKLIST</span><span class="p">:</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dname</span><span class="si">}</span><span class="s2"> is found in </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="si">}</span><span class="s2">. &quot;</span>
-                    <span class="s2">&quot;However, Images must not be under a directory whose name is blacklisted &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;(SUBSET_NAME_BLACKLIST=</span><span class="si">{</span><span class="n">SUBSET_NAME_BLACKLIST</span><span class="si">}</span><span class="s2">).&quot;</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dname</span><span class="si">}</span><span class="s2"> is found in </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="si">}</span><span class="s2">. "</span>
+                    <span class="s2">"However, Images must not be under a directory whose name is blacklisted "</span>
+                    <span class="sa">f</span><span class="s2">"(SUBSET_NAME_BLACKLIST=</span><span class="si">{</span><span class="n">SUBSET_NAME_BLACKLIST</span><span class="si">}</span><span class="s2">)."</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></div>
@@ -507,7 +507,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT</span><span class="p">}]</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains_only_images</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span></div>
+        <span class="k">return</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT</span><span class="p">}]</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains_only_images</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span></div>
 
 
 <div class="viewcode-block" id="ImagenetImporter.get_file_extensions">
@@ -522,8 +522,8 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--subset&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--path"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--subset"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parser</span></div>
 </div>
@@ -534,7 +534,7 @@
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet.html#datumaro.plugins.data_formats.imagenet.ImagenetWithSubsetDirsImporter">[docs]</a>
 <span class="nd">@with_subset_dirs</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetWithSubsetDirsImporter</span><span class="p">(</span><span class="n">ImagenetImporter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-level image directory structure importer.</span>
+<span class="w">    </span><span class="sd">"""Multi-level image directory structure importer.</span>
 <span class="sd">    Example:</span>
 
 <span class="sd">    .. code-block::</span>
@@ -564,14 +564,14 @@
 <span class="sd">            │       └── img2.jpg</span>
 <span class="sd">            └── label_1</span>
 <span class="sd">                └── img3.jpg</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="ImagenetExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.imagenet.html#datumaro.plugins.data_formats.imagenet.ImagenetExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImagenetExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".jpg"</span>
     <span class="n">USE_SUBSET_DIRS</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -582,17 +582,17 @@
                 <span class="c1"># e.g. item.id = my_img_1</span>
                 <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
             <span class="c1"># e.g. item.id = label_1:my_img_1</span>
-            <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># &quot;:&quot; is not allowed in windows</span>
+            <span class="k">return</span> <span class="s2">"_"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">id_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>  <span class="c1"># ":" is not allowed in windows</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not an image"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">USE_SUBSET_DIRS</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;There are more than one subset in the dataset (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span><span class="si">}</span><span class="s2">). &quot;</span>
-                <span class="s2">&quot;However, ImageNet format exports all dataset items into the same directory. &quot;</span>
-                <span class="s2">&quot;Therefore, subset information will be lost. To prevent it, please use ImagenetWithSubsetDirsExporter. &quot;</span>
-                <span class="s1">&#39;For example, dataset.export(&quot;&lt;path/to/output&gt;&quot;, format=&quot;imagenet_with_subset_dirs&quot;).&#39;</span>
+                <span class="sa">f</span><span class="s2">"There are more than one subset in the dataset (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span><span class="si">}</span><span class="s2">). "</span>
+                <span class="s2">"However, ImageNet format exports all dataset items into the same directory. "</span>
+                <span class="s2">"Therefore, subset information will be lost. To prevent it, please use ImagenetWithSubsetDirsExporter. "</span>
+                <span class="s1">'For example, dataset.export("&lt;path/to/output&gt;", format="imagenet_with_subset_dirs").'</span>
             <span class="p">)</span>
 
         <span class="n">root_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>

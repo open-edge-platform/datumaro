@@ -351,16 +351,16 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.importer.html#datumaro.plugins.data_formats.mvtec.importer.MvtecImporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MvtecImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_TASKS</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">classification</span><span class="p">:</span> <span class="s2">&quot;mvtec_classification&quot;</span><span class="p">,</span>
-        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span><span class="p">:</span> <span class="s2">&quot;mvtec_detection&quot;</span><span class="p">,</span>
-        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span><span class="p">:</span> <span class="s2">&quot;mvtec_segmentation&quot;</span><span class="p">,</span>
+        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">classification</span><span class="p">:</span> <span class="s2">"mvtec_classification"</span><span class="p">,</span>
+        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span><span class="p">:</span> <span class="s2">"mvtec_detection"</span><span class="p">,</span>
+        <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span><span class="p">:</span> <span class="s2">"mvtec_segmentation"</span><span class="p">,</span>
     <span class="p">}</span>
 
 <div class="viewcode-block" id="MvtecImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.importer.html#datumaro.plugins.data_formats.mvtec.importer.MvtecImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">subset_paths</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"*"</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># MVTec format should have MvtecPath.MASK_DIR directory.</span>
         <span class="k">if</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">subset_paths</span><span class="p">]:</span>
@@ -372,9 +372,9 @@
                 <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subset_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subset_path</span><span class="p">:</span>
                     <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="p">{</span>
-                            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">subset_path</span><span class="p">,</span>
-                            <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">extractor_type</span><span class="p">,</span>
-                            <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;merge_policy&quot;</span><span class="p">:</span> <span class="s2">&quot;union&quot;</span><span class="p">}),</span>
+                            <span class="s2">"url"</span><span class="p">:</span> <span class="n">subset_path</span><span class="p">,</span>
+                            <span class="s2">"format"</span><span class="p">:</span> <span class="n">extractor_type</span><span class="p">,</span>
+                            <span class="s2">"options"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">"merge_policy"</span><span class="p">:</span> <span class="s2">"union"</span><span class="p">}),</span>
                         <span class="p">}</span>
                     <span class="p">)</span>
 
@@ -385,7 +385,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.importer.html#datumaro.plugins.data_formats.mvtec.importer.MvtecImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;.png&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">".png"</span><span class="p">]</span></div>
 </div>
 
 

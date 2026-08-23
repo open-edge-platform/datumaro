@@ -369,7 +369,7 @@
 <div class="viewcode-block" id="Validator.validate">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.validator.html#datumaro.components.hl_ops.Validator.validate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the validation results of a dataset based on task type.</span>
 
 <span class="sd">        Args:</span>
@@ -381,28 +381,28 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            validation_results (dict):</span>
 <span class="sd">                Dict with validation statistics, reports and summary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">validation_results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid dataset type &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Invalid dataset type '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
 
         <span class="c1"># generate statistics</span>
         <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-        <span class="n">validation_results</span><span class="p">[</span><span class="s2">&quot;statistics&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
+        <span class="n">validation_results</span><span class="p">[</span><span class="s2">"statistics"</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
 
         <span class="c1"># generate validation reports and summary</span>
         <span class="n">reports</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_reports</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
         <span class="n">reports</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">reports</span><span class="p">))</span>
 
         <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
-            <span class="s2">&quot;warnings&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;warning&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
-            <span class="s2">&quot;infos&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
+            <span class="s2">"errors"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"error"</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
+            <span class="s2">"warnings"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"warning"</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
+            <span class="s2">"infos"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"info"</span><span class="p">,</span> <span class="n">reports</span><span class="p">)),</span>
         <span class="p">}</span>
 
-        <span class="n">validation_results</span><span class="p">[</span><span class="s2">&quot;validation_reports&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reports</span>
-        <span class="n">validation_results</span><span class="p">[</span><span class="s2">&quot;summary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="n">validation_results</span><span class="p">[</span><span class="s2">"validation_reports"</span><span class="p">]</span> <span class="o">=</span> <span class="n">reports</span>
+        <span class="n">validation_results</span><span class="p">[</span><span class="s2">"summary"</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
 
         <span class="k">return</span> <span class="n">validation_results</span></div>
 
@@ -410,7 +410,7 @@
 <div class="viewcode-block" id="Validator.compute_statistics">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.validator.html#datumaro.components.hl_ops.Validator.compute_statistics">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Computes statistics of the dataset based on task type.</span>
 
 <span class="sd">        Args:</span>
@@ -418,14 +418,14 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            stats (dict): A dict object containing statistics of the dataset.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in a subclass&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Must be implemented in a subclass"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Validator.generate_reports">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.validator.html#datumaro.components.hl_ops.Validator.generate_reports">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be implemented in a subclass&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Must be implemented in a subclass"</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

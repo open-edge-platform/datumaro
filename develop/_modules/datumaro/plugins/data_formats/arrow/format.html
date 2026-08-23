@@ -351,44 +351,44 @@
 <div class="viewcode-block" id="DatumaroArrow">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.plugins.data_formats.arrow.format.DatumaroArrow">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatumaroArrow</span><span class="p">:</span>
-    <span class="n">SIGNATURE</span> <span class="o">=</span> <span class="s2">&quot;signature:datumaro_arrow&quot;</span>
-    <span class="n">VERSION</span> <span class="o">=</span> <span class="s2">&quot;2.0&quot;</span>
+    <span class="n">SIGNATURE</span> <span class="o">=</span> <span class="s2">"signature:datumaro_arrow"</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s2">"2.0"</span>
 
     <span class="n">MP_TIMEOUT</span> <span class="o">=</span> <span class="mf">300.0</span>  <span class="c1"># 5 minutes</span>
 
-    <span class="n">ID_FIELD</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
-    <span class="n">SUBSET_FIELD</span> <span class="o">=</span> <span class="s2">&quot;subset&quot;</span>
+    <span class="n">ID_FIELD</span> <span class="o">=</span> <span class="s2">"id"</span>
+    <span class="n">SUBSET_FIELD</span> <span class="o">=</span> <span class="s2">"subset"</span>
 
     <span class="n">IMAGE_FIELD</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;has_bytes&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">bool_</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">list_</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">uint16</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"has_bytes"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">bool_</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">list_</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">uint16</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)),</span>
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="n">POINT_CLOUD_FIELD</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;has_bytes&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">bool_</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;extra_images&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">list_</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">IMAGE_FIELD</span><span class="p">))),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"has_bytes"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">bool_</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"path"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"extra_images"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">list_</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"image"</span><span class="p">,</span> <span class="n">IMAGE_FIELD</span><span class="p">))),</span>
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="n">MEDIA_FIELD</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
         <span class="p">[</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">uint8</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">IMAGE_FIELD</span><span class="p">),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;point_cloud&quot;</span><span class="p">,</span> <span class="n">POINT_CLOUD_FIELD</span><span class="p">),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"type"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">uint8</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"image"</span><span class="p">,</span> <span class="n">IMAGE_FIELD</span><span class="p">),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">,</span> <span class="n">POINT_CLOUD_FIELD</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="n">SCHEMA</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span>
         <span class="p">[</span>
             <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">ID_FIELD</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
             <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">SUBSET_FIELD</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">string</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;media&quot;</span><span class="p">,</span> <span class="n">MEDIA_FIELD</span><span class="p">),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;annotations&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
-            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;attributes&quot;</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"media"</span><span class="p">,</span> <span class="n">MEDIA_FIELD</span><span class="p">),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"annotations"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
+            <span class="n">pa</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">"attributes"</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">binary</span><span class="p">()),</span>
         <span class="p">]</span>
     <span class="p">)</span>
 
@@ -398,7 +398,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">check_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">signature</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">signature</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Input signature=</span><span class="si">{</span><span class="n">signature</span><span class="si">}</span><span class="s2"> is not aligned with the ground truth signature=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Input signature=</span><span class="si">{</span><span class="n">signature</span><span class="si">}</span><span class="s2"> is not aligned with the ground truth signature=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -408,9 +408,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">check_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">Schema</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SCHEMA</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">schema</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;input schema is not aligned with the ground truth schema.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;input schema: </span><span class="se">\n</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;ground truth schema: </span><span class="se">\n</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">SCHEMA</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"input schema is not aligned with the ground truth schema.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"input schema: </span><span class="se">\n</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"ground truth schema: </span><span class="se">\n</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">SCHEMA</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -420,7 +420,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">check_version</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">version</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Input version=</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> is not aligned with the current data format version=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Input version=</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> is not aligned with the current data format version=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -433,11 +433,11 @@
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SCHEMA</span><span class="o">.</span><span class="n">with_metadata</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;signature&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="p">,</span>
-                <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="p">,</span>
-                <span class="s2">&quot;infos&quot;</span><span class="p">:</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">infos</span><span class="p">()),</span>
-                <span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">categories</span><span class="p">),</span>
-                <span class="s2">&quot;media_type&quot;</span><span class="p">:</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">media_type</span><span class="p">)),</span>
+                <span class="s2">"signature"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="p">,</span>
+                <span class="s2">"version"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VERSION</span><span class="p">,</span>
+                <span class="s2">"infos"</span><span class="p">:</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">infos</span><span class="p">()),</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">categories</span><span class="p">),</span>
+                <span class="s2">"media_type"</span><span class="p">:</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&lt;I"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">media_type</span><span class="p">)),</span>
             <span class="p">}</span>
         <span class="p">)</span></div>
 </div>

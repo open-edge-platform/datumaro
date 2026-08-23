@@ -364,11 +364,11 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.check_instruction_set">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_instruction_set</span><span class="p">(</span><span class="n">instruction</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">instruction</span> <span class="o">==</span> <span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span>
-        <span class="c1"># Let&#39;s ignore a warning from bandit about using shell=True.</span>
-        <span class="c1"># In this case it isn&#39;t a security issue and we use some</span>
+        <span class="c1"># Let's ignore a warning from bandit about using shell=True.</span>
+        <span class="c1"># In this case it isn't a security issue and we use some</span>
         <span class="c1"># shell features like pipes.</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s1">&#39;lscpu | grep -o &quot;</span><span class="si">%s</span><span class="s1">&quot; | head -1&#39;</span> <span class="o">%</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>  <span class="c1"># nosec B602</span>
-            <span class="s2">&quot;utf-8&quot;</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s1">'lscpu | grep -o "</span><span class="si">%s</span><span class="s1">" | head -1'</span> <span class="o">%</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>  <span class="c1"># nosec B602</span>
+            <span class="s2">"utf-8"</span>
         <span class="p">)</span>
     <span class="p">)</span></div>
 
@@ -421,13 +421,13 @@
     <span class="n">min_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exts</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">exts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">exts</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)}</span>
+        <span class="n">exts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"."</span> <span class="o">+</span> <span class="n">exts</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"."</span><span class="p">)}</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">exts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exts</span><span class="p">}</span>
+        <span class="n">exts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"."</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exts</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ext</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">dotpos</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dotpos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># exclude &#39;.ext&#39; cases too</span>
+        <span class="n">dotpos</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dotpos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># exclude '.ext' cases too</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="n">dotpos</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">exts</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
@@ -462,31 +462,31 @@
     <span class="n">dst</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;Source directory &#39;</span><span class="si">%s</span><span class="s2">&#39; doesn&#39;t exist&quot;</span> <span class="o">%</span> <span class="n">src</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">"Source directory '</span><span class="si">%s</span><span class="s2">' doesn't exist"</span> <span class="o">%</span> <span class="n">src</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="s2">&quot;Destination directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists&quot;</span> <span class="o">%</span> <span class="n">dst</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="s2">"Destination directory '</span><span class="si">%s</span><span class="s2">' already exists"</span> <span class="o">%</span> <span class="n">dst</span><span class="p">)</span>
 
     <span class="n">dst_basedir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dst_basedir</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst_basedir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"windows"</span><span class="p">:</span>
             <span class="c1"># Ignore</span>
             <span class="c1">#   B603: subprocess_without_shell_equals_true</span>
             <span class="c1">#   B607: start_process_with_partial_path</span>
             <span class="c1"># In this case we control what is called and command arguments</span>
             <span class="c1"># PATH overriding is considered low risk</span>
             <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>  <span class="c1"># nosec B603, B607</span>
-                <span class="p">[</span><span class="s2">&quot;xcopy&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="s2">&quot;/s&quot;</span><span class="p">,</span> <span class="s2">&quot;/e&quot;</span><span class="p">,</span> <span class="s2">&quot;/q&quot;</span><span class="p">,</span> <span class="s2">&quot;/y&quot;</span><span class="p">,</span> <span class="s2">&quot;/i&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">"xcopy"</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="s2">"/s"</span><span class="p">,</span> <span class="s2">"/e"</span><span class="p">,</span> <span class="s2">"/q"</span><span class="p">,</span> <span class="s2">"/y"</span><span class="p">,</span> <span class="s2">"/i"</span><span class="p">],</span>
                 <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
                 <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"linux"</span><span class="p">:</span>
             <span class="c1"># As above</span>
             <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>  <span class="c1"># nosec B603, B607</span>
-                <span class="p">[</span><span class="s2">&quot;cp&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">"cp"</span><span class="p">,</span> <span class="s2">"-r"</span><span class="p">,</span> <span class="s2">"--"</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">],</span>
                 <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
                 <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
@@ -494,7 +494,7 @@
             <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="s2">&quot;Failed to copy data. The command &#39;</span><span class="si">%s</span><span class="s2">&#39; has failed with the following output: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">cmd</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="s2">"Failed to copy data. The command '</span><span class="si">%s</span><span class="s2">' has failed with the following output: '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">cmd</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
@@ -503,7 +503,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.suppress_output">[docs]</a>
 <span class="nd">@contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">suppress_output</span><span class="p">(</span><span class="n">stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">,</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">es</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">,</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">es</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
             <span class="n">es</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">redirect_stdout</span><span class="p">(</span><span class="n">devnull</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">stderr</span><span class="p">:</span>
@@ -562,13 +562,13 @@
 <div class="viewcode-block" id="is_subpath">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.is_subpath">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_subpath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Tests if a path is subpath of another path or the paths are equal.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">base</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span></div>
 
 
 
@@ -577,14 +577,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">make_file_name</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="c1"># adapted from</span>
     <span class="c1"># https://docs.djangoproject.com/en/2.1/_modules/django/utils/text/#slugify</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Normalizes string, converts to lowercase, removes non-alpha characters,</span>
 <span class="sd">    and converts spaces to hyphens.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKD&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">"NFKD"</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^\w\s-]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-\s]+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span></div>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[^\w\s-]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[-\s]+"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span></div>
 
 
 
@@ -593,12 +593,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_next_name</span><span class="p">(</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">basename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
-    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">,</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates the &quot;next&quot; name by appending a next index to the occurrence</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Generates the "next" name by appending a next index to the occurrence</span>
 <span class="sd">    of the basename with the highest index in the input collection.</span>
 
 <span class="sd">    Returns: next string name</span>
@@ -617,9 +617,9 @@
 <span class="sd">    Basename: name_base</span>
 
 <span class="sd">    Output: name_base6</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(?:</span><span class="si">%s</span><span class="s2">(\d+))?</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">,</span> <span class="p">[</span><span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">suffix</span><span class="p">])))</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"</span><span class="si">%s</span><span class="s2">(?:</span><span class="si">%s</span><span class="s2">(\d+))?</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">,</span> <span class="p">[</span><span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">suffix</span><span class="p">])))</span>
     <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">match</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">)</span> <span class="k">if</span> <span class="n">match</span><span class="p">]</span>
 
     <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">cast</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -627,7 +627,7 @@
         <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">sep</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">sep</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">basename</span> <span class="o">+</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">suffix</span></div>
@@ -637,11 +637,11 @@
 <div class="viewcode-block" id="extract_subset_name_from_parent">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.extract_subset_name_from_parent">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_subset_name_from_parent</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract subset name from the given url.</span>
+<span class="w">    </span><span class="sd">"""Extract subset name from the given url.</span>
 
-<span class="sd">    For example, if url = &quot;/a/b/images/train/img.jpg&quot; and start = &quot;/a/b&quot;,</span>
-<span class="sd">    it will return &quot;train&quot;. On the other hand, if url = &quot;/a/b/images/img.jpg&quot;</span>
-<span class="sd">    and start = &quot;/a/b&quot;, it will return DEFAULT_SUBSET_NAME.</span>
+<span class="sd">    For example, if url = "/a/b/images/train/img.jpg" and start = "/a/b",</span>
+<span class="sd">    it will return "train". On the other hand, if url = "/a/b/images/img.jpg"</span>
+<span class="sd">    and start = "/a/b", it will return DEFAULT_SUBSET_NAME.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -654,12 +654,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        Subset name</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">relpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
     <span class="n">relpath</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">relpath</span><span class="p">)</span>
     <span class="n">relpath</span><span class="p">,</span> <span class="n">subdir_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">relpath</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">relpath</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">relpath</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
     <span class="k">return</span> <span class="n">subdir_name</span></div>
@@ -670,7 +670,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.get_all_file_extensions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_file_extensions</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_dirs</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">extensions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"**"</span><span class="p">,</span> <span class="s2">"*.*"</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ignore_dirs</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)):</span>
             <span class="n">extensions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span></div>

@@ -508,27 +508,27 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_merge_by_copy</span><span class="p">(</span><span class="n">anns</span><span class="p">:</span> <span class="n">AnnotationsForMerge</span><span class="p">,</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="n">Caption</span><span class="p">]:</span>
     <span class="n">new_anns</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ann</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">:</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">caption</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;caption&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">caption</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"caption"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_anns</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">ann</span>
         <span class="k">elif</span> <span class="n">caption</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_anns</span><span class="p">[</span><span class="n">caption</span><span class="p">]</span> <span class="o">=</span> <span class="n">ann</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;The annotation should be Label or Caption.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">"The annotation should be Label or Caption."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">new_anns</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_merge_not_support</span><span class="p">(</span><span class="n">ann_type</span><span class="p">:</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;type(ann)=</span><span class="si">{</span><span class="n">ann_type</span><span class="si">}</span><span class="s2"> is not support tiling.&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"type(ann)=</span><span class="si">{</span><span class="n">ann_type</span><span class="si">}</span><span class="s2"> is not support tiling."</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MergeTile">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.tiling.merge_tile.html#datumaro.plugins.tiling.merge_tile.MergeTile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MergeTile</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Transformation to merge the previously tiled dataset. It can generally</span>
 <span class="sd">    be understood as the inverse transform of TileTransform. However,</span>
 <span class="sd">    A sequence of Tile -&gt; MergeTile is a lossy transformation.</span>
@@ -537,7 +537,7 @@
 <span class="sd">    better to revert TileTransform when you need to merge them. But,</span>
 <span class="sd">    this will be helpful when you have another transformation between</span>
 <span class="sd">    Tile and MergeTile. For example, Tile -&gt; (an arbitrary Transform) -&gt; MergeTile.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_merge_anns_func_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">_merge_by_copy</span><span class="p">,</span>
@@ -566,8 +566,8 @@
         <span class="n">items_to_merge</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>
-            <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tile_id&quot;</span><span class="p">)</span>
-            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi&quot;</span><span class="p">)</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tile_id"</span><span class="p">)</span>
+            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"roi"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">item_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">roi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">items_to_merge</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="p">]</span>
@@ -581,7 +581,7 @@
         <span class="n">max_h</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">max_w</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi&quot;</span><span class="p">)</span>
+            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"roi"</span><span class="p">)</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">roi</span>
             <span class="n">max_w</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_w</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span>
             <span class="n">max_h</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_h</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
@@ -594,7 +594,7 @@
                 <span class="p">[</span>
                     <span class="p">(</span>
                         <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span>
-                        <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi&quot;</span><span class="p">),</span>
+                        <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"roi"</span><span class="p">),</span>
                     <span class="p">)</span>
                     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span>
                 <span class="p">],</span>
@@ -610,16 +610,16 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
             <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
 
-        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;tile_idx&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;tile_id&quot;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;roi&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"tile_idx"</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"tile_id"</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">"roi"</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">attrs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_merge_tiled_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">anns_to_merge</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">AnnotationsForMerge</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi&quot;</span><span class="p">)</span>
+            <span class="n">roi</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"roi"</span><span class="p">)</span>
             <span class="n">roi_box</span><span class="p">:</span> <span class="n">ShapelyPolygon</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="o">*</span><span class="n">xywh_to_x1y1x2y2</span><span class="p">(</span><span class="o">*</span><span class="n">roi</span><span class="p">))</span>
 
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>

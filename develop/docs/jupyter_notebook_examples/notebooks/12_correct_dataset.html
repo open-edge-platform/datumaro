@@ -610,10 +610,10 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;coco_dataset&quot;</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;coco_instances&quot;</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s2">"coco_dataset"</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"coco_instances"</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Representation for sample COCO dataset&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Representation for sample COCO dataset"</span><span class="p">)</span>
 <span class="n">dataset</span>
 </pre></div>
 </div>
@@ -666,9 +666,9 @@ infos
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectionValidator</span>
 
 <span class="n">extra_args</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;few_samples_thr&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="s2">&quot;imbalance_ratio_thr&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;far_from_mean_thr&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="s2">"few_samples_thr"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">"imbalance_ratio_thr"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"far_from_mean_thr"</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">validator</span> <span class="o">=</span> <span class="n">DetectionValidator</span><span class="p">(</span><span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
@@ -677,33 +677,33 @@ infos
 <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
     <span class="n">reports</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation report summary:&quot;</span><span class="p">,</span> <span class="n">reports</span><span class="p">[</span><span class="s2">&quot;summary&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Validation report summary:"</span><span class="p">,</span> <span class="n">reports</span><span class="p">[</span><span class="s2">"summary"</span><span class="p">])</span>
 
     <span class="n">error_cnt</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">warning_cnt</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">info_cnt</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">[</span><span class="s2">&quot;validation_reports&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span>
-            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;anomaly_type&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">[</span><span class="s2">"validation_reports"</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"error"</span><span class="p">:</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">"anomaly_type"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">error_cnt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">error_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">error_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;warning&quot;</span><span class="p">:</span>
-            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;anomaly_type&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"warning"</span><span class="p">:</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">"anomaly_type"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">warning_cnt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">warning_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">warning_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;severity&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;info&quot;</span><span class="p">:</span>
-            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;anomaly_type&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">"severity"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"info"</span><span class="p">:</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s2">"anomaly_type"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">info_cnt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">info_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">info_cnt</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The number of reports per error type: &quot;</span><span class="p">,</span> <span class="n">error_cnt</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The number of reports per warning type: &quot;</span><span class="p">,</span> <span class="n">warning_cnt</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The number of reports per info type: &quot;</span><span class="p">,</span> <span class="n">info_cnt</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"The number of reports per error type: "</span><span class="p">,</span> <span class="n">error_cnt</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"The number of reports per warning type: "</span><span class="p">,</span> <span class="n">warning_cnt</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"The number of reports per info type: "</span><span class="p">,</span> <span class="n">info_cnt</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">reports</span>
 
@@ -736,12 +736,12 @@ The number of reports per info type:  {&#39;FewSamplesInLabel&#39;: 9, &#39;Imba
 
 <span class="n">far_from_mean_ids</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">far_from_mean_subsets</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">[</span><span class="s2">&quot;validation_reports&quot;</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;anomaly_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;FarFromLabelMean&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">far_from_mean_ids</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">reports</span><span class="p">[</span><span class="s2">"validation_reports"</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">"anomaly_type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"FarFromLabelMean"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">report</span><span class="p">[</span><span class="s2">"item_id"</span><span class="p">]</span> <span class="ow">in</span> <span class="n">far_from_mean_ids</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">far_from_mean_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">])</span>
-        <span class="n">far_from_mean_subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;subset&quot;</span><span class="p">])</span>
+        <span class="n">far_from_mean_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">"item_id"</span><span class="p">])</span>
+        <span class="n">far_from_mean_subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">"subset"</span><span class="p">])</span>
 
 <span class="n">visualizer</span> <span class="o">=</span> <span class="n">Visualizer</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">ignored_types</span><span class="o">=</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">visualizer</span><span class="o">.</span><span class="n">vis_gallery</span><span class="p">(</span><span class="n">far_from_mean_ids</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="n">far_from_mean_subsets</span><span class="p">[:</span><span class="mi">8</span><span class="p">])</span>

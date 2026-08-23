@@ -357,14 +357,14 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">],</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">NONE</span><span class="p">)}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">MediaType</span><span class="o">.</span><span class="n">NONE</span><span class="p">)}</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ImageMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PointCloudMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MediaElementMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">obj</span><span class="o">.</span><span class="n">_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MediaMapper.backward">
@@ -377,7 +377,7 @@
         <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span>
         <span class="n">table_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
-        <span class="n">media_type</span> <span class="o">=</span> <span class="n">MediaType</span><span class="p">(</span><span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span>
+        <span class="n">media_type</span> <span class="o">=</span> <span class="n">MediaType</span><span class="p">(</span><span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -387,7 +387,7 @@
             <span class="k">return</span> <span class="n">PointCloudMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">media_struct</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MediaElementMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">media_struct</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2"> is not allowed for MediaMapper."</span><span class="p">)</span></div>
 </div>
 
 
@@ -395,14 +395,14 @@
 <div class="viewcode-block" id="MediaElementMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.MediaElementMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MediaElementMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
-    <span class="n">MAGIC_PATH</span> <span class="o">=</span> <span class="s2">&quot;/NOT/A/REAL/PATH&quot;</span>
+    <span class="n">MAGIC_PATH</span> <span class="o">=</span> <span class="s2">"/NOT/A/REAL/PATH"</span>
     <span class="n">MEDIA_TYPE</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">MEDIA_ELEMENT</span>
 
 <div class="viewcode-block" id="MediaElementMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.MediaElementMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">MediaElement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">type</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">type</span><span class="p">)}</span></div>
 
 
 <div class="viewcode-block" id="MediaElementMapper.backward">
@@ -424,30 +424,30 @@
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.ImageMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ImageMapper</span><span class="p">(</span><span class="n">MediaElementMapper</span><span class="p">):</span>
     <span class="n">MEDIA_TYPE</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span>
-    <span class="n">AVAILABLE_SCHEMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;AS-IS&quot;</span><span class="p">,</span> <span class="s2">&quot;PNG&quot;</span><span class="p">,</span> <span class="s2">&quot;TIFF&quot;</span><span class="p">,</span> <span class="s2">&quot;JPEG/95&quot;</span><span class="p">,</span> <span class="s2">&quot;JPEG/75&quot;</span><span class="p">,</span> <span class="s2">&quot;NONE&quot;</span><span class="p">)</span>
+    <span class="n">AVAILABLE_SCHEMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"AS-IS"</span><span class="p">,</span> <span class="s2">"PNG"</span><span class="p">,</span> <span class="s2">"TIFF"</span><span class="p">,</span> <span class="s2">"JPEG/95"</span><span class="p">,</span> <span class="s2">"JPEG/75"</span><span class="p">,</span> <span class="s2">"NONE"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImageMapper.encode">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.ImageMapper.encode">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">scheme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;PNG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">scheme</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;NONE&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">scheme</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"PNG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">scheme</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">"NONE"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;AS-IS&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">"AS-IS"</span><span class="p">:</span>
             <span class="n">_bytes</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">bytes</span>
             <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">_bytes</span>
             <span class="c1"># try to encode in PNG</span>
-            <span class="n">scheme</span> <span class="o">=</span> <span class="s2">&quot;PNG&quot;</span>
+            <span class="n">scheme</span> <span class="o">=</span> <span class="s2">"PNG"</span>
 
         <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">scheme</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;JPEG&quot;</span><span class="p">):</span>
-            <span class="n">quality</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scheme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;ext&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;JPEG&quot;</span>
-            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quality</span>
-        <span class="k">elif</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;PNG&quot;</span><span class="p">:</span>
-            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;ext&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;PNG&quot;</span>
-        <span class="k">elif</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;TIFF&quot;</span><span class="p">:</span>
-            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;ext&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;TIFF&quot;</span>
+        <span class="k">if</span> <span class="n">scheme</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"JPEG"</span><span class="p">):</span>
+            <span class="n">quality</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scheme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">"ext"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"JPEG"</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">"jpeg_quality"</span><span class="p">]</span> <span class="o">=</span> <span class="n">quality</span>
+        <span class="k">elif</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">"PNG"</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">"ext"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"PNG"</span>
+        <span class="k">elif</span> <span class="n">scheme</span> <span class="o">==</span> <span class="s2">"TIFF"</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">"ext"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"TIFF"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -472,18 +472,18 @@
 <div class="viewcode-block" id="ImageMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.ImageMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Image</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;PNG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Image</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Image</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">"PNG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">_bytes</span> <span class="o">=</span> <span class="n">encoder</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="n">encoder</span><span class="p">)</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">out</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;has_bytes&quot;</span><span class="p">:</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="n">_bytes</span><span class="p">,</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"image"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"has_bytes"</span><span class="p">:</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"bytes"</span><span class="p">:</span> <span class="n">_bytes</span><span class="p">,</span>
+            <span class="s2">"path"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
@@ -498,22 +498,22 @@
         <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span>
         <span class="n">table_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
-        <span class="n">image_struct</span> <span class="o">=</span> <span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">)</span>
+        <span class="n">image_struct</span> <span class="o">=</span> <span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
                 <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-                <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">))</span>
+            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">))</span>
             <span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">&quot;media&quot;</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
             <span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
-            <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
         <span class="p">)</span></div>
 
 
@@ -523,19 +523,19 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">backward_extra_image</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">image_struct</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">StructScalar</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">extra_image_idx</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
                 <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-                <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">&quot;media&quot;</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;point_cloud&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_images&quot;</span><span class="p">)[</span><span class="n">extra_image_idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra_images"</span><span class="p">)[</span><span class="n">extra_image_idx</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
             <span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
-            <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
         <span class="p">)</span></div>
 </div>
 
@@ -546,28 +546,28 @@
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.PointCloudMapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PointCloudMapper</span><span class="p">(</span><span class="n">MediaElementMapper</span><span class="p">):</span>
     <span class="n">MEDIA_TYPE</span> <span class="o">=</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">POINT_CLOUD</span>
-    <span class="n">B64_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;//B64_ENCODED//&quot;</span>
+    <span class="n">B64_PREFIX</span> <span class="o">=</span> <span class="s2">"//B64_ENCODED//"</span>
 
 <div class="viewcode-block" id="PointCloudMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.media.html#datumaro.plugins.data_formats.arrow.mapper.PointCloudMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PointCloud</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;PNG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">encoder</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PointCloud</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">"PNG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
             <span class="n">_bytes</span> <span class="o">=</span> <span class="n">encoder</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">encoder</span> <span class="o">!=</span> <span class="s2">&quot;NONE&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">encoder</span> <span class="o">!=</span> <span class="s2">"NONE"</span><span class="p">:</span>
             <span class="n">_bytes</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_bytes</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">out</span><span class="p">[</span><span class="s2">&quot;point_cloud&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;has_bytes&quot;</span><span class="p">:</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="n">_bytes</span><span class="p">,</span>
-            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
-            <span class="s2">&quot;extra_images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">ImageMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="n">encoder</span><span class="p">)[</span><span class="s2">&quot;image&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">extra_images</span><span class="p">],</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"point_cloud"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"has_bytes"</span><span class="p">:</span> <span class="n">_bytes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"bytes"</span><span class="p">:</span> <span class="n">_bytes</span><span class="p">,</span>
+            <span class="s2">"path"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+            <span class="s2">"extra_images"</span><span class="p">:</span> <span class="p">[</span><span class="n">ImageMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="n">encoder</span><span class="p">)[</span><span class="s2">"image"</span><span class="p">]</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">extra_images</span><span class="p">],</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
@@ -583,22 +583,22 @@
         <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span>
         <span class="n">table_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointCloud</span><span class="p">:</span>
-        <span class="n">point_cloud_struct</span> <span class="o">=</span> <span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;point_cloud&quot;</span><span class="p">)</span>
+        <span class="n">point_cloud_struct</span> <span class="o">=</span> <span class="n">media_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">)</span>
 
         <span class="n">extra_images</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">ImageMapper</span><span class="o">.</span><span class="n">backward_extra_image</span><span class="p">(</span><span class="n">image_struct</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">extra_image_idx</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">extra_image_idx</span><span class="p">,</span> <span class="n">image_struct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">point_cloud_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;extra_images&quot;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">extra_image_idx</span><span class="p">,</span> <span class="n">image_struct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">point_cloud_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra_images"</span><span class="p">))</span>
         <span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">point_cloud_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="o">:=</span> <span class="n">point_cloud_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"path"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">PointCloud</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">extra_images</span><span class="o">=</span><span class="n">extra_images</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">PointCloud</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">))</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">))</span>
             <span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">&quot;media&quot;</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;point_cloud&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bytes&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
             <span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
             <span class="n">extra_images</span><span class="o">=</span><span class="n">extra_images</span><span class="p">,</span>
         <span class="p">)</span></div>

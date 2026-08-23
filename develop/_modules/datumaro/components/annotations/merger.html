@@ -361,18 +361,18 @@
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;AnnotationMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;BboxMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;CaptionsMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Cuboid3dMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;EllipseMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImageAnnotationMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LabelMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LineMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MaskMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PointsMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PolygonMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RotatedBboxMerger&quot;</span><span class="p">,</span>
+    <span class="s2">"AnnotationMerger"</span><span class="p">,</span>
+    <span class="s2">"BboxMerger"</span><span class="p">,</span>
+    <span class="s2">"CaptionsMerger"</span><span class="p">,</span>
+    <span class="s2">"Cuboid3dMerger"</span><span class="p">,</span>
+    <span class="s2">"EllipseMerger"</span><span class="p">,</span>
+    <span class="s2">"ImageAnnotationMerger"</span><span class="p">,</span>
+    <span class="s2">"LabelMerger"</span><span class="p">,</span>
+    <span class="s2">"LineMerger"</span><span class="p">,</span>
+    <span class="s2">"MaskMerger"</span><span class="p">,</span>
+    <span class="s2">"PointsMerger"</span><span class="p">,</span>
+    <span class="s2">"PolygonMerger"</span><span class="p">,</span>
+    <span class="s2">"RotatedBboxMerger"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -421,7 +421,7 @@
             <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Label</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_get_label_id</span><span class="p">(</span><span class="n">label</span><span class="p">),</span>
-                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">)},</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="n">count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">)},</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
@@ -442,7 +442,7 @@
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_get_src_label_name</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">votes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">s</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"score"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
             <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">label</span><span class="p">,</span> <span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">votes</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -471,7 +471,7 @@
 
         <span class="n">shape</span><span class="o">.</span><span class="n">z_order</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">z_order</span><span class="p">)</span><span class="o">.</span><span class="n">z_order</span>
         <span class="n">shape</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
-        <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_score</span> <span class="o">*</span> <span class="n">shape_score</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">shape_score</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_score</span> <span class="o">*</span> <span class="n">shape_score</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">shape_score</span>
 
         <span class="k">return</span> <span class="n">shape</span>
 
@@ -543,7 +543,7 @@
         <span class="n">shape</span><span class="p">,</span> <span class="n">shape_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_cluster_shape</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 
         <span class="n">shape</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
-        <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_score</span> <span class="o">*</span> <span class="n">shape_score</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">shape_score</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_score</span> <span class="o">*</span> <span class="n">shape_score</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">shape_score</span>
 
         <span class="k">return</span> <span class="n">shape</span></div>
 </div>

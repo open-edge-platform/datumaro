@@ -666,28 +666,28 @@ elements (see examples).</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
 <ul>
 <li><p>Extract a dataset with images with <code class="docutils literal notranslate"><span class="pre">width</span></code> &lt; <code class="docutils literal notranslate"><span class="pre">height</span></code></p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e &#39;/item[image/width &lt; image/height]&#39; dataset/</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e '/item[image/width &lt; image/height]' dataset/</span>
 </pre></div>
 </div>
 </li>
 <li><p>Extract a dataset with images of the <code class="docutils literal notranslate"><span class="pre">train</span></code> subset</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e &#39;/item[subset=&quot;train&quot;]&#39; dataset/</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e '/item[subset="train"]' dataset/</span>
 </pre></div>
 </div>
 </li>
 <li><p>Extract a dataset with only large annotations of the <code class="docutils literal notranslate"><span class="pre">cat</span></code> class and any non-<code class="docutils literal notranslate"><span class="pre">persons</span></code></p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter --mode annotations \</span>
-<span class="go">  -e &#39;/item/annotation[(label=&quot;cat&quot; and area &gt; 99.5) or label!=&quot;person&quot;]&#39; dataset/</span>
+<span class="go">  -e '/item/annotation[(label="cat" and area &gt; 99.5) or label!="person"]' dataset/</span>
 </pre></div>
 </div>
 </li>
 <li><p>Extract a dataset with non-occluded annotations, remove empty images</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -m i+a -e &#39;/item/annotation[occluded=&quot;False&quot;]&#39; dataset/ -o output_dir</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -m i+a -e '/item/annotation[occluded="False"]' dataset/ -o output_dir</span>
 </pre></div>
 </div>
 </li>
 <li><p>Extract a dataset composed solely of items containing annotations</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e &#39;/item[annotation]&#39; dataset/</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">datum filter -e '/item[annotation]' dataset/</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">item[annotation]</span></code> checks if there is a child named <code class="docutils literal notranslate"><span class="pre">annotation</span></code> within the <code class="docutils literal notranslate"><span class="pre">item</span></code> node.</p>

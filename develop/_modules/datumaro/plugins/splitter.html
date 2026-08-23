@@ -366,7 +366,7 @@
 <div class="viewcode-block" id="Split">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.Split">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Split</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    - classification split |n</span>
 <span class="sd">    |s|s|s|sSplits dataset into subsets(train/val/test) in class-wise manner. |n</span>
 <span class="sd">    |s|s|s|sSplits dataset images in the specified ratio, keeping the initial class |n</span>
@@ -374,9 +374,9 @@
 <span class="sd">    |n</span>
 <span class="sd">    - detection &amp; segmentation split |n</span>
 <span class="sd">    |s|s|s|sEach image can have multiple object annotations - |n</span>
-<span class="sd">    |s|s|s|s(bbox, mask, polygon). Since an image shouldn&#39;t be included |n</span>
+<span class="sd">    |s|s|s|s(bbox, mask, polygon). Since an image shouldn't be included |n</span>
 <span class="sd">    |s|s|s|sin multiple subsets at the same time, and image annotations |n</span>
-<span class="sd">    |s|s|s|sshouldn&#39;t be split, in general, dataset annotations are unlikely |n</span>
+<span class="sd">    |s|s|s|sshouldn't be split, in general, dataset annotations are unlikely |n</span>
 <span class="sd">    |s|s|s|sto be split exactly in the specified ratio. |n</span>
 <span class="sd">    |s|s|s|sThis split tries to split dataset images as close as possible |n</span>
 <span class="sd">    |s|s|s|sto the specified ratio, keeping the initial class distribution.|n</span>
@@ -386,25 +386,25 @@
 <span class="sd">    |s|s|s|speople or objects during the training phase.|n</span>
 <span class="sd">    |s|s|s|sThis function splits a dataset in the following way:|n</span>
 <span class="sd">    |n</span>
-<span class="sd">    |s|s1. Splits the dataset into &#39;train + val&#39; and &#39;test&#39; sets |n</span>
+<span class="sd">    |s|s1. Splits the dataset into 'train + val' and 'test' sets |n</span>
 <span class="sd">    |s|s|s|s|sbased on person or object ID.|n</span>
-<span class="sd">    |s|s2. Splits &#39;test&#39; set into &#39;test-gallery&#39; and &#39;test-query&#39; sets |n</span>
+<span class="sd">    |s|s2. Splits 'test' set into 'test-gallery' and 'test-query' sets |n</span>
 <span class="sd">    |s|s|s|s|sin class-wise manner.|n</span>
-<span class="sd">    |s|s3. Splits the &#39;train + val&#39; set into &#39;train&#39; and &#39;val&#39; sets |n</span>
+<span class="sd">    |s|s3. Splits the 'train + val' set into 'train' and 'val' sets |n</span>
 <span class="sd">    |s|s|s|s|sin the same way.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    The final subsets would be|n</span>
-<span class="sd">    &#39;train&#39;, &#39;val&#39;, &#39;test-gallery&#39; and &#39;test-query&#39;. |n</span>
+<span class="sd">    'train', 'val', 'test-gallery' and 'test-query'. |n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Notes:|n</span>
 <span class="sd">    |s|s- Each image is expected to have only one Annotation. Unlabeled or |n</span>
 <span class="sd">    |s|s|s|smulti-labeled images will be split into subsets randomly. |n</span>
 <span class="sd">    |s|s- If Labels also have attributes, also splits by attribute values.|n</span>
 <span class="sd">    |s|s- If there is not enough images in some class or attributes group, |n</span>
-<span class="sd">    |s|s|s|sthe split ratio can&#39;t be guaranteed. |n</span>
+<span class="sd">    |s|s|s|sthe split ratio can't be guaranteed. |n</span>
 <span class="sd">    |s|s|s|sIn reidentification task, |n</span>
 <span class="sd">    |s|s- Object ID can be described by Label, or by attribute (--attr parameter)|n</span>
-<span class="sd">    |s|s- The splits of the test set are controlled by &#39;--query&#39; parameter |n</span>
+<span class="sd">    |s|s- The splits of the test set are controlled by '--query' parameter |n</span>
 <span class="sd">    |s|s|s|sGallery ratio would be 1.0 - query.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Example:|n</span>
@@ -416,14 +416,14 @@
 <span class="sd">    |s|s%(prog)s -t segmentation --subset train:.5 --subset val:.2 --subset test:.3 |n</span>
 <span class="sd">    |s|s%(prog)s -t reid --subset train:.5 --subset val:.2 --subset test:.3 --query .5 |n</span>
 <span class="sd">    |n</span>
-<span class="sd">    Example: use &#39;person_id&#39; attribute for splitting|n</span>
+<span class="sd">    Example: use 'person_id' attribute for splitting|n</span>
 
 <span class="sd">    .. code-block::</span>
 
 <span class="sd">    |s|s%(prog)s --attr person_id</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">_default_split</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)]</span>
+    <span class="n">_default_split</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"train"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">"val"</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">"test"</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)]</span>
     <span class="n">_default_query_ratio</span> <span class="o">=</span> <span class="mf">0.5</span>
 
 <div class="viewcode-block" id="Split.build_cmdline_parser">
@@ -432,40 +432,40 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--task&quot;</span><span class="p">,</span>
+            <span class="s2">"-t"</span><span class="p">,</span>
+            <span class="s2">"--task"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">SplitTask</span><span class="o">.</span><span class="n">classification</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SplitTask</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;(one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SplitTask</span><span class="p">)),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"(one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SplitTask</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--subset&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+            <span class="s2">"-s"</span><span class="p">,</span>
+            <span class="s2">"--subset"</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">"append"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_arg</span><span class="p">,</span>
-            <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;splits&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsets in the form: &#39;&lt;subset&gt;:&lt;ratio&gt;&#39; (repeatable, default: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
+            <span class="n">dest</span><span class="o">=</span><span class="s2">"splits"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Subsets in the form: '&lt;subset&gt;:&lt;ratio&gt;' (repeatable, default: </span><span class="si">%s</span><span class="s2">)"</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--query&quot;</span><span class="p">,</span>
+            <span class="s2">"--query"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Query ratio in the test set (default: </span><span class="si">%.3f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_default_query_ratio</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Query ratio in the test set (default: </span><span class="si">%.3f</span><span class="s2">)"</span> <span class="o">%</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_default_query_ratio</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--attr&quot;</span><span class="p">,</span>
+            <span class="s2">"--attr"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;attr_for_id&quot;</span><span class="p">,</span>
+            <span class="n">dest</span><span class="o">=</span><span class="s2">"attr_for_id"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Attribute name representing the ID (default: use label)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Attribute name representing the ID (default: use label)"</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Random seed&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--seed"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Random seed"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
@@ -498,7 +498,7 @@
                 <span class="n">attr_for_id</span><span class="o">=</span><span class="n">attr_for_id</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39;, available splitter format: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">SplitTask</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown task '</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">', available splitter format: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">SplitTask</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">splitter</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -546,7 +546,7 @@
         <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/194</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="n">subsets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="s2">"parent"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -574,16 +574,16 @@
         <span class="n">snames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ratios</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">subsets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">valid</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ratio</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">:</span>
             <span class="c1"># remove subset name restriction</span>
             <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/194</span>
             <span class="k">if</span> <span class="n">restrict</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">valid</span><span class="p">,</span> <span class="s2">&quot;Subset name must be one of </span><span class="si">%s</span><span class="s2">, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="k">assert</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">valid</span><span class="p">,</span> <span class="s2">"Subset name must be one of </span><span class="si">%s</span><span class="s2">, got </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
                     <span class="n">valid</span><span class="p">,</span>
                     <span class="n">subset</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="k">assert</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Ratio is expected to be in the range [0, 1], but got </span><span class="si">%s</span><span class="s2"> for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="k">assert</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">"Ratio is expected to be in the range [0, 1], but got </span><span class="si">%s</span><span class="s2"> for </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">ratio</span><span class="p">,</span>
                 <span class="n">subset</span><span class="p">,</span>
             <span class="p">)</span>
@@ -591,7 +591,7 @@
             <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
                 <span class="c1"># handling duplication</span>
                 <span class="k">if</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">snames</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Subset (</span><span class="si">%s</span><span class="s2">) is duplicated&quot;</span> <span class="o">%</span> <span class="n">subset</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Subset (</span><span class="si">%s</span><span class="s2">) is duplicated"</span> <span class="o">%</span> <span class="n">subset</span><span class="p">)</span>
                 <span class="n">snames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
                 <span class="n">ratios</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">))</span>
             <span class="n">subsets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
@@ -600,7 +600,7 @@
 
         <span class="n">total_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total_ratio</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">snames</span><span class="p">,</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">subsets</span>
 
@@ -640,12 +640,12 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_group_by_attr</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            items: list of (idx_img, ann). ann is the annotation from Label object.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            by_attributes: dict of { combination-of-attrs : list of index }</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># float--&gt; numerical, others(int, string, bool) --&gt; categorical</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_is_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -712,14 +712,14 @@
             <span class="n">_split_indice</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_unlabeled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unlabeled</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        split unlabeled data into subsets (detection, classification)</span>
 <span class="sd">        Args:</span>
 <span class="sd">            unlabeled: list of index of unlabeled or multi-labeled data</span>
 <span class="sd">            by_splits: splits up to now</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            by_splits: final splits</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">dataset_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">n_splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_sections</span><span class="p">(</span><span class="n">dataset_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sratio</span><span class="p">))</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">by_splits</span><span class="p">[</span><span class="n">sname</span><span class="p">])</span> <span class="k">for</span> <span class="n">sname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snames</span><span class="p">]</span>
@@ -742,7 +742,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_ClassificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Splits dataset into subsets(train/val/test) in class-wise manner. |n</span>
 <span class="sd">    Splits dataset images in the specified ratio, keeping the initial class</span>
 <span class="sd">    distribution.|n</span>
@@ -752,17 +752,17 @@
 <span class="sd">    |s|s|s|smulti-labeled images will be split into subsets randomly. |n</span>
 <span class="sd">    |s|s- If Labels also have attributes, also splits by attribute values.|n</span>
 <span class="sd">    |s|s- If there is not enough images in some class or attributes group,</span>
-<span class="sd">    |s|s|s|sthe split ratio can&#39;t be guaranteed.|n</span>
+<span class="sd">    |s|s|s|sthe split ratio can't be guaranteed.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Example:|n</span>
 
 <span class="sd">    .. code-block::</span>
 
 <span class="sd">    |s|s%(prog)s -t classification --subset train:.5 --subset val:.2 --subset test:.3</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dataset : Dataset</span>
@@ -771,7 +771,7 @@
 <span class="sd">            The sum of ratios is expected to be 1.</span>
 <span class="sd">        seed : int</span>
 <span class="sd">            optional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -783,7 +783,7 @@
         <span class="n">annotations</span><span class="p">,</span> <span class="n">unlabeled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_uniq_annotations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_labels</span><span class="p">:</span>
                 <span class="n">by_labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">by_labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">ann</span><span class="p">))</span>
@@ -804,7 +804,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_ReidentificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Splits a dataset for re-identification task.|n</span>
 <span class="sd">    Produces a split with a specified ratio of images, avoiding having same</span>
 <span class="sd">    labels in different subsets.|n</span>
@@ -813,21 +813,21 @@
 <span class="sd">    people or objects during the training phase. |n</span>
 <span class="sd">    This function splits a dataset in the following way:|n</span>
 <span class="sd">    |n</span>
-<span class="sd">    |s|s1. Splits the dataset into &#39;train + val&#39; and &#39;test&#39; sets|n</span>
+<span class="sd">    |s|s1. Splits the dataset into 'train + val' and 'test' sets|n</span>
 <span class="sd">    |s|s|s|s|sbased on person or object ID.|n</span>
-<span class="sd">    |s|s2. Splits &#39;test&#39; set into &#39;test-gallery&#39; and &#39;test-query&#39; sets|n</span>
+<span class="sd">    |s|s2. Splits 'test' set into 'test-gallery' and 'test-query' sets|n</span>
 <span class="sd">    |s|s|s|s|sin class-wise manner.|n</span>
-<span class="sd">    |s|s3. Splits the &#39;train + val&#39; set into &#39;train&#39; and &#39;val&#39; sets|n</span>
+<span class="sd">    |s|s3. Splits the 'train + val' set into 'train' and 'val' sets|n</span>
 <span class="sd">    |s|s|s|s|sin the same way.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    The final subsets would be</span>
-<span class="sd">    &#39;train&#39;, &#39;val&#39;, &#39;test-gallery&#39; and &#39;test-query&#39;. |n</span>
+<span class="sd">    'train', 'val', 'test-gallery' and 'test-query'. |n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Notes:|n</span>
 <span class="sd">    |s|s- Each image is expected to have a single Label. Unlabeled or multi-labeled</span>
-<span class="sd">    |s|s|s|simages will be split into &#39;not-supported&#39;.|n</span>
+<span class="sd">    |s|s|s|simages will be split into 'not-supported'.|n</span>
 <span class="sd">    |s|s- Object ID can be described by Label, or by attribute (--attr parameter)|n</span>
-<span class="sd">    |s|s- The splits of the test set are controlled by &#39;--query&#39; parameter. |n</span>
+<span class="sd">    |s|s- The splits of the test set are controlled by '--query' parameter. |n</span>
 <span class="sd">    |s|s|s|sGallery ratio would be 1.0 - query.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Example: split a dataset in the specified ratio, split the test set|n</span>
@@ -837,43 +837,43 @@
 
 <span class="sd">    |s|s%(prog)s -t reidentification --subset train:.5 --subset val:.2 --subset test:.3 --query .5|n</span>
 <span class="sd">    |n</span>
-<span class="sd">    Example: use &#39;person_id&#39; attribute for splitting|n</span>
+<span class="sd">    Example: use 'person_id' attribute for splitting|n</span>
 
 <span class="sd">    .. code-block::</span>
 
 <span class="sd">    |s|s%(prog)s --attr person_id</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_default_query_ratio</span> <span class="o">=</span> <span class="mf">0.5</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dataset : Dataset</span>
 <span class="sd">        splits : list</span>
 <span class="sd">            A list of (subset(str), ratio(float))</span>
-<span class="sd">            Subset is expected to be one of [&quot;train&quot;, &quot;val&quot;, &quot;test&quot;].</span>
+<span class="sd">            Subset is expected to be one of ["train", "val", "test"].</span>
 <span class="sd">            The sum of ratios is expected to be 1.</span>
 <span class="sd">        query : float</span>
-<span class="sd">            The ratio of &#39;test-query&#39; set.</span>
-<span class="sd">            The ratio of &#39;test-gallery&#39; set would be 1.0 - query.</span>
+<span class="sd">            The ratio of 'test-query' set.</span>
+<span class="sd">            The ratio of 'test-gallery' set would be 1.0 - query.</span>
 <span class="sd">        attr_for_id: str</span>
 <span class="sd">            attribute name representing the person/object id.</span>
 <span class="sd">            if this is not specified, label would be used.</span>
 <span class="sd">        seed : int</span>
 <span class="sd">            optional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_query_ratio</span>
 
-        <span class="k">assert</span> <span class="n">query</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">query</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Query ratio is expected to be in the range [0, 1], but got </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query</span>
-        <span class="n">test_splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;test-query&quot;</span><span class="p">,</span> <span class="n">query</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test-gallery&quot;</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">query</span><span class="p">)]</span>
+        <span class="k">assert</span> <span class="n">query</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">query</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">"Query ratio is expected to be in the range [0, 1], but got </span><span class="si">%f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">query</span>
+        <span class="n">test_splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"test-query"</span><span class="p">,</span> <span class="n">query</span><span class="p">),</span> <span class="p">(</span><span class="s2">"test-gallery"</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">query</span><span class="p">)]</span>
 
         <span class="c1"># remove subset name restriction</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test-gallery&quot;</span><span class="p">,</span> <span class="s2">&quot;test-query&quot;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">,</span> <span class="s2">"test-gallery"</span><span class="p">,</span> <span class="s2">"test-query"</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_splits</span> <span class="o">=</span> <span class="n">test_splits</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_attr_for_id</span> <span class="o">=</span> <span class="n">attr_for_id</span>
 
@@ -890,14 +890,14 @@
         <span class="n">annotations</span><span class="p">,</span> <span class="n">unlabeled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_uniq_annotations</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">attr_for_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># use label</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
-                <span class="n">ID</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">ID</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_id</span><span class="p">:</span>
                     <span class="n">by_id</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">by_id</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">ann</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># use attr_for_id</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
                 <span class="n">attributes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-                <span class="k">assert</span> <span class="n">attr_for_id</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">,</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; is expected as an attribute name&quot;</span> <span class="o">%</span> <span class="n">attr_for_id</span>
+                <span class="k">assert</span> <span class="n">attr_for_id</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">,</span> <span class="s2">"'</span><span class="si">%s</span><span class="s2">' is expected as an attribute name"</span> <span class="o">%</span> <span class="n">attr_for_id</span>
                 <span class="n">ID</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">attr_for_id</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_id</span><span class="p">:</span>
                     <span class="n">by_id</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -906,12 +906,12 @@
         <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_required</span><span class="p">(</span><span class="n">id_ratio</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">required</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;There&#39;s not enough IDs, which is </span><span class="si">%s</span><span class="s2">, so train/val/test ratio can&#39;t be guaranteed.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span>
+                <span class="s2">"There's not enough IDs, which is </span><span class="si">%s</span><span class="s2">, so train/val/test ratio can't be guaranteed."</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># 1. split dataset into trval and test</span>
         <span class="c1">#    IDs in test set should not exist in train/val set.</span>
-        <span class="n">test</span> <span class="o">=</span> <span class="n">id_ratio</span><span class="p">[</span><span class="n">id_snames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)]</span> <span class="k">if</span> <span class="s2">&quot;test&quot;</span> <span class="ow">in</span> <span class="n">id_snames</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">id_ratio</span><span class="p">[</span><span class="n">id_snames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)]</span> <span class="k">if</span> <span class="s2">"test"</span> <span class="ow">in</span> <span class="n">id_snames</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">test</span> <span class="o">&gt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>  <span class="c1"># has testset</span>
             <span class="n">split_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">test</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">test</span><span class="p">])</span>
             <span class="n">IDs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">by_id</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -933,7 +933,7 @@
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">:</span>
             <span class="n">by_splits</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># 2. split &#39;test&#39; into &#39;test-gallery&#39; and &#39;test-query&#39;</span>
+        <span class="c1"># 2. split 'test' into 'test-gallery' and 'test-query'</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">test_snames</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">test_ratio</span> <span class="o">=</span> <span class="p">[]</span>
@@ -943,8 +943,8 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span><span class="n">testset</span><span class="p">,</span> <span class="n">test_snames</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="c1"># 3. split &#39;trval&#39; into  &#39;train&#39; and &#39;val&#39;</span>
-        <span class="n">trval_snames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">]</span>
+        <span class="c1"># 3. split 'trval' into  'train' and 'val'</span>
+        <span class="n">trval_snames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">]</span>
         <span class="n">trval_ratio</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">trval_snames</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">id_snames</span><span class="p">:</span>
@@ -955,16 +955,16 @@
         <span class="n">trval_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">trval_ratio</span><span class="p">)</span>
         <span class="n">total_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trval_ratio</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">total_ratio</span> <span class="o">&lt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
-            <span class="n">trval_splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span> <span class="n">trval_ratio</span><span class="p">))</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Sum of ratios is expected to be positive, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">trval_splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
+            <span class="n">trval_splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">"train"</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">],</span> <span class="n">trval_ratio</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Sum of ratios is expected to be positive, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">trval_splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">trval_ratio</span> <span class="o">/=</span> <span class="n">total_ratio</span>  <span class="c1"># normalize</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span><span class="n">trval</span><span class="p">,</span> <span class="n">trval_snames</span><span class="p">,</span> <span class="n">trval_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="c1"># split unlabeled data into &#39;not-supported&#39;.</span>
+        <span class="c1"># split unlabeled data into 'not-supported'.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unlabeled</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;not-supported&quot;</span><span class="p">)</span>
-            <span class="n">by_splits</span><span class="p">[</span><span class="s2">&quot;not-supported&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unlabeled</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"not-supported"</span><span class="p">)</span>
+            <span class="n">by_splits</span><span class="p">[</span><span class="s2">"not-supported"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unlabeled</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_parts</span><span class="p">(</span><span class="n">by_splits</span><span class="p">)</span>
 
@@ -1016,16 +1016,16 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_InstanceSpecificSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Splits a dataset into subsets(train/val/test),</span>
 <span class="sd">    using object annotations as a basis for splitting.|n</span>
 <span class="sd">    Tries to produce an image split with the specified ratio, keeping the</span>
 <span class="sd">    initial distribution of class objects.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    each image can have multiple object annotations -</span>
-<span class="sd">    (instance bounding boxes, masks, polygons). Since an image shouldn&#39;t be included</span>
+<span class="sd">    (instance bounding boxes, masks, polygons). Since an image shouldn't be included</span>
 <span class="sd">    in multiple subsets at the same time, and image annotations</span>
-<span class="sd">    shouldn&#39;t be split, in general, dataset annotations are unlikely to be split</span>
+<span class="sd">    shouldn't be split, in general, dataset annotations are unlikely to be split</span>
 <span class="sd">    exactly in the specified ratio. |n</span>
 <span class="sd">    This split tries to split dataset images as close as possible</span>
 <span class="sd">    to the specified ratio, keeping the initial class distribution.|n</span>
@@ -1042,10 +1042,10 @@
 
 <span class="sd">    |s|s%(prog)s -t detection --subset train:.5 --subset val:.2 --subset test:.3 |n</span>
 <span class="sd">    |s|s%(prog)s -t segmentation --subset train:.5 --subset val:.2 --subset test:.3</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dataset : Dataset</span>
@@ -1054,7 +1054,7 @@
 <span class="sd">            The sum of ratios is expected to be 1.</span>
 <span class="sd">        seed : int</span>
 <span class="sd">            optional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="n">SplitTask</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
@@ -1072,7 +1072,7 @@
                 <span class="n">unlabeled</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
                 <span class="k">continue</span>
             <span class="k">for</span> <span class="n">instance_ann</span> <span class="ow">in</span> <span class="n">instance_anns</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance_ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance_ann</span><span class="p">,</span> <span class="s2">"label"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_labels</span><span class="p">:</span>
                     <span class="n">by_labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">idx</span><span class="p">,</span> <span class="n">instance_ann</span><span class="p">)]</span>
                 <span class="k">else</span><span class="p">:</span>

@@ -333,7 +333,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for copy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Generic (shallow and deep) copying operations.</span>
+<span></span><span class="sd">"""Generic (shallow and deep) copying operations.</span>
 
 <span class="sd">Interface summary:</span>
 
@@ -355,7 +355,7 @@
 <span class="sd">- A deep copy constructs a new compound object and then, recursively,</span>
 <span class="sd">  inserts *copies* into it of the objects found in the original.</span>
 
-<span class="sd">Two problems often exist with deep copy operations that don&#39;t exist</span>
+<span class="sd">Two problems often exist with deep copy operations that don't exist</span>
 <span class="sd">with shallow copy operations:</span>
 
 <span class="sd"> a) recursive objects (compound objects that, directly or indirectly,</span>
@@ -365,7 +365,7 @@
 <span class="sd">    administrative data structures that should be shared even between</span>
 <span class="sd">    copies</span>
 
-<span class="sd">Python&#39;s deep copy operation avoids these problems by:</span>
+<span class="sd">Python's deep copy operation avoids these problems by:</span>
 
 <span class="sd"> a) keeping a table of objects already copied during the current</span>
 <span class="sd">    copying pass</span>
@@ -380,8 +380,8 @@
 <span class="sd">Classes can use the same interfaces to control copying that they use</span>
 <span class="sd">to control pickling: they can define methods called __getinitargs__(),</span>
 <span class="sd">__getstate__() and __setstate__().  See the documentation for module</span>
-<span class="sd">&quot;pickle&quot; for information on these methods.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"pickle" for information on these methods.</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
@@ -396,15 +396,15 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">PyStringMap</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="s2">&quot;copy&quot;</span><span class="p">,</span> <span class="s2">&quot;deepcopy&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Error"</span><span class="p">,</span> <span class="s2">"copy"</span><span class="p">,</span> <span class="s2">"deepcopy"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="copy">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.dataset_item_storage.html#datumaro.components.dataset.copy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shallow copy operation on arbitrary Python objects.</span>
+<span class="w">    </span><span class="sd">"""Shallow copy operation on arbitrary Python objects.</span>
 
-<span class="sd">    See the module&#39;s __doc__ string for more info.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    See the module's __doc__ string for more info.</span>
+<span class="sd">    """</span>
 
     <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -416,7 +416,7 @@
         <span class="c1"># treat it as a regular class:</span>
         <span class="k">return</span> <span class="n">_copy_immutable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-    <span class="n">copier</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__copy__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">copier</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">"__copy__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">copier</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">copier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -424,15 +424,15 @@
     <span class="k">if</span> <span class="n">reductor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__reduce_ex__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"__reduce_ex__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">reductor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__reduce__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"__reduce__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">reductor</span><span class="p">:</span>
                 <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">&quot;un(shallow)copyable object of type </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span><span class="s2">"un(shallow)copyable object of type </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rv</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -449,7 +449,7 @@
           <span class="n">types</span><span class="o">.</span><span class="n">BuiltinFunctionType</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">Ellipsis</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="bp">NotImplemented</span><span class="p">),</span>
           <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">,</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">):</span>
     <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_immutable</span>
-<span class="n">t</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="s2">&quot;CodeType&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="s2">"CodeType"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_immutable</span>
 
@@ -466,10 +466,10 @@
 <div class="viewcode-block" id="deepcopy">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.dataset.html#datumaro.components.dataset.deepcopy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_nil</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deep copy operation on arbitrary Python objects.</span>
+<span class="w">    </span><span class="sd">"""Deep copy operation on arbitrary Python objects.</span>
 
-<span class="sd">    See the module&#39;s __doc__ string for more info.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    See the module's __doc__ string for more info.</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">memo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">memo</span> <span class="o">=</span> <span class="p">{}</span>
@@ -488,7 +488,7 @@
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">_deepcopy_atomic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">copier</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__deepcopy__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">copier</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"__deepcopy__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">copier</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">copier</span><span class="p">(</span><span class="n">memo</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -496,22 +496,22 @@
                 <span class="k">if</span> <span class="n">reductor</span><span class="p">:</span>
                     <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__reduce_ex__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"__reduce_ex__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">reductor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;__reduce__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                        <span class="n">reductor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">"__reduce__"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">reductor</span><span class="p">:</span>
                             <span class="n">rv</span> <span class="o">=</span> <span class="n">reductor</span><span class="p">()</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="n">Error</span><span class="p">(</span>
-                                <span class="s2">&quot;un(deep)copyable object of type </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
+                                <span class="s2">"un(deep)copyable object of type </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="bp">cls</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rv</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">y</span> <span class="o">=</span> <span class="n">_reconstruct</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="p">,</span> <span class="o">*</span><span class="n">rv</span><span class="p">)</span>
 
-    <span class="c1"># If is its own copy, don&#39;t memoize.</span>
+    <span class="c1"># If is its own copy, don't memoize.</span>
     <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
         <span class="n">memo</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
         <span class="n">_keep_alive</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span> <span class="c1"># Make sure x lives at least as long as d</span>
@@ -550,7 +550,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_deepcopy_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="p">,</span> <span class="n">deepcopy</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">):</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-    <span class="c1"># We&#39;re not going to put the tuple in the memo, but it&#39;s still important we</span>
+    <span class="c1"># We're not going to put the tuple in the memo, but it's still important we</span>
     <span class="c1"># check for it, in case the tuple contains recursive mutable structures.</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
@@ -582,7 +582,7 @@
 <span class="k">del</span> <span class="n">d</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_keep_alive</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Keeps a reference to the object x in the memo.</span>
+<span class="w">    </span><span class="sd">"""Keeps a reference to the object x in the memo.</span>
 
 <span class="sd">    Because we remember objects by their id, we have</span>
 <span class="sd">    to assure that possibly temporary objects are kept</span>
@@ -590,7 +590,7 @@
 <span class="sd">    We store a reference at the id of the memo, which should</span>
 <span class="sd">    normally not be used unless someone tries to deepcopy</span>
 <span class="sd">    the memo itself...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">memo</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -610,7 +610,7 @@
     <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;__setstate__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">'__setstate__'</span><span class="p">):</span>
             <span class="n">y</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>

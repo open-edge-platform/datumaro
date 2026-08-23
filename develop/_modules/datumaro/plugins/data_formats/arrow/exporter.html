@@ -368,58 +368,58 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="c1"># &#39;--image-ext&#39; would be used in a different way for arrow foramt</span>
+        <span class="c1"># '--image-ext' would be used in a different way for arrow foramt</span>
         <span class="n">_actions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">&quot;image_ext&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="o">!=</span> <span class="s2">"image_ext"</span><span class="p">:</span>
                 <span class="n">_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">_actions</span> <span class="o">=</span> <span class="n">_actions</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">_option_string_actions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;--image-ext&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">_option_string_actions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"--image-ext"</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--image-ext&quot;</span><span class="p">,</span>
+            <span class="s2">"--image-ext"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Image encoding scheme. (default: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DEFAULT_IMAGE_EXT</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Image encoding scheme. (default: </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DEFAULT_IMAGE_EXT</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--max-shard-size&quot;</span><span class="p">,</span>
+            <span class="s2">"--max-shard-size"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The maximum number of dataset item can be stored in each shard file. &quot;</span>
-            <span class="s2">&quot;&#39;--max-shard-size&#39; and &#39;--num-shards&#39; are mutually exclusive, &quot;</span>
-            <span class="s2">&quot;Therefore, if &#39;--max-shard-size&#39; is not None, the number of shard files will be determined by &quot;</span>
-            <span class="s2">&quot;(# of total dataset item) / (max chunk size). &quot;</span>
-            <span class="s2">&quot;(default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"The maximum number of dataset item can be stored in each shard file. "</span>
+            <span class="s2">"'--max-shard-size' and '--num-shards' are mutually exclusive, "</span>
+            <span class="s2">"Therefore, if '--max-shard-size' is not None, the number of shard files will be determined by "</span>
+            <span class="s2">"(# of total dataset item) / (max chunk size). "</span>
+            <span class="s2">"(default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--num-shards&quot;</span><span class="p">,</span>
+            <span class="s2">"--num-shards"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of shards to export. &quot;</span>
-            <span class="s2">&quot;&#39;--max-shard-size&#39; and &#39;--num-shards&#39; are mutually exclusive. &quot;</span>
-            <span class="s2">&quot;Therefore, if &#39;--num-shards&#39; is not None, the number of dataset item in each shard file &quot;</span>
-            <span class="s2">&quot;will be determined by (# of total dataset item) / (num shards). &quot;</span>
-            <span class="s2">&quot;(default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"The number of shards to export. "</span>
+            <span class="s2">"'--max-shard-size' and '--num-shards' are mutually exclusive. "</span>
+            <span class="s2">"Therefore, if '--num-shards' is not None, the number of dataset item in each shard file "</span>
+            <span class="s2">"will be determined by (# of total dataset item) / (num shards). "</span>
+            <span class="s2">"(default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--num-workers&quot;</span><span class="p">,</span>
+            <span class="s2">"--num-workers"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of multi-processing workers for export. &quot;</span>
-            <span class="s2">&quot;If num_workers = 0, do not use multiprocessing. (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"The number of multi-processing workers for export. "</span>
+            <span class="s2">"If num_workers = 0, do not use multiprocessing. (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--prefix&quot;</span><span class="p">,</span>
+            <span class="s2">"--prefix"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;datum&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Prefix to be appended in front of the shard file name. &quot;</span>
-            <span class="s2">&quot;Therefore, the generated file name will be `&lt;prefix&gt;-&lt;idx&gt;.arrow`. &quot;</span>
-            <span class="s2">&quot;(default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">"datum"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Prefix to be appended in front of the shard file name. "</span>
+            <span class="s2">"Therefore, the generated file name will be `&lt;prefix&gt;-&lt;idx&gt;.arrow`. "</span>
+            <span class="s2">"(default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">parser</span></div>
@@ -450,7 +450,7 @@
             <span class="k">with</span> <span class="n">consumer_generator</span><span class="p">(</span><span class="n">producer_generator</span><span class="o">=</span><span class="n">_producer_gen</span><span class="p">())</span> <span class="k">as</span> <span class="n">consumer_gen</span><span class="p">:</span>
 
                 <span class="k">def</span><span class="w"> </span><span class="nf">_gen_with_pbar</span><span class="p">():</span>
-                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">consumer_gen</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Exporting&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">consumer_gen</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Exporting"</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)):</span>
                         <span class="k">yield</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_file</span><span class="p">(</span><span class="n">_gen_with_pbar</span><span class="p">())</span>
@@ -458,7 +458,7 @@
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">create_consumer_gen</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Exporting&quot;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Exporting"</span><span class="p">):</span>
                     <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_to_dict_record</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_write_file</span><span class="p">(</span><span class="n">create_consumer_gen</span><span class="p">())</span>
@@ -466,7 +466,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer_gen</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">file_idx</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">):</span>
             <span class="n">suffix</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_idx</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_digits</span><span class="p">)</span>
-            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.arrow&quot;</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.arrow"</span>
             <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
 
             <span class="n">record_batch</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">RecordBatch</span><span class="o">.</span><span class="n">from_pylist</span><span class="p">(</span>
@@ -474,7 +474,7 @@
                 <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">new_file</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">new_file</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">record_batch</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ArrowExporter.patch">
@@ -510,7 +510,7 @@
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">max_shard_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">num_shards</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;datum&quot;</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"datum"</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -524,17 +524,17 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Both &#39;num_shards&#39; or &#39;max_shard_size&#39; cannot be provided at the same time.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">"Both 'num_shards' or 'max_shard_size' cannot be provided at the same time."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_shards</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_shards should be non-negative but num_shards=</span><span class="si">{</span><span class="n">num_shards</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"num_shards should be non-negative but num_shards=</span><span class="si">{</span><span class="n">num_shards</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;max_shard_size should be non-negative but max_shard_size=</span><span class="si">{</span><span class="n">max_shard_size</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_shard_size should be non-negative but max_shard_size=</span><span class="si">{</span><span class="n">max_shard_size</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_shards</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_shard_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">"Either one of 'num_shards' or 'max_shard_size' should be provided."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_shards</span> <span class="o">=</span> <span class="n">num_shards</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span> <span class="o">=</span> <span class="n">max_shard_size</span>
@@ -542,16 +542,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_image_ext</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="s2">&quot;NONE&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="o">=</span> <span class="s2">"NONE"</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="si">}</span><span class="s2"> is unkonwn ext. Available exts are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="si">}</span><span class="s2"> is unkonwn ext. Available exts are </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">AVAILABLE_IMAGE_EXTS</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">_source_path</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="s2">&quot;_source_path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">_source_path</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="s2">"_source_path"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
         <span class="n">total_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)</span>
@@ -562,10 +562,10 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_shard_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_shard_size</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Either one of &#39;num_shards&#39; or &#39;max_shard_size&#39; should be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">"Either one of 'num_shards' or 'max_shard_size' should be provided."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">size</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_len</span><span class="p">,</span> <span class="n">max_shard_size</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">total_len</span><span class="p">]))</span>
-        <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_len</span><span class="p">,</span> <span class="s2">&quot;Sum of chunk sizes should be the number of total items.&quot;</span>
+        <span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_len</span><span class="p">,</span> <span class="s2">"Sum of chunk sizes should be the number of total items."</span>
 
         <span class="n">num_shard_files</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chunk_sizes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_digits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">num_shard_files</span><span class="p">))</span>
@@ -580,12 +580,12 @@
         <span class="n">image_ext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">source_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">dict_item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;encoder&quot;</span><span class="p">:</span> <span class="n">image_ext</span><span class="p">})</span>
+        <span class="n">dict_item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="p">{</span><span class="s2">"encoder"</span><span class="p">:</span> <span class="n">image_ext</span><span class="p">})</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_change_path</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;path&quot;</span> <span class="ow">and</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">parent</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"path"</span> <span class="ow">and</span> <span class="n">child</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                     <span class="n">parent</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_change_path</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>

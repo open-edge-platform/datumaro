@@ -352,13 +352,13 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
-    <span class="n">pd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+    <span class="n">pd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">"pandas"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="RelevancySampler">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.relevancy_sampler.html#datumaro.plugins.sampler.relevancy_sampler.RelevancySampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RelevancySampler</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
 <span class="sd">    Sampler that analyzes model inference results on the dataset |n</span>
 <span class="sd">    and picks the best sample for training.|n</span>
 <span class="sd">    |n</span>
@@ -376,14 +376,14 @@
 <span class="sd">    |s|s- `randtopk` - Select 3*k items randomly, and return the topk among them|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Notes:|n</span>
-<span class="sd">    |s|s- Each image&#39;s inference result must contain the probability for|n</span>
+<span class="sd">    |s|s- Each image's inference result must contain the probability for|n</span>
 <span class="sd">    |s|s|s|sall classes.|n</span>
 <span class="sd">    |s|s- Requesting a sample larger than the number of all images will|n</span>
 <span class="sd">    |s|s|s|sreturn all images.|n</span>
 <span class="sd">    |n</span>
 <span class="sd">    Example: select the most relevant data subset of 20 images |n</span>
-<span class="sd">    |s|sbased on model certainty, put the result into &#39;sample&#39; subset |n</span>
-<span class="sd">    |s|sand put all the rest into &#39;unsampled&#39; subset, use &#39;train&#39; subset |n</span>
+<span class="sd">    |s|sbased on model certainty, put the result into 'sample' subset |n</span>
+<span class="sd">    |s|sand put all the rest into 'unsampled' subset, use 'train' subset |n</span>
 <span class="sd">    |s|sas input. |n</span>
 
 <span class="sd">    .. code-block::</span>
@@ -394,47 +394,47 @@
 <span class="sd">    |s|s|s|s--sample_name sample \ |n</span>
 <span class="sd">    |s|s|s|s--unsampled_name unsampled \ |n</span>
 <span class="sd">    |s|s|s|s--sampling_method topk -k 20</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="RelevancySampler.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.relevancy_sampler.html#datumaro.plugins.sampler.relevancy_sampler.RelevancySampler.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="s2">&quot;--count&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of items to sample&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-k"</span><span class="p">,</span> <span class="s2">"--count"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Number of items to sample"</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--algorithm&quot;</span><span class="p">,</span>
+            <span class="s2">"-a"</span><span class="p">,</span>
+            <span class="s2">"--algorithm"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">Algorithm</span><span class="o">.</span><span class="n">entropy</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling algorithm (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">)),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Sampling algorithm (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--input_subset&quot;</span><span class="p">,</span>
+            <span class="s2">"-i"</span><span class="p">,</span>
+            <span class="s2">"--input_subset"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subset name to select sample from (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Subset name to select sample from (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--sampled_subset&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subset name to put sampled data to (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">"-o"</span><span class="p">,</span>
+            <span class="s2">"--sampled_subset"</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">"sample"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Subset name to put sampled data to (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-u&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--unsampled_subset&quot;</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="s2">&quot;unsampled&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subset name to put the rest data to (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">"-u"</span><span class="p">,</span>
+            <span class="s2">"--unsampled_subset"</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="s2">"unsampled"</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Subset name to put the rest data to (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;--sampling_method&quot;</span><span class="p">,</span>
+            <span class="s2">"-m"</span><span class="p">,</span>
+            <span class="s2">"--sampling_method"</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">SamplingMethod</span><span class="o">.</span><span class="n">topk</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling method (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">)),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"Sampling method (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">)),</span>
         <span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--output_file&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A .csv file path to dump sampling results&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"-d"</span><span class="p">,</span> <span class="s2">"--output_file"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"A .csv file path to dump sampling results"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -446,28 +446,28 @@
         <span class="n">algorithm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Algorithm</span><span class="p">],</span>
         <span class="n">sampling_method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SamplingMethod</span><span class="p">],</span>
         <span class="n">input_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">sampled_subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span>
-        <span class="n">unsampled_subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unsampled&quot;</span><span class="p">,</span>
+        <span class="n">sampled_subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sample"</span><span class="p">,</span>
+        <span class="n">unsampled_subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"unsampled"</span><span class="p">,</span>
         <span class="n">output_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        extractor</span>
 <span class="sd">        algorithm</span>
 <span class="sd">            Specifying the algorithm to calculate the uncertainty</span>
-<span class="sd">            for sample selection. default: &#39;entropy&#39;</span>
+<span class="sd">            for sample selection. default: 'entropy'</span>
 <span class="sd">        subset_name</span>
 <span class="sd">            The name of the subset to which you want to select a sample.</span>
 <span class="sd">        sample_name</span>
-<span class="sd">            Subset name of the selected sample, default: &#39;sample&#39;</span>
+<span class="sd">            Subset name of the selected sample, default: 'sample'</span>
 <span class="sd">        sampling_method</span>
-<span class="sd">            Method of sampling, &#39;topk&#39; or &#39;lowk&#39; or &#39;randk&#39;</span>
+<span class="sd">            Method of sampling, 'topk' or 'lowk' or 'randk'</span>
 <span class="sd">        count</span>
 <span class="sd">            Number of samples extracted</span>
 <span class="sd">        output_file</span>
 <span class="sd">            A path to .csv file for sampling results</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">input_subset</span> <span class="o">=</span> <span class="n">input_subset</span>
@@ -479,8 +479,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
 
         <span class="c1"># Use the --output_file option to save the sample list as a csv file</span>
-        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The output file must have the &#39;.csv&#39; extension&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The output file must have the '.csv' extension"</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_inference_from_subset</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">):</span>
@@ -488,7 +488,7 @@
         <span class="k">if</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">():</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown subset &#39;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown subset '</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
 
         <span class="n">data_df</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="n">infer_df</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -496,28 +496,28 @@
         <span class="c1"># 2. Fill the data_df and infer_df to fit the sampler algorithm</span>
         <span class="c1"># input format.</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
-            <span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">data_df</span><span class="p">[</span><span class="s2">"ImageID"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have image info&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have image info"</span><span class="p">)</span>
 
             <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
-            <span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;Width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
-            <span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;Height&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
-            <span class="n">data_df</span><span class="p">[</span><span class="s2">&quot;ImagePath&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="n">data_df</span><span class="p">[</span><span class="s2">"Width"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+            <span class="n">data_df</span><span class="p">[</span><span class="s2">"Height"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+            <span class="n">data_df</span><span class="p">[</span><span class="s2">"ImagePath"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have annotations&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have annotations"</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;scores&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> - an annotation does not have &#39;scores&#39; attribute&quot;</span><span class="p">)</span>
-                <span class="n">probs</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">"scores"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> - an annotation does not have 'scores' attribute"</span><span class="p">)</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">"scores"</span><span class="p">]</span>
 
-                <span class="n">infer_df</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="n">infer_df</span><span class="p">[</span><span class="s2">"ImageID"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">prob_idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probs</span><span class="p">):</span>
-                    <span class="n">infer_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ClassProbability</span><span class="si">{</span><span class="n">prob_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+                    <span class="n">infer_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">"ClassProbability</span><span class="si">{</span><span class="n">prob_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
 
         <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
         <span class="n">infer_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">infer_df</span><span class="p">)</span>
@@ -533,7 +533,7 @@
             <span class="c1"># Data delivery, uncertainty score calculations also proceed.</span>
             <span class="n">sampler</span> <span class="o">=</span> <span class="n">SampleEntropy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">inference</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown algorithm &#39;</span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">&#39;, available algorithms: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Algorithm</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown algorithm '</span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">', available algorithms: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Algorithm</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sampler</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_sample_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
@@ -557,7 +557,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">sample_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s2">"ImageID"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
 
         <span class="c1"># Transform properties for each data</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>

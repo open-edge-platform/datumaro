@@ -346,13 +346,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">parse_json_file</span>
 
-<span class="n">DATASET_META_FILE</span> <span class="o">=</span> <span class="s2">&quot;dataset_meta.json&quot;</span>
+<span class="n">DATASET_META_FILE</span> <span class="o">=</span> <span class="s2">"dataset_meta.json"</span>
 
 
 <div class="viewcode-block" id="is_meta_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.is_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span></div>
+    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">".json"</span></div>
 
 
 
@@ -381,11 +381,11 @@
 
     <span class="n">label_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"labels"</span><span class="p">,</span> <span class="p">[]):</span>
         <span class="n">label_map</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;segmentation_colors&quot;</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label_map&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"segmentation_colors"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"label_map"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">label_map</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="ow">and</span> <span class="n">colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -401,7 +401,7 @@
     <span class="n">dataset_meta</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]]</span>
-    <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+    <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
 
     <span class="k">if</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">):</span>
         <span class="n">label_map</span> <span class="o">=</span> <span class="p">{}</span>
@@ -410,12 +410,12 @@
             <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
                 <span class="n">segmentation_colors</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">color</span><span class="p">[</span><span class="mi">2</span><span class="p">])])</span>
                 <span class="n">label_map</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">&quot;label_map&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_map</span>
-        <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">&quot;segmentation_colors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">segmentation_colors</span>
+        <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">"label_map"</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_map</span>
+        <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">"segmentation_colors"</span><span class="p">]</span> <span class="o">=</span> <span class="n">segmentation_colors</span>
 
         <span class="n">bg_label</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">bg_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">&quot;background_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bg_label</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">dataset_meta</span><span class="p">[</span><span class="s2">"background_label"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bg_label</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="n">meta_file</span> <span class="o">=</span> <span class="n">path</span>
     <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>

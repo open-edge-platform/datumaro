@@ -354,25 +354,25 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_YoloStrictImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
-    <span class="n">_FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.data&quot;</span>
+    <span class="n">_FORMAT_EXT</span> <span class="o">=</span> <span class="s2">".data"</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;obj</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">"obj</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-        <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.data&quot;</span><span class="p">,</span> <span class="n">YoloFormatType</span><span class="o">.</span><span class="n">yolo_strict</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">".data"</span><span class="p">,</span> <span class="n">YoloFormatType</span><span class="o">.</span><span class="n">yolo_strict</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_extract_subset_wise_sources</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-            <span class="n">config_path</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span>
+            <span class="n">config_path</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]</span>
             <span class="n">config</span> <span class="o">=</span> <span class="n">YoloPath</span><span class="o">.</span><span class="n">_parse_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
             <span class="n">subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">config</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">YoloPath</span><span class="o">.</span><span class="n">RESERVED_CONFIG_KEYS</span><span class="p">]</span>
             <span class="k">return</span> <span class="p">[</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">config_path</span><span class="p">,</span>
-                    <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">YoloFormatType</span><span class="o">.</span><span class="n">yolo_strict</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">},</span>
+                    <span class="s2">"url"</span><span class="p">:</span> <span class="n">config_path</span><span class="p">,</span>
+                    <span class="s2">"format"</span><span class="p">:</span> <span class="n">YoloFormatType</span><span class="o">.</span><span class="n">yolo_strict</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset</span><span class="p">},</span>
                 <span class="p">}</span>
                 <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">subsets</span>
             <span class="p">]</span>
@@ -394,30 +394,30 @@
 
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">():</span>
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;[Aa]nnotations/**/*.txt&quot;</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"[Aa]nnotations/**/*.txt"</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
             <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
-                <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">&quot;[Ll]abels/**/*.txt&quot;</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="s2">"[Ll]abels/**/*.txt"</span><span class="p">),</span> <span class="n">context</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;Requirements for the annotation file of yolo format&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"Requirements for the annotation file of yolo format"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_ann_file_impl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fp</span><span class="p">:</span> <span class="n">TextIOWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Yolo format txt file should have 5 fields for each line, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Yolo format txt file should have 5 fields for each line, "</span>
+                    <span class="sa">f</span><span class="s2">"but the read line has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2"> fields: fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Each field should be a number but fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Each field should be a number but fields=</span><span class="si">{</span><span class="n">fields</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
             <span class="c1"># Check the first line only</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -428,18 +428,18 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_find_loose</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dirname</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">_filter_ann_file</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_check_ann_file_impl</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">DatasetImportError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">sources</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
             <span class="n">path</span><span class="p">,</span>
-            <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.txt&quot;</span><span class="p">,</span>
-            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">ext</span><span class="o">=</span><span class="s2">".txt"</span><span class="p">,</span>
+            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
             <span class="n">dirname</span><span class="o">=</span><span class="n">dirname</span><span class="p">,</span>
             <span class="n">file_filter</span><span class="o">=</span><span class="n">_filter_ann_file</span><span class="p">,</span>
-            <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
+            <span class="n">filename</span><span class="o">=</span><span class="s2">"**/*"</span><span class="p">,</span>
             <span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
@@ -449,15 +449,15 @@
         <span class="n">subsets</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
-            <span class="n">subsets</span><span class="p">[</span><span class="n">extract_subset_name_from_parent</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">path</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+            <span class="n">subsets</span><span class="p">[</span><span class="n">extract_subset_name_from_parent</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">],</span> <span class="n">path</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
-                <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
-                <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
-                    <span class="s2">&quot;urls&quot;</span><span class="p">:</span> <span class="n">urls</span><span class="p">,</span>
+                <span class="s2">"url"</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+                <span class="s2">"format"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+                <span class="s2">"options"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"subset"</span><span class="p">:</span> <span class="n">subset</span><span class="p">,</span>
+                    <span class="s2">"urls"</span><span class="p">:</span> <span class="n">urls</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">}</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">urls</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -470,8 +470,8 @@
         <span class="n">obj_names_files</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
             <span class="n">path</span><span class="p">,</span>
             <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span>
-            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">extractor_name</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+            <span class="n">dirname</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
             <span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -482,11 +482,11 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">obj_names_file</span> <span class="ow">in</span> <span class="n">obj_names_files</span><span class="p">:</span>
-            <span class="n">base_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">obj_names_file</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">found</span> <span class="o">:=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_loose</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s2">&quot;[Aa]nnotations&quot;</span><span class="p">):</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">obj_names_file</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">found</span> <span class="o">:=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_loose</span><span class="p">(</span><span class="n">base_path</span><span class="p">,</span> <span class="s2">"[Aa]nnotations"</span><span class="p">):</span>
                 <span class="n">sources</span> <span class="o">+=</span> <span class="n">found</span>
 
-            <span class="k">if</span> <span class="n">found</span> <span class="o">:=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_loose</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;[Ll]abels&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">found</span> <span class="o">:=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_loose</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"[Ll]abels"</span><span class="p">):</span>
                 <span class="n">sources</span> <span class="o">+=</span> <span class="n">found</span>
 
         <span class="k">return</span> <span class="n">sources</span>
@@ -497,7 +497,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;.txt&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">".txt"</span><span class="p">]</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_YoloUltralyticsImporter</span><span class="p">(</span><span class="n">_YoloLooseImporter</span><span class="p">):</span>
@@ -527,7 +527,7 @@
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
                     <span class="k">return</span> <span class="n">importer_cls</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
 
-        <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Any yolo format is not detected.&quot;</span><span class="p">)</span></div>
+        <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"Any yolo format is not detected."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="YoloImporter.find_sources">

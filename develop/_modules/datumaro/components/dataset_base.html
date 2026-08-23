@@ -351,14 +351,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_if_none</span><span class="p">,</span> <span class="n">not_empty</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MediaElement</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">MediaElement</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DatasetItem">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.DatasetItem">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatasetItem</span><span class="p">:</span>
-    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span> <span class="n">validator</span><span class="o">=</span><span class="n">not_empty</span><span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">),</span> <span class="n">validator</span><span class="o">=</span><span class="n">not_empty</span><span class="p">)</span>
 
     <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
@@ -380,7 +380,7 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.DatasetItem.media_as">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">media_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">media</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"t"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">media</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -404,9 +404,9 @@
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IDataset</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Provides sequential access to dataset items.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -418,9 +418,9 @@
 <div class="viewcode-block" id="IDataset.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.subsets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Enumerates subsets in the dataset. Each subset can be a dataset itself.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
@@ -433,58 +433,58 @@
 <div class="viewcode-block" id="IDataset.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.infos">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns meta-info of dataset.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="IDataset.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns metainfo about dataset labels.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="IDataset.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Provides random access to dataset items.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="IDataset.media_type">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.media_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns media type of the dataset items.</span>
 
 <span class="sd">        All the items are supposed to have the same media type.</span>
 <span class="sd">        Supposed to be constant and known immediately after the</span>
-<span class="sd">        object construction (i.e. doesn&#39;t require dataset iteration).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        object construction (i.e. doesn't require dataset iteration).</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="IDataset.ann_types">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.ann_types">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns available task type from dataset annotation types.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Boolean indicating whether the dataset is a stream</span>
+<span class="w">        </span><span class="sd">"""Boolean indicating whether the dataset is a stream</span>
 
 <span class="sd">        If the dataset is a stream, the dataset item is generated on demand from its iterator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
@@ -527,7 +527,7 @@
             <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">subset</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">subset</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unknown subset &#39;</span><span class="si">%s</span><span class="s2">&#39;, available subsets: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">)))</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"Unknown subset '</span><span class="si">%s</span><span class="s2">', available subsets: </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">)))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -568,11 +568,11 @@
 <div class="viewcode-block" id="DatasetBase">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.DatasetBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatasetBase</span><span class="p">(</span><span class="n">_DatasetBase</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A base class for user-defined and built-in extractors.</span>
 <span class="sd">    Should be used in cases, where SubsetBase is not enough,</span>
 <span class="sd">    or its use makes problems with performance, implementation etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -606,10 +606,10 @@
 <div class="viewcode-block" id="SubsetBase">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.SubsetBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SubsetBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A base class for simple, single-subset extractors.</span>
 <span class="sd">    Should be used by default for user-defined extractors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -654,13 +654,13 @@
 <div class="viewcode-block" id="SubsetBase.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.SubsetBase.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">subset</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">subset</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="s2">"</span><span class="si">%s</span><span class="s2"> != </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subset name of this instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Subset name of this instance."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span></div>
 
 </pre></div>

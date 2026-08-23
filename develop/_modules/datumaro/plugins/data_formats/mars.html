@@ -356,9 +356,9 @@
 <div class="viewcode-block" id="MarsPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mars.html#datumaro.plugins.data_formats.mars.MarsPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MarsPath</span><span class="p">:</span>
-    <span class="n">SUBSET_DIR_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;bbox_*&quot;</span>
-    <span class="n">IMAGE_DIR_PATTERNS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;[0-9]&quot;</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;00-1&quot;</span><span class="p">]</span>
-    <span class="n">IMAGE_NAME_POSTFIX</span> <span class="o">=</span> <span class="s2">&quot;C[0-9]&quot;</span> <span class="o">+</span> <span class="s2">&quot;T&quot;</span> <span class="o">+</span> <span class="s2">&quot;[0-9]&quot;</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="s2">&quot;F&quot;</span> <span class="o">+</span> <span class="s2">&quot;[0-9]&quot;</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="s2">&quot;.jpg&quot;</span></div>
+    <span class="n">SUBSET_DIR_PATTERN</span> <span class="o">=</span> <span class="s2">"bbox_*"</span>
+    <span class="n">IMAGE_DIR_PATTERNS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"[0-9]"</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"00-1"</span><span class="p">]</span>
+    <span class="n">IMAGE_NAME_POSTFIX</span> <span class="o">=</span> <span class="s2">"C[0-9]"</span> <span class="o">+</span> <span class="s2">"T"</span> <span class="o">+</span> <span class="s2">"[0-9]"</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="s2">"F"</span> <span class="o">+</span> <span class="s2">"[0-9]"</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="s2">".jpg"</span></div>
 
 
 
@@ -371,7 +371,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">subset_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">)</span>
+            <span class="n">subset_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">subset_dir</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">))</span> <span class="ow">and</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">SUBSET_DIR_PATTERN</span><span class="p">))</span>
         <span class="p">}</span>
@@ -420,9 +420,9 @@
 
                 <span class="k">if</span> <span class="n">pedestrian_id</span> <span class="o">!=</span> <span class="n">label</span><span class="p">:</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The image </span><span class="si">{</span><span class="n">image_path</span><span class="si">}</span><span class="s2"> will be skip because&quot;</span>
-                        <span class="s2">&quot;pedestrian id for it does not match with&quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;the directory name: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"The image </span><span class="si">{</span><span class="n">image_path</span><span class="si">}</span><span class="s2"> will be skip because"</span>
+                        <span class="s2">"pedestrian id for it does not match with"</span>
+                        <span class="sa">f</span><span class="s2">"the directory name: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
                     <span class="k">continue</span>
 
@@ -433,10 +433,10 @@
                         <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
                         <span class="n">annotations</span><span class="o">=</span><span class="p">[</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">)],</span>
                         <span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
-                            <span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">pedestrian_id</span><span class="p">,</span>
-                            <span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
-                            <span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">11</span><span class="p">]),</span>
-                            <span class="s2">&quot;frame_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">15</span><span class="p">]),</span>
+                            <span class="s2">"person_id"</span><span class="p">:</span> <span class="n">pedestrian_id</span><span class="p">,</span>
+                            <span class="s2">"camera_id"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                            <span class="s2">"track_id"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">11</span><span class="p">]),</span>
+                            <span class="s2">"frame_id"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_name</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">15</span><span class="p">]),</span>
                         <span class="p">},</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -457,7 +457,7 @@
             <span class="k">for</span> <span class="n">image_dir</span> <span class="ow">in</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">IMAGE_DIR_PATTERNS</span><span class="p">:</span>
                 <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">alternative</span><span class="p">():</span>
                     <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span>
-                        <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                             <span class="p">[</span>
                                 <span class="n">MarsPath</span><span class="o">.</span><span class="n">SUBSET_DIR_PATTERN</span><span class="p">,</span>
                                 <span class="n">image_dir</span><span class="p">,</span>
@@ -472,7 +472,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">,</span> <span class="n">image_dir</span> <span class="o">+</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">IMAGE_NAME_POSTFIX</span><span class="p">))</span>
+            <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">,</span> <span class="n">image_dir</span> <span class="o">+</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">IMAGE_NAME_POSTFIX</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">image_dir</span> <span class="ow">in</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">IMAGE_DIR_PATTERNS</span>
             <span class="k">for</span> <span class="n">subset_dir</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset_dir</span><span class="p">))</span> <span class="ow">and</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">subset_dir</span><span class="p">,</span> <span class="n">MarsPath</span><span class="o">.</span><span class="n">SUBSET_DIR_PATTERN</span><span class="p">))</span>
@@ -481,7 +481,7 @@
         <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="nb">next</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">pattern</span><span class="p">))</span>
-                <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;mars&quot;</span><span class="p">}]</span>
+                <span class="k">return</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"mars"</span><span class="p">}]</span>
             <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
                 <span class="k">continue</span></div>
 

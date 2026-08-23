@@ -368,7 +368,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_split_tasks_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">MvtecTask</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">MvtecTask</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="MvtecExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecExporter.build_cmdline_parser">[docs]</a>
@@ -377,10 +377,10 @@
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--tasks&quot;</span><span class="p">,</span>
+            <span class="s2">"--tasks"</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_tasks_string</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;MVTec task filter, comma-separated list of {</span><span class="si">%s</span><span class="s2">} &quot;</span>
-            <span class="s2">&quot;(default: all)&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">MvtecTask</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">"MVTec task filter, comma-separated list of {</span><span class="si">%s</span><span class="s2">} "</span>
+            <span class="s2">"(default: all)"</span> <span class="o">%</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">MvtecTask</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -405,7 +405,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not an image"</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -461,7 +461,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecClassificationExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MvtecClassificationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">classification</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"tasks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">classification</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -470,7 +470,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecSegmentationExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MvtecSegmentationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"tasks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -479,7 +479,7 @@
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecDetectionExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MvtecDetectionExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"tasks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 </pre></div>

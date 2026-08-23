@@ -359,16 +359,16 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtractorMerger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUBSET_NAME_WHITELIST</span>
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;FailingImportErrorPolicy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImportContext&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImportErrorPolicy&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Importer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NullImportContext&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_ImportFail&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;with_subset_dirs&quot;</span><span class="p">,</span>
+    <span class="s2">"FailingImportErrorPolicy"</span><span class="p">,</span>
+    <span class="s2">"ImportContext"</span><span class="p">,</span>
+    <span class="s2">"ImportErrorPolicy"</span><span class="p">,</span>
+    <span class="s2">"Importer"</span><span class="p">,</span>
+    <span class="s2">"NullImportContext"</span><span class="p">,</span>
+    <span class="s2">"_ImportFail"</span><span class="p">,</span>
+    <span class="s2">"with_subset_dirs"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -385,7 +385,7 @@
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_sources_with_params</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">):</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;specific requirement information unavailable&quot;</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">"specific requirement information unavailable"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">DETECT_CONFIDENCE</span></div>
 
@@ -422,14 +422,14 @@
         <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">found_sources</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">extra_params</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;options&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"options"</span><span class="p">,</span> <span class="p">{}))</span>
 
             <span class="k">if</span> <span class="n">stream</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_stream</span><span class="p">:</span>
-                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;stream&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"stream"</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="k">elif</span> <span class="n">stream</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_stream</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> cannot stream, but stream=True.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> cannot stream, but stream=True."</span><span class="p">)</span>
 
-            <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
+            <span class="n">desc</span><span class="p">[</span><span class="s2">"options"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
             <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sources</span>
@@ -440,13 +440,13 @@
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">extractor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="n">dirname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
+        <span class="n">dirname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">file_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
         <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Finds sources in the specified location, using the matching pattern</span>
 <span class="sd">        to filter file names and directories.</span>
 <span class="sd">        Supposed to be used, and to be the only call in subclasses.</span>
@@ -454,23 +454,23 @@
 <span class="sd">        Parameters:</span>
 <span class="sd">            path: a directory or file path, where sources need to be found.</span>
 <span class="sd">            ext: file extension to match. To match directories,</span>
-<span class="sd">                set this parameter to None or &#39;&#39;. Comparison is case-independent,</span>
+<span class="sd">                set this parameter to None or ''. Comparison is case-independent,</span>
 <span class="sd">                a starting dot is not required.</span>
 <span class="sd">            extractor_name: the name of the associated Extractor type</span>
 <span class="sd">            filename: a glob pattern for file names</span>
 <span class="sd">            dirname: a glob pattern for filename prefixes</span>
 <span class="sd">            file_filter: a callable (abspath: str) -&gt; bool, to filter paths found</span>
 <span class="sd">            max_depth: the maximum depth for recursive search.</span>
-<span class="sd">            recursive: If recursive is true, the pattern &#39;**&#39; will match any files and</span>
+<span class="sd">            recursive: If recursive is true, the pattern '**' will match any files and</span>
 <span class="sd">                zero or more directories and subdirectories.</span>
 
 <span class="sd">        Returns: a list of source configurations</span>
 <span class="sd">            (i.e. Extractor type names and c-tor parameters)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">ext</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
-                <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">ext</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s2">"."</span> <span class="o">+</span> <span class="n">ext</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
@@ -479,13 +479,13 @@
             <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">dirname</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
         <span class="p">):</span>
-            <span class="n">sources</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}]</span>
+            <span class="n">sources</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">sources</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                    <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">ext</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">)</span>
+                    <span class="p">{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">:</span> <span class="n">extractor_name</span><span class="p">}</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="s2">"*"</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="n">ext</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">)</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nb">callable</span><span class="p">(</span><span class="n">file_filter</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file_filter</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">file_filter</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">sources</span><span class="p">:</span>
@@ -494,13 +494,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flag to indicate whether the importer can stream the dataset item or not.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Flag to indicate whether the importer can stream the dataset item or not."""</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="Importer.get_extractor_merger">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.importer.Importer.get_extractor_merger">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_extractor_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">ExtractorMerger</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extractor merger dedicated for the data format</span>
+<span class="w">        </span><span class="sd">"""Extractor merger dedicated for the data format</span>
 
 <span class="sd">        Datumaro import process spawns multiple `DatasetBase` for the detected sources.</span>
 <span class="sd">        We can find a bunch of the detected sources from the given directory path.</span>
@@ -512,7 +512,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            If None, use `Dataset.from_extractors()` to merge the extractors,</span>
 <span class="sd">            Otherwise, use the return type to merge the extractors.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 </div>
 
@@ -542,8 +542,8 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_cls</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> should require an input as a directory path. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;However, </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is not a directory path.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">input_cls</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> should require an input as a directory path. "</span>
+                    <span class="sa">f</span><span class="s2">"However, </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> is not a directory path."</span>
                 <span class="p">)</span>
 
             <span class="k">for</span> <span class="n">sub_dir</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -558,7 +558,7 @@
                         <span class="n">confs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">conf</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">confs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_cls</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> cannot find its subdirectory structure.&quot;</span><span class="p">)</span>
+                <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">input_cls</span><span class="o">.</span><span class="n">NAME</span><span class="si">}</span><span class="s2"> cannot find its subdirectory structure."</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">confs</span><span class="p">)</span>
 
@@ -570,14 +570,14 @@
                     <span class="n">source</span> <span class="o">=</span> <span class="n">input_cls</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_path</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_params</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;@with_subset_dirs only allows one source format from </span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"@with_subset_dirs only allows one source format from </span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="s2">&quot;subset&quot;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="s2">"subset"</span> <span class="ow">in</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                         <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;@with_subset_dirs does not allows a subset key in source: </span><span class="si">{</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                            <span class="sa">f</span><span class="s2">"@with_subset_dirs does not allows a subset key in source: </span><span class="si">{</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span>
                         <span class="p">)</span>
 
-                    <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;options&quot;</span><span class="p">][</span><span class="s2">&quot;subset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_dir</span>
+                    <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"options"</span><span class="p">][</span><span class="s2">"subset"</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_dir</span>
                     <span class="n">sources</span> <span class="o">+=</span> <span class="n">source</span>
 
             <span class="k">return</span> <span class="n">sources</span>

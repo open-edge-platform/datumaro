@@ -602,7 +602,7 @@ presented:</p></li>
 <span class="c1"># http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar</span>
 <span class="n">datum</span> <span class="n">convert</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="nb">format</span> <span class="n">voc</span> <span class="o">--</span><span class="nb">input</span><span class="o">-</span><span class="n">path</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">voc</span><span class="o">&gt;</span> \
               <span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="nb">format</span> <span class="n">coco</span> \
-              <span class="o">--</span><span class="nb">filter</span> <span class="s1">&#39;/item[annotation/label=&quot;cat&quot;]&#39;</span> \
+              <span class="o">--</span><span class="nb">filter</span> <span class="s1">'/item[annotation/label="cat"]'</span> \
               <span class="o">--</span> <span class="o">--</span><span class="n">reindex</span> <span class="mi">1</span> <span class="c1"># avoid annotation id conflicts</span>
 </pre></div>
 </div>
@@ -611,7 +611,7 @@ presented:</p></li>
 <a class="reference external" href="https://github.com/opencv/cvat">CVAT</a> project to TFrecord:</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># export Datumaro dataset in CVAT UI, extract somewhere</span>
-<span class="n">datum</span> <span class="nb">filter</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;/item/annotation[occluded=&quot;False&quot;]&#39;</span> <span class="o">--</span><span class="n">mode</span> <span class="n">items</span><span class="o">+</span><span class="n">anno</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">cvat</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="nb">filter</span> <span class="o">-</span><span class="n">e</span> <span class="s1">'/item/annotation[occluded="False"]'</span> <span class="o">--</span><span class="n">mode</span> <span class="n">items</span><span class="o">+</span><span class="n">anno</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">cvat</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span>
 <span class="n">datum</span> <span class="n">convert</span> <span class="o">-</span><span class="n">i</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">f</span> <span class="n">tf_detection_api</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">final_output</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">media</span>
 </pre></div>
 </div>
@@ -621,7 +621,7 @@ presented:</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download COCO dataset http://cocodataset.org/#download</span>
 <span class="c1"># Put images to coco/images/ and annotations to coco/annotations/</span>
-<span class="n">datum</span> <span class="nb">filter</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;/image[images_I_dont_like]&#39;</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coco</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">o</span> <span class="n">filtered_coco</span>
+<span class="n">datum</span> <span class="nb">filter</span> <span class="o">-</span><span class="n">e</span> <span class="s1">'/image[images_I_dont_like]'</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coco</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">o</span> <span class="n">filtered_coco</span>
 <span class="n">datum</span> <span class="n">convert</span> <span class="o">-</span><span class="n">i</span> <span class="n">filtered_coco</span> <span class="o">-</span><span class="n">f</span> <span class="n">cvat</span> <span class="o">-</span><span class="n">o</span> <span class="n">cvat_export</span>
 </pre></div>
 </div>
@@ -645,9 +645,9 @@ presented:</p></li>
 <span class="c1"># Save as mycolormap.txt</span>
 
 <span class="n">datum</span> <span class="n">convert</span> <span class="o">-</span><span class="n">i</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">voc</span><span class="o">/</span><span class="n">dataset</span><span class="o">&gt;</span> <span class="o">-</span><span class="k">if</span> <span class="n">voc</span> <span class="o">-</span><span class="n">f</span> <span class="n">voc_segmentation</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">--</span><span class="n">label</span><span class="o">-</span><span class="nb">map</span> <span class="n">mycolormap</span><span class="o">.</span><span class="n">txt</span>
-<span class="c1"># add &quot;--apply-colormap=0&quot; to save grayscale (indexed) masks</span>
-<span class="c1"># check &quot;--help&quot; option for more info</span>
-<span class="c1"># use &quot;datum --loglevel debug&quot; for extra conversion info</span>
+<span class="c1"># add "--apply-colormap=0" to save grayscale (indexed) masks</span>
+<span class="c1"># check "--help" option for more info</span>
+<span class="c1"># use "datum --loglevel debug" for extra conversion info</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -657,15 +657,15 @@ presented:</p></li>
 <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span>
-  <span class="n">dm</span><span class="o">.</span><span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;image1&#39;</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span>
+  <span class="n">dm</span><span class="o">.</span><span class="n">DatasetItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">'image1'</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s1">'train'</span><span class="p">,</span>
     <span class="n">media</span><span class="o">=</span><span class="n">dm</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))),</span>
     <span class="n">annotations</span><span class="o">=</span><span class="p">[</span>
       <span class="n">dm</span><span class="o">.</span><span class="n">Bbox</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="p">]</span>
   <span class="p">),</span>
   <span class="c1"># ...</span>
-<span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="s1">&#39;dog&#39;</span><span class="p">])</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;test_dataset/&#39;</span><span class="p">,</span> <span class="s1">&#39;coco&#39;</span><span class="p">)</span>
+<span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">'cat'</span><span class="p">,</span> <span class="s1">'dog'</span><span class="p">])</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">'test_dataset/'</span><span class="p">,</span> <span class="s1">'coco'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

@@ -362,25 +362,25 @@
 <div class="viewcode-block" id="CifarPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cifar.html#datumaro.plugins.data_formats.cifar.CifarPath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CifarPath</span><span class="p">:</span>
-    <span class="n">META_10_FILE</span> <span class="o">=</span> <span class="s2">&quot;batches.meta&quot;</span>
-    <span class="n">META_100_FILE</span> <span class="o">=</span> <span class="s2">&quot;meta&quot;</span>
-    <span class="n">TRAIN_FILE_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;data_batch_&quot;</span>
-    <span class="n">USELESS_FILE</span> <span class="o">=</span> <span class="s2">&quot;file.txt~&quot;</span>
+    <span class="n">META_10_FILE</span> <span class="o">=</span> <span class="s2">"batches.meta"</span>
+    <span class="n">META_100_FILE</span> <span class="o">=</span> <span class="s2">"meta"</span>
+    <span class="n">TRAIN_FILE_PREFIX</span> <span class="o">=</span> <span class="s2">"data_batch_"</span>
+    <span class="n">USELESS_FILE</span> <span class="o">=</span> <span class="s2">"file.txt~"</span>
     <span class="n">IMAGE_SIZE</span> <span class="o">=</span> <span class="mi">32</span></div>
 
 
 
 <span class="n">Cifar10Label</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;airplane&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;automobile&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;bird&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cat&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;deer&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dog&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;frog&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;horse&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ship&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;truck&quot;</span><span class="p">,</span>
+    <span class="s2">"airplane"</span><span class="p">,</span>
+    <span class="s2">"automobile"</span><span class="p">,</span>
+    <span class="s2">"bird"</span><span class="p">,</span>
+    <span class="s2">"cat"</span><span class="p">,</span>
+    <span class="s2">"deer"</span><span class="p">,</span>
+    <span class="s2">"dog"</span><span class="p">,</span>
+    <span class="s2">"frog"</span><span class="p">,</span>
+    <span class="s2">"horse"</span><span class="p">,</span>
+    <span class="s2">"ship"</span><span class="p">,</span>
+    <span class="s2">"truck"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Support for Python version CIFAR-10/100</span>
@@ -397,7 +397,7 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find annotations file&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"Can't find annotations file"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
@@ -419,21 +419,21 @@
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">meta_file</span><span class="p">):</span>
             <span class="c1"># CIFAR-10:</span>
             <span class="c1"># num_cases_per_batch: 1000</span>
-            <span class="c1"># label_names: [&#39;airplane&#39;, &#39;automobile&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;deer&#39;,</span>
-            <span class="c1">#               &#39;dog&#39;, &#39;frog&#39;, &#39;horse&#39;, &#39;ship&#39;, &#39;truck&#39;]</span>
+            <span class="c1"># label_names: ['airplane', 'automobile', 'bird', 'cat', 'deer',</span>
+            <span class="c1">#               'dog', 'frog', 'horse', 'ship', 'truck']</span>
             <span class="c1"># num_vis: 3072</span>
             <span class="c1"># CIFAR-100:</span>
-            <span class="c1"># fine_label_names: [&#39;apple&#39;, &#39;aquarium_fish&#39;, &#39;baby&#39;, ...]</span>
-            <span class="c1"># coarse_label_names: [&#39;aquatic_mammals&#39;, &#39;fish&#39;, &#39;flowers&#39;, ...]</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
+            <span class="c1"># fine_label_names: ['apple', 'aquarium_fish', 'baby', ...]</span>
+            <span class="c1"># coarse_label_names: ['aquatic_mammals', 'fish', 'flowers', ...]</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">restricted_load</span><span class="p">(</span><span class="n">labels_file</span><span class="p">)</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label_names&quot;</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"label_names"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
                     <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fine_label_names&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;coarse_label_names&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fine_label_names"</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_labels</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"coarse_label_names"</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
                         <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -447,29 +447,29 @@
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
-        <span class="c1"># &#39;batch_label&#39;: &#39;training batch 1 of 5&#39;</span>
-        <span class="c1"># &#39;data&#39;: ndarray</span>
-        <span class="c1"># &#39;filenames&#39;: list</span>
-        <span class="c1"># CIFAR-10: &#39;labels&#39;: list</span>
-        <span class="c1"># CIFAR-100: &#39;fine_labels&#39;: list</span>
-        <span class="c1">#            &#39;coarse_labels&#39;: list</span>
+        <span class="c1"># 'batch_label': 'training batch 1 of 5'</span>
+        <span class="c1"># 'data': ndarray</span>
+        <span class="c1"># 'filenames': list</span>
+        <span class="c1"># CIFAR-10: 'labels': list</span>
+        <span class="c1"># CIFAR-100: 'fine_labels': list</span>
+        <span class="c1">#            'coarse_labels': list</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">anno_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">anno_file</span><span class="p">:</span>
             <span class="n">annotation_dict</span> <span class="o">=</span> <span class="n">PickleLoader</span><span class="o">.</span><span class="n">restricted_load</span><span class="p">(</span><span class="n">anno_file</span><span class="p">)</span>
 
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="n">coarse_labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;coarse_labels&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"labels"</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">coarse_labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"coarse_labels"</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fine_labels&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="n">filenames</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filenames&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="n">images_data</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_sizes&quot;</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fine_labels"</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"filenames"</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">images_data</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">annotation_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image_sizes"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;The sizes of the arrays &#39;filenames&#39;, &#39;labels&#39; don&#39;t match.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">"The sizes of the arrays 'filenames', 'labels' don't match."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">images_data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;The sizes of the arrays &#39;data&#39;, &#39;filenames&#39;, &#39;labels&#39; don&#39;t match.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">"The sizes of the arrays 'data', 'filenames', 'labels' don't match."</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span><span class="p">)):</span>
             <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -477,7 +477,7 @@
             <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coarse_labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">coarse_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">label_cat</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coarse_labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">coarse_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">label_cat</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
                     <span class="n">label_cat</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coarse_labels</span><span class="p">[</span><span class="n">coarse_labels</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
 
             <span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
@@ -521,19 +521,19 @@
             <span class="c1"># Find dataset root by looking for the meta file</span>
             <span class="n">roots</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
                 <span class="n">path</span><span class="p">,</span>
-                <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;cifar&quot;</span><span class="p">,</span>
+                <span class="s2">""</span><span class="p">,</span>
+                <span class="s2">"cifar"</span><span class="p">,</span>
                 <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="n">meta_file_name</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="c1"># Extract subset files from the root path</span>
             <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
-                <span class="n">root_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
+                <span class="n">root_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
                 <span class="n">sources</span> <span class="o">+=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
                     <span class="n">root_dir</span><span class="p">,</span>
-                    <span class="s2">&quot;&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;cifar&quot;</span><span class="p">,</span>
+                    <span class="s2">""</span><span class="p">,</span>
+                    <span class="s2">"cifar"</span><span class="p">,</span>
                     <span class="c1"># Subset files have no extension in the format, and</span>
                     <span class="c1"># should not be the meta file.</span>
                     <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -562,11 +562,11 @@
 <div class="viewcode-block" id="CifarExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cifar.html#datumaro.plugins.data_formats.cifar.CifarExporter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CifarExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
-    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.png&quot;</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">".png"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">"Media type is not an image"</span><span class="p">)</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -584,15 +584,15 @@
 
         <span class="k">if</span> <span class="n">coarse_label_names</span><span class="p">:</span>
             <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;fine_label_names&quot;</span><span class="p">:</span> <span class="n">label_names</span><span class="p">,</span>
-                <span class="s2">&quot;coarse_label_names&quot;</span><span class="p">:</span> <span class="n">coarse_label_names</span><span class="p">,</span>
+                <span class="s2">"fine_label_names"</span><span class="p">:</span> <span class="n">label_names</span><span class="p">,</span>
+                <span class="s2">"coarse_label_names"</span><span class="p">:</span> <span class="n">coarse_label_names</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">coarse_label_names</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coarse_label_names</span><span class="p">))</span>
             <span class="n">meta_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CifarPath</span><span class="o">.</span><span class="n">META_100_FILE</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label_names&quot;</span><span class="p">:</span> <span class="n">label_names</span><span class="p">}</span>
+            <span class="n">labels_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"label_names"</span><span class="p">:</span> <span class="n">label_names</span><span class="p">}</span>
             <span class="n">meta_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CifarPath</span><span class="o">.</span><span class="n">META_10_FILE</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">labels_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -626,40 +626,40 @@
 
             <span class="n">annotation_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-            <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;filenames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filenames</span>
+            <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"filenames"</span><span class="p">]</span> <span class="o">=</span> <span class="n">filenames</span>
             <span class="k">if</span> <span class="n">labels</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">coarse_labels</span><span class="p">)):</span>
-                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;fine_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
-                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;coarse_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coarse_labels</span>
+                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"fine_labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"coarse_labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">coarse_labels</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
-            <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span>
+            <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">image_sizes</span><span class="p">:</span>
                 <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="n">CifarPath</span><span class="o">.</span><span class="n">IMAGE_SIZE</span><span class="p">,</span> <span class="n">CifarPath</span><span class="o">.</span><span class="n">IMAGE_SIZE</span><span class="p">)</span>
-                <span class="c1"># &#39;image_sizes&#39; isn&#39;t included in the standard format,</span>
+                <span class="c1"># 'image_sizes' isn't included in the standard format,</span>
                 <span class="c1"># needed for different image sizes</span>
-                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;image_sizes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_sizes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
+                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"image_sizes"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_sizes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
 
             <span class="n">batch_label</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">subset_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">CifarPath</span><span class="o">.</span><span class="n">TRAIN_FILE_PREFIX</span><span class="p">):</span>
                 <span class="n">num</span> <span class="o">=</span> <span class="n">subset_name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">CifarPath</span><span class="o">.</span><span class="n">TRAIN_FILE_PREFIX</span><span class="p">)</span> <span class="p">:]</span>
                 <span class="k">if</span> <span class="n">cast</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">batch_label</span> <span class="o">=</span> <span class="s2">&quot;training batch </span><span class="si">%s</span><span class="s2"> of 5&quot;</span> <span class="o">%</span> <span class="n">num</span>
-            <span class="k">elif</span> <span class="n">subset_name</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">:</span>
-                <span class="n">batch_label</span> <span class="o">=</span> <span class="s2">&quot;testing batch 1 of 1&quot;</span>
+                    <span class="n">batch_label</span> <span class="o">=</span> <span class="s2">"training batch </span><span class="si">%s</span><span class="s2"> of 5"</span> <span class="o">%</span> <span class="n">num</span>
+            <span class="k">elif</span> <span class="n">subset_name</span> <span class="o">==</span> <span class="s2">"test"</span><span class="p">:</span>
+                <span class="n">batch_label</span> <span class="o">=</span> <span class="s2">"testing batch 1 of 1"</span>
 
             <span class="k">if</span> <span class="n">batch_label</span><span class="p">:</span>
-                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;batch_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_label</span>
+                <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"batch_label"</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_label</span>
 
             <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="ow">and</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span><span class="o">.</span><span class="n">updated_subsets</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">&quot;filenames&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="ow">and</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span><span class="o">.</span><span class="n">updated_subsets</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">annotation_dict</span><span class="p">[</span><span class="s2">"filenames"</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">):</span>
                     <span class="c1"># Remove subsets that became empty</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">labels_file</span><span class="p">:</span>
                 <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">annotation_dict</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CifarExporter.patch">
