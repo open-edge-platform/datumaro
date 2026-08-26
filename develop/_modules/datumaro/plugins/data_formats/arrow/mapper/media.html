@@ -507,12 +507,14 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">))</span>
-            <span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image"</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">memory_map</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"image"</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">as_py</span><span class="p">()</span>
+            <span class="p">),</span>
             <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
         <span class="p">)</span></div>
 
@@ -530,11 +532,9 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra_images"</span><span class="p">)[</span><span class="n">extra_image_idx</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
+            <span class="n">data</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">"media"</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"point_cloud"</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"extra_images"</span><span class="p">)[</span><span class="n">extra_image_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bytes"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">()</span>
+            <span class="p">),</span>
             <span class="n">size</span><span class="o">=</span><span class="n">image_struct</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
         <span class="p">)</span></div>
 </div>

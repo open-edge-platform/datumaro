@@ -536,9 +536,9 @@
                     <span class="s2">"cifar"</span><span class="p">,</span>
                     <span class="c1"># Subset files have no extension in the format, and</span>
                     <span class="c1"># should not be the meta file.</span>
-                    <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="n">meta_file_name</span><span class="p">,</span>
+                    <span class="n">file_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="n">meta_file_name</span>
+                    <span class="p">),</span>
                 <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">sources</span>
