@@ -221,7 +221,7 @@ class InstanceMaskCallableField(Field):
         """
         if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
-        return {name: pl.Series(name, [value])}
+        return {name: pl.Series(name, [value], dtype=pl.Object())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """
@@ -307,7 +307,7 @@ class MaskCallableField(Field):
         """
         if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
-        return {name: pl.Series(name, [value])}
+        return {name: pl.Series(name, [value], dtype=pl.Object())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Callable:  # noqa: ARG002
         """

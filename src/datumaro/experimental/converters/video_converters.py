@@ -10,6 +10,7 @@ This module provides converters for transforming video frame references
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
@@ -118,6 +119,30 @@ class VideoFramePathToImageConverter(MediaBridgeConverter):
         )
 
 
+@dataclass(frozen=True)
+class _VideoFramePathLoader:
+    """Picklable callable that lazily loads a single video frame on demand.
+
+    Used in place of a locally-defined closure so that datasets containing this
+    callable can be passed to ``torch.utils.data.DataLoader`` workers started
+    with the ``spawn`` multiprocessing context, which requires every object
+    reachable from the ``Dataset`` to be picklable. A closure defined inside a
+    function is not picklable by the standard ``pickle`` module, whereas a
+    module-level dataclass instance with simple attributes is.
+    """
+
+    video_path: str
+    frame_index: int
+    format: str
+
+    def __call__(self) -> np.ndarray:
+        return LazyVideoFrame(
+            video_path=self.video_path,
+            frame_index=self.frame_index,
+            format=self.format,
+        ).data
+
+
 @converter
 class VideoFrameToImageCallableConverter(MediaBridgeConverter):
     """
@@ -165,19 +190,7 @@ class VideoFrameToImageCallableConverter(MediaBridgeConverter):
                 callables.append(None)
                 continue
 
-            # Create a closure that loads the frame on demand
-            def make_loader(p: str, idx: int, fmt: str) -> callable:
-                def load_frame() -> np.ndarray:
-                    frame = LazyVideoFrame(
-                        video_path=p,
-                        frame_index=idx,
-                        format=fmt,
-                    )
-                    return frame.data
-
-                return load_frame
-
-            callables.append(make_loader(str(path), frame_idx, self.input_frame.field.format))
+            callables.append(_VideoFramePathLoader(str(path), frame_idx, self.input_frame.field.format))
 
         return df.with_columns(pl.Series(output_col, callables, dtype=pl.Object()))
 

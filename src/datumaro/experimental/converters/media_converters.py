@@ -12,6 +12,7 @@ MediaPathField.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 import polars as pl
@@ -132,6 +133,31 @@ class MediaPathToImageConverter(MediaBridgeConverter):
         )
 
 
+@dataclass(frozen=True)
+class _MediaPathLoader:
+    """Picklable callable that lazily loads an image or video frame on demand.
+
+    Used in place of a locally-defined closure so that datasets containing this
+    callable can be passed to ``torch.utils.data.DataLoader`` workers started
+    with the ``spawn`` multiprocessing context, which requires every object
+    reachable from the ``Dataset`` to be picklable. A closure defined inside a
+    function is not picklable by the standard ``pickle`` module, whereas a
+    module-level dataclass instance with simple attributes is.
+    """
+
+    path: str
+    frame_index: int | None
+    format: str
+
+    def __call__(self) -> np.ndarray:
+        media = (
+            LazyVideoFrame(video_path=self.path, frame_index=self.frame_index, format=self.format)
+            if self.frame_index is not None
+            else LazyImage(path=self.path, format=self.format)
+        )
+        return media.data
+
+
 @converter
 class MediaPathToImageCallableConverter(MediaBridgeConverter):
     """
@@ -179,18 +205,7 @@ class MediaPathToImageCallableConverter(MediaBridgeConverter):
                 callables.append(None)
                 continue
 
-            # Create a closure that loads the media on demand
-            def make_loader(p: str, idx: int | None, fmt: str) -> callable:
-                def load_media() -> np.ndarray:
-                    if idx is not None:
-                        media = LazyVideoFrame(video_path=p, frame_index=idx, format=fmt)
-                    else:
-                        media = LazyImage(path=p, format=fmt)
-                    return media.data
-
-                return load_media
-
-            callables.append(make_loader(str(path), frame_idx, self.input_media.field.format))
+            callables.append(_MediaPathLoader(str(path), frame_idx, self.input_media.field.format))
 
         return df.with_columns(pl.Series(output_col, callables, dtype=pl.Object()))
 

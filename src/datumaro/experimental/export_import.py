@@ -23,6 +23,7 @@ import platform
 import re
 import shutil
 import tempfile
+from dataclasses import dataclass
 from enum import Enum
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
@@ -1163,16 +1164,30 @@ def _load_dataframe(input_dir: Path) -> pl.DataFrame:
     return pl.read_parquet(parquet_path)
 
 
-def _make_image_loader(path: Path):
-    """Create a closure that loads an image from a path."""
+@dataclass(frozen=True)
+class _ImageFileLoader:
+    """Picklable callable that lazily loads an image from *path* on demand.
 
-    def load_image():
+    Used in place of a locally-defined closure so that datasets containing this
+    callable can be passed to ``torch.utils.data.DataLoader`` workers started
+    with the ``spawn`` multiprocessing context, which requires every object
+    reachable from the ``Dataset`` to be picklable. A closure defined inside a
+    function is not picklable by the standard ``pickle`` module, whereas a
+    module-level dataclass instance with simple (picklable) attributes is.
+    """
+
+    path: Path
+
+    def __call__(self) -> np.ndarray:
         # Apply EXIF orientation so the loaded array matches the image as
         # displayed (consistent with LazyImage).
-        with Image.open(path) as img:
+        with Image.open(self.path) as img:
             return np.array(ImageOps.exif_transpose(img))
 
-    return load_image
+
+def _make_image_loader(path: Path) -> _ImageFileLoader:
+    """Create a picklable lazy loader callable for an image path."""
+    return _ImageFileLoader(path)
 
 
 def _build_index_based_lookup(field_name: str, images_base_dir: Path) -> dict[int, Path]:
@@ -1330,8 +1345,12 @@ def _update_dataframe_with_field(
         if field_name in df.columns:
             df = df.drop(field_name)
         return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
-    if field_name in df.columns:
-        return df.with_columns(pl.Series(field_name, values))
+    # Callable fields (e.g. lazy image/mask loaders) must be forced to ``pl.Object()``:
+    # letting Polars infer the dtype from a list of callables is unreliable -- e.g. a
+    # dataclass-based loader (which exposes named attributes) can be misidentified as a
+    # nested struct, raising ``InvalidOperation: nested objects are not allowed``.
+    # ``with_columns`` adds the column when absent and replaces it when present, so a
+    # single branch handles both cases.
     return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
 
 
