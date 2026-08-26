@@ -494,7 +494,7 @@ class VideoFrameCallableField(Field):
         """Store callable as Object in Polars series."""
         if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
-        return {name: pl.Series(name, [value])}
+        return {name: pl.Series(name, [value], dtype=pl.Object())}
 
     def from_polars(
         self,

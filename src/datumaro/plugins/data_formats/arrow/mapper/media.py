@@ -141,12 +141,14 @@ class ImageMapper(MediaElementMapper):
             )
 
         return Image.from_bytes(
-            data=lambda: pa.ipc.open_file(pa.memory_map(table_path, "r"))
-            .read_all()
-            .column("media")[idx]
-            .get("image")
-            .get("bytes")
-            .as_py(),
+            data=lambda: (
+                pa.ipc.open_file(pa.memory_map(table_path, "r"))
+                .read_all()
+                .column("media")[idx]
+                .get("image")
+                .get("bytes")
+                .as_py()
+            ),
             size=image_struct.get("size").as_py(),
         )
 
@@ -161,11 +163,9 @@ class ImageMapper(MediaElementMapper):
             )
 
         return Image.from_bytes(
-            data=lambda: table.column("media")[idx]
-            .get("point_cloud")
-            .get("extra_images")[extra_image_idx]
-            .get("bytes")
-            .as_py(),
+            data=lambda: (
+                table.column("media")[idx].get("point_cloud").get("extra_images")[extra_image_idx].get("bytes").as_py()
+            ),
             size=image_struct.get("size").as_py(),
         )
 

@@ -883,5 +883,4 @@ class ImagePathToImageCallableConverter(MediaBridgeConverter):
 
             callables.append(_ImagePathLoader(str(path), self.input_path.field.format))
 
-
         return df.with_columns(pl.Series(output_col, callables, dtype=pl.Object()))

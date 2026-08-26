@@ -1345,12 +1345,12 @@ def _update_dataframe_with_field(
         if field_name in df.columns:
             df = df.drop(field_name)
         return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
-    if field_name in df.columns:
-        # Callable fields (e.g. lazy image/mask loaders) must be forced to ``pl.Object()``:
-        # letting Polars infer the dtype from a list of callables is unreliable -- e.g. a
-        # dataclass-based loader (which exposes named attributes) can be misidentified as a
-        # nested struct, raising ``InvalidOperation: nested objects are not allowed``.
-        return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
+    # Callable fields (e.g. lazy image/mask loaders) must be forced to ``pl.Object()``:
+    # letting Polars infer the dtype from a list of callables is unreliable -- e.g. a
+    # dataclass-based loader (which exposes named attributes) can be misidentified as a
+    # nested struct, raising ``InvalidOperation: nested objects are not allowed``.
+    # ``with_columns`` adds the column when absent and replaces it when present, so a
+    # single branch handles both cases.
     return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
 
 

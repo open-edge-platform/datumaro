@@ -307,6 +307,84 @@ class ForwardMaskAnnotationConverterPickleTest:
         assert output_masks.shape == (2, 2, 2)
 
 
+class LazyLoaderPicklabilityRegressionTest:
+    """Regression tests for the picklable dataclass loaders introduced to make
+    lazy media/mask loaders survive ``torch.utils.data.DataLoader`` ``spawn``
+    pickling.
+
+    These guard against two regressions:
+    - reverting to non-picklable closures (only module-level callables survive
+      ``spawn`` pickling), and
+    - the ``InvalidOperation: nested objects are not allowed`` Polars error that
+      occurs when such loaders (which expose named attributes) are stored in a
+      callable column without an explicit ``pl.Object()`` dtype.
+    """
+
+    def test_image_file_loader_is_picklable(self, tmp_path):
+        """``_ImageFileLoader`` used during export/import must round-trip."""
+        from PIL import Image
+
+        from datumaro.experimental.export_import import _ImageFileLoader
+
+        img_path = tmp_path / "img.png"
+        Image.fromarray(np.zeros((4, 4, 3), dtype=np.uint8)).save(img_path)
+
+        loader = _ImageFileLoader(img_path)
+        assert loader().shape == (4, 4, 3)
+
+        restored = pickle.loads(pickle.dumps(loader))
+        assert restored().shape == (4, 4, 3)
+
+    def test_image_path_loader_is_picklable(self, tmp_path):
+        """``_ImagePathLoader`` used by ImagePathToImageCallableConverter must round-trip."""
+        from PIL import Image
+
+        from datumaro.experimental.converters.image_converters import _ImagePathLoader
+
+        img_path = tmp_path / "img.png"
+        Image.fromarray(np.zeros((4, 4, 3), dtype=np.uint8)).save(img_path)
+
+        loader = _ImagePathLoader(str(img_path), "RGB")
+        assert loader().shape == (4, 4, 3)
+
+        restored = pickle.loads(pickle.dumps(loader))
+        assert restored().shape == (4, 4, 3)
+
+    def test_voc_mask_loader_is_picklable(self, tmp_path):
+        """``_VocMaskLoader`` used for VOC segmentation masks must round-trip."""
+        from PIL import Image
+
+        from datumaro.experimental.data_formats.voc.helpers import _VocMaskLoader
+
+        mask_path = tmp_path / "mask.png"
+        Image.fromarray(np.zeros((4, 4), dtype=np.uint8), mode="L").save(mask_path)
+
+        loader = _VocMaskLoader(mask_path, None)
+        assert loader().shape == (4, 4)
+
+        restored = pickle.loads(pickle.dumps(loader))
+        assert restored().shape == (4, 4)
+
+    def test_dataset_with_loader_callable_column_is_picklable(self, tmp_path):
+        """A Dataset storing dataclass loaders in a callable column must pickle."""
+        from PIL import Image
+
+        from datumaro.experimental.converters.image_converters import _ImagePathLoader
+
+        ds = Dataset(PicklableSample)
+
+        img_path = tmp_path / "img.png"
+        Image.fromarray(np.zeros((4, 4, 3), dtype=np.uint8)).save(img_path)
+        loader = _ImagePathLoader(str(img_path), "RGB")
+
+        ds.append(PicklableSample(image=loader))
+        assert pl.Object in ds.df.schema.values()
+
+        restored = pickle.loads(pickle.dumps(ds))
+        assert len(restored) == 1
+        assert restored[0].image().shape == (4, 4, 3)
+
+
 class ConvertFromLegacyPickleTest:
     """Tests for convert_from_legacy producing picklable datasets."""
 
