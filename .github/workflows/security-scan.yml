@@ -29,7 +29,7 @@ jobs:
     steps:
       - &harden_runner
         name: Harden the runner
-        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           disable-sudo: true
           disable-telemetry: true
@@ -51,7 +51,7 @@ jobs:
           persist-credentials: false
 
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@844eabfe27ce617aa1b2c0ca1b234d023c3ac7fb # zizmor/v0.1.3
+        uses: open-edge-platform/geti-ci/actions/zizmor@cffbec1b3b7c155efa789cd2ea67a2a765a4369f # zizmor/v0.1.4
         with:
           severity-level: "LOW"
           confidence-level: "LOW"
