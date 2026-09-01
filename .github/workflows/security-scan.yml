@@ -100,7 +100,6 @@ jobs:
 
   semgrep-scan:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
@@ -119,4 +118,5 @@ jobs:
         with:
           scan-scope: "all"
           severity: "LOW"
-          fail-on-findings: false # reports only
+          scan-scope: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && 'changed' || 'all' }}
+          fail-on-findings: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && 'true' || 'false' }}

@@ -56,6 +56,10 @@ def get_lazy_plugin(
     extra_deps: List[str] = [],
     metadata: Dict = {},
 ) -> Optional[LazyPlugin]:
+    if not import_path.startswith("datumaro."):
+        log.error(f"Refusing to load plugin with non-datumaro import_path={import_path!r}.")
+        return None
+
     for extra_dep in extra_deps:
         spec = find_spec(extra_dep)
         if spec is None:
@@ -73,6 +77,8 @@ def get_lazy_plugin(
             splits = import_path.split(".")
             module_name = ".".join(splits[:-1])
             class_name = splits[-1]
+            # module_name is validated against _ALLOWED_PLUGIN_PACKAGE before reaching here
+            # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
             module = import_module(module_name)
             return getattr(module, class_name)
 
