@@ -1289,6 +1289,136 @@ def test_resolve_type_from_qualified_name_helper():
     assert _resolve_type_from_qualified_name("nonexistent.module.Type") is object
 
 
+def test_is_allowed_type_module():
+    """Test that only trusted top-level packages are allowed for type resolution."""
+    from datumaro.experimental.schema import _is_allowed_type_module
+
+    # Trusted packages, including submodules
+    assert _is_allowed_type_module("numpy") is True
+    assert _is_allowed_type_module("torch") is True
+    assert _is_allowed_type_module("torchvision") is True
+    assert _is_allowed_type_module("torchvision.tv_tensors._bounding_boxes") is True
+    assert _is_allowed_type_module("datumaro") is True
+    assert _is_allowed_type_module("datumaro.experimental.media") is True
+
+    # Untrusted packages, including ones an attacker could pick for RCE
+    assert _is_allowed_type_module("subprocess") is False
+    assert _is_allowed_type_module("os") is False
+    assert _is_allowed_type_module("builtins") is False
+    assert _is_allowed_type_module("sys") is False
+    # A prefix collision must not be enough to be trusted (e.g. "numpyfake")
+    assert _is_allowed_type_module("numpyfake") is False
+    assert _is_allowed_type_module("datumaroevil") is False
+
+
+def test_resolve_type_blocks_untrusted_modules():
+    """Test that _resolve_type refuses to import modules outside the allowlist."""
+    from datumaro.experimental.schema import _resolve_type
+
+    assert _resolve_type("getoutput", "subprocess") is object
+    assert _resolve_type("Popen", "subprocess") is object
+    assert _resolve_type("system", "os") is object
+    assert _resolve_type("exit", "sys") is object
+
+
+def test_resolve_type_blocks_non_type_attributes_in_allowed_modules():
+    """Test that _resolve_type never returns a callable that isn't an actual class."""
+    from datumaro.experimental.schema import _resolve_type
+
+    # numpy.array is a factory function, not a class - must not be returned as a "type"
+    assert _resolve_type("array", "numpy") is object
+    # image_field is a factory function in a trusted Datumaro module, not a class
+    assert _resolve_type("image_field", "datumaro.experimental.fields.images") is object
+
+
+def test_resolve_type_from_qualified_name_blocks_untrusted_modules():
+    """Test that _resolve_type_from_qualified_name refuses modules outside the allowlist."""
+    from datumaro.experimental.schema import _resolve_type_from_qualified_name
+
+    assert _resolve_type_from_qualified_name("subprocess.getoutput") is object
+    assert _resolve_type_from_qualified_name("os.system") is object
+
+
+def test_schema_from_dict_regression_arbitrary_code_execution():
+    """Regression test for GHSA/security report: a malicious schema selecting
+    subprocess.getoutput as an image-path "type" must not resolve to a callable
+    that gets invoked on the path value.
+    """
+    field = image_path_field()
+
+    # Simulate the exact payload reported: only type/type_module are attacker-controlled.
+    malicious_schema_dict = {
+        "attributes": {
+            "image": {
+                "type": "getoutput",
+                "type_module": "subprocess",
+                "field": field.to_dict(),
+            }
+        },
+        "categories": {},
+    }
+
+    schema = Schema.from_dict(malicious_schema_dict)
+
+    # The dangerous callable must never be returned as the resolved type.
+    resolved_type = schema.attributes["image"].type
+    assert resolved_type is object
+
+    # Simulate the sink: Field.from_polars is called with the resolved type as target_type.
+    polars_data = field.to_polars("image", "; touch /tmp/datumaro_rce_regression_test ;")
+    df = pl.DataFrame(polars_data)
+
+    # Must fail safely (TypeError from calling object() with an argument) instead of
+    # executing the attacker-controlled shell command.
+    with pytest.raises(TypeError):
+        field.from_polars("image", 0, df, resolved_type)
+
+    import os
+
+    assert not os.path.exists("/tmp/datumaro_rce_regression_test")
+
+
+def test_schema_from_dict_still_resolves_legitimate_image_path_type():
+    """Test that legitimate LazyImage-typed schemas still resolve correctly after the fix."""
+    from datumaro.experimental.media import LazyImage
+
+    field = image_path_field()
+    legit_schema_dict = {
+        "attributes": {
+            "image": {
+                "type": "LazyImage",
+                "type_module": "datumaro.experimental.media",
+                "field": field.to_dict(),
+            }
+        },
+        "categories": {},
+    }
+
+    schema = Schema.from_dict(legit_schema_dict)
+    resolved_type = schema.attributes["image"].type
+    assert resolved_type is LazyImage
+
+    polars_data = field.to_polars("image", "/tmp/some_image.jpg")
+    df = pl.DataFrame(polars_data)
+    result = field.from_polars("image", 0, df, resolved_type)
+    assert isinstance(result, LazyImage)
+    assert result.path == "/tmp/some_image.jpg"
+
+
+def test_schema_serialization_torch_tensor_type():
+    """Test that torch.Tensor attribute types round-trip through Schema to_dict/from_dict."""
+    torch = pytest.importorskip("torch")
+
+    schema = Schema(attributes={"data": AttributeInfo(type=torch.Tensor, field=tensor_field(dtype=pl.Float32()))})
+
+    schema_dict = schema.to_dict()
+    assert schema_dict["attributes"]["data"]["type"] == "Tensor"
+    assert schema_dict["attributes"]["data"]["type_module"] == "torch"
+
+    reconstructed = Schema.from_dict(schema_dict)
+    assert reconstructed.attributes["data"].type is torch.Tensor
+
+
 def test_subset_field_in_sample_with_union_type():
     """Test SubsetField usage in a Sample class with union type annotation."""
 
