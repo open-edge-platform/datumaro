@@ -23,10 +23,16 @@ DEFAULT_MIN_DEPTH = 0
 
 
 def check_instruction_set(instruction):
+    # Validate instruction
+    if not re.fullmatch(r"[A-Za-z0-9_]+", instruction):
+        raise ValueError(f"Invalid instruction set name: {instruction!r}")
+
     return instruction == str.strip(
         # Let's ignore a warning from bandit about using shell=True.
         # In this case it isn't a security issue and we use some
         # shell features like pipes.
+        # Additionally, instruction is validated with regexp.
+        # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         subprocess.check_output('lscpu | grep -o "%s" | head -1' % instruction, shell=True).decode(  # nosec B602
             "utf-8"
         )
@@ -39,6 +45,8 @@ def import_foreign_module(name, path):
     try:
         sys.path = [osp.abspath(path), *default_path]
         sys.modules.pop(name, None)  # remove from cache
+        # name is derived from filesystem glob-scanning by _find_plugins, not from user-supplied data
+        # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
         module = importlib.import_module(name)
         sys.modules.pop(name)  # remove from cache
     finally:
