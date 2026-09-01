@@ -67,15 +67,32 @@ BUILTIN_TYPES = {
     "NoneType": type(None),
 }
 
+# Schemas can be loaded from untrusted dataset files (e.g. a Datumaro-format
+# dataset received from an external source). Resolving a type module/name pair
+# read from such a file must never be allowed to import and return an arbitrary
+# importable object since that value is later invoked as a callable elsewhere
+# (see Field.from_polars implementations).
+# Only modules that are part of Datumaro itself or numpy are ever imported here.
+_ALLOWED_TYPE_MODULES = frozenset({"numpy"})
+
+
+def _is_allowed_type_module(type_module: str) -> bool:
+    """Check whether a module is trusted to be imported when resolving a serialized type."""
+    return type_module in _ALLOWED_TYPE_MODULES or type_module.startswith("datumaro.")
+
 
 def _resolve_type(type_name: str, type_module: str | None) -> type:
     """Resolve a type from its name and module."""
     if type_module and type_module != "builtins":
+        if not _is_allowed_type_module(type_module):
+            return object
         try:
             module = importlib.import_module(type_module)
-            return getattr(module, type_name, object)
+            resolved = getattr(module, type_name, object)
         except (ImportError, AttributeError):
             return object
+        # Only ever return an actual class, never an arbitrary callable (e.g. a function).
+        return resolved if isinstance(resolved, type) else object
     if type_name in BUILTIN_TYPES:
         return BUILTIN_TYPES.get(type_name, object)
     return object
@@ -92,11 +109,15 @@ def _resolve_type_from_qualified_name(qualified_name: str) -> type:
     parts = qualified_name.rsplit(".", 1)
     if len(parts) == 2:
         module_name, attr_name = parts
+        if not _is_allowed_type_module(module_name):
+            return object
         try:
             module = importlib.import_module(module_name)
-            return getattr(module, attr_name, object)
+            resolved = getattr(module, attr_name, object)
         except (ImportError, AttributeError):
             return object
+        # Only ever return an actual class, never an arbitrary callable (e.g. a function).
+        return resolved if isinstance(resolved, type) else object
     return object
 
 
