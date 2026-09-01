@@ -58,6 +58,27 @@ def _create_ultralytics_dataset(root: Path, create_images: bool = True) -> None:
     (root / "data.yaml").write_text(yaml.dump(yaml_data))
 
 
+def _create_roboflow_dataset(root: Path) -> None:
+    """Create a Roboflow-style Ultralytics dataset laid out as <subset>/images and <subset>/labels."""
+    for subset_dir_name, image_names in (("train", ("img1", "img2")), ("valid", ("img3",))):
+        images_dir = root / subset_dir_name / "images"
+        labels_dir = root / subset_dir_name / "labels"
+        images_dir.mkdir(parents=True)
+        labels_dir.mkdir(parents=True)
+
+        for image_name in image_names:
+            _create_test_image(images_dir / f"{image_name}.jpg", 640, 480)
+            (labels_dir / f"{image_name}.txt").write_text("0 0.5 0.5 0.2 0.3\n")
+
+    # Roboflow declares the paths relative to a subset directory, not to the dataset root
+    yaml_data = {
+        "names": ["cat", "dog"],
+        "train": "../train/images",
+        "val": "../valid/images",
+    }
+    (root / "data.yaml").write_text(yaml.dump(yaml_data))
+
+
 def _create_traditional_dataset(root: Path, create_images: bool = True) -> None:
     """Create a minimal traditional YOLO format dataset structure."""
     train_dir = root / "obj_train_data"
@@ -189,8 +210,76 @@ def test_load_yolo_dataset_missing_images_dir_raises(tmp_path: Path):
     # Create data.yaml but no images directory
     (tmp_path / "data.yaml").write_text("names: [cat]\n")
 
-    with pytest.raises(FileNotFoundError, match="Missing 'images' directory"):
+    with pytest.raises(FileNotFoundError, match="Could not locate any image directory"):
         load_yolo_dataset(str(tmp_path), format="ultralytics")
+
+
+def test_load_yolo_dataset_roboflow_split_first_layout(tmp_path: Path):
+    """Test loading a Roboflow-style dataset laid out as <subset>/images and <subset>/labels."""
+    _create_roboflow_dataset(tmp_path)
+
+    ds = load_yolo_dataset(str(tmp_path))
+
+    assert len(ds) == 3
+    assert {s.subset for s in ds} == {Subset.TRAINING, Subset.VALIDATION}
+    # Annotations must be picked up from the sibling labels directory
+    assert all(s.bboxes is not None and len(s.bboxes) == 1 for s in ds)
+
+    labels_attr = ds.schema.attributes.get("labels")
+    assert labels_attr is not None
+    assert labels_attr.categories.labels == ("cat", "dog")
+
+
+def test_load_yolo_dataset_yaml_paths_take_precedence(tmp_path: Path):
+    """Test that subset directories declared in data.yaml are used even with unconventional names."""
+    images_dir = tmp_path / "custom" / "pictures"
+    labels_dir = tmp_path / "custom" / "labels"
+    images_dir.mkdir(parents=True)
+    labels_dir.mkdir(parents=True)
+    _create_test_image(images_dir / "img1.jpg", 640, 480)
+    (labels_dir / "img1.txt").write_text("0 0.5 0.5 0.2 0.3\n")
+
+    yaml_data = {"names": ["cat", "dog"], "train": "custom/pictures"}
+    (tmp_path / "data.yaml").write_text(yaml.dump(yaml_data))
+
+    ds = load_yolo_dataset(str(tmp_path))
+
+    assert len(ds) == 1
+    assert ds[0].subset == Subset.TRAINING
+    assert ds[0].bboxes is not None
+
+
+def test_load_yolo_dataset_ignores_yaml_paths_outside_root(tmp_path: Path):
+    """Test that data.yaml paths escaping the dataset root are not followed."""
+    outside_dir = tmp_path / "outside" / "images"
+    outside_dir.mkdir(parents=True)
+    _create_test_image(outside_dir / "secret.jpg", 640, 480)
+
+    root = tmp_path / "dataset"
+    images_train = root / "images" / "train"
+    images_train.mkdir(parents=True)
+    _create_test_image(images_train / "img1.jpg", 640, 480)
+
+    yaml_data = {"names": ["cat"], "train": "images/train", "val": "/etc"}
+    (root / "data.yaml").write_text(yaml.dump(yaml_data))
+
+    ds = load_yolo_dataset(str(root))
+
+    assert len(ds) == 1
+    assert Path(ds[0].image).name == "img1.jpg"
+
+
+def test_load_yolo_dataset_recovers_subset_missing_from_yaml(tmp_path: Path):
+    """Test that a subset on disk is loaded even when data.yaml points at a nonexistent path."""
+    _create_roboflow_dataset(tmp_path)
+    # Roboflow assets sometimes disagree with the on-disk layout; the loader must not drop the split.
+    yaml_data = {"names": ["cat", "dog"], "train": "../train/images", "val": "../nonexistent/images"}
+    (tmp_path / "data.yaml").write_text(yaml.dump(yaml_data))
+
+    ds = load_yolo_dataset(str(tmp_path))
+
+    assert len(ds) == 3
+    assert {s.subset for s in ds} == {Subset.TRAINING, Subset.VALIDATION}
 
 
 def test_load_yolo_dataset_traditional_obj_data_directory(tmp_path: Path):

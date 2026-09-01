@@ -79,6 +79,17 @@ def load_yolo_dataset(root_dir: str, format: str = "auto") -> Dataset:
             val/
             test/  (optional)
 
+    Ultralytics format, split-first layout (as exported by Roboflow)::
+
+        data.yaml    (declares e.g. "train: ../train/images")
+        train/
+            images/
+            labels/
+        valid/
+            images/
+            labels/
+        test/  (optional)
+
     Traditional YOLO format::
 
         obj.names

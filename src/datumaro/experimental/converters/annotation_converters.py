@@ -968,26 +968,28 @@ class PolygonCoordinateConverter(Converter):
         return df.with_columns(
             pl.struct([pl.col(input_polygon_name), pl.col(image_shape_name)])
             .map_elements(
-                lambda row: [
+                lambda row: (
                     [
                         [
-                            (
-                                point[0] * row[image_shape_name][1]
-                                if input_normalized
-                                else point[0] / row[image_shape_name][1]
-                            ),
-                            (
-                                point[1] * row[image_shape_name][0]
-                                if input_normalized
-                                else point[1] / row[image_shape_name][0]
-                            ),
+                            [
+                                (
+                                    point[0] * row[image_shape_name][1]
+                                    if input_normalized
+                                    else point[0] / row[image_shape_name][1]
+                                ),
+                                (
+                                    point[1] * row[image_shape_name][0]
+                                    if input_normalized
+                                    else point[1] / row[image_shape_name][0]
+                                ),
+                            ]
+                            for point in polygon
                         ]
-                        for point in polygon
+                        for polygon in row[input_polygon_name]
                     ]
-                    for polygon in row[input_polygon_name]
-                ]
-                if row[input_polygon_name] is not None
-                else None,
+                    if row[input_polygon_name] is not None
+                    else None
+                ),
                 return_dtype=pl.List(pl.List(pl.Array(self.output_polygon.field.dtype, 2))),
             )
             .alias(output_polygon_name)
@@ -1149,8 +1151,8 @@ class BBoxFormatConverter(Converter):
             # Convert cxcywh to x1y1x2y2: [cx, cy, w, h] -> [cx-w/2, cy-h/2, cx+w/2, cy+h/2]
             intermediate_expr = pl.col(input_bbox_name).list.eval(
                 pl.concat_arr(
-                    pl.element().arr.get(0) - pl.element().arr.get(2) / 2,  # x1 = cx - w/2
-                    pl.element().arr.get(1) - pl.element().arr.get(3) / 2,  # y1 = cy - h/2
+                    (pl.element().arr.get(0) - pl.element().arr.get(2) / 2).clip(lower_bound=0),  # x1 = cx - w/2
+                    (pl.element().arr.get(1) - pl.element().arr.get(3) / 2).clip(lower_bound=0),  # y1 = cy - h/2
                     pl.element().arr.get(0) + pl.element().arr.get(2) / 2,  # x2 = cx + w/2
                     pl.element().arr.get(1) + pl.element().arr.get(3) / 2,  # y2 = cy + h/2
                 )

@@ -15,8 +15,21 @@ SUBSET_TO_DIR_NAME = {
     Subset.UNASSIGNED: "unassigned",
 }
 
-# Mapping from YOLO directory names to subset enum
-DIR_NAME_TO_SUBSET = {v: k for k, v in SUBSET_TO_DIR_NAME.items()}
+# Mapping from YOLO directory names (and the ``data.yaml`` keys sharing those names) to the
+# subset enum. Exporters are not consistent in how they spell the splits (e.g. Roboflow names
+# the validation split "valid" instead of "val"), so common variations are accepted on import.
+# Export always uses the canonical names from ``SUBSET_TO_DIR_NAME``.
+DIR_NAME_TO_SUBSET = {
+    "train": Subset.TRAINING,
+    "training": Subset.TRAINING,
+    "val": Subset.VALIDATION,
+    "valid": Subset.VALIDATION,
+    "validation": Subset.VALIDATION,
+    "test": Subset.TESTING,
+    "testing": Subset.TESTING,
+    "unassigned": Subset.UNASSIGNED,
+    "unknown": Subset.UNASSIGNED,
+}
 
 # Mapping from subset enum to traditional YOLO directory names
 TRADITIONAL_SUBSET_DIR_NAMES = {
