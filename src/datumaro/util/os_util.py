@@ -23,11 +23,15 @@ DEFAULT_MIN_DEPTH = 0
 
 
 def check_instruction_set(instruction):
+    # Validate instruction
+    if not re.fullmatch(r"[A-Za-z0-9_]+", instruction):
+        raise ValueError(f"Invalid instruction set name: {instruction!r}")
+
     return instruction == str.strip(
         # Let's ignore a warning from bandit about using shell=True.
         # In this case it isn't a security issue and we use some
         # shell features like pipes.
-        # instruction is always a hardcoded CPU flag name (e.g. "avx"), never user-supplied
+        # Additionally, instruction is validated with regexp.
         # nosemgrep: python.lang.security.audit.subprocess-shell-true.subprocess-shell-true
         subprocess.check_output('lscpu | grep -o "%s" | head -1' % instruction, shell=True).decode(  # nosec B602
             "utf-8"
