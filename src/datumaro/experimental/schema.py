@@ -72,13 +72,13 @@ BUILTIN_TYPES = {
 # read from such a file must never be allowed to import and return an arbitrary
 # importable object since that value is later invoked as a callable elsewhere
 # (see Field.from_polars implementations).
-# Only modules that are part of Datumaro itself or numpy are ever imported here.
-_ALLOWED_TYPE_MODULES = frozenset({"numpy"})
+# Only these trusted top-level packages are ever imported here.
+_ALLOWED_TYPE_PACKAGES = frozenset({"numpy", "torch", "torchvision", "datumaro"})
 
 
 def _is_allowed_type_module(type_module: str) -> bool:
     """Check whether a module is trusted to be imported when resolving a serialized type."""
-    return type_module in _ALLOWED_TYPE_MODULES or type_module.startswith("datumaro.")
+    return type_module.split(".", 1)[0] in _ALLOWED_TYPE_PACKAGES
 
 
 def _resolve_type(type_name: str, type_module: str | None) -> type:
