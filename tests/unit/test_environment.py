@@ -8,10 +8,10 @@ import pytest
 
 import datumaro.components.environment
 import datumaro.components.lazy_plugin
-from datumaro.plugins import specs as plugin_specs
 from datumaro.components.environment import DEFAULT_ENVIRONMENT, Environment, PluginRegistry
 from datumaro.components.exporter import Exporter
 from datumaro.components.lazy_plugin import get_lazy_plugin
+from datumaro.plugins import specs as plugin_specs
 from datumaro.util import parse_json_file
 
 real_find_spec = datumaro.components.lazy_plugin.find_spec
