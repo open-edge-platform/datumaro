@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Type, TypeVar, Union, cast
 
 import attr
@@ -18,12 +19,33 @@ from datumaro.util.definitions import DEFAULT_SUBSET_NAME
 
 T = TypeVar("T", bound=MediaElement)
 
+# Item ids and subsets are frequently taken verbatim from untrusted dataset
+# content (e.g. COCO "file_name") and later joined into export file paths, so
+# they must not be usable to escape the intended output directory.
+# Matches: a leading "/" (POSIX absolute path), a leading "C:/" or "C:\"
+# (Windows drive-absolute path), or a ".." path segment anywhere in the string.
+_UNSAFE_PATH_COMPONENT_RE = re.compile(r"^/|^[A-Za-z]:[/\\]|(^|[/\\])\.\.([/\\]|$)")
+
+
+def _validate_no_path_traversal(instance, attribute, value):
+    if isinstance(value, str) and _UNSAFE_PATH_COMPONENT_RE.search(value):
+        raise ValueError(
+            f"Dataset item '{attribute.name}' must not be an absolute path or contain '..' components, got: {value!r}"
+        )
+
 
 @attrs(order=False, init=False, slots=True)
 class DatasetItem:
-    id: str = field(converter=lambda x: str(x).replace("\\", "/"), validator=not_empty)
+    id: str = field(
+        converter=lambda x: str(x).replace("\\", "/"),
+        validator=[not_empty, _validate_no_path_traversal],
+    )
 
-    subset: str = field(converter=lambda v: v or DEFAULT_SUBSET_NAME, default=None)
+    subset: str = field(
+        converter=lambda v: v or DEFAULT_SUBSET_NAME,
+        validator=_validate_no_path_traversal,
+        default=None,
+    )
 
     media: Optional[MediaElement] = field(
         default=None, validator=attr.validators.optional(attr.validators.instance_of(MediaElement))

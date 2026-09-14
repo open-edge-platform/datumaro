@@ -18,6 +18,7 @@ from datumaro.components.errors import AnnotationExportError, DatasetExportError
 from datumaro.components.media import Image, PointCloud, Video, VideoFrame
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.util.meta_file_util import save_meta_file
+from datumaro.util.os_util import join_within_base
 from datumaro.util.scope import on_error_do, scoped
 
 T = TypeVar("T")
@@ -225,7 +226,7 @@ class Exporter(CliPlugin):
             return
 
         basedir = basedir or self._save_dir
-        path = path or osp.join(basedir, self._make_image_filename(item, name=name, subdir=subdir))
+        path = path or join_within_base(basedir, self._make_image_filename(item, name=name, subdir=subdir))
         path = osp.abspath(path)
 
         item.media.save(path)
@@ -238,7 +239,7 @@ class Exporter(CliPlugin):
             return
 
         basedir = basedir or self._save_dir
-        path = path or osp.join(basedir, self._make_pcd_filename(item, name=name, subdir=subdir))
+        path = path or join_within_base(basedir, self._make_pcd_filename(item, name=name, subdir=subdir))
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
@@ -333,7 +334,7 @@ class ExportContextComponent:
         basedir = self._images_dir if basedir is None else basedir
         basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_image_filename(item) if fname is None else fname
-        path = osp.join(basedir, fname)
+        path = join_within_base(basedir, fname)
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
@@ -354,7 +355,7 @@ class ExportContextComponent:
         basedir = self._pcd_dir if basedir is None else basedir
         basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_pcd_filename(item) if fname is None else fname
-        path = osp.join(basedir, fname)
+        path = join_within_base(basedir, fname)
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
@@ -362,7 +363,7 @@ class ExportContextComponent:
         def helper(i, image):
             basedir = self._images_dir
             basedir = osp.join(basedir, subdir) if subdir is not None else basedir
-            return {"fp": osp.join(basedir, self.make_pcd_extra_image_filename(item, i, image))}
+            return {"fp": join_within_base(basedir, self.make_pcd_extra_image_filename(item, i, image))}
 
         item.media.save(path, helper)
 
@@ -381,7 +382,7 @@ class ExportContextComponent:
         basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_video_filename(item) if fname is None else fname
 
-        path = osp.join(basedir, fname)
+        path = join_within_base(basedir, fname)
         path = osp.abspath(path)
 
         # To prevent the video from being overwritten
