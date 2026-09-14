@@ -1931,6 +1931,34 @@ class DatasetItemTest:
             # pylint: enable=no-value-for-parameter
 
     @pytest.mark.parametrize(
+        "unsafe_id",
+        [
+            "../escape",
+            "a/../../escape",
+            "a/b/../../../escape",
+            "..",
+            "/etc/passwd",
+            "C:/Windows/System32",
+        ],
+    )
+    def test_ctor_rejects_path_traversal_in_id(self, unsafe_id):
+        # ids are often taken from untrusted dataset content and later used
+        # to build export file paths, so traversal must be rejected (#local.md)
+        with pytest.raises(ValueError):
+            DatasetItem(id=unsafe_id)
+
+    def test_ctor_rejects_path_traversal_in_subset(self):
+        with pytest.raises(ValueError):
+            DatasetItem(id="item", subset="../escape")
+
+    @pytest.mark.parametrize(
+        "safe_id",
+        ["img001", "train/img001", "2021..12..31", "sub/dir/name", "a/b..c/d"],
+    )
+    def test_ctor_accepts_safe_ids(self, safe_id):
+        assert DatasetItem(id=safe_id).id == safe_id
+
+    @pytest.mark.parametrize(
         "kwargs",
         [
             {"id": 0, "media": None},
