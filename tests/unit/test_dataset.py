@@ -6,6 +6,7 @@ import logging
 import os
 import os.path as osp
 import pickle
+from pathlib import Path
 from typing import Callable, List  # nosec B403
 from unittest import TestCase, mock
 
@@ -1939,6 +1940,9 @@ class DatasetItemTest:
             "..",
             "/etc/passwd",
             "C:/Windows/System32",
+            "C:foo",
+            "\\\\server\\share",
+            "..\\escape",
         ],
     )
     def test_ctor_rejects_path_traversal_in_id(self, unsafe_id):
@@ -1947,9 +1951,19 @@ class DatasetItemTest:
         with pytest.raises(ValueError):
             DatasetItem(id=unsafe_id)
 
-    def test_ctor_rejects_path_traversal_in_subset(self):
+    @pytest.mark.parametrize(
+        "unsafe_subset",
+        [
+            "../escape",
+            "C:foo",
+            "\\\\server\\share",
+            Path("../escape"),
+        ],
+    )
+    def test_ctor_rejects_path_traversal_in_subset(self, unsafe_subset):
+        # non-str subset values (e.g. Path) must also be normalized and checked
         with pytest.raises(ValueError):
-            DatasetItem(id="item", subset="../escape")
+            DatasetItem(id="item", subset=unsafe_subset)
 
     @pytest.mark.parametrize(
         "safe_id",

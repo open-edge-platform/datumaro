@@ -22,9 +22,11 @@ T = TypeVar("T", bound=MediaElement)
 # Item ids and subsets are frequently taken verbatim from untrusted dataset
 # content (e.g. COCO "file_name") and later joined into export file paths, so
 # they must not be usable to escape the intended output directory.
-# Matches: a leading "/" (POSIX absolute path), a leading "C:/" or "C:\"
-# (Windows drive-absolute path), or a ".." path segment anywhere in the string.
-_UNSAFE_PATH_COMPONENT_RE = re.compile(r"^/|^[A-Za-z]:[/\\]|(^|[/\\])\.\.([/\\]|$)")
+# Matches: a leading "/" or "\\" (POSIX/Windows-rooted path, incl. UNC paths
+# like "\\server\share"), a leading drive prefix such as "C:" (covers both
+# drive-absolute "C:/foo" and drive-relative "C:foo"), or a ".." path segment
+# anywhere in the string.
+_UNSAFE_PATH_COMPONENT_RE = re.compile(r"^[/\\]|^[A-Za-z]:|(^|[/\\])\.\.([/\\]|$)")
 
 
 def _validate_no_path_traversal(instance, attribute, value):
@@ -42,7 +44,7 @@ class DatasetItem:
     )
 
     subset: str = field(
-        converter=lambda v: v or DEFAULT_SUBSET_NAME,
+        converter=lambda v: str(v).replace("\\", "/") if v else DEFAULT_SUBSET_NAME,
         validator=_validate_no_path_traversal,
         default=None,
     )
