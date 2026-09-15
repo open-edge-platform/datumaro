@@ -24,6 +24,11 @@ from datumaro.util.scope import on_error_do, scoped
 T = TypeVar("T")
 
 
+def _confined_path(basedir: str, *parts: Optional[str]) -> str:
+    # keeps basedir as the confinement root; subdir must not be pre-joined into it
+    return join_within_base(basedir, *(part for part in parts if part is not None))
+
+
 class _ExportFail(DatumaroError):
     pass
 
@@ -332,9 +337,8 @@ class ExportContextComponent:
             return
 
         basedir = self._images_dir if basedir is None else basedir
-        basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_image_filename(item) if fname is None else fname
-        path = join_within_base(basedir, fname)
+        path = _confined_path(basedir, subdir, fname)
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
@@ -353,17 +357,14 @@ class ExportContextComponent:
             return
 
         basedir = self._pcd_dir if basedir is None else basedir
-        basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_pcd_filename(item) if fname is None else fname
-        path = join_within_base(basedir, fname)
+        path = _confined_path(basedir, subdir, fname)
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
 
         def helper(i, image):
-            basedir = self._images_dir
-            basedir = osp.join(basedir, subdir) if subdir is not None else basedir
-            return {"fp": join_within_base(basedir, self.make_pcd_extra_image_filename(item, i, image))}
+            return {"fp": _confined_path(self._images_dir, subdir, self.make_pcd_extra_image_filename(item, i, image))}
 
         item.media.save(path, helper)
 
@@ -379,10 +380,9 @@ class ExportContextComponent:
             log.warning("Item '%s' has no video", item.id)
             return
         basedir = self._video_dir if basedir is None else basedir
-        basedir = osp.join(basedir, subdir) if subdir is not None else basedir
         fname = self.make_video_filename(item) if fname is None else fname
 
-        path = join_within_base(basedir, fname)
+        path = _confined_path(basedir, subdir, fname)
         path = osp.abspath(path)
 
         # To prevent the video from being overwritten
