@@ -6,6 +6,7 @@ import logging
 import os
 import os.path as osp
 import pickle
+from pathlib import Path
 from typing import Callable, List  # nosec B403
 from unittest import TestCase, mock
 
@@ -1929,6 +1930,47 @@ class DatasetItemTest:
             # pylint: disable=no-value-for-parameter
             DatasetItem()
             # pylint: enable=no-value-for-parameter
+
+    @pytest.mark.parametrize(
+        "unsafe_id",
+        [
+            "../escape",
+            "a/../../escape",
+            "a/b/../../../escape",
+            "..",
+            "/etc/passwd",
+            "C:/Windows/System32",
+            "C:foo",
+            "\\\\server\\share",
+            "..\\escape",
+        ],
+    )
+    def test_ctor_rejects_path_traversal_in_id(self, unsafe_id):
+        # ids are often taken from untrusted dataset content and later used
+        # to build export file paths, so traversal must be rejected (#local.md)
+        with pytest.raises(ValueError):
+            DatasetItem(id=unsafe_id)
+
+    @pytest.mark.parametrize(
+        "unsafe_subset",
+        [
+            "../escape",
+            "C:foo",
+            "\\\\server\\share",
+            Path("../escape"),
+        ],
+    )
+    def test_ctor_rejects_path_traversal_in_subset(self, unsafe_subset):
+        # non-str subset values (e.g. Path) must also be normalized and checked
+        with pytest.raises(ValueError):
+            DatasetItem(id="item", subset=unsafe_subset)
+
+    @pytest.mark.parametrize(
+        "safe_id",
+        ["img001", "train/img001", "2021..12..31", "sub/dir/name", "a/b..c/d"],
+    )
+    def test_ctor_accepts_safe_ids(self, safe_id):
+        assert DatasetItem(id=safe_id).id == safe_id
 
     @pytest.mark.parametrize(
         "kwargs",

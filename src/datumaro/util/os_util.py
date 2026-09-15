@@ -33,6 +33,26 @@ def check_instruction_set(instruction):
     )
 
 
+def join_within_base(base_dir: str, *parts: str) -> str:
+    """Join `parts` onto `base_dir`, and reject the result if it escapes `base_dir`.
+
+    Untrusted values (e.g. dataset item ids) can contain '..' or be absolute,
+    so a plain osp.join() can traverse outside of `base_dir`. Raises ValueError
+    in that case (including when the paths don't share a common root, e.g.
+    different drives on Windows).
+    """
+    path = osp.join(base_dir, *parts)
+    resolved_base = osp.realpath(base_dir)
+    resolved_path = osp.realpath(path)
+    try:
+        confined = osp.commonpath([resolved_base, resolved_path]) == resolved_base
+    except ValueError:
+        confined = False
+    if not confined:
+        raise ValueError(f"Resulting path '{path}' escapes base directory '{base_dir}'")
+    return path
+
+
 def import_foreign_module(name, path):
     module = None
     default_path = sys.path.copy()
