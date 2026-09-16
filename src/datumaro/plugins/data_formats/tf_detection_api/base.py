@@ -16,6 +16,7 @@ from datumaro.components.importer import ImportContext, Importer
 from datumaro.components.lazy_plugin import extra_deps
 from datumaro.components.media import Image
 from datumaro.util.image import decode_image, lazy_image
+from datumaro.util.os_util import join_within_base
 from datumaro.util.tf_util import has_feature
 from datumaro.util.tf_util import import_tf as _import_tf
 
@@ -177,7 +178,7 @@ class TfDetectionApiBase(SubsetBase):
                 else:
                     image = Image.from_bytes(data=frame_image, size=image_size)
             elif frame_filename:
-                image = Image.from_file(path=osp.join(images_dir, frame_filename), size=image_size)
+                image = Image.from_file(path=join_within_base(images_dir, frame_filename), size=image_size)
 
             for ann in annotations:
                 self._ann_types.add(ann.type)
