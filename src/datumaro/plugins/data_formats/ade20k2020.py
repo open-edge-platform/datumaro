@@ -22,6 +22,7 @@ from datumaro.rust_api import JsonSectionPageMapper
 from datumaro.util import parse_json
 from datumaro.util.image import IMAGE_EXTENSIONS, find_images, lazy_image, load_image
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 
 class Ade20k2020Path:
@@ -107,7 +108,7 @@ class Ade20k2020Base(DatasetBase):
                 mask_path = osp.splitext(image_path)[0] + "_parts_%s.png" % (part_level + 1)
 
             for item in item_info:
-                instance_path = osp.join(osp.dirname(image_path), item["instance_mask"])
+                instance_path = join_within_base(osp.dirname(image_path), item["instance_mask"])
                 if not osp.isfile(instance_path):
                     log.warning("Can`t find instance mask: %s" % instance_path)
                     continue
