@@ -1943,6 +1943,13 @@ class DatasetItemTest:
             "C:foo",
             "\\\\server\\share",
             "..\\escape",
+            # Win32 file APIs silently trim trailing dots/spaces from a path
+            # component, so these all resolve to ".." on Windows too.
+            ".. ",
+            "...",
+            ".. .",
+            "a/.. /b",
+            "a/...  /b",
         ],
     )
     def test_ctor_rejects_path_traversal_in_id(self, unsafe_id):
@@ -1958,6 +1965,7 @@ class DatasetItemTest:
             "C:foo",
             "\\\\server\\share",
             Path("../escape"),
+            ".. ",
         ],
     )
     def test_ctor_rejects_path_traversal_in_subset(self, unsafe_subset):
@@ -1965,9 +1973,21 @@ class DatasetItemTest:
         with pytest.raises(ValueError):
             DatasetItem(id="item", subset=unsafe_subset)
 
+    def test_setattr_revalidates_id(self):
+        # the traversal guard must also hold for items that get mutated after
+        # construction, not just at __init__ time
+        item = DatasetItem(id="safe")
+        with pytest.raises(ValueError):
+            item.id = "../escape"
+
+    def test_setattr_revalidates_subset(self):
+        item = DatasetItem(id="safe")
+        with pytest.raises(ValueError):
+            item.subset = ".. "
+
     @pytest.mark.parametrize(
         "safe_id",
-        ["img001", "train/img001", "2021..12..31", "sub/dir/name", "a/b..c/d"],
+        ["img001", "train/img001", "2021..12..31", "sub/dir/name", "a/b..c/d", "foo...", "foo.. bar"],
     )
     def test_ctor_accepts_safe_ids(self, safe_id):
         assert DatasetItem(id=safe_id).id == safe_id

@@ -18,7 +18,7 @@ from datumaro.components.errors import AnnotationExportError, DatasetExportError
 from datumaro.components.media import Image, PointCloud, Video, VideoFrame
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.util.meta_file_util import save_meta_file
-from datumaro.util.os_util import join_within_base
+from datumaro.util.os_util import ensure_within_base, join_within_base
 from datumaro.util.scope import on_error_do, scoped
 
 T = TypeVar("T")
@@ -231,7 +231,10 @@ class Exporter(CliPlugin):
             return
 
         basedir = basedir or self._save_dir
-        path = path or join_within_base(basedir, self._make_image_filename(item, name=name, subdir=subdir))
+        if path:
+            path = ensure_within_base(path, basedir)
+        else:
+            path = join_within_base(basedir, self._make_image_filename(item, name=name, subdir=subdir))
         path = osp.abspath(path)
 
         item.media.save(path)
@@ -244,7 +247,10 @@ class Exporter(CliPlugin):
             return
 
         basedir = basedir or self._save_dir
-        path = path or join_within_base(basedir, self._make_pcd_filename(item, name=name, subdir=subdir))
+        if path:
+            path = ensure_within_base(path, basedir)
+        else:
+            path = join_within_base(basedir, self._make_pcd_filename(item, name=name, subdir=subdir))
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)

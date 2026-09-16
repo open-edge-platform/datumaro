@@ -33,23 +33,64 @@ def check_instruction_set(instruction):
     )
 
 
+def _win32_trim_dot_space(component: str) -> str:
+    """Reproduce Win32's silent trimming of trailing dots/spaces from a path
+    component when a file/directory is created through the regular (non-\\\\?\\)
+    Win32 API. Trimming stops as soon as the remainder is exactly "." or "..",
+    since those are special directory references, not trimmed further.
+    So e.g. ".. ", "..." and ".. ." (any trailing run of dots/spaces after
+    "..") all resolve to the parent directory "..".
+    """
+    while component and component[-1] in ". ":
+        if component in (".", ".."):
+            break
+        component = component[:-1]
+    return component
+
+
+def contains_unsafe_path_component(path: str) -> bool:
+    """Check if any "/" or "\\"-separated component of `path` is (or, once
+    Win32's trailing dot/space trimming is accounted for, resolves to) the
+    parent directory reference "..".
+    """
+    return any(_win32_trim_dot_space(component) == ".." for component in re.split(r"[\\/]", path))
+
+
+def _is_within_base(path: str, base_dir: str) -> bool:
+    resolved_base = osp.realpath(base_dir)
+    resolved_path = osp.realpath(path)
+    try:
+        return osp.commonpath([resolved_base, resolved_path]) == resolved_base
+    except ValueError:
+        return False
+
+
 def join_within_base(base_dir: str, *parts: str) -> str:
     """Join `parts` onto `base_dir`, and reject the result if it escapes `base_dir`.
 
     Untrusted values (e.g. dataset item ids) can contain '..' or be absolute,
     so a plain osp.join() can traverse outside of `base_dir`. Raises ValueError
     in that case (including when the paths don't share a common root, e.g.
-    different drives on Windows).
+    different drives on Windows, or when a part would resolve to '..' only
+    after Win32's trailing dot/space trimming is applied).
     """
+    for part in parts:
+        if contains_unsafe_path_component(part):
+            raise ValueError(f"Path component {part!r} is not allowed to reference the parent directory")
+
     path = osp.join(base_dir, *parts)
-    resolved_base = osp.realpath(base_dir)
-    resolved_path = osp.realpath(path)
-    try:
-        confined = osp.commonpath([resolved_base, resolved_path]) == resolved_base
-    except ValueError:
-        confined = False
-    if not confined:
+    if not _is_within_base(path, base_dir):
         raise ValueError(f"Resulting path '{path}' escapes base directory '{base_dir}'")
+    return path
+
+
+def ensure_within_base(path: str, base_dir: str) -> str:
+    """Validate that an already-constructed `path` (e.g. one supplied directly
+    by a caller instead of being composed from parts via `join_within_base`)
+    stays within `base_dir`. Raises ValueError otherwise.
+    """
+    if contains_unsafe_path_component(path) or not _is_within_base(path, base_dir):
+        raise ValueError(f"Path '{path}' escapes base directory '{base_dir}'")
     return path
 
 
