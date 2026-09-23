@@ -87,6 +87,8 @@ def _resolve_type(type_name: str, type_module: str | None) -> type:
         if not _is_allowed_type_module(type_module):
             return object
         try:
+            # _ALLOWED_TYPE_PACKAGES is used for validation
+            # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
             module = importlib.import_module(type_module)
             resolved = getattr(module, type_name, object)
         except (ImportError, AttributeError):
@@ -112,6 +114,8 @@ def _resolve_type_from_qualified_name(qualified_name: str) -> type:
         if not _is_allowed_type_module(module_name):
             return object
         try:
+            # _ALLOWED_TYPE_PACKAGES is used for validation
+            # nosemgrep: python.lang.security.audit.non-literal-import.non-literal-import
             module = importlib.import_module(module_name)
             resolved = getattr(module, attr_name, object)
         except (ImportError, AttributeError):

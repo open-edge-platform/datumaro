@@ -100,7 +100,6 @@ jobs:
 
   semgrep-scan:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
@@ -117,6 +116,6 @@ jobs:
         id: semgrep
         uses: open-edge-platform/geti-ci/actions/semgrep@940b10164d8c2a6a6e4d786fe1c0aeab74bd629d
         with:
-          scan-scope: "all"
           severity: "LOW"
-          fail-on-findings: false # reports only
+          scan-scope: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && 'changed' || 'all' }}
+          fail-on-findings: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && 'true' || 'false' }}

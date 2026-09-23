@@ -15,13 +15,24 @@ import pytest
 from datumaro.util import is_method_redefined
 from datumaro.util.definitions import get_datumaro_cache_dir
 from datumaro.util.multi_procs_util import consumer_generator
-from datumaro.util.os_util import walk
+from datumaro.util.os_util import check_instruction_set, walk
 from datumaro.util.scope import Scope, on_error_do, on_exit_do, scoped
 from tests.utils.test_utils import TestDir
 
 
 class TestException(Exception):
     pass
+
+
+class CheckInstructionSetTest(TestCase):
+    def test_rejects_shell_metacharacters(self):
+        for malicious in ("avx; rm -rf /", "avx`id`", "avx$(whoami)", "avx|cat", "avx\n", ""):
+            with self.assertRaises(ValueError):
+                check_instruction_set(malicious)
+
+    def test_accepts_valid_instruction_name(self):
+        with mock.patch("subprocess.check_output", return_value=b"avx\n"):
+            self.assertTrue(check_instruction_set("avx"))
 
 
 class ScopeTest(TestCase):

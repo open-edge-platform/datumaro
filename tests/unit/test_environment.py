@@ -2,11 +2,17 @@
 #
 # SPDX-License-Identifier: MIT
 
+from pathlib import Path
+
 import pytest
 
+import datumaro.components.environment
 import datumaro.components.lazy_plugin
 from datumaro.components.environment import DEFAULT_ENVIRONMENT, Environment, PluginRegistry
 from datumaro.components.exporter import Exporter
+from datumaro.components.lazy_plugin import get_lazy_plugin
+from datumaro.plugins import specs as plugin_specs
+from datumaro.util import parse_json_file
 
 real_find_spec = datumaro.components.lazy_plugin.find_spec
 
@@ -90,3 +96,78 @@ class EnvironmentTest:
 
         merged = Environment.merge(envs)
         assert "test_plugin" in merged.exporters
+
+
+class TestLazyPluginImportSafety:
+    """Safety checks for lazy plugin import path restrictions."""
+
+    _SPECS_JSON_PATH = Path(plugin_specs.__file__).resolve().with_name("specs.json")
+
+    def test_all_specs_import_paths_are_datumaro_internal(self):
+        """Every entry in specs.json must start with 'datumaro.' to stay within the trusted package."""
+        specs = parse_json_file(str(self._SPECS_JSON_PATH))
+        for spec in specs:
+            import_path = spec["import_path"]
+            assert import_path.startswith("datumaro."), (
+                f"specs.json contains a non-datumaro import_path: {import_path!r}. "
+                "All plugin paths must be internal to prevent module injection."
+            )
+
+    def test_get_lazy_plugin_resolves_correctly(self):
+        """get_lazy_plugin with a valid datumaro import_path resolves to the correct class."""
+        from datumaro.plugins.data_formats.datumaro.exporter import DatumaroExporter
+
+        plugin_cls_factory = get_lazy_plugin(
+            "datumaro.plugins.data_formats.datumaro.exporter.DatumaroExporter",
+            "datumaro",
+            "Exporter",
+        )
+        assert plugin_cls_factory is not None
+        resolved = plugin_cls_factory.get_plugin_cls()
+        assert resolved is DatumaroExporter
+        assert issubclass(resolved, Exporter)
+
+    def test_get_lazy_plugin_rejects_non_datumaro_import_path(self):
+        """get_lazy_plugin must refuse import_paths outside the datumaro package."""
+        # Untrusted packages, including ones an attacker could pick for RCE
+        assert get_lazy_plugin("subprocess.getoutput", "bad", "Exporter") is None
+        assert get_lazy_plugin("os.system", "bad", "Exporter") is None
+        assert get_lazy_plugin("builtins.eval", "bad", "Exporter") is None
+        assert get_lazy_plugin("importlib.import_module", "bad", "Exporter") is None
+        assert get_lazy_plugin("datumaroevil.plugin.Class", "bad", "Exporter") is None
+
+
+def test_load_plugins_only_imports_names_found_by_find_plugins(tmp_path, monkeypatch):
+    """Environment.load_plugins must only ever import module names that were discovered by
+    scanning `plugins_dir` on disk (via `_find_plugins`); it must not accept a module name from
+    any other source (e.g. dataset content).
+
+    This documents the trust boundary for this API: `plugins_dir` is an operator-supplied local
+    path, so a malicious file placed there is treated as intentionally trusted, unlike the
+    externally-triggerable arbitrary-import vulnerability fixed in schema.py.
+    """
+    plugin_file = tmp_path / "my_plugin.py"
+    plugin_file.write_text(
+        "from datumaro.components.exporter import Exporter\n\n\nclass MyExporter(Exporter):\n    pass\n"
+    )
+
+    expected_names = Environment._find_plugins(str(tmp_path))
+    assert expected_names == ["my_plugin"]
+
+    seen_names = []
+    real_importer = datumaro.components.environment.import_foreign_module
+
+    def _tracking_importer(name, path):
+        seen_names.append(name)
+        return real_importer(name, path)
+
+    monkeypatch.setattr(datumaro.components.environment, "import_foreign_module", _tracking_importer)
+
+    env = Environment()
+    # Skip loading the (unrelated, heavy) builtin plugin set that self.exporters etc. would
+    # otherwise trigger lazily on first access from within register_plugins().
+    env._builtins_initialized = True
+    env.load_plugins(str(tmp_path))
+
+    assert seen_names == expected_names
+    assert "my" in env.exporters
