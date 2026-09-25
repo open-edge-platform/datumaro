@@ -56,9 +56,32 @@ def contains_unsafe_path_component(path: str) -> bool:
     return any(_win32_trim_dot_space(component) == ".." for component in re.split(r"[\\/]", path))
 
 
+def _resolve_existing_part(path: str) -> str:
+    """Resolve symlinks in the longest prefix of `path` that already exists on
+    disk, then lexically re-append the (not yet created) remaining tail.
+
+    Plain `osp.realpath(path)` is not used for the whole path because on
+    Windows it resolves nonexistent paths with a "best effort" fallback that
+    can disagree with the resolution of an already-existing ancestor (e.g.
+    `base_dir`) resolved via a separate call, causing spurious escape errors
+    for perfectly safe, not-yet-created destination paths (this matters here
+    since directories are created after this check, not before).
+    """
+    head = osp.abspath(path)
+    tail_parts: List[str] = []
+    while head and not osp.exists(head):
+        head, name = osp.split(head)
+        if not name:
+            break
+        tail_parts.append(name)
+
+    resolved_head = osp.realpath(head) if head else head
+    return osp.normpath(osp.join(resolved_head, *reversed(tail_parts))) if tail_parts else resolved_head
+
+
 def _is_within_base(path: str, base_dir: str) -> bool:
     resolved_base = osp.realpath(base_dir)
-    resolved_path = osp.realpath(path)
+    resolved_path = _resolve_existing_part(path)
     try:
         return osp.commonpath([resolved_base, resolved_path]) == resolved_base
     except ValueError:

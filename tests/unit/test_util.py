@@ -174,6 +174,13 @@ class JoinWithinBaseTest(TestCase):
         )
         self.assertEqual(osp.join(self.base_dir, "img001.jpg"), join_within_base(self.base_dir, "img001.jpg"))
 
+    def test_can_join_descendant_paths_with_nonexistent_subdirs(self):
+        # the joined subdirectories are not created ahead of time (that
+        # happens later, when the file is actually written), so the
+        # confinement check must not depend on them already existing on disk
+        result = join_within_base(self.base_dir, "not_yet_created", "img001.jpg")
+        self.assertEqual(osp.join(self.base_dir, "not_yet_created", "img001.jpg"), result)
+
     def test_rejects_dotdot_component(self):
         with self.assertRaises(ValueError):
             join_within_base(self.base_dir, "..", "escape.txt")
