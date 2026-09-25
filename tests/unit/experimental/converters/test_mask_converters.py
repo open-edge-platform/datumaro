@@ -548,7 +548,7 @@ def test_mask_callable_to_mask_converter_validation():
     )
 
     # Check that it raises error for invalid shape
-    with pytest.raises(ValueError, match="Mask array must be 2D \(H,W\), got shape \(1, 2, 2\)"):
+    with pytest.raises(ValueError, match="Mask array must be 2D \\(H,W\\), got shape \\(1, 2, 2\\)"):
         converter_instance.convert(df)
 
 
