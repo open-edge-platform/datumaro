@@ -226,7 +226,9 @@ class DatumaroBinaryExporter(DatumaroExporter):
             default_image_ext=self._default_image_ext,
         )
 
-        if osp.sep in subset:
+        # DatasetItem normalizes id/subset to use "/" regardless of platform, so
+        # check both separators rather than only the platform-specific osp.sep.
+        if "/" in subset or "\\" in subset:
             raise PathSeparatorInSubsetNameError(subset)
 
         return _SubsetWriter(

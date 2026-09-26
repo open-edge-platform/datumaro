@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Type, TypeVar, Union, cast
 
 import attr
@@ -15,15 +16,54 @@ from datumaro.components.contexts.importer import ImportContext, NullImportConte
 from datumaro.components.media import Image, MediaElement
 from datumaro.util.attrs_util import default_if_none, not_empty
 from datumaro.util.definitions import DEFAULT_SUBSET_NAME
+from datumaro.util.os_util import contains_unsafe_path_component
 
 T = TypeVar("T", bound=MediaElement)
+
+# Item ids and subsets are frequently taken verbatim from untrusted dataset
+# content (e.g. COCO "file_name") and later joined into export file paths, so
+# they must not be usable to escape the intended output directory.
+_DRIVE_PREFIX_RE = re.compile(r"^[A-Za-z]:")
+
+
+def _validate_no_path_traversal(instance, attribute, value):
+    if not isinstance(value, str):
+        return
+
+    normalized = value.replace("\\", "/")
+
+    # A leading "/" also catches UNC paths (which start with "//" once their
+    # leading "\\" is normalized above).
+    if normalized.startswith("/") or _DRIVE_PREFIX_RE.match(normalized):
+        raise ValueError(
+            f"Dataset item '{attribute.name}' must not be an absolute or drive-qualified path, got: {value!r}"
+        )
+
+    if contains_unsafe_path_component(normalized):
+        raise ValueError(
+            f"Dataset item '{attribute.name}' must not contain '..' path components, including forms "
+            f"that Win32 file APIs trim to '..' (e.g. '.. '), got: {value!r}"
+        )
 
 
 @attrs(order=False, init=False, slots=True)
 class DatasetItem:
-    id: str = field(converter=lambda x: str(x).replace("\\", "/"), validator=not_empty)
+    # id/subset re-validate on assignment (not just construction), since they
+    # are later used to build export file paths and must stay traversal-safe.
+    _revalidate_on_setattr = attr.setters.pipe(attr.setters.convert, attr.setters.validate)
 
-    subset: str = field(converter=lambda v: v or DEFAULT_SUBSET_NAME, default=None)
+    id: str = field(
+        converter=lambda x: str(x).replace("\\", "/"),
+        validator=[not_empty, _validate_no_path_traversal],
+        on_setattr=_revalidate_on_setattr,
+    )
+
+    subset: str = field(
+        converter=lambda v: str(v).replace("\\", "/") if v else DEFAULT_SUBSET_NAME,
+        validator=_validate_no_path_traversal,
+        on_setattr=_revalidate_on_setattr,
+        default=None,
+    )
 
     media: Optional[MediaElement] = field(
         default=None, validator=attr.validators.optional(attr.validators.instance_of(MediaElement))
