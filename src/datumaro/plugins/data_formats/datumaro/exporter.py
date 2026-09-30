@@ -183,7 +183,8 @@ class _SubsetWriter:
 
             if context.save_media:
                 fname = context.make_video_filename(item)
-                subdir = item.subset.replace(os.sep, "_") if item.subset else None
+                # DatasetItem always normalizes subset to use "/" as separator.
+                subdir = item.subset.replace("/", "_") if item.subset else None
                 context.save_video(item, fname=fname, subdir=subdir)
                 item.media = Video(
                     path=fname,
@@ -199,7 +200,8 @@ class _SubsetWriter:
 
             if context.save_media:
                 fname = context.make_video_filename(item)
-                subdir = item.subset.replace(os.sep, "_") if item.subset else None
+                # DatasetItem always normalizes subset to use "/" as separator.
+                subdir = item.subset.replace("/", "_") if item.subset else None
                 context.save_video(item, fname=fname, subdir=subdir)
                 item.media = VideoFrame(Video(fname), video_frame.index)
 
@@ -210,8 +212,9 @@ class _SubsetWriter:
 
             if context.save_media:
                 # Temporarily update image path and save it.
-                fname = context.make_image_filename(item, name=str(item.id).replace(os.sep, "_"))
-                subdir = item.subset.replace(os.sep, "_") if item.subset else None
+                # DatasetItem always normalizes id/subset to use "/" as separator.
+                fname = context.make_image_filename(item, name=str(item.id).replace("/", "_"))
+                subdir = item.subset.replace("/", "_") if item.subset else None
                 context.save_image(item, encryption=encryption, fname=fname, subdir=subdir)
                 item.media = Image.from_file(path=fname, size=image._size)
 
@@ -221,9 +224,10 @@ class _SubsetWriter:
             pcd = item.media_as(PointCloud)
 
             if context.save_media:
-                pcd_name = str(item.id).replace(os.sep, "_")
+                # DatasetItem always normalizes id/subset to use "/" as separator.
+                pcd_name = str(item.id).replace("/", "_")
                 pcd_fname = context.make_pcd_filename(item, name=pcd_name)
-                subdir = item.subset.replace(os.sep, "_") if item.subset else None
+                subdir = item.subset.replace("/", "_") if item.subset else None
                 context.save_point_cloud(item, fname=pcd_fname, subdir=subdir)
 
                 extra_images = []
@@ -509,7 +513,9 @@ class DatumaroExporter(Exporter):
             default_image_ext=self._default_image_ext,
         )
 
-        if os.path.sep in subset:
+        # DatasetItem normalizes id/subset to use "/" regardless of platform, so
+        # check both separators rather than only the platform-specific os.path.sep.
+        if "/" in subset or "\\" in subset:
             raise PathSeparatorInSubsetNameError(subset)
 
         return (
