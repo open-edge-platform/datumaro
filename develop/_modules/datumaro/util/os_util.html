@@ -374,6 +374,99 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_win32_trim_dot_space</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Reproduce Win32's silent trimming of trailing dots/spaces from a path</span>
+<span class="sd">    component when a file/directory is created through the regular (non-\\\\?\\)</span>
+<span class="sd">    Win32 API. Trimming stops as soon as the remainder is exactly "." or "..",</span>
+<span class="sd">    since those are special directory references, not trimmed further.</span>
+<span class="sd">    So e.g. ".. ", "..." and ".. ." (any trailing run of dots/spaces after</span>
+<span class="sd">    "..") all resolve to the parent directory "..".</span>
+<span class="sd">    """</span>
+    <span class="k">while</span> <span class="n">component</span> <span class="ow">and</span> <span class="n">component</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">". "</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">component</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">".."</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="n">component</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">component</span>
+
+
+<div class="viewcode-block" id="contains_unsafe_path_component">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.contains_unsafe_path_component">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">contains_unsafe_path_component</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check if any "/" or "\\"-separated component of `path` is (or, once</span>
+<span class="sd">    Win32's trailing dot/space trimming is accounted for, resolves to) the</span>
+<span class="sd">    parent directory reference "..".</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">_win32_trim_dot_space</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="o">==</span> <span class="s2">".."</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[</span><span class="se">\\</span><span class="s2">/]"</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_existing_part</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Resolve symlinks in the longest prefix of `path` that already exists on</span>
+<span class="sd">    disk, then lexically re-append the (not yet created) remaining tail.</span>
+
+<span class="sd">    Plain `osp.realpath(path)` is not used for the whole path because on</span>
+<span class="sd">    Windows it resolves nonexistent paths with a "best effort" fallback that</span>
+<span class="sd">    can disagree with the resolution of an already-existing ancestor (e.g.</span>
+<span class="sd">    `base_dir`) resolved via a separate call, causing spurious escape errors</span>
+<span class="sd">    for perfectly safe, not-yet-created destination paths (this matters here</span>
+<span class="sd">    since directories are created after this check, not before).</span>
+<span class="sd">    """</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">tail_parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">head</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">head</span><span class="p">):</span>
+        <span class="n">head</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">tail_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">resolved_head</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="k">if</span> <span class="n">head</span> <span class="k">else</span> <span class="n">head</span>
+    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resolved_head</span><span class="p">,</span> <span class="o">*</span><span class="nb">reversed</span><span class="p">(</span><span class="n">tail_parts</span><span class="p">)))</span> <span class="k">if</span> <span class="n">tail_parts</span> <span class="k">else</span> <span class="n">resolved_head</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_within_base</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">resolved_base</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
+    <span class="n">resolved_path</span> <span class="o">=</span> <span class="n">_resolve_existing_part</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">commonpath</span><span class="p">([</span><span class="n">resolved_base</span><span class="p">,</span> <span class="n">resolved_path</span><span class="p">])</span> <span class="o">==</span> <span class="n">resolved_base</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="join_within_base">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.join_within_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join_within_base</span><span class="p">(</span><span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">parts</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Join `parts` onto `base_dir`, and reject the result if it escapes `base_dir`.</span>
+
+<span class="sd">    Untrusted values (e.g. dataset item ids) can contain '..' or be absolute,</span>
+<span class="sd">    so a plain osp.join() can traverse outside of `base_dir`. Raises ValueError</span>
+<span class="sd">    in that case (including when the paths don't share a common root, e.g.</span>
+<span class="sd">    different drives on Windows, or when a part would resolve to '..' only</span>
+<span class="sd">    after Win32's trailing dot/space trimming is applied).</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">contains_unsafe_path_component</span><span class="p">(</span><span class="n">part</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Path component </span><span class="si">{</span><span class="n">part</span><span class="si">!r}</span><span class="s2"> is not allowed to reference the parent directory"</span><span class="p">)</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base_dir</span><span class="p">,</span> <span class="o">*</span><span class="n">parts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_within_base</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Resulting path '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">' escapes base directory '</span><span class="si">{</span><span class="n">base_dir</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+
+<div class="viewcode-block" id="ensure_within_base">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.ensure_within_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_within_base</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Validate that an already-constructed `path` (e.g. one supplied directly</span>
+<span class="sd">    by a caller instead of being composed from parts via `join_within_base`)</span>
+<span class="sd">    stays within `base_dir`. Raises ValueError otherwise.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">contains_unsafe_path_component</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_is_within_base</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Path '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">' escapes base directory '</span><span class="si">{</span><span class="n">base_dir</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+
 <div class="viewcode-block" id="import_foreign_module">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.plugins.data_formats.yolo.base.import_foreign_module">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">import_foreign_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>

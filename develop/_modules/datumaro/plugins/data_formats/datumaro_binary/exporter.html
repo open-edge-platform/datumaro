@@ -568,7 +568,9 @@
             <span class="n">default_image_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_image_ext</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
+        <span class="c1"># DatasetItem normalizes id/subset to use "/" regardless of platform, so</span>
+        <span class="c1"># check both separators rather than only the platform-specific osp.sep.</span>
+        <span class="k">if</span> <span class="s2">"/"</span> <span class="ow">in</span> <span class="n">subset</span> <span class="ow">or</span> <span class="s2">"</span><span class="se">\\</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PathSeparatorInSubsetNameError</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">_SubsetWriter</span><span class="p">(</span>
