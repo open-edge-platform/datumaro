@@ -17,7 +17,7 @@ from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, ImageFromFile
 from datumaro.util.image import DEFAULT_IMAGE_META_FILE_NAME, IMAGE_EXTENSIONS, ImageMeta, load_image_meta_file
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
-from datumaro.util.os_util import extract_subset_name_from_parent, find_files, split_path
+from datumaro.util.os_util import extract_subset_name_from_parent, find_files, join_within_base, split_path
 
 from .format import YoloLoosePath, YoloPath, YoloUltralyticsPath
 
@@ -75,7 +75,7 @@ class _Subset(DatasetBase):
 
         try:
             image_size = self._image_info.get(item_id)
-            image = Image.from_file(path=osp.join(self._path, item), size=image_size)
+            image = Image.from_file(path=join_within_base(self._path, item), size=image_size)
 
             anno_path = osp.splitext(image.path)[0] + ".txt"
             annotations = self._parse_annotations(
