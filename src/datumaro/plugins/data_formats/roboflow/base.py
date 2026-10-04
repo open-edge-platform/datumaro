@@ -23,7 +23,7 @@ from datumaro.plugins.data_formats.voc.format import VocImporterType, VocTask
 from datumaro.plugins.data_formats.yolo.base import YoloUltralyticsBase
 from datumaro.util import parse_json_file
 from datumaro.util.image import IMAGE_EXTENSIONS, ImageMeta
-from datumaro.util.os_util import find_files
+from datumaro.util.os_util import find_files, join_within_base
 
 
 class RoboflowCocoBase(_CocoBase):
@@ -229,7 +229,7 @@ class RoboflowCreateMlBase(SubsetBase):
             items[img_id] = DatasetItem(
                 id=img_id,
                 subset=self._subset,
-                media=Image.from_file(path=osp.join(osp.dirname(self._path), anns["image"])),
+                media=Image.from_file(path=join_within_base(osp.dirname(self._path), anns["image"])),
                 annotations=annotations,
             )
 
@@ -293,7 +293,7 @@ class RoboflowMulticlassBase(SubsetBase):
                     DatasetItem(
                         id=img_id,
                         subset=self._subset,
-                        media=Image.from_file(path=osp.join(osp.dirname(self._path), anns["filename"])),
+                        media=Image.from_file(path=join_within_base(osp.dirname(self._path), anns["filename"])),
                         annotations=annotations,
                     )
                 )

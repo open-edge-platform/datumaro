@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-import os.path as osp
 import struct
 from typing import Dict, Optional, Tuple
 
 from datumaro.components.errors import DatumaroError
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
+from datumaro.util.os_util import join_within_base
 
 from .common import Mapper, StringMapper
 
@@ -83,7 +83,7 @@ class MediaElementMapper(Mapper):
             "type": media_type,
             "path": path
             if path == cls.MAGIC_PATH or media_path_prefix is None
-            else osp.join(media_path_prefix[cls.MEDIA_TYPE], path),
+            else join_within_base(media_path_prefix[cls.MEDIA_TYPE], path),
         }, offset
 
     @classmethod
