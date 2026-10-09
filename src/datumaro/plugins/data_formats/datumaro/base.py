@@ -574,7 +574,7 @@ class DatumaroBase(SubsetBase):
         # This is because we are the producer of Datumaro format.
         search_size = 1024  # 1 KB
 
-        pattern = '"dm_format_version"\s*:\s*"(\w+)"'
+        pattern = '"dm_format_version"\\s*:\\s*"(\\w+)"'
 
         with open(path, "r", encoding="utf-8") as fp:
             out = fp.read(search_size)
@@ -585,7 +585,7 @@ class DatumaroBase(SubsetBase):
 
         version_str = found.group(1)
 
-        if re.match("\d+\.d+", version_str) is None:
+        if re.match("\\d+\\.d+", version_str) is None:
             raise DatasetImportError(f"Invalid version string: {version_str} ")
 
         return version_str
