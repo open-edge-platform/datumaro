@@ -24,6 +24,7 @@ from datumaro.plugins.data_formats.coco.format import CocoTask
 from datumaro.plugins.data_formats.coco.page_mapper import COCOPageMapper
 from datumaro.util import parse_json_file
 from datumaro.util.image import IMAGE_EXTENSIONS, lazy_image
+from datumaro.util.os_util import join_within_base
 
 T = TypeVar("T")
 
@@ -51,7 +52,12 @@ class KaggleImageCsvBase(DatasetBase):
         self._categories = {AnnotationType.label: self._label_cat}
 
     def _get_media_path(self, media_name: str):
-        media_path = osp.join(self._path, media_name)
+        # media_name comes from untrusted annotation content and must not be
+        # able to escape self._path.
+        try:
+            media_path = join_within_base(self._path, media_name)
+        except ValueError:
+            return None
         if osp.exists(media_path):
             return media_path
 

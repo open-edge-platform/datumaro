@@ -30,6 +30,7 @@ from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
 from datumaro.plugins.data_formats.datumaro.page_mapper import DatumPageMapper
 from datumaro.util import parse_json_file
+from datumaro.util.os_util import join_within_base
 from datumaro.version import __version__
 
 from .format import DATUMARO_FORMAT_VERSION, DatumaroPath
@@ -174,10 +175,10 @@ class JsonReader:
             image_info = item_desc.get("image")
             if image_info:
                 image_filename = image_info.get("path") or item_id + DatumaroPath.IMAGE_EXT
-                image_path = osp.join(self._images_dir, self._subset, image_filename)
+                image_path = join_within_base(self._images_dir, self._subset, image_filename)
                 if not osp.isfile(image_path):
                     # backward compatibility
-                    old_image_path = osp.join(self._images_dir, image_filename)
+                    old_image_path = join_within_base(self._images_dir, image_filename)
                     if osp.isfile(old_image_path):
                         image_path = old_image_path
 
@@ -187,7 +188,7 @@ class JsonReader:
             if media and pcd_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if pcd_info and (pcd_path := pcd_info.get("path")):
-                point_cloud = osp.join(self._pcd_dir, self._subset, pcd_path)
+                point_cloud = join_within_base(self._pcd_dir, self._subset, pcd_path)
 
                 related_images = None
                 ri_info = item_desc.get("related_images")
@@ -195,7 +196,7 @@ class JsonReader:
                     related_images = [
                         Image.from_file(
                             size=ri.get("size"),
-                            path=osp.join(self._images_dir, self._subset, ri.get("path")),
+                            path=join_within_base(self._images_dir, self._subset, ri.get("path")),
                         )
                         for ri in ri_info
                     ]
@@ -206,7 +207,7 @@ class JsonReader:
             if media and video_frame_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if video_frame_info:
-                video_path = osp.join(self._video_dir, self._subset, video_frame_info.get("video_path"))
+                video_path = join_within_base(self._video_dir, self._subset, video_frame_info.get("video_path"))
                 if video_path not in self._videos:
                     self._videos[video_path] = Video(video_path)
                 video = self._videos[video_path]
@@ -219,7 +220,7 @@ class JsonReader:
             if media and video_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if video_info:
-                video_path = osp.join(self._video_dir, self._subset, video_info.get("path"))
+                video_path = join_within_base(self._video_dir, self._subset, video_info.get("path"))
                 if video_path not in self._videos:
                     self._videos[video_path] = Video(video_path)
                 step = video_info.get("step", 1)
