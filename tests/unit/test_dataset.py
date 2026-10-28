@@ -25,6 +25,7 @@ from datumaro.components.annotation import (
     Points,
     Polygon,
     PolyLine,
+    RleMask,
 )
 from datumaro.components.dataset import DEFAULT_FORMAT, Dataset, eager_mode
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetBase, DatasetItem, SubsetBase
@@ -2138,6 +2139,257 @@ class DatasetFilterTest(TestCase):
         filtered = XPathAnnotationsFilter(source, "/item/annotation[label_id = 2]", remove_empty=True)
 
         compare_datasets(self, expected, filtered)
+
+    def test_mask_encoding_exposes_geometry(self):
+        item = DatasetItem(
+            id=1,
+            annotations=[
+                Mask(
+                    id=1,
+                    image=np.array(
+                        [
+                            [0, 0, 0, 0],
+                            [0, 1, 1, 0],
+                            [0, 1, 1, 0],
+                        ],
+                        dtype=np.uint8,
+                    ),
+                ),
+            ],
+        )
+
+        encoded = DatasetItemEncoder.encode(item)
+        ann = encoded.find("annotation")
+
+        self.assertEqual("4", ann.find("area").text)
+
+        bbox = ann.find("bbox")
+        self.assertEqual([1, 1, 2, 2], [int(bbox.find(k).text) for k in ("x", "y", "w", "h")])
+        self.assertEqual("4", bbox.find("area").text)
+
+    def test_mask_encoding_exposes_zero_area_for_empty_mask(self):
+        item = DatasetItem(
+            id=1,
+            annotations=[Mask(id=1, image=np.zeros((3, 3), dtype=np.uint8))],
+        )
+
+        encoded = DatasetItemEncoder.encode(item)
+        ann = encoded.find("annotation")
+
+        self.assertEqual("0", ann.find("area").text)
+        self.assertEqual([0, 0, 0, 0], [int(ann.find("bbox").find(k).text) for k in ("x", "y", "w", "h")])
+
+    def test_annotations_filter_by_area_keeps_mask_annotations(self):
+        # Regression test for
+        # https://github.com/open-edge-platform/datumaro/issues/2208:
+        # mask annotations used to be silently dropped by area predicates,
+        # because their encoding had no geometry fields at all.
+        source = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[
+                        Mask(id=1, image=np.ones((8, 5), dtype=np.uint8)),  # area 40
+                        Bbox(2, 2, 5, 8, id=2),  # area 40
+                        Mask(id=3, image=np.ones((2, 3), dtype=np.uint8)),  # area 6
+                        Bbox(0, 0, 2, 3, id=4),  # area 6
+                    ],
+                ),
+            ],
+            categories=["a"],
+        )
+
+        expected = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[
+                        Mask(id=1, image=np.ones((8, 5), dtype=np.uint8)),
+                        Bbox(2, 2, 5, 8, id=2),
+                    ],
+                ),
+            ],
+            categories=["a"],
+        )
+
+        filtered = XPathAnnotationsFilter(source, "/item/annotation[area > 30]")
+
+        compare_datasets(self, expected, filtered)
+
+    def test_annotations_filter_by_area_can_drop_mask_annotations(self):
+        source = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[
+                        Mask(id=1, image=np.ones((2, 3), dtype=np.uint8)),  # area 6
+                    ],
+                ),
+            ],
+            categories=["a"],
+        )
+
+        expected = Dataset.from_iterable(
+            [
+                DatasetItem(id=1, annotations=[]),
+            ],
+            categories=["a"],
+        )
+
+        filtered = XPathAnnotationsFilter(source, "/item/annotation[area > 30]")
+
+        compare_datasets(self, expected, filtered)
+
+    def test_annotations_filter_by_area_keeps_polygon_annotations(self):
+        # The same documented '/item/annotation[area > N]' expression must
+        # also work for polygons, using the polygon area itself.
+        source = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[Polygon([0, 0, 10, 0, 10, 10, 0, 10], id=1)],  # area 100
+                ),
+            ],
+            categories=["a"],
+        )
+
+        filtered = XPathAnnotationsFilter(source, "/item/annotation[area > 50]")
+        compare_datasets(self, source, filtered)
+
+        expected_empty = Dataset.from_iterable(
+            [
+                DatasetItem(id=1, annotations=[]),
+            ],
+            categories=["a"],
+        )
+
+        filtered = XPathAnnotationsFilter(source, "/item/annotation[area > 200]")
+        compare_datasets(self, expected_empty, filtered)
+
+    def test_points_and_polyline_encoding_exposes_zero_area(self):
+        item = DatasetItem(
+            id=1,
+            annotations=[
+                Points([1, 2, 2, 0, 1, 1], id=1),
+                PolyLine([1, 2, 3, 4, 5, 6, 7, 8], id=2),
+            ],
+        )
+
+        encoded = DatasetItemEncoder.encode(item)
+
+        self.assertEqual(2, len(encoded.findall("annotation")))
+        for ann in encoded.findall("annotation"):
+            self.assertEqual("0", ann.find("area").text)
+
+    def test_chained_filters_preserve_mask_annotations(self):
+        # The exact scenario from
+        # https://github.com/open-edge-platform/datumaro/issues/2208:
+        # a label filter followed by an area filter must not lose masks.
+        source = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[
+                        Mask(label=0, id=1, image=np.ones((8, 5), dtype=np.uint8)),
+                        Mask(label=1, id=2, image=np.ones((2, 3), dtype=np.uint8)),
+                    ],
+                ),
+            ],
+            categories=["a", "b"],
+        )
+
+        source.filter(
+            '/item/annotation[label = "a" or label = "b"]',
+            filter_annotations=True,
+            remove_empty=True,
+        )
+        source.filter("/item/annotation[area > 30]", filter_annotations=True, remove_empty=True)
+
+        expected = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    annotations=[Mask(label=0, id=1, image=np.ones((8, 5), dtype=np.uint8))],
+                ),
+            ],
+            categories=["a", "b"],
+        )
+
+        compare_datasets(self, expected, source)
+
+    def test_rle_mask_encoding_matches_dense_and_skips_decoding(self):
+        # An RleMask must expose the same geometry as the equivalent dense
+        # mask, but read it from the compressed representation, so that
+        # XPath filters do not pay for a full image decode per annotation.
+        from pycocotools import mask as mask_utils
+
+        image = np.array(
+            [
+                [0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 0],
+                [0, 0, 1, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0],
+                [0, 1, 1, 0, 0, 0],
+            ],
+            dtype=np.uint8,
+        )
+        rle = mask_utils.encode(np.asfortranarray(image))
+
+        # If the fast path is bypassed and the mask is decoded, the patched
+        # decoder fails the test instead of silently decoding.
+        with mock.patch.object(RleMask, "_decode", side_effect=AssertionError("the mask was decoded")):
+            encoded = DatasetItemEncoder.encode(DatasetItem(id=1, annotations=[RleMask(rle=rle, id=1)]))
+        ann = encoded.find("annotation")
+
+        # Same values as the dense encoding of the same mask: 8 nonzero
+        # pixels, covering bbox (1, 1, 4, 4).
+        dense = DatasetItemEncoder.encode(DatasetItem(id=1, annotations=[Mask(id=1, image=image)]))
+        dense_ann = dense.find("annotation")
+
+        self.assertEqual(dense_ann.find("area").text, ann.find("area").text)
+        self.assertEqual("8", ann.find("area").text)
+
+        bbox = ann.find("bbox")
+        dense_bbox = dense_ann.find("bbox")
+        for key in ("x", "y", "w", "h", "area"):
+            self.assertEqual(dense_bbox.find(key).text, bbox.find(key).text)
+        self.assertEqual([1, 1, 4, 4], [int(bbox.find(k).text) for k in ("x", "y", "w", "h")])
+        self.assertEqual("16", bbox.find("area").text)
+
+    def test_mask_encoding_with_unreadable_image_keeps_metadata(self):
+        # A mask whose lazy loader points at a missing file must not abort
+        # XPath filtering: it keeps the metadata-only encoding, so label and
+        # item-id filters keep working for such items.
+        unreadable = mock.Mock(side_effect=FileNotFoundError("missing mask file"))
+        item = DatasetItem(id=1, annotations=[Mask(id=1, label=0, image=unreadable)])
+
+        encoded = DatasetItemEncoder.encode(item)
+        ann = encoded.find("annotation")
+        self.assertIsNotNone(ann)
+        self.assertIsNone(ann.find("area"))
+        self.assertIsNone(ann.find("bbox"))
+        self.assertEqual("0", ann.find("label_id").text)
+
+        source = Dataset.from_iterable([item], categories=["a"])
+
+        filtered = XPathAnnotationsFilter(source, '/item/annotation[label = "a"]')
+        filtered_items = list(filtered)
+
+        self.assertEqual(1, len(filtered_items))
+        self.assertEqual(1, len(filtered_items[0].annotations))
+
+    def test_rle_mask_encoding_with_unreadable_rle_keeps_metadata(self):
+        # Same as above, through the compressed representation: a lazy RLE
+        # loader pointing at a missing file also keeps the metadata encoding.
+        unreadable = mock.Mock(side_effect=FileNotFoundError("missing rle file"))
+        item = DatasetItem(id=1, annotations=[RleMask(rle=unreadable, id=1, label=0)])
+
+        encoded = DatasetItemEncoder.encode(item)
+        ann = encoded.find("annotation")
+        self.assertIsNotNone(ann)
+        self.assertIsNone(ann.find("area"))
+        self.assertIsNone(ann.find("bbox"))
+        self.assertEqual("0", ann.find("label_id").text)
 
 
 class DatasetTransformTest:
