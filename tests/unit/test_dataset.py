@@ -2301,3 +2301,29 @@ class DatasetInfosTest:
 
             dataset.transform(RemapLabels, mapping={"car": "apple", "cat": "banana", "dog": "cinnamon"})
             fxt_test_case.assertEqual(dataset.infos(), infos_2)
+
+
+@pytest.mark.parametrize("cache_first", [False, True])
+def test_get_applies_pending_resize(cache_first):
+    dataset = Dataset.from_iterable([DatasetItem(1, media=Image.from_numpy(np.ones((10, 10, 3))))])
+    if cache_first:
+        dataset.init_cache()
+    dataset.transform("resize", width=20, height=30)
+
+    item = dataset.get("1")
+
+    assert item.media.size == (30, 20)
+    assert item.media.data.shape == (30, 20, 3)
+    assert next(iter(dataset)).media.size == (30, 20)
+
+
+@pytest.mark.parametrize("cache_first", [False, True])
+def test_get_applies_pending_reindex(cache_first):
+    dataset = Dataset.from_iterable([DatasetItem(1), DatasetItem(2)])
+    if cache_first:
+        dataset.init_cache()
+    dataset.transform("reindex", start=10)
+
+    assert dataset.get("1") is None
+    assert dataset.get("10").id == "10"
+    assert [item.id for item in dataset] == ["10", "11"]
