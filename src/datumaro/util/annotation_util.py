@@ -191,7 +191,7 @@ def PDJ(a, b, eps=None, ratio=0.05, bbox=None):
 
 def OKS(a, b, sigma=None, bbox=None, scale=None):
     """
-    Object Keypoint Similarity metric.
+    Object Keypoint Similarity metric, averaged over keypoints.
     https://cocodataset.org/#keypoints-eval
     """
 
@@ -204,6 +204,7 @@ def OKS(a, b, sigma=None, bbox=None, scale=None):
         sigma = 0.1
     else:
         assert len(sigma) == len(p1)
+        sigma = np.asarray(sigma)
 
     if not scale:
         if bbox is None:
@@ -211,7 +212,7 @@ def OKS(a, b, sigma=None, bbox=None, scale=None):
         scale = bbox[2] * bbox[3]
 
     dists = np.linalg.norm(p1 - p2, axis=1)
-    return np.sum(np.exp(-(dists**2) / (2 * scale * (2 * sigma) ** 2)))
+    return np.mean(np.exp(-(dists**2) / (2 * scale * (2 * sigma) ** 2)))
 
 
 def approximate_line(points: Sequence[float], segments: int) -> np.ndarray:
