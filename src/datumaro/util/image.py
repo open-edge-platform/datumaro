@@ -167,6 +167,17 @@ def copyto_image(src: Union[str, IOBase], dst: Union[str, IOBase]) -> None:
         dst_fp.write(_bytes)
 
 
+def _array_to_pil_image(image: np.ndarray, ext: str):
+    from PIL import Image
+
+    # Pillow 13 cannot write mode "I" as PNG; 16-bit is the widest it supports.
+    # Out-of-range values are clipped, matching Pillow 12's behavior.
+    if ext.lower() == "png" and image.ndim == 2 and image.dtype.kind in "iu" and image.dtype.itemsize > 1:
+        if image.dtype != np.uint16:
+            image = np.clip(image, 0, np.iinfo(np.uint16).max).astype(np.uint16)
+    return Image.fromarray(image)
+
+
 def save_image(
     dst: Union[str, IOBase],
     image: np.ndarray,
@@ -211,8 +222,6 @@ def save_image(
         else:
             dst.write(image_bytes)
     elif backend == ImageBackend.PIL:
-        from PIL import Image
-
         if ext.startswith("."):
             ext = ext[1:]
 
@@ -224,7 +233,7 @@ def save_image(
         image = image.astype(dtype)
         if len(image.shape) == 3 and image.shape[2] in {3, 4}:
             image[:, :, :3] = image[:, :, 2::-1]  # BGR to RGB
-        image = Image.fromarray(image)
+        image = _array_to_pil_image(image, ext)
         image.save(dst, format=ext, **params)
     else:
         raise NotImplementedError
@@ -251,8 +260,6 @@ def encode_image(image: np.ndarray, ext: str, dtype: DTypeLike = np.uint8, **kwa
             raise Exception("Failed to encode image to '%s' format" % (ext))
         return result.tobytes()
     if IMAGE_BACKEND.get() == ImageBackend.PIL:
-        from PIL import Image
-
         if ext.startswith("."):
             ext = ext[1:]
 
@@ -264,7 +271,7 @@ def encode_image(image: np.ndarray, ext: str, dtype: DTypeLike = np.uint8, **kwa
         image = image.astype(dtype)
         if len(image.shape) == 3 and image.shape[2] in {3, 4}:
             image[:, :, :3] = image[:, :, 2::-1]  # BGR to RGB
-        image = Image.fromarray(image)
+        image = _array_to_pil_image(image, ext)
         with BytesIO() as buffer:
             image.save(buffer, format=ext, **params)
             return buffer.getvalue()
