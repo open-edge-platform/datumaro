@@ -172,9 +172,9 @@ def _array_to_pil_image(image: np.ndarray, ext: str):
 
     # Pillow 13 cannot write mode "I" as PNG; 16-bit is the widest it supports.
     # Out-of-range values are clipped, matching Pillow 12's behavior.
-    if ext.lower() == "png" and image.ndim == 2 and image.dtype.kind in "iu" and image.dtype.itemsize > 1:
-        if image.dtype != np.uint16:
-            image = np.clip(image, 0, np.iinfo(np.uint16).max).astype(np.uint16)
+    is_wide_int = image.ndim == 2 and image.dtype.kind in "iu" and image.dtype.itemsize > 1
+    if ext.lower() == "png" and is_wide_int and image.dtype != np.uint16:
+        image = np.clip(image, 0, np.iinfo(np.uint16).max).astype(np.uint16)
     return Image.fromarray(image)
 
 
