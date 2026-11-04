@@ -80,48 +80,13 @@ jobs:
       - name: Installing dependencies
         run: uv sync --locked --all-extras --dev
 
-      # TEMP: remove once the LLVM duplicate-option abort is diagnosed
-      - name: "TEMP: diagnose LLVM duplicate-option abort"
-        if: matrix.os == 'ubuntu-24.04' && matrix.python-version == '3.11'
-        continue-on-error: true
-        run: |
-          set +e
-          probe() { echo "::group::$1"; uv run python -X faulthandler -c "$1"; echo "exit=$?"; echo "::endgroup::"; }
-
-          probe "import triton, tensorflow"
-
-          # Does a newer TF avoid the clash? Isolated venvs, not the project env.
-          for TFV in 2.21.0 2.22.0rc0; do
-            echo "::group::import tensorflow, triton with tensorflow==$TFV"
-            uv venv -q -p 3.11 "/tmp/tf-$TFV"
-            uv pip install -q --python "/tmp/tf-$TFV" "tensorflow==$TFV" triton==3.9.0
-            "/tmp/tf-$TFV/bin/python" -X faulthandler -c "import tensorflow, triton" 2>&1 | grep -v '^  File' | tail -n 5
-            echo "exit=${PIPESTATUS[0]}"
-            echo "::endgroup::"
-          done
-
-          echo "::group::TF shared libraries exporting llvm::cl symbols"
-          TFDIR=$(uv run python -c "import importlib.util,os;print(os.path.dirname(importlib.util.find_spec('tensorflow').origin))")
-          find "$TFDIR" -name '*.so*' -type f | while read -r f; do
-            n=$(nm -D --defined-only "$f" 2>/dev/null | grep -c '_ZN4llvm2cl')
-            [ "$n" -gt 0 ] && echo "$n $f"
-          done
-          echo "::endgroup::"
-
-          # Run the venv python directly so LD_DEBUG doesn't also trace uv.
-          echo "::group::LD_DEBUG: where libtriton's llvm::cl symbols bind (import tensorflow, triton)"
-          LD_DEBUG=bindings LD_DEBUG_OUTPUT=/tmp/ld .venv/bin/python -c "import tensorflow, triton"
-          echo "exit=$?"
-          echo "-- target library counts --"
-          grep -h 'binding file [^ ]*libtriton\.so' /tmp/ld.* | grep '_ZN4llvm2cl' \
-            | sed -E 's/.* to ([^ ]+) .*/\1/' | sort | uniq -c
-          echo "-- sample bindings to non-triton libraries --"
-          grep -h 'binding file [^ ]*libtriton\.so' /tmp/ld.* | grep '_ZN4llvm2cl' \
-            | grep -v ' to [^ ]*libtriton\.so' | head -n 20
-          echo "::endgroup::"
+      # triton's bundled LLVM aborts the process when loaded after TensorFlow; tests don't use triton.
+      - name: Remove triton
+        if: runner.os == 'Linux'
+        run: uv pip uninstall triton
 
       - name: Tests
-        run: uv run pytest --cov --cov-report=xml
+        run: uv run --no-sync pytest --cov --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
