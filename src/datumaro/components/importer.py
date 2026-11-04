@@ -62,6 +62,11 @@ class Importer(CliPlugin):
     def find_sources_with_params(cls, path: str, **extra_params) -> List[Dict]:
         return cls.find_sources(path)
 
+    @classmethod
+    def get_save_options(cls, **import_params) -> Dict:
+        """Import parameters to reuse when the imported dataset is saved in place."""
+        return {}
+
     def __call__(self, path, stream: bool = False, **extra_params):
         if not path or not osp.exists(path):
             raise DatasetNotFoundError(path, self.NAME)

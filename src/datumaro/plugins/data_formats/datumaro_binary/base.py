@@ -30,6 +30,7 @@ class DatumaroBinaryBase(DatumaroBase):
         *,
         num_workers: int = 0,
         subset: Optional[str] = None,
+        allow_external_media: bool = False,
         ctx: Optional[ImportContext] = None,
     ):
         """
@@ -39,10 +40,13 @@ class DatumaroBinaryBase(DatumaroBase):
             Directory path to import DatumaroBinary format dataset
         num_workers
             The number of multi-processing workers for import. If num_workers = 0, do not use multiprocessing.
+        allow_external_media
+            Allow media paths in the annotations to point outside the dataset directory, as written
+            by exports made without `save_media`. Only enable this for trusted datasets.
         """
         self._fp: Optional[BufferedReader] = None
         self._num_workers = num_workers
-        super().__init__(path, subset=subset, ctx=ctx)
+        super().__init__(path, subset=subset, allow_external_media=allow_external_media, ctx=ctx)
 
     def _get_dm_format_version(self, path: str) -> str:
         with open(path, "rb") as fp:
@@ -141,6 +145,7 @@ class DatumaroBinaryBase(DatumaroBase):
                         (
                             blob_bytes,
                             media_path_prefix,
+                            self._allow_external_media,
                         ),
                     )
                 ]
@@ -152,18 +157,23 @@ class DatumaroBinaryBase(DatumaroBase):
             ]
 
     def _read_items_sp(self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
-        items_list = [self._read_blob(self._fp.read(blob_size), media_path_prefix) for blob_size in blob_sizes]
+        items_list = [
+            self._read_blob(self._fp.read(blob_size), media_path_prefix, self._allow_external_media)
+            for blob_size in blob_sizes
+        ]
 
         return [item for items in items_list for item in items]
 
     @staticmethod
-    def _read_blob(blob_bytes: bytes, media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
+    def _read_blob(
+        blob_bytes: bytes, media_path_prefix: Dict[MediaType, str], allow_external_media: bool = False
+    ) -> List[DatasetItem]:
         items = []
         offset = 0
 
         # Extract items
         while offset < len(blob_bytes):
-            item, offset = DatasetItemMapper.backward(blob_bytes, offset, media_path_prefix)
+            item, offset = DatasetItemMapper.backward(blob_bytes, offset, media_path_prefix, allow_external_media)
             items.append(item)
 
         assert offset == len(blob_bytes)

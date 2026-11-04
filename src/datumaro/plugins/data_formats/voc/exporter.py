@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import logging as log
+import math
 import os
 import os.path as osp
 from collections import OrderedDict, defaultdict
@@ -53,13 +54,22 @@ def _convert_attr(name, attributes, type_conv, default=None):
         return default
 
 
-def _write_xml_bbox(bbox, parent_elem):
+def _write_xml_bbox(bbox, parent_elem, *, coordinate_mode="dm-zero-based"):
     x, y, w, h = bbox
+    if coordinate_mode == "voc-one-based":
+        if not all(math.isfinite(value) for value in (x, y, w, h, x + w, y + h)):
+            raise InvalidAnnotationError("VOC bounding box coordinates must be finite")
+        if x < 0 or y < 0 or w <= 0 or h <= 0:
+            raise InvalidAnnotationError("VOC bounding boxes must have nonnegative origins and positive dimensions")
+        xmin, ymin = math.floor(x) + 1, math.floor(y) + 1
+        xmax, ymax = math.ceil(x + w), math.ceil(y + h)
+    else:
+        xmin, ymin, xmax, ymax = x, y, x + w, y + h
     bbox_elem = ET.SubElement(parent_elem, "bndbox")
-    ET.SubElement(bbox_elem, "xmin").text = str(x)
-    ET.SubElement(bbox_elem, "ymin").text = str(y)
-    ET.SubElement(bbox_elem, "xmax").text = str(x + w)
-    ET.SubElement(bbox_elem, "ymax").text = str(y + h)
+    ET.SubElement(bbox_elem, "xmin").text = str(xmin)
+    ET.SubElement(bbox_elem, "ymin").text = str(ymin)
+    ET.SubElement(bbox_elem, "xmax").text = str(xmax)
+    ET.SubElement(bbox_elem, "ymax").text = str(ymax)
     return bbox_elem
 
 
@@ -107,6 +117,14 @@ class VocExporter(Exporter):
         parser = super().build_cmdline_parser(**kwargs)
 
         parser.add_argument(
+            "--coordinate-mode",
+            choices=("dm-zero-based", "voc-one-based"),
+            default="dm-zero-based",
+            help=(
+                "Bounding box convention: unchanged coordinates or 1-based inclusive integer VOC (default: %(default)s)"
+            ),
+        )
+        parser.add_argument(
             "--apply-colormap",
             type=str_to_bool,
             default=True,
@@ -148,9 +166,14 @@ class VocExporter(Exporter):
         label_map=None,
         allow_attributes=True,
         keep_empty=False,
+        coordinate_mode="dm-zero-based",
         **kwargs,
     ):
         super().__init__(extractor, save_dir, **kwargs)
+
+        if coordinate_mode not in ("dm-zero-based", "voc-one-based"):
+            raise ValueError(f"Unknown VOC coordinate mode: {coordinate_mode!r}")
+        self._coordinate_mode = coordinate_mode
 
         task = VocTask.voc if task is None else task
         if not isinstance(task, VocTask):
@@ -337,7 +360,7 @@ class VocExporter(Exporter):
 
                 bbox = obj.get_bbox()
                 if bbox is not None:
-                    _write_xml_bbox(bbox, obj_elem)
+                    _write_xml_bbox(bbox, obj_elem, coordinate_mode=self._coordinate_mode)
 
                 if self._task in [VocTask.voc, VocTask.voc_layout]:
                     for part_bbox in layout_bboxes:
@@ -346,7 +369,7 @@ class VocExporter(Exporter):
 
                         part_elem = ET.SubElement(obj_elem, "part")
                         ET.SubElement(part_elem, "name").text = self.get_label(part_bbox.label)
-                        _write_xml_bbox(part_bbox.get_bbox(), part_elem)
+                        _write_xml_bbox(part_bbox.get_bbox(), part_elem, coordinate_mode=self._coordinate_mode)
 
                         objects_with_parts.append(new_obj_id)
 

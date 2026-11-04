@@ -38,6 +38,7 @@ from datumaro.util import NOTSET, parse_json_file, take_by
 from datumaro.util.image import lazy_image, load_image
 from datumaro.util.mask_tools import bgr2index
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 from .format import CocoImporterType, CocoPath, CocoTask
 from .page_mapper import COCOPageMapper
@@ -369,11 +370,13 @@ class _CocoBase(SubsetBase):
             else:
                 image_size = None
 
+            # "file_name" is untrusted dataset content and must not be able to
+            # escape the images directory.
             file_name = self._parse_field(img_info, "file_name", str)
             return img_id, DatasetItem(
                 id=osp.splitext(file_name)[0],
                 subset=self._subset,
-                media=Image.from_file(path=osp.join(self._images_dir, file_name), size=image_size),
+                media=Image.from_file(path=join_within_base(self._images_dir, file_name), size=image_size),
                 annotations=[],
                 attributes={"id": img_id},
             )
@@ -386,7 +389,7 @@ class _CocoBase(SubsetBase):
 
         # For the panoptic task, each annotation struct is a per-image
         # annotation rather than a per-object annotation.
-        mask_path = osp.join(self._mask_dir, self._parse_field(ann, "file_name", str))
+        mask_path = join_within_base(self._mask_dir, self._parse_field(ann, "file_name", str))
         mask = lazy_image(mask_path, loader=self._load_pan_mask)
         mask = CompiledMask(instance_mask=mask)
         for segm_info in self._parse_field(ann, "segments_info", list):

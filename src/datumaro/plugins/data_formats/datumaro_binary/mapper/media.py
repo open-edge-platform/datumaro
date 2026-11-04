@@ -8,6 +8,7 @@ from typing import Dict, Optional, Tuple
 
 from datumaro.components.errors import DatumaroError
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
+from datumaro.util.os_util import join_within_base
 
 from .common import Mapper, StringMapper
 
@@ -35,21 +36,22 @@ class MediaMapper(Mapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[Optional[MediaElement], int]:
         (media_type,) = struct.unpack_from("<I", _bytes, offset)
 
         if media_type == MediaType.NONE:
             return None, offset + 4
         if media_type == MediaType.IMAGE:
-            return ImageMapper.backward(_bytes, offset, media_path_prefix)
+            return ImageMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         if media_type == MediaType.POINT_CLOUD:
-            return PointCloudMapper.backward(_bytes, offset, media_path_prefix)
+            return PointCloudMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         if media_type == MediaType.VIDEO:
-            return VideoMapper.backward(_bytes, offset, media_path_prefix)
+            return VideoMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         if media_type == MediaType.VIDEO_FRAME:
-            return VideoFrameMapper.backward(_bytes, offset, media_path_prefix)
+            return VideoFrameMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         if media_type == MediaType.MEDIA_ELEMENT:
-            return MediaElementMapper.backward(_bytes, offset, media_path_prefix)
+            return MediaElementMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         raise DatumaroError(f"{media_type} is not allowed for MediaMapper.")
 
 
@@ -72,6 +74,7 @@ class MediaElementMapper(Mapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[Dict, int]:
         (media_type,) = struct.unpack_from("<I", _bytes, offset)
         assert media_type == cls.MEDIA_TYPE, f"Expect {cls.MEDIA_TYPE} but actual is {media_type}."
@@ -79,11 +82,12 @@ class MediaElementMapper(Mapper):
         path, offset = StringMapper.backward(_bytes, offset)
         if path == cls.MAGIC_PATH:
             path = None
+        join_media_path = osp.join if allow_external_media else join_within_base
         return {
             "type": media_type,
             "path": path
             if path == cls.MAGIC_PATH or media_path_prefix is None
-            else osp.join(media_path_prefix[cls.MEDIA_TYPE], path),
+            else join_media_path(media_path_prefix[cls.MEDIA_TYPE], path),
         }, offset
 
     @classmethod
@@ -92,8 +96,9 @@ class MediaElementMapper(Mapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[MediaElement, int]:
-        _, offset = cls.backward_dict(_bytes, offset, media_path_prefix)
+        _, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         return MediaElement(), offset
 
 
@@ -117,8 +122,9 @@ class ImageMapper(MediaElementMapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[Image, int]:
-        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix)
+        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         height, width = struct.unpack_from("<ii", _bytes, offset)
         size = (height, width)
         offset += 8
@@ -148,8 +154,9 @@ class VideoMapper(MediaElementMapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[Video, int]:
-        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix)
+        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         step, start_frame, end_frame = struct.unpack_from("<III", _bytes, offset)
         offset += 12
         video = Video(
@@ -178,8 +185,9 @@ class VideoFrameMapper(MediaElementMapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[VideoFrame, int]:
-        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix)
+        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         (frame_index,) = struct.unpack_from("<I", _bytes, offset)
         video = Video(media_dict["path"])
         offset += 4
@@ -208,14 +216,15 @@ class PointCloudMapper(MediaElementMapper):
         _bytes: bytes,
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[PointCloud, int]:
-        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix)
+        media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         (len_extra_images,) = struct.unpack_from("<I", _bytes, offset)
         offset += 4
 
         extra_images = []
         for _ in range(len_extra_images):
-            img, offset = ImageMapper.backward(_bytes, offset, media_path_prefix)
+            img, offset = ImageMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
             extra_images.append(img)
 
         return PointCloud.from_file(path=media_dict["path"], extra_images=extra_images), offset

@@ -350,6 +350,8 @@ class IntersectMergeTest(TestCase):
                 result_dir,
                 dataset2_url + ":voc",
                 dataset1_url + ":coco",
+                "--",
+                "--save-media",
             )
 
             compare_datasets(self, expected, Dataset.load(result_dir), require_media=True)
@@ -457,6 +459,8 @@ class IntersectMergeTest(TestCase):
                 result_dir,
                 dataset2_url + ":voc",
                 dataset1_url + ":coco",
+                "--",
+                "--save-media",
             )
 
             compare_datasets(self, expected, Dataset.load(result_dir), require_media=True)

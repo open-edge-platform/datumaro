@@ -430,11 +430,21 @@ def rle_to_mask(rle_uncompressed: Dict[str, np.ndarray]) -> np.ndarray:
 
 
 def find_mask_bbox(mask) -> Tuple[int, int, int, int]:
+    """
+    Computes the bounding box of the non-zero mask pixels.
+
+    The extent is the number of covered rows/columns, so the box covers
+    every non-zero pixel: a mask that spans columns ``x0..x1`` (inclusive)
+    has width ``x1 - x0 + 1``. The input must contain at least one non-zero
+    pixel.
+
+    Returns: [x, y, w, h]
+    """
     cols = np.any(mask, axis=0)
     rows = np.any(mask, axis=1)
     x0, x1 = np.where(cols)[0][[0, -1]]
     y0, y1 = np.where(rows)[0][[0, -1]]
-    return (x0, y0, x1 - x0, y1 - y0)
+    return (x0, y0, x1 - x0 + 1, y1 - y0 + 1)
 
 
 def merge_masks(masks, start=None):

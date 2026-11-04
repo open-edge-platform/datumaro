@@ -18,6 +18,7 @@ from datumaro.components.errors import (
 from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image
 from datumaro.util import NOTSET, parse_json_file
+from datumaro.util.os_util import join_within_base
 
 T = TypeVar("T")
 
@@ -88,7 +89,7 @@ class SegmentAnythingBase(SubsetBase):
                 file_name = parse_field(image_info, "file_name", str)
 
                 item_kwargs["id"] = osp.splitext(file_name)[0]
-                item_kwargs["media"] = Image.from_file(path=osp.join(self._path, file_name), size=image_size)
+                item_kwargs["media"] = Image.from_file(path=join_within_base(self._path, file_name), size=image_size)
             except Exception as e:
                 self._ctx.error_policy.report_item_error(e, item_id=(image_id, self._subset))
 

@@ -12,7 +12,7 @@ from lxml import etree as ElementTree  # nosec
 
 import datumaro.plugins.data_formats.voc.format as VOC
 from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask, MaskCategories
-from datumaro.components.dataset import Dataset
+from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.errors import (
@@ -24,6 +24,7 @@ from datumaro.components.errors import (
 from datumaro.components.exporter import Exporter
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
+from datumaro.plugins.data_formats.voc.base import VocBase
 from datumaro.plugins.data_formats.voc.exporter import (
     VocActionExporter,
     VocClassificationExporter,
@@ -31,6 +32,7 @@ from datumaro.plugins.data_formats.voc.exporter import (
     VocInstanceSegmentationExporter,
     VocLayoutExporter,
     VocSegmentationExporter,
+    _write_xml_bbox,
 )
 from datumaro.plugins.data_formats.voc.format import VocTask
 from datumaro.plugins.data_formats.voc.importer import (
@@ -214,6 +216,153 @@ def fxt_action_dataset():
 
 
 class VocFormatImportExportTest(TestDataFormatBase):
+    @pytest.mark.parametrize("coordinate_mode", [None, "dm-zero-based", "voc-one-based"])
+    @pytest.mark.parametrize("format_name", ["voc", "voc_detection"])
+    def test_bbox_coordinate_mode(self, test_dir, coordinate_mode, format_name):
+        boxes = [(0, 0, 20, 10), (0, 0, 1, 1), (2, 3, 4, 5), (1.25, 2.5, 3.5, 4.25)]
+        dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="image",
+                    media=Image.from_numpy(data=np.ones((10, 20, 3))),
+                    annotations=[Bbox(*box, label=0) for box in boxes],
+                )
+            ],
+            categories=["person"],
+        )
+        options = {} if coordinate_mode is None else {"coordinate_mode": coordinate_mode}
+        dataset.export(test_dir, format_name, **options)
+
+        root = ElementTree.parse(osp.join(test_dir, "Annotations", "image.xml")).getroot()
+        written = [[field.text for field in bbox] for bbox in root.findall("object/bndbox")]
+        if coordinate_mode == "voc-one-based":
+            assert written == [
+                ["1", "1", "20", "10"],
+                ["1", "1", "1", "1"],
+                ["3", "4", "6", "8"],
+                ["2", "3", "5", "7"],
+            ]
+            expected = [*boxes[:3], (1, 2, 4, 5)]
+        else:
+            assert written == [
+                ["0.0", "0.0", "20.0", "10.0"],
+                ["0.0", "0.0", "1.0", "1.0"],
+                ["2.0", "3.0", "6.0", "8.0"],
+                ["1.25", "2.5", "4.75", "6.75"],
+            ]
+            expected = boxes
+        imported = Dataset.import_from(test_dir, format_name, **options)
+        assert [ann.get_bbox() for ann in next(iter(imported)).annotations if isinstance(ann, Bbox)] == [
+            list(box) for box in expected
+        ]
+
+    @pytest.mark.parametrize("dataset_cls", [Dataset, StreamDataset])
+    @pytest.mark.parametrize(
+        "coordinate_mode, expected", [("dm-zero-based", [1, 2, 2, 2]), ("voc-one-based", [0, 1, 3, 3])]
+    )
+    def test_import_bbox_coordinate_mode(self, dataset_cls, coordinate_mode, expected):
+        dataset = dataset_cls.import_from(DUMMY_DATASET_DIR, "voc_detection", coordinate_mode=coordinate_mode)
+        item = next(item for item in dataset if item.id == "2007_000001" and item.subset == "train")
+        assert item.annotations[0].get_bbox() == expected
+
+    def test_inplace_save_preserves_coordinate_mode(self, test_dir):
+        Dataset.from_iterable(
+            [
+                DatasetItem(id="edited", annotations=[Bbox(0, 0, 10, 10, label=0)]),
+                DatasetItem(id="untouched", annotations=[Bbox(0, 0, 10, 10, label=0)]),
+            ],
+            categories=["person"],
+        ).export(test_dir, "voc_detection", coordinate_mode="voc-one-based")
+
+        dataset = Dataset.import_from(test_dir, "voc_detection", coordinate_mode="voc-one-based")
+        item = next(item for item in dataset if item.id == "edited")
+        ann = item.annotations[0]
+        dataset.put(item.wrap(annotations=[Bbox(2, 3, 4, 5, label=ann.label, attributes=ann.attributes, id=ann.id)]))
+        dataset.save()
+
+        def read_box(item_id):
+            root = ElementTree.parse(osp.join(test_dir, "Annotations", f"{item_id}.xml")).getroot()
+            return [field.text for field in root.find("object/bndbox")]
+
+        assert read_box("edited") == ["3", "4", "6", "8"]
+        assert read_box("untouched") == ["1", "1", "10", "10"]
+
+    @pytest.mark.parametrize(
+        "coordinates, expected",
+        [("1 1 1 1", [0, 0, 1, 1]), ("1 1 20 10", [0, 0, 20, 10]), ("3 4 6 8", [2, 3, 4, 5])],
+    )
+    def test_parse_voc_bbox(self, coordinates, expected):
+        bbox = ElementTree.Element("object")
+        bounds = ElementTree.SubElement(bbox, "bndbox")
+        for name, value in zip(("xmin", "ymin", "xmax", "ymax"), coordinates.split()):
+            ElementTree.SubElement(bounds, name).text = value
+        assert VocBase._parse_bbox(bbox, coordinate_mode="voc-one-based") == expected
+
+    @pytest.mark.parametrize(
+        "coordinate_mode, expected_part, expected_part_bbox",
+        [
+            ("dm-zero-based", ["5.5", "6.0", "7.5", "8.0"], [5.5, 6, 2, 2]),
+            ("voc-one-based", ["6", "7", "8", "8"], [5, 6, 3, 2]),
+        ],
+    )
+    @pytest.mark.parametrize("format_name", ["voc_layout", "voc_action"])
+    def test_task_bbox_coordinate_mode(
+        self, test_dir, request, format_name, coordinate_mode, expected_part, expected_part_bbox
+    ):
+        dataset = request.getfixturevalue("fxt_layout_dataset" if format_name == "voc_layout" else "fxt_action_dataset")
+        dataset.export(test_dir, format_name, label_map=format_name, coordinate_mode=coordinate_mode)
+        root = ElementTree.parse(osp.join(test_dir, "Annotations", "2007_000001.xml")).getroot()
+        box = root.find("object/bndbox")
+        expected = ["5", "6", "6", "7"] if coordinate_mode == "voc-one-based" else ["4.0", "5.0", "6.0", "7.0"]
+        assert [field.text for field in box] == expected
+        imported = Dataset.import_from(test_dir, format_name, coordinate_mode=coordinate_mode)
+        item = imported.get("2007_000001", "train")
+        assert item is not None
+        annotations = [ann for ann in item.annotations if isinstance(ann, Bbox)]
+        assert annotations[-1].get_bbox() == [4, 5, 2, 2]
+        if format_name == "voc_layout":
+            part = root.find("object/part/bndbox")
+            assert [field.text for field in part] == expected_part
+            assert annotations[0].get_bbox() == expected_part_bbox
+
+    @pytest.mark.parametrize(
+        "box",
+        [
+            (-1, 0, 1, 1),
+            (0, -1, 1, 1),
+            (0, 0, 0, 1),
+            (0, 0, 1, -1),
+            (float("nan"), 0, 1, 1),
+            (0, 0, float("inf"), 1),
+        ],
+    )
+    def test_voc_bbox_rejects_invalid_geometry(self, box):
+        with pytest.raises(InvalidAnnotationError):
+            _write_xml_bbox(box, ElementTree.Element("object"), coordinate_mode="voc-one-based")
+
+    def test_voc_bbox_does_not_clip(self):
+        root = ElementTree.Element("object")
+        _write_xml_bbox((19, 9, 5, 5), root, coordinate_mode="voc-one-based")
+        assert [field.text for field in root.find("bndbox")] == ["20", "10", "24", "14"]
+
+    @pytest.mark.parametrize(
+        "plugin", [VocDetectionImporter, VocDetectionExporter, VocLayoutImporter, VocLayoutExporter]
+    )
+    def test_coordinate_mode_cli(self, plugin):
+        parser = plugin.build_cmdline_parser()
+        assert parser.parse_args([]).coordinate_mode == "dm-zero-based"
+        assert parser.parse_args(["--coordinate-mode", "voc-one-based"]).coordinate_mode == "voc-one-based"
+        with pytest.raises(SystemExit):
+            parser.parse_args(["--coordinate-mode", "unknown"])
+
+    def test_coordinate_mode_rejects_unknown_value(self, test_dir, fxt_detection_dataset):
+        with pytest.raises(DatasetImportError) as error:
+            Dataset.import_from(DUMMY_DATASET_DIR, "voc_detection", coordinate_mode="unknown")
+        assert isinstance(error.value.__cause__, ValueError)
+        assert "Unknown VOC coordinate mode" in str(error.value.__cause__)
+        with pytest.raises(ValueError, match="Unknown VOC coordinate mode"):
+            fxt_detection_dataset.export(test_dir, "voc_detection", coordinate_mode="unknown")
+
     @pytest.mark.parametrize(
         "fxt_dataset_dir, importer",
         [

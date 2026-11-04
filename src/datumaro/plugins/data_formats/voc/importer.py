@@ -25,6 +25,23 @@ class _VocImporter(Importer):
     ANNO_EXT = ".txt"
 
     @classmethod
+    def build_cmdline_parser(cls, **kwargs):
+        parser = super().build_cmdline_parser(**kwargs)
+        parser.add_argument(
+            "--coordinate-mode",
+            choices=("dm-zero-based", "voc-one-based"),
+            default="dm-zero-based",
+            help="Bounding box convention: unchanged coordinates or 1-based inclusive VOC (default: %(default)s)",
+        )
+        return parser
+
+    @classmethod
+    def get_save_options(cls, **import_params):
+        if "coordinate_mode" in import_params:
+            return {"coordinate_mode": import_params["coordinate_mode"]}
+        return {}
+
+    @classmethod
     def detect(cls, context: FormatDetectionContext) -> None:
         # The `voc` format is inherently ambiguous with `voc_classification`,
         # `voc_detection`, etc. To remove the ambiguity (and thus make it

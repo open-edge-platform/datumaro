@@ -25,11 +25,14 @@ class DatasetItemMapper(Mapper):
 
     @staticmethod
     def backward(
-        _bytes: bytes, offset: int = 0, media_path_prefix: Optional[Dict[MediaType, str]] = None
+        _bytes: bytes,
+        offset: int = 0,
+        media_path_prefix: Optional[Dict[MediaType, str]] = None,
+        allow_external_media: bool = False,
     ) -> Tuple[DatasetItem, int]:
         id, offset = StringMapper.backward(_bytes, offset)
         subset, offset = StringMapper.backward(_bytes, offset)
-        media, offset = MediaMapper.backward(_bytes, offset, media_path_prefix)
+        media, offset = MediaMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         attributes, offset = DictMapper.backward(_bytes, offset)
         annotations, offset = AnnotationListMapper.backward(_bytes, offset)
         return (

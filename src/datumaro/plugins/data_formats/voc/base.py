@@ -23,6 +23,7 @@ from datumaro.components.media import Image
 from datumaro.util.image import find_images
 from datumaro.util.mask_tools import invert_colormap, lazy_mask
 from datumaro.util.meta_file_util import has_meta_file
+from datumaro.util.os_util import join_within_base
 
 from .format import (
     VocImporterType,
@@ -48,8 +49,13 @@ class VocBase(SubsetBase):
         subset: Optional[str] = None,
         voc_importer_type: VocImporterType = VocImporterType.default,
         ctx: Optional[ImportContext] = None,
+        coordinate_mode: str = "dm-zero-based",
         **kwargs,
     ):
+        if coordinate_mode not in ("dm-zero-based", "voc-one-based"):
+            raise ValueError(f"Unknown VOC coordinate mode: {coordinate_mode!r}")
+        self._coordinate_mode = coordinate_mode
+
         if not subset:
             subset = osp.splitext(osp.basename(path))[0]
 
@@ -153,7 +159,7 @@ class VocBase(SubsetBase):
                 anns = annotations.get(item_id, [])
                 image = None
 
-                ann_file = osp.join(self._anno_dir, item_id + ".xml")
+                ann_file = join_within_base(self._anno_dir, item_id + ".xml")
                 if osp.isfile(ann_file) and self._task not in [
                     VocTask.voc_classification,
                     VocTask.voc_segmentation,
@@ -169,7 +175,7 @@ class VocBase(SubsetBase):
 
                     filename_elem = root_elem.find("filename")
                     if filename_elem is not None:
-                        image = osp.join(self._image_dir, filename_elem.text)
+                        image = join_within_base(self._image_dir, filename_elem.text)
 
                     anns += self._parse_annotations(root_elem, item_id=(item_id, self._subset))
 
@@ -248,7 +254,7 @@ class VocBase(SubsetBase):
         return attributes
 
     @classmethod
-    def _parse_bbox(cls, object_elem):
+    def _parse_bbox(cls, object_elem, *, coordinate_mode="dm-zero-based"):
         bbox_elem = object_elem.find("bndbox")
         if bbox_elem is None:
             raise MissingFieldError("bndbox")
@@ -257,6 +263,10 @@ class VocBase(SubsetBase):
         xmax = cls._parse_field(bbox_elem, "xmax", float)
         ymin = cls._parse_field(bbox_elem, "ymin", float)
         ymax = cls._parse_field(bbox_elem, "ymax", float)
+        assert xmin is not None and xmax is not None and ymin is not None and ymax is not None
+        if coordinate_mode == "voc-one-based":
+            xmin -= 1
+            ymin -= 1
         return [xmin, ymin, xmax - xmin, ymax - ymin]
 
     def _parse_annotations(self, root_elem, *, item_id: Tuple[str, str]) -> List[Annotation]:
@@ -274,7 +284,7 @@ class VocBase(SubsetBase):
                     continue
 
                 obj_label_id = self._get_label_id(label_name)
-                obj_bbox = self._parse_bbox(object_elem)
+                obj_bbox = self._parse_bbox(object_elem, coordinate_mode=self._coordinate_mode)
                 attributes = self._parse_attribute(object_elem)
 
                 group = obj_id
@@ -282,7 +292,7 @@ class VocBase(SubsetBase):
                 if self._task in [VocTask.voc, VocTask.voc_layout]:
                     for part_elem in object_elem.findall("part"):
                         part_label_id = self._get_label_id(self._parse_field(part_elem, "name"))
-                        part_bbox = self._parse_bbox(part_elem)
+                        part_bbox = self._parse_bbox(part_elem, coordinate_mode=self._coordinate_mode)
 
                         item_annotations.append(Bbox(*part_bbox, label=part_label_id, group=group))
 
@@ -312,13 +322,13 @@ class VocBase(SubsetBase):
         item_annotations = []
 
         class_mask = None
-        segm_path = osp.join(self._mask_dir, item_id + VocPath.SEGM_EXT)
+        segm_path = join_within_base(self._mask_dir, item_id + VocPath.SEGM_EXT)
         if osp.isfile(segm_path):
             inverse_cls_colormap = self._categories[AnnotationType.mask].inverse_colormap
             class_mask = lazy_mask(segm_path, inverse_cls_colormap)
 
         instances_mask = None
-        inst_path = osp.join(self._inst_dir, item_id + VocPath.SEGM_EXT)
+        inst_path = join_within_base(self._inst_dir, item_id + VocPath.SEGM_EXT)
         if osp.isfile(inst_path):
             instances_mask = lazy_mask(inst_path, _inverse_inst_colormap)
 
@@ -365,7 +375,7 @@ class VocBase(SubsetBase):
         annotations = {}
         task_dir = osp.dirname(self._path)
         for label_id, label in enumerate(self._categories[AnnotationType.label]):
-            ann_file = osp.join(task_dir, f"{label.name}_{self._subset}.txt")
+            ann_file = join_within_base(task_dir, f"{label.name}_{self._subset}.txt")
             if not osp.isfile(ann_file):
                 continue
 

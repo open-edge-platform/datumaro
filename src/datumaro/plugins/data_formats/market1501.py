@@ -16,6 +16,7 @@ from datumaro.components.importer import ImportContext, Importer
 from datumaro.components.media import Image
 from datumaro.util import str_to_bool
 from datumaro.util.image import find_images
+from datumaro.util.os_util import join_within_base
 
 
 class Market1501Path:
@@ -67,7 +68,7 @@ class Market1501Base(DatasetBase):
         if osp.isfile(subset_path):
             with open(subset_path, encoding="utf-8") as f:
                 for line in f:
-                    paths.append(osp.join(self._path, line.strip()))
+                    paths.append(join_within_base(self._path, line.strip()))
         else:
             paths = list(find_images(subset_path, recursive=True))
 

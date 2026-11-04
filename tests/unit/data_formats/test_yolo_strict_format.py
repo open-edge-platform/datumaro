@@ -437,3 +437,19 @@ class YoloStrictBaseTest:
                 if isinstance(e, DatasetImportError) and e.__cause__:
                     raise e.__cause__
                 raise
+
+    @pytest.mark.parametrize("key", ["names", "train"])
+    @pytest.mark.parametrize("unsafe_path", ["../outside.txt", "absolute"])
+    def test_rejects_config_paths_escaping_dataset_dir(self, fxt_dataset, test_dir, key, unsafe_path):
+        outside_path = osp.join(osp.dirname(test_dir), "outside.txt")
+        if unsafe_path == "absolute":
+            unsafe_path = outside_path
+
+        config_path = osp.join(test_dir, "obj.data")
+        with open(config_path, "r") as f:
+            lines = [f"{key} = {unsafe_path}\n" if line.split("=")[0].strip() == key else line for line in f]
+        with open(config_path, "w") as f:
+            f.writelines(lines)
+
+        with pytest.raises(ValueError, match="escapes base directory|parent directory"):  # noqa: RUF043
+            YoloStrictBase(config_path, subset="train")

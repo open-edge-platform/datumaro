@@ -24,6 +24,61 @@ Supported annotation types:
 - `Bbox` (detection, action detection and person layout)
 - `Mask` (segmentation)
 
+### Bounding box coordinates
+
+VOC uses image coordinates whose top-left pixel is `(1, 1)` for both
+detection results (VOC2012 DevKit, section 4.3, page 13) and ground-truth
+annotations (section 10.2.2, page 28). Object parts use the same convention
+(page 29). The PDF does not explicitly require integer coordinates everywhere;
+its detection-result text examples include decimal notation. However, some
+XML annotation readers require integer strings.
+
+Datumaro supports two bounding box coordinate modes for VOC import and export:
+
+- `dm-zero-based` (default): preserves the existing Datumaro behavior. Export writes
+  `(xmin, ymin, xmax, ymax) = (x, y, x + w, y + h)` directly, with floating-point
+  values. Import reads floats and returns `(xmin, ymin, xmax - xmin, ymax - ymin)`
+  without an offset. For boxes originating in Datumaro's 0-based coordinate
+  space, this output differs from the VOC convention. VOC-aware readers may
+  change the box geometry, and integer-only readers may reject even `10.0`.
+- `voc-one-based` (opt-in): interprets imported boxes as 1-based inclusive pixel indices
+  and converts them to Datumaro's 0-based coordinates:
+  `(x, y, w, h) = (xmin - 1, ymin - 1, xmax - xmin + 1, ymax - ymin + 1)`.
+  Export writes integer XML values with outward rounding:
+  `(floor(x) + 1, floor(y) + 1, ceil(x + w), ceil(y + h))`.
+  For example, `Bbox(0, 0, 10, 10)` becomes `(1, 1, 10, 10)`, and
+  `Bbox(0, 0, 1, 1)` becomes `(1, 1, 1, 1)`.
+
+VOC-mode export rejects non-finite coordinates, negative origins, and
+nonpositive dimensions. Boxes are not clipped to image dimensions. Fractional
+boxes can expand during integer quantization, so their round trip is not lossless.
+Import continues to accept fractional values without rounding them.
+
+The mode applies to object and part bounding boxes in the combined `voc`,
+`voc_detection`, `voc_action`, and `voc_layout` formats. It does not modify
+classification labels, segmentation masks, or reference-point attributes.
+
+Use `dm-zero-based` when reading files previously exported by Datumaro with its default
+settings. Use `voc-one-based` for official VOC annotations and compatible XML consumers.
+The convention is not auto-detected: the same numeric coordinates can be valid
+under either interpretation. The mode is not recorded in exported files.
+
+```python
+import datumaro as dm
+
+dataset = dm.Dataset.import_from('VOC2012', 'voc_detection', coordinate_mode='voc-one-based')
+dataset.export('voc_output', 'voc_detection', coordinate_mode='voc-one-based', save_media=True)
+```
+
+Both importer and exporter plugins accept `--coordinate-mode {dm-zero-based,voc-one-based}`.
+For example, to export a native Datumaro dataset using VOC coordinates:
+
+```bash
+datum convert -if datumaro -i <input/dir> -f voc_detection -o <output/dir> -- --coordinate-mode voc-one-based
+```
+
+### Annotation attributes
+
 Supported annotation attributes:
 - `occluded` (boolean) - indicates that a significant portion of the
   object within the bounding box is occluded by another object

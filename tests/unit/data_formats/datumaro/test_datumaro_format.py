@@ -11,7 +11,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from datumaro.components.dataset import Dataset
+from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.errors import PathSeparatorInSubsetNameError
@@ -316,3 +316,26 @@ class DatumaroFormatTest:
     def test_version_compatibility(self, fxt_wrong_version_dir):
         with pytest.raises(DatasetImportError):
             Dataset.import_from(fxt_wrong_version_dir, "datumaro")
+
+    @pytest.mark.parametrize("stream", [True, False])
+    def test_external_media_requires_opt_in(self, test_dir, stream, helper_tc):
+        if stream and type(self) is not DatumaroFormatTest:
+            pytest.skip("stream=True is only available for DatumaroFormatTest")
+
+        src_dir = osp.join(test_dir, "src")
+        Dataset.from_iterable(
+            [DatasetItem("a", subset="train", media=Image.from_numpy(data=np.ones((4, 4, 3))))],
+        ).export(src_dir, format=self.format, save_media=True)
+        source = Dataset.import_from(src_dir, format=self.format)
+
+        # Without save_media, media paths are written as-is, i.e. outside the export dir
+        dst_dir = osp.join(test_dir, "dst")
+        source.export(dst_dir, format=self.format)
+
+        dataset_cls = StreamDataset if stream else Dataset
+        with pytest.raises(Exception) as exc_info:
+            list(dataset_cls.import_from(dst_dir, format=self.format))
+        assert "escapes base directory" in str(exc_info.value.__cause__)
+
+        actual = dataset_cls.import_from(dst_dir, format=self.format, allow_external_media=True)
+        compare_datasets(helper_tc, source, actual, require_media=True)

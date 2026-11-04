@@ -1,7 +1,10 @@
 # Copyright (C) 2023 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+import json
+import shutil
 from typing import Any, Dict
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -10,6 +13,7 @@ from datumaro.components.annotation import AnnotationType, LabelCategories, Mask
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.media import Image
+from datumaro.plugins.data_formats.mapillary_vistas import base as mapillary_base
 from datumaro.plugins.data_formats.mapillary_vistas.format import (
     MapillaryVistasLabelMaps,
     make_mapillary_instance_categories,
@@ -22,6 +26,50 @@ from .base import TestDataFormatBase
 
 DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset")
 VAL_DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset", "val")
+
+
+@pytest.mark.parametrize(
+    "task,unsafe_path",
+    [
+        ("panoptic", "relative"),
+        ("panoptic", "absolute"),
+        ("panoptic", "symlink"),
+        ("instances", "symlink"),
+    ],
+)
+def test_rejects_unsafe_polygon_paths(tmp_path, task, unsafe_path):
+    dataset_dir = tmp_path / "dataset"
+    shutil.copytree(DATASET_DIR, dataset_dir)
+    subset_dir = dataset_dir / "val"
+    annotations_dir = subset_dir / "v2.0"
+    outside_dir = tmp_path / "outside"
+    outside_dir.mkdir()
+
+    if unsafe_path == "symlink":
+        for polygon_path in (annotations_dir / "polygons").glob("*.json"):
+            target = outside_dir / polygon_path.name
+            polygon_path.rename(target)
+            try:
+                polygon_path.symlink_to(target)
+            except (OSError, NotImplementedError):
+                pytest.skip("Symlink creation is not available")
+    else:
+        config_path = annotations_dir / "panoptic" / "panoptic_2020.json"
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        config["annotations"][0]["image_id"] = (
+            "../outside" if unsafe_path == "relative" else str(outside_dir / "polygon")
+        )
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    base_cls = (
+        mapillary_base.MapillaryVistasPanopticBase
+        if task == "panoptic"
+        else mapillary_base.MapillaryVistasInstancesBase
+    )
+    with patch.object(mapillary_base, "parse_json_file", wraps=mapillary_base.parse_json_file) as read_json:
+        with pytest.raises(ValueError, match="escapes base directory|parent directory"):  # noqa: RUF043
+            base_cls(str(subset_dir), parse_polygon=True)
+        assert read_json.call_count == (1 if task == "panoptic" else 0)
 
 
 @pytest.fixture

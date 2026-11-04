@@ -1062,12 +1062,6 @@ class SegmentationValidator(DetectionValidator):
 
             _, _, _w, _h = ann.get_bbox()
 
-            # Detete the following block when #226 is resolved
-            # https://github.com/open-edge-platform/datumaro/issues/226
-            if ann.type == AnnotationType.mask:
-                _w += 1
-                _h += 1
-
             area = ann.get_area()
 
             ann_mask_info = _generate_ann_mask_info(area, _w, _h)
@@ -1109,12 +1103,6 @@ class SegmentationValidator(DetectionValidator):
             mask_label_stats = dist_by_label[label_name]
 
             _, _, _w, _h = ann.get_bbox()
-
-            # Detete the following block when #226 is resolved
-            # https://github.com/open-edge-platform/datumaro/issues/226
-            if ann.type == AnnotationType.mask:
-                _w += 1
-                _h += 1
             area = ann.get_area()
 
             ann_mask_info = _generate_ann_mask_info(area, _w, _h)

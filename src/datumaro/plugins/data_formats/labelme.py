@@ -24,6 +24,7 @@ from datumaro.util import cast, escape, unescape
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import find_mask_bbox, load_mask
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 
 class LabelMePath:
@@ -72,7 +73,7 @@ class LabelMeBase(DatasetBase):
 
             subset = root.find("folder").text or ""
             item_id = osp.splitext(root.find("filename").text)[0]
-            image_path = osp.join(path, "Images", subset, root.find("filename").text)
+            image_path = join_within_base(osp.join(path, LabelMePath.IMAGES_DIR), subset, root.find("filename").text)
 
             image_size = None
             imagesize_elem = root.find("imagesize")
@@ -219,7 +220,7 @@ class LabelMeBase(DatasetBase):
                     user = user_elem.text
                 attributes.append(("username", user))
 
-                mask_path = osp.join(path, LabelMePath.MASKS_DIR, subset, segm_elem.find("mask").text)
+                mask_path = join_within_base(osp.join(path, LabelMePath.MASKS_DIR), subset, segm_elem.find("mask").text)
                 if not osp.isfile(mask_path):
                     raise FileNotFoundError(errno.ENOENT, "Can't find mask", mask_path)
                 mask = load_mask(mask_path)

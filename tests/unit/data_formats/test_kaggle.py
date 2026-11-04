@@ -31,6 +31,42 @@ DUMMY_DATASET_YOLO_DIR = get_test_asset_path("kaggle_dataset", "relaxed_yolo")
 DUMMY_DATASET_COCO_DIR = get_test_asset_path("kaggle_dataset", "relaxed_coco")
 
 
+@pytest.mark.parametrize("base_cls", [KaggleImageCsvBase, KaggleImageTxtBase])
+@pytest.mark.parametrize("media_kind", ["regular", "internal_symlink", "external_symlink"])
+def test_extension_fallback_confines_media_path(tmp_path, base_cls, media_kind):
+    media_dir = tmp_path / "images"
+    media_dir.mkdir()
+    image_path = media_dir / "foo.jpg"
+    if media_kind == "regular":
+        image_path.touch()
+    else:
+        target_dir = tmp_path if media_kind == "external_symlink" else media_dir
+        target = target_dir / "target.jpg"
+        target.touch()
+        try:
+            image_path.symlink_to(target)
+        except (OSError, NotImplementedError):
+            pytest.skip("Symlink creation is not available")
+
+    ann_file = tmp_path / "annotations.txt"
+    if base_cls is KaggleImageCsvBase:
+        ann_file.write_text("media,label\nfoo,object\n", encoding="utf-8")
+        columns = {"media": "media", "label": "label"}
+    else:
+        ann_file.write_text("foo object\n", encoding="utf-8")
+        columns = {"media": 0, "label": 1}
+
+    if media_kind == "external_symlink":
+        with pytest.warns(UserWarning, match="skip to create"):
+            dataset = base_cls(str(media_dir), str(ann_file), columns)
+        assert list(dataset) == []
+    else:
+        dataset = base_cls(str(media_dir), str(ann_file), columns)
+        items = list(dataset)
+        assert len(items) == 1
+        assert items[0].media.path == str(image_path).replace("\\", "/")
+
+
 @pytest.fixture
 def fxt_img_dataset() -> Dataset:
     return Dataset.from_iterable(

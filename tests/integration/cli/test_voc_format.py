@@ -3,6 +3,7 @@ from collections import OrderedDict
 from unittest import TestCase
 
 import numpy as np
+from defusedxml import ElementTree
 
 import datumaro.plugins.data_formats.voc.format as VOC
 from datumaro.components.annotation import Bbox, Label, Mask
@@ -16,6 +17,34 @@ DUMMY_DATASETS_DIR = get_test_asset_path("voc_dataset")
 
 
 class VocIntegrationScenarios(TestCase):
+    def test_export_voc_coordinate_mode(self):
+        dataset = Dataset.from_iterable(
+            [DatasetItem("image", annotations=[Bbox(0, 0, 1, 1, label=0)])], categories=["person"]
+        )
+        with TestDir() as test_dir:
+            source_dir = osp.join(test_dir, "source")
+            result_dir = osp.join(test_dir, "result")
+            dataset.export(source_dir, "datumaro")
+            run(
+                self,
+                "convert",
+                "-i",
+                source_dir,
+                "-if",
+                "datumaro",
+                "-f",
+                "voc_detection",
+                "-o",
+                result_dir,
+                "--",
+                "--coordinate-mode",
+                "voc-one-based",
+            )
+            root = ElementTree.parse(osp.join(result_dir, "Annotations", "image.xml")).getroot()
+            self.assertEqual([field.text for field in root.find("object/bndbox")], ["1", "1", "1", "1"])
+            imported = Dataset.import_from(result_dir, "voc_detection", coordinate_mode="voc-one-based")
+            self.assertEqual(next(iter(imported)).annotations[0].get_bbox(), [0, 0, 1, 1])
+
     def _test_can_save_and_load(
         self,
         test_dir,

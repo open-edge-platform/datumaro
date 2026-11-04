@@ -465,7 +465,7 @@ class TransformsTest(TestCase):
                     id=1,
                     media=Image.from_numpy(data=np.zeros((5, 5, 3))),
                     annotations=[
-                        Bbox(0, 0, 4, 4, id=1),
+                        Bbox(0, 0, 5, 5, id=1),
                         Bbox(1, 1, 3, 3, id=2),
                         Bbox(1, 1, 1, 1, id=3),
                         Bbox(2, 2, 2, 2, id=4),

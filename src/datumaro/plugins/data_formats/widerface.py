@@ -17,6 +17,7 @@ from datumaro.components.importer import ImportContext, Importer
 from datumaro.components.media import Image
 from datumaro.util import str_to_bool
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 
 class WiderFacePath:
@@ -94,10 +95,8 @@ class WiderFaceBase(SubsetBase):
             item_id = osp.splitext(image_path)[0]
             item_id = item_id.replace("\\", "/")
 
-            image_path = osp.join(
-                self._dataset_dir,
-                WiderFacePath.SUBSET_DIR + self._subset,
-                WiderFacePath.IMAGES_DIR,
+            image_path = join_within_base(
+                osp.join(self._dataset_dir, WiderFacePath.SUBSET_DIR + self._subset, WiderFacePath.IMAGES_DIR),
                 image_path,
             )
 

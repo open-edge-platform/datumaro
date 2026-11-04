@@ -13,6 +13,7 @@ from datumaro.components.importer import ImportContext, Importer
 from datumaro.components.media import Image
 from datumaro.util import parse_json_file
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 
 class VottJsonPath:
@@ -95,7 +96,7 @@ class VottJsonBase(SubsetBase):
                 id=item_id,
                 subset=self._subset,
                 attributes={"id": id},
-                media=Image.from_file(path=osp.join(osp.dirname(path), asset.get("asset", {}).get("path"))),
+                media=Image.from_file(path=join_within_base(osp.dirname(path), asset.get("asset", {}).get("path"))),
                 annotations=annotations,
             )
 

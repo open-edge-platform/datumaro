@@ -30,6 +30,7 @@ from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
 from datumaro.plugins.data_formats.datumaro.page_mapper import DatumPageMapper
 from datumaro.util import parse_json_file
+from datumaro.util.os_util import join_within_base
 from datumaro.version import __version__
 
 from .format import DATUMARO_FORMAT_VERSION, DatumaroPath
@@ -47,6 +48,7 @@ class JsonReader:
         pcd_dir: str,
         video_dir: str,
         ctx: ImportContext,
+        allow_external_media: bool = False,
     ) -> None:
         self._subset = subset
         self._rootpath = rootpath
@@ -55,6 +57,7 @@ class JsonReader:
         self._video_dir = video_dir
         self._videos = {}
         self._ctx = ctx
+        self._join_media_path = osp.join if allow_external_media else join_within_base
         self.ann_types = {}
 
         self._reader = self._init_reader(path)
@@ -174,10 +177,10 @@ class JsonReader:
             image_info = item_desc.get("image")
             if image_info:
                 image_filename = image_info.get("path") or item_id + DatumaroPath.IMAGE_EXT
-                image_path = osp.join(self._images_dir, self._subset, image_filename)
+                image_path = self._join_media_path(self._images_dir, self._subset, image_filename)
                 if not osp.isfile(image_path):
                     # backward compatibility
-                    old_image_path = osp.join(self._images_dir, image_filename)
+                    old_image_path = self._join_media_path(self._images_dir, image_filename)
                     if osp.isfile(old_image_path):
                         image_path = old_image_path
 
@@ -187,7 +190,7 @@ class JsonReader:
             if media and pcd_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if pcd_info and (pcd_path := pcd_info.get("path")):
-                point_cloud = osp.join(self._pcd_dir, self._subset, pcd_path)
+                point_cloud = self._join_media_path(self._pcd_dir, self._subset, pcd_path)
 
                 related_images = None
                 ri_info = item_desc.get("related_images")
@@ -195,7 +198,7 @@ class JsonReader:
                     related_images = [
                         Image.from_file(
                             size=ri.get("size"),
-                            path=osp.join(self._images_dir, self._subset, ri.get("path")),
+                            path=self._join_media_path(self._images_dir, self._subset, ri.get("path")),
                         )
                         for ri in ri_info
                     ]
@@ -206,7 +209,7 @@ class JsonReader:
             if media and video_frame_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if video_frame_info:
-                video_path = osp.join(self._video_dir, self._subset, video_frame_info.get("video_path"))
+                video_path = self._join_media_path(self._video_dir, self._subset, video_frame_info.get("video_path"))
                 if video_path not in self._videos:
                     self._videos[video_path] = Video(video_path)
                 video = self._videos[video_path]
@@ -219,7 +222,7 @@ class JsonReader:
             if media and video_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if video_info:
-                video_path = osp.join(self._video_dir, self._subset, video_info.get("path"))
+                video_path = self._join_media_path(self._video_dir, self._subset, video_info.get("path"))
                 if video_path not in self._videos:
                     self._videos[video_path] = Video(video_path)
                 step = video_info.get("step", 1)
@@ -410,8 +413,9 @@ class StreamJsonReader(JsonReader):
         pcd_dir: str,
         video_dir: str,
         ctx: ImportContext,
+        allow_external_media: bool = False,
     ) -> None:
-        super().__init__(path, subset, rootpath, images_dir, pcd_dir, video_dir, ctx)
+        super().__init__(path, subset, rootpath, images_dir, pcd_dir, video_dir, ctx, allow_external_media)
         self._length = None
 
     def __len__(self):
@@ -479,11 +483,20 @@ class DatumaroBase(SubsetBase):
         *,
         subset: Optional[str] = None,
         stream: bool = False,
+        allow_external_media: bool = False,
         ctx: Optional[ImportContext] = None,
     ):
+        """
+        Parameters
+        ----------
+        allow_external_media
+            Allow media paths in the annotations to point outside the dataset directory, as written
+            by exports made without `save_media`. Only enable this for trusted datasets.
+        """
         assert osp.isfile(path), path
         subset = osp.splitext(osp.basename(path))[0] if subset is None else subset
         self._stream = stream
+        self._allow_external_media = allow_external_media
         super().__init__(subset=subset, ctx=ctx)
         self._init_path(path)
 
@@ -549,6 +562,7 @@ class DatumaroBase(SubsetBase):
                 self._pcd_dir,
                 self._video_dir,
                 self._ctx,
+                self._allow_external_media,
             )
             if not self._stream
             else StreamJsonReader(
@@ -559,6 +573,7 @@ class DatumaroBase(SubsetBase):
                 self._pcd_dir,
                 self._video_dir,
                 self._ctx,
+                self._allow_external_media,
             )
         )
         return self._reader

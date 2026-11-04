@@ -743,6 +743,7 @@ class Dataset(IDataset):
             format = cls.detect(path, env=env)
 
         extractor_merger = None
+        save_options = {}
         # TODO: remove importers, put this logic into extractors
         if format in env.importers:
             importer = env.make_importer(format)
@@ -751,6 +752,7 @@ class Dataset(IDataset):
                     importer(path, stream=cls._stream, **kwargs) if importer.can_stream else importer(path, **kwargs)
                 )
             extractor_merger = importer.get_extractor_merger()
+            save_options = importer.get_save_options(**kwargs)
         elif format in env.extractors:
             detected_sources = [{"url": path, "format": format, "options": kwargs}]
         else:
@@ -817,6 +819,7 @@ class Dataset(IDataset):
 
         dataset._source_path = path
         dataset._format = format
+        dataset._options = save_options
 
         return dataset
 

@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import importlib.util
 import logging as log
 import os.path as osp
 import sys
@@ -10,8 +11,6 @@ import warnings
 
 from datumaro.version import __version__
 
-from . import contexts, helpers
-from .commands import get_non_project_commands
 from .util import add_subparser, make_subcommands_help
 from .util.errors import CliException
 
@@ -63,12 +62,16 @@ class _LogManager:
 
 # TODO: revisit during CLI refactoring
 def _get_known_contexts():
+    from . import contexts
+
     return [
         ("util", contexts.util, "Auxillary tools and utilities"),
     ]
 
 
 def _get_helper_commands():
+    from . import helpers
+
     return [
         (
             "format",
@@ -79,6 +82,8 @@ def _get_helper_commands():
 
 
 def make_parser():
+    from .commands import get_non_project_commands
+
     parser = argparse.ArgumentParser(
         description="Dataset Framework", formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -123,6 +128,18 @@ def make_parser():
 
 def main(args=None):
     _LogManager.init_logger(args)
+
+    # Check before importing commands: compare's lazy import of tensorboardX
+    # otherwise fails during parser construction when CLI extras are absent.
+    missing = [
+        name for name in ("tensorboardX", "tabulate", "scipy", "matplotlib") if importlib.util.find_spec(name) is None
+    ]
+    if missing:
+        log.error(
+            "Missing optional CLI dependencies: %s. Install CLI support with: pip install 'datumaro[cli]'",
+            ", ".join(missing),
+        )
+        return 1
 
     parser = make_parser()
     args = parser.parse_args(args)

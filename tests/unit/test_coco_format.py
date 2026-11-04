@@ -1130,6 +1130,19 @@ class CocoExtractorTests(TestCase):
         with TestDir() as test_dir, self.assertRaisesRegex(FileNotFoundError, "JSON file"):
             CocoInstancesBase(test_dir)
 
+    def test_rejects_path_traversal_in_file_name(self):
+        # file_name is untrusted dataset content; it must not be usable to
+        # read files outside the images directory.
+        for unsafe_file_name in ("../../../etc/passwd", "/etc/passwd", "..\\..\\escape.jpg"):
+            with self.subTest(file_name=unsafe_file_name), TestDir() as test_dir:
+                ann_path = self._get_dummy_annotation_path(test_dir)
+                anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
+                anns["images"][0]["file_name"] = unsafe_file_name
+                dump_json_file(ann_path, anns)
+
+                with self.assertRaises(DatasetImportError):
+                    Dataset.import_from(ann_path, "coco_instances")
+
     @staticmethod
     def _get_dummy_annotation_path(test_dir: str) -> str:
         ann_dir = osp.join(test_dir, "annotations")
@@ -1729,8 +1742,8 @@ class CocoExporterTest:
                         Bbox(
                             1.0,
                             0.0,
-                            2.0,
-                            2.0,
+                            3.0,
+                            3.0,
                             id=3,
                             attributes={"is_crowd": True},
                             group=3,
@@ -1757,8 +1770,8 @@ class CocoExporterTest:
                         Bbox(
                             0.0,
                             1.0,
+                            3.0,
                             2.0,
-                            1.0,
                             id=3,
                             attributes={"is_crowd": True},
                             group=3,
@@ -1898,8 +1911,8 @@ class CocoExporterTest:
                         Bbox(
                             0.0,
                             0.0,
-                            4.0,
-                            4.0,
+                            5.0,
+                            5.0,
                             id=1,
                             attributes={"is_crowd": True},
                             group=1,
@@ -2073,8 +2086,8 @@ class CocoExporterTest:
                         Bbox(
                             1.0,
                             0.0,
-                            7.0,
-                            3.0,
+                            8.0,
+                            4.0,
                             id=4,
                             attributes={"is_crowd": False},
                             group=4,
@@ -2735,8 +2748,8 @@ class CocoExporterTest:
                         Bbox(
                             1.0,
                             1.0,
-                            2.0,
-                            2.0,
+                            3.0,
+                            3.0,
                             id=1,
                             attributes={"is_crowd": True},
                             group=1,

@@ -45,6 +45,20 @@ Install:
         pip install 'datumaro @ git+https://github.com/open-edge-platform/datumaro'
 
 
+Command-line support
+^^^^^^^^^^^^^^^^^^^^
+
+Install the optional CLI dependencies to use the ``datum`` command:
+
+.. code-block::
+
+    pip install 'datumaro[cli]'
+
+If CLI dependencies are missing, the command reports their names and the
+installation command, then exits with a nonzero status. Installing the base
+package remains sufficient for using the library without CLI-only features.
+
+
 Plugins
 ^^^^^^^
 

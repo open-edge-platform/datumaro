@@ -25,6 +25,7 @@ from datumaro.util.annotation_util import make_label_id_mapping
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import generate_colormap, lazy_mask, paint_mask
 from datumaro.util.meta_file_util import has_meta_file, is_meta_file, parse_meta_file
+from datumaro.util.os_util import join_within_base
 
 CamvidLabelMap = OrderedDict(
     [
@@ -207,11 +208,11 @@ class CamvidBase(SubsetBase):
             for line in f:
                 image, gt = _parse_annotation_line(line)
                 item_id = osp.splitext(osp.join(*image.split("/")[2:]))[0]
-                image_path = osp.join(self._dataset_dir, image.lstrip("/"))
+                image_path = join_within_base(self._dataset_dir, image.lstrip("/"))
 
                 item_annotations = []
                 if gt is not None:
-                    gt_path = osp.join(self._dataset_dir, gt)
+                    gt_path = join_within_base(self._dataset_dir, gt)
                     mask = lazy_mask(gt_path, self._categories[AnnotationType.mask].inverse_colormap)
                     np_mask = mask()  # loading mask through cache
 

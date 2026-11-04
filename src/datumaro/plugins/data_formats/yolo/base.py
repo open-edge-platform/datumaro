@@ -17,7 +17,7 @@ from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, ImageFromFile
 from datumaro.util.image import DEFAULT_IMAGE_META_FILE_NAME, IMAGE_EXTENSIONS, ImageMeta, load_image_meta_file
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
-from datumaro.util.os_util import extract_subset_name_from_parent, find_files, split_path
+from datumaro.util.os_util import extract_subset_name_from_parent, find_files, join_within_base, split_path
 
 from .format import YoloLoosePath, YoloPath, YoloUltralyticsPath
 
@@ -75,7 +75,7 @@ class _Subset(DatasetBase):
 
         try:
             image_size = self._image_info.get(item_id)
-            image = Image.from_file(path=osp.join(self._path, item), size=image_size)
+            image = Image.from_file(path=join_within_base(self._path, item), size=image_size)
 
             anno_path = osp.splitext(image.path)[0] + ".txt"
             annotations = self._parse_annotations(
@@ -181,7 +181,7 @@ class YoloStrictBase(SubsetBase):
             raise InvalidAnnotationError("Failed to parse names file path from config")
 
         self._categories = {
-            AnnotationType.label: self._load_categories(osp.join(self._path, localize_path(names_path)))
+            AnnotationType.label: self._load_categories(join_within_base(self._path, localize_path(names_path)))
         }
 
         # The original format is like this:
@@ -201,7 +201,7 @@ class YoloStrictBase(SubsetBase):
             if subset_name != subset:
                 continue
 
-            list_path = osp.join(self._path, localize_path(list_path))
+            list_path = join_within_base(self._path, localize_path(list_path))
             if not osp.isfile(list_path):
                 raise InvalidAnnotationError(f"Can't find '{subset_name}' subset list file")
 

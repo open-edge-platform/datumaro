@@ -252,3 +252,43 @@ class MaskToolsTest:
             np.array([[10, 65535], [65535, 10]], dtype=np.uint16),
             mask_tools.make_index_mask(binary_mask=binary_mask, index=10, ignore_index=65535, dtype=np.uint16),
         )
+
+
+class FindMaskBboxTest(TestCase):
+    def test_bbox_covers_the_whole_mask(self):
+        mask = np.ones((5, 5), dtype=np.uint8)
+
+        self.assertEqual((0, 0, 5, 5), mask_tools.find_mask_bbox(mask))
+
+    def test_bbox_covers_an_interior_block(self):
+        mask = np.zeros((4, 4), dtype=np.uint8)
+        mask[1:3, 1:3] = 1
+
+        self.assertEqual((1, 1, 2, 2), mask_tools.find_mask_bbox(mask))
+
+    def test_bbox_of_single_pixel_wide_mask_is_one_pixel_wide(self):
+        mask = np.zeros((3, 3), dtype=np.uint8)
+        mask[:, 1] = 1
+
+        self.assertEqual((1, 0, 1, 3), mask_tools.find_mask_bbox(mask))
+
+    def test_bbox_of_single_pixel(self):
+        mask = np.zeros((4, 4), dtype=np.uint8)
+        mask[2, 3] = 1
+
+        self.assertEqual((3, 2, 1, 1), mask_tools.find_mask_bbox(mask))
+
+    def test_bbox_spans_disjoint_regions(self):
+        mask = np.zeros((5, 8), dtype=np.uint8)
+        mask[0, 0] = 1
+        mask[4, 7] = 1
+
+        self.assertEqual((0, 0, 8, 5), mask_tools.find_mask_bbox(mask))
+
+    def test_mask_get_bbox_matches_find_mask_bbox(self):
+        from datumaro.components.annotation import Mask
+
+        mask = np.zeros((4, 4), dtype=np.uint8)
+        mask[1:3, 1:3] = 1
+
+        self.assertEqual((1, 1, 2, 2), Mask(image=mask).get_bbox())
