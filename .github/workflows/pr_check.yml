@@ -80,6 +80,30 @@ jobs:
       - name: Installing dependencies
         run: uv sync --locked --all-extras --dev
 
+      # TEMP: remove once the LLVM duplicate-option abort is diagnosed
+      - name: "TEMP: diagnose LLVM duplicate-option abort"
+        if: matrix.os == 'ubuntu-24.04' && matrix.python-version == '3.11'
+        continue-on-error: true
+        run: |
+          set +e
+          probe() { echo "::group::$1"; uv run python -X faulthandler -c "$1"; echo "exit=$?"; echo "::endgroup::"; }
+
+          probe "import triton"
+          probe "import torch, triton"
+          probe "import tensorflow, triton"
+          probe "import torchvision.models"
+
+          echo "::group::libtriton exported LLVM cl:: symbols + bundled .so"
+          TDIR=$(uv run python -c "import importlib.util,os;print(os.path.dirname(importlib.util.find_spec('triton').origin))")
+          find "$TDIR" -name '*.so*' -exec ls -la {} \;
+          nm -D --defined-only "$TDIR/_C/libtriton.so" | grep -c '_ZN4llvm2cl'
+          echo "::endgroup::"
+
+          echo "::group::LD_DEBUG bindings for llvm::cl symbols"
+          LD_DEBUG=bindings LD_DEBUG_OUTPUT=/tmp/ld uv run python -c "import torch, triton"
+          grep -h '_ZN4llvm2cl' /tmp/ld.* | grep -v "to .*libtriton" | head -n 40
+          echo "::endgroup::"
+
       - name: Tests
         run: uv run pytest --cov --cov-report=xml
 
