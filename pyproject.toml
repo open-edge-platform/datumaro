@@ -11,10 +11,9 @@ maintainers = [
 ]
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.11,<3.15"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -88,9 +87,9 @@ docs = [
 # Also exclude TensorFlow from the MacOS checks due to the following issue:
 # https://github.com/tensorflow/tensorflow/issues/98563
 tf = [
-    "tensorflow; python_version >= '3.11' and python_version < '3.13' and sys_platform != 'darwin'",
+    "tensorflow; python_version < '3.13' and sys_platform != 'darwin'",
     # Pin keras to a non-vulnerable version
-    "keras>=3.13.2; python_version >= '3.11' and python_version < '3.13' and sys_platform != 'darwin'",
+    "keras>=3.13.2; python_version < '3.13' and sys_platform != 'darwin'",
 ]
 # TODO: Reenable tfds
 #tfds = [
@@ -166,7 +165,7 @@ omit = [
 
 [tool.cibuildwheel]
 # reference docs - https://cibuildwheel.readthedocs.io/en/stable/options/#build-skip
-build = "cp310-*_x86_64 cp311-*_x86_64 cp312-*_x86_64 cp313-*_x86_64 cp314-*_x86_64 cp310-*_amd64 cp311-*_amd64 cp312-*_amd64 cp313-*_amd64 cp314-*_amd64 cp310-*_arm64 cp311-*_arm64 cp312-*_arm64 cp313-*_arm64 cp314-*_arm64"
+build = "cp311-*_x86_64 cp312-*_x86_64 cp313-*_x86_64 cp314-*_x86_64 cp311-*_amd64 cp312-*_amd64 cp313-*_amd64 cp314-*_amd64 cp311-*_arm64 cp312-*_arm64 cp313-*_arm64 cp314-*_arm64"
 
 [tool.cibuildwheel.linux]
 before-all = [
@@ -204,7 +203,7 @@ ignore_errors = true
 skip_empty = true
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 line-length = 120
 
 # Exclude a variety of commonly ignored directories.
@@ -270,7 +269,7 @@ max-complexity = 10
 ruff = ["--ignore=E402"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 ignore_missing_imports = true
 show_error_codes = true
 
