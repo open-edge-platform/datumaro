@@ -651,6 +651,25 @@ class MergeTileTest(_TestBase, TestCase):
             compare_datasets(self, transformed, source, require_media=True)
 
 
+@pytest.mark.parametrize("shape, grid_size", [((7, 11), (2, 3)), ((8, 12), (2, 3)), ((601, 801), (2, 2))])
+@pytest.mark.parametrize("overlap", [0.0, 0.1])
+def test_tile_merge_preserves_image_borders(shape, grid_size, overlap):
+    height, width = shape
+    pixels = np.arange(height * width * 3).reshape(height, width, 3).astype(np.uint8)
+    border_box = Bbox(width - 1, height - 1, 1, 1, id=1, label=0)
+    source = Dataset.from_iterable(
+        [DatasetItem("sample", media=Image.from_numpy(pixels), annotations=[border_box])], categories=["object"]
+    )
+
+    merged = source.transform(
+        "tile", grid_size=grid_size, overlap=(overlap, overlap), threshold_drop_ann=0.5
+    ).transform("merge_tile")
+
+    result = next(iter(merged))
+    np.testing.assert_array_equal(result.media.data, pixels)
+    assert [ann.get_bbox() for ann in result.annotations] == [border_box.get_bbox()]
+
+
 @pytest.mark.parametrize("mask_type", ["dense", "rle", "lazy_rle"])
 def test_tile_mask_preserves_pixels_and_metadata(mask_type):
     pixels = np.zeros((6, 8), dtype=np.uint8)
