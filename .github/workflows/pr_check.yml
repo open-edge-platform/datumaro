@@ -31,7 +31,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-24.04", "windows-2022", "macos-15"]
-        python-version: ["3.10", "3.14"]
+        python-version: ["3.11", "3.14"]
     name: pr test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
@@ -80,8 +80,13 @@ jobs:
       - name: Installing dependencies
         run: uv sync --locked --all-extras --dev
 
+      # triton's bundled LLVM aborts the process when loaded after TensorFlow; tests don't use triton.
+      - name: Remove triton
+        if: runner.os == 'Linux'
+        run: uv pip uninstall triton
+
       - name: Tests
-        run: uv run pytest --cov --cov-report=xml
+        run: uv run --no-sync pytest --cov --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1

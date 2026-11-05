@@ -184,7 +184,7 @@ class LazyImageClassTest:
             test_image_path = os.path.join(temp_dir, "gray16_image.png")
             # Create 16-bit grayscale image with values > 255
             img_array = np.array([[1000, 2000, 30000], [40000, 50000, 60000]], dtype=np.uint16)
-            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img = PILImage.fromarray(img_array)
             test_img.save(test_image_path)
 
             lazy_img = LazyImage(path=test_image_path, format="L")
@@ -202,7 +202,7 @@ class LazyImageClassTest:
             test_image_path = os.path.join(temp_dir, "gray16_image.png")
             # Create 16-bit grayscale image with values > 255
             img_array = np.array([[1000, 2000], [30000, 40000]], dtype=np.uint16)
-            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img = PILImage.fromarray(img_array)
             test_img.save(test_image_path)
 
             lazy_img = LazyImage(path=test_image_path, format="RGB")
@@ -221,7 +221,7 @@ class LazyImageClassTest:
             test_image_path = os.path.join(temp_dir, "gray16_image.png")
             # Create 16-bit grayscale image
             img_array = np.array([[5000, 10000]], dtype=np.uint16)
-            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img = PILImage.fromarray(img_array)
             test_img.save(test_image_path)
 
             lazy_img = LazyImage(path=test_image_path, format="BGR")
@@ -236,7 +236,7 @@ class LazyImageClassTest:
         with tempfile.TemporaryDirectory() as temp_dir:
             test_image_path = os.path.join(temp_dir, "gray16_image.png")
             img_array = np.array([[1000, 2000], [3000, 4000]], dtype=np.uint16)
-            test_img = PILImage.fromarray(img_array, mode="I;16")
+            test_img = PILImage.fromarray(img_array)
             test_img.save(test_image_path)
 
             lazy_img = LazyImage(path=test_image_path, format="RGB", channels_first=True)
