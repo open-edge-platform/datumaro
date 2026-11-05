@@ -5,17 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
-
-### Security
-- Update Pillow to 13.0 (security fixes); Pillow is now required as `~=13.0`
-
-### Bug fixes
-- Write 32-bit integer masks as 16-bit PNG explicitly, since Pillow 13 can no longer write mode `I` as PNG (output is unchanged from earlier versions)
-
-### Removed
-- Dropped Python 3.10 support (Pillow 13 requires Python 3.11+)
-
 ## Release 1.13.0
 
 This release is centered around the maturation of the experimental dataset
