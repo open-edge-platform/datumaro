@@ -232,7 +232,7 @@ class WiderFaceExporter(Exporter):
                                 wider_attr += "- "
                         if attr_counter > 0:
                             wider_annotation += wider_attr
-                    if label_categories[bbox.label].name != WiderFacePath.DEFAULT_LABEL and bbox.label is not None:
+                    if bbox.label is not None and label_categories[bbox.label].name != WiderFacePath.DEFAULT_LABEL:
                         wider_annotation += "%s" % label_categories[bbox.label].name
                     wider_annotation += "\n"
 
