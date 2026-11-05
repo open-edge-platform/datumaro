@@ -92,14 +92,18 @@ class CropCoveredSegments(ItemTransform, CliPlugin):
         if not isinstance(item.media, Image):
             raise Exception("Image info is required for this transform")
         h, w = item.media.size
-        segments = self.crop_segments(segments, w, h)
+        segments = self.crop_segments(item.annotations, w, h)
 
         annotations += segments
         return self.wrap_item(item, annotations=annotations)
 
     @classmethod
     def crop_segments(cls, segment_anns, img_width, img_height):
-        segment_anns = sorted(segment_anns, key=lambda x: x.z_order)
+        group_id = max((ann.group or 0 for ann in segment_anns), default=0)
+        segment_anns = sorted(
+            (ann for ann in segment_anns if ann.type in {AnnotationType.polygon, AnnotationType.mask}),
+            key=lambda x: x.z_order,
+        )
 
         segments = []
         for s in segment_anns:
@@ -124,8 +128,9 @@ class CropCoveredSegments(ItemTransform, CliPlugin):
                 "attributes": ann.attributes,
             }
             if ann.type == AnnotationType.polygon:
-                if fields["group"] is None:
-                    fields["group"] = cls._make_group_id(segment_anns + new_anns, fields["id"])
+                if len(new_segment) > 1 and not fields["group"]:
+                    group_id += 1
+                    fields["group"] = group_id
                 for polygon in new_segment:
                     new_anns.append(Polygon(points=polygon, **fields))
             else:
@@ -134,13 +139,6 @@ class CropCoveredSegments(ItemTransform, CliPlugin):
                 new_anns.append(RleMask(rle=rle, **fields))
 
         return new_anns
-
-    @staticmethod
-    def _make_group_id(anns, ann_id):
-        if ann_id:
-            return ann_id
-        max_gid = max(anns, default=0, key=lambda x: x.group)
-        return max_gid + 1
 
 
 class MergeInstanceSegments(ItemTransform, CliPlugin):
