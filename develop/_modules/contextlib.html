@@ -335,6 +335,7 @@
   <h1>Source code for contextlib</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Utilities for with-statement contexts.  See PEP 343."""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">_collections_abc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
@@ -344,7 +345,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"asynccontextmanager"</span><span class="p">,</span> <span class="s2">"contextmanager"</span><span class="p">,</span> <span class="s2">"closing"</span><span class="p">,</span> <span class="s2">"nullcontext"</span><span class="p">,</span>
            <span class="s2">"AbstractContextManager"</span><span class="p">,</span> <span class="s2">"AbstractAsyncContextManager"</span><span class="p">,</span>
            <span class="s2">"AsyncExitStack"</span><span class="p">,</span> <span class="s2">"ContextDecorator"</span><span class="p">,</span> <span class="s2">"ExitStack"</span><span class="p">,</span>
-           <span class="s2">"redirect_stdout"</span><span class="p">,</span> <span class="s2">"redirect_stderr"</span><span class="p">,</span> <span class="s2">"suppress"</span><span class="p">,</span> <span class="s2">"aclosing"</span><span class="p">]</span>
+           <span class="s2">"redirect_stdout"</span><span class="p">,</span> <span class="s2">"redirect_stderr"</span><span class="p">,</span> <span class="s2">"suppress"</span><span class="p">,</span> <span class="s2">"aclosing"</span><span class="p">,</span>
+           <span class="s2">"chdir"</span><span class="p">]</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">AbstractContextManager</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
@@ -478,7 +480,10 @@
             <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop"</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop"</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Need to force instantiation so we can reliably</span>
@@ -494,6 +499,7 @@
             <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="c1"># Don't re-raise the passed in exception. (issue27122)</span>
                 <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                     <span class="k">return</span> <span class="kc">False</span>
                 <span class="c1"># Avoid suppressing if a StopIteration exception</span>
                 <span class="c1"># was passed to throw() and later wrapped into a RuntimeError</span>
@@ -505,6 +511,7 @@
                     <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">)</span>
                     <span class="ow">and</span> <span class="n">exc</span><span class="o">.</span><span class="n">__cause__</span> <span class="ow">is</span> <span class="n">value</span>
                 <span class="p">):</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                     <span class="k">return</span> <span class="kc">False</span>
                 <span class="k">raise</span>
             <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -516,8 +523,12 @@
                 <span class="c1"># and the __exit__() protocol.</span>
                 <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">raise</span>
+                <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop after throw()"</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop after throw()"</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_AsyncGeneratorContextManager</span><span class="p">(</span>
     <span class="n">_GeneratorContextManagerBase</span><span class="p">,</span>
@@ -542,7 +553,10 @@
             <span class="k">except</span> <span class="ne">StopAsyncIteration</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop"</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop"</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Need to force instantiation so we can reliably</span>
@@ -558,17 +572,19 @@
             <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="c1"># Don't re-raise the passed in exception. (issue27122)</span>
                 <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                     <span class="k">return</span> <span class="kc">False</span>
                 <span class="c1"># Avoid suppressing if a Stop(Async)Iteration exception</span>
                 <span class="c1"># was passed to athrow() and later wrapped into a RuntimeError</span>
                 <span class="c1"># (see PEP 479 for sync generators; async generators also</span>
                 <span class="c1"># have this behavior). But do this only if the exception wrapped</span>
-                <span class="c1"># by the RuntimeError is actully Stop(Async)Iteration (see</span>
+                <span class="c1"># by the RuntimeError is actually Stop(Async)Iteration (see</span>
                 <span class="c1"># issue29692).</span>
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="ne">StopIteration</span><span class="p">,</span> <span class="ne">StopAsyncIteration</span><span class="p">))</span>
                     <span class="ow">and</span> <span class="n">exc</span><span class="o">.</span><span class="n">__cause__</span> <span class="ow">is</span> <span class="n">value</span>
                 <span class="p">):</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                     <span class="k">return</span> <span class="kc">False</span>
                 <span class="k">raise</span>
             <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -580,8 +596,12 @@
                 <span class="c1"># and the __exit__() protocol.</span>
                 <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">raise</span>
+                <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span> <span class="o">=</span> <span class="n">traceback</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop after athrow()"</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"generator didn't stop after athrow()"</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="contextmanager">
@@ -825,9 +845,14 @@
 <span class="sd">        """</span>
         <span class="c1"># We look up the special methods on the type to match the with</span>
         <span class="c1"># statement.</span>
-        <span class="n">_cm_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
-        <span class="n">_exit</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__exit__</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_enter</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__enter__</span>
+            <span class="n">_exit</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__exit__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' object does "</span>
+                            <span class="sa">f</span><span class="s2">"not support the context manager protocol"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_enter</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_push_cm_exit</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">_exit</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -952,9 +977,15 @@
 <span class="sd">        If successful, also pushes its __aexit__ method as a callback and</span>
 <span class="sd">        returns the result of the __aenter__ method.</span>
 <span class="sd">        """</span>
-        <span class="n">_cm_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
-        <span class="n">_exit</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__aexit__</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__aenter__</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_enter</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__aenter__</span>
+            <span class="n">_exit</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__aexit__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">' object does "</span>
+                            <span class="sa">f</span><span class="s2">"not support the asynchronous context manager protocol"</span>
+                           <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_enter</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_push_async_cm_exit</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">_exit</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -1081,6 +1112,21 @@
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">excinfo</span><span class="p">):</span>
         <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">chdir</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Non thread-safe context manager to change the current working directory."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_cwd</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_cwd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">excinfo</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_old_cwd</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
 </pre></div>
 
                 </article>
