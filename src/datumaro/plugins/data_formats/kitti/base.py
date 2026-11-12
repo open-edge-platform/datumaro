@@ -105,7 +105,7 @@ class _KittiBase(SubsetBase):
                 anns = []
 
                 with open(labels_path, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
+                    lines = [line for line in f if line.strip()]  # skip blank lines
 
                 for line_idx, line in enumerate(lines):
                     line = line.split()
