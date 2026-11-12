@@ -59,7 +59,7 @@ def is_legacy_datumaro_format(input_dir: Path) -> bool:
 def _is_legacy_datumaro_json(json_path: Path) -> bool:
     """Check if a JSON file has legacy Datumaro structure (dm_format_version key)."""
     try:
-        with open(json_path) as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
             if isinstance(data, dict):
                 return "dm_format_version" in data
