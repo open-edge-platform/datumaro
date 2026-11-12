@@ -139,6 +139,37 @@ class VocFormatDetectionTest:
             assert hasattr(sample, "labels")
 
 
+def test_voc_boxes_convert_to_and_from_other_formats(voc_dataset_path, tmp_path):
+    """VOC boxes can be converted to COCO boxes and back when exporting to another format."""
+    from datumaro.experimental import export_dataset, import_dataset
+    from datumaro.experimental.data_formats.base import DataFormat
+
+    voc_dataset = import_dataset(voc_dataset_path)
+    samples = [sample for sample in voc_dataset if sample.bboxes is not None and len(sample.bboxes)]
+    assert samples
+
+    coco_dir = tmp_path / "coco"
+    export_dataset(voc_dataset, coco_dir, data_format=DataFormat.COCO)
+    coco_dataset = import_dataset(
+        coco_dir,
+        data_format=DataFormat.COCO,
+        images_dir_path=str(coco_dir / "images"),
+        annotations_path=str(coco_dir / "annotations.json"),
+    )
+
+    voc_dir = tmp_path / "voc"
+    export_dataset(coco_dataset, voc_dir, data_format=DataFormat.VOC)
+    voc_dataset2 = import_dataset(voc_dir)
+
+    expected = sorted(sorted(map(tuple, sample.bboxes.tolist())) for sample in samples)
+    actual = sorted(
+        sorted(map(tuple, sample.bboxes.tolist()))
+        for sample in voc_dataset2
+        if sample.bboxes is not None and len(sample.bboxes)
+    )
+    assert actual == expected
+
+
 @pytest.fixture
 def voc_dataset_path():
     """Return path to test VOC dataset."""

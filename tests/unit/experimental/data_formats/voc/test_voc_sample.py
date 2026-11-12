@@ -83,11 +83,11 @@ def test_voc_sample_schema_has_required_attributes():
 
 
 def test_voc_sample_bbox_format_is_xyxy():
-    """Test that VocSample bboxes are in xyxy format."""
+    """Test that VocSample bboxes are in xyxy format, using the name the converters know."""
     schema = VocSample.infer_schema()
     bbox_attr = schema.attributes.get("bboxes")
     assert bbox_attr is not None
-    assert bbox_attr.field.format == "xyxy"
+    assert bbox_attr.field.format == "x1y1x2y2"
 
 
 def test_voc_categories_default_labels():
