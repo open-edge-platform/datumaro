@@ -2509,6 +2509,31 @@ def test_import_dataset_auto_detects_legacy_datumaro_format(tmp_path):
     assert len(dataset) >= 1  # Should have at least one sample
 
 
+def test_import_dataset_auto_detects_legacy_datumaro_format_with_subsets(tmp_path):
+    """Test that legacy Datumaro format is detected when its items are split into subsets."""
+    from datumaro import Dataset as LegacyDataset
+    from datumaro.components.annotation import Label
+    from datumaro.components.dataset import DatasetItem
+
+    legacy_dataset = LegacyDataset.from_iterable(
+        [
+            DatasetItem(id="item1", subset="train", annotations=[Label(0)]),
+            DatasetItem(id="item2", subset="train", annotations=[Label(1)]),
+            DatasetItem(id="item3", subset="val", annotations=[Label(1)]),
+        ],
+        categories=["cat", "dog"],
+    )
+
+    # One annotation file is written per subset: annotations/train.json and annotations/val.json
+    export_dir = tmp_path / "legacy_export"
+    legacy_dataset.export(str(export_dir), format="datumaro")
+    assert not (export_dir / "annotations" / "default.json").exists()
+
+    dataset = import_dataset(export_dir)
+
+    assert len(dataset) == 3
+
+
 def test_export_dataset_raises_error_if_output_already_exists(tmp_path):
     """Test that export_dataset raises FileExistsError when the output already exists."""
     import shutil
