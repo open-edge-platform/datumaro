@@ -128,7 +128,7 @@ class CropCoveredSegments(ItemTransform, CliPlugin):
                     fields["group"] = cls._make_group_id(segment_anns + new_anns, fields["id"])
                 for polygon in new_segment:
                     new_anns.append(Polygon(points=polygon, **fields))
-            else:
+            elif len(new_segment) != 0:  # a mask that is too small comes back as an empty list
                 rle = mask_tools.mask_to_rle(new_segment)
                 rle = mask_utils.frPyObjects(rle, *rle["size"])
                 new_anns.append(RleMask(rle=rle, **fields))
