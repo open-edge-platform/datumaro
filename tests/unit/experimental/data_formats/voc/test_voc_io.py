@@ -12,7 +12,7 @@ import pytest
 
 from datumaro.experimental import Dataset
 from datumaro.experimental.data_formats.voc.helpers import _build_image_index, _find_image_file
-from datumaro.experimental.data_formats.voc.io import load_voc_dataset, save_voc_dataset
+from datumaro.experimental.data_formats.voc.io import is_voc_format, load_voc_dataset, save_voc_dataset
 from datumaro.experimental.data_formats.voc.sample import VocSample
 from datumaro.experimental.fields import ImageInfo, Subset
 
@@ -814,3 +814,14 @@ def test_load_classification_with_multiple_subsets(tmp_path: Path):
     np.testing.assert_array_equal(labels_by_image["val_img"], [2])  # cat
     assert subset_by_image["train_img"] == Subset.TRAINING
     assert subset_by_image["val_img"] == Subset.VALIDATION
+
+
+def test_is_voc_format_non_ascii_labelmap(tmp_path: Path):
+    """The label map is read as UTF-8, whatever the platform's default encoding is."""
+    (tmp_path / "Annotations").mkdir()
+    (tmp_path / "labelmap.txt").write_text(
+        "# label:color_rgb:parts:actions\nbackground:0,0,0::\n\u0441\u043e\u0431\u0430\u043a\u0430:128,0,0::\n",
+        encoding="utf-8",
+    )
+
+    assert is_voc_format(tmp_path) is True
