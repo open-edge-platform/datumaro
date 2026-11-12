@@ -64,10 +64,11 @@ class LabelMerger(AnnotationMerger, LabelMatcher):
         merged = []
         for label, count in votes.items():
             if count < self.quorum:
+                # blame the sources that voted for another label
                 sources = set(
-                    self.get_ann_source(id(a))
+                    self._context.get_ann_source(id(a))
                     for a in clusters[0]
-                    if label not in [self._context._get_src_label_name(l, l.label) for l in a]
+                    if label != self._context._get_src_label_name(a, a.label)
                 )
                 sources = [self._context._dataset_map[s][1] for s in sources]
                 self._context.add_item_error(FailedLabelVotingError, votes, sources=sources)
