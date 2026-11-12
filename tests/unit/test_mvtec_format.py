@@ -1,3 +1,4 @@
+import os.path as osp
 from unittest import TestCase
 
 import cv2
@@ -14,6 +15,7 @@ from datumaro.plugins.data_formats.mvtec.importer import (
     MvtecDetectionImporter,
     MvtecSegmentationImporter,
 )
+from datumaro.util.image import load_image
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -252,3 +254,23 @@ class MVTecExporterTest(TestCase):
         with TestDir() as test_dir:
             MvtecExporter.convert(source_dataset, test_dir, save_media=True)
             assert cv2.imread(test_dir + "/ground_truth/label_1/000_mask.png").max() == 255
+
+    def test_masks_saved_to_non_ascii_path(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="label_1/000",
+                    media=Image.from_numpy(data=np.ones((8, 8, 3))),
+                    annotations=[Mask(image=np.ones((8, 8), dtype=np.uint8), label=1)],
+                ),
+            ],
+            categories={
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
+            },
+        )
+
+        with TestDir() as test_dir:
+            # cv2.imwrite cannot write to such a path on Windows and reports no error
+            save_dir = osp.join(test_dir, "données_データ")
+            MvtecExporter.convert(source_dataset, save_dir, save_media=True)
+            assert load_image(osp.join(save_dir, "ground_truth", "label_1", "000_mask.png")).max() == 255
