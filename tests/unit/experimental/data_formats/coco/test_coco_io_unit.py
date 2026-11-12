@@ -619,3 +619,39 @@ def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
     (root / "README.roboflow.txt").write_text("metadata")
     # find_dataset_root should return root since format is detectable there
     assert find_dataset_root(root) == root.resolve()
+
+
+def test_import_coco_dataset_skips_panoptic_annotation_files(tmp_path: Path):
+    """A panoptic annotation file next to the instances file does not break the import."""
+    root = tmp_path / "coco"
+    (root / "images").mkdir(parents=True)
+    (root / "images" / "img.jpg").write_bytes(b"img")
+    images = [{"id": 1, "file_name": "img.jpg", "height": 10, "width": 8}]
+    _write_json(
+        root / "annotations" / "instances_default.json",
+        {
+            "images": images,
+            "annotations": [{"id": 1, "image_id": 1, "category_id": 1, "bbox": [1, 2, 3, 4], "area": 12, "iscrowd": 0}],
+            "categories": [{"id": 1, "name": "cat"}],
+        },
+    )
+    _write_json(
+        root / "annotations" / "panoptic_default.json",
+        {
+            "images": images,
+            "annotations": [
+                {
+                    "image_id": 1,
+                    "file_name": "img.png",
+                    "segments_info": [{"id": 1, "category_id": 1, "area": 12, "bbox": [1, 2, 3, 4], "iscrowd": 0}],
+                }
+            ],
+            "categories": [{"id": 1, "name": "cat", "isthing": 1}],
+        },
+    )
+
+    dataset = import_coco_dataset(root)
+
+    assert len(dataset) == 1
+    np.testing.assert_array_equal(dataset[0].bboxes, [[1, 2, 3, 4]])
+    np.testing.assert_array_equal(dataset[0].labels, [0])
