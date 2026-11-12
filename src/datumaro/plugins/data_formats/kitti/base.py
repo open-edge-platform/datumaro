@@ -100,7 +100,7 @@ class _KittiBase(SubsetBase):
 
         det_dir = osp.join(self._path, KittiPath.LABELS_DIR)
         if self._task == KittiTask.detection:
-            for labels_path in sorted(glob.glob(osp.join(det_dir, "**", "*.txt"), recursive=True)):
+            for labels_path in sorted(glob.glob(osp.join(glob.escape(det_dir), "**", "*.txt"), recursive=True)):
                 item_id = osp.splitext(osp.relpath(labels_path, det_dir))[0]
                 anns = []
 

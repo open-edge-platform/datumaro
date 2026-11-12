@@ -7,6 +7,7 @@ import logging as log
 import os
 import os.path as osp
 from collections import defaultdict
+from glob import escape as glob_escape
 from glob import glob, iglob
 from typing import List, Optional
 
@@ -68,7 +69,7 @@ class LabelMeBase(DatasetBase):
         else:
             categories = {AnnotationType.label: LabelCategories(attributes={"occluded", "username"})}
 
-        for xml_path in sorted(glob(osp.join(path, "**", "*.xml"), recursive=True)):
+        for xml_path in sorted(glob(osp.join(glob_escape(path), "**", "*.xml"), recursive=True)):
             root = ElementTree.parse(xml_path)
 
             subset = root.find("folder").text or ""
@@ -338,7 +339,7 @@ class LabelMeImporter(Importer):
             return []
 
         try:
-            next(iglob(osp.join(path, "**", "*.xml"), recursive=True))
+            next(iglob(osp.join(glob_escape(path), "**", "*.xml"), recursive=True))
             subsets.append(
                 {
                     "url": osp.normpath(path),

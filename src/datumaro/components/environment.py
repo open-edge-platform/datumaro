@@ -228,7 +228,7 @@ class Environment:
             if detected_formats:
                 all_matched_formats |= set(detected_formats)
 
-            paths = glob.glob(osp.join(path, "*"))
+            paths = glob.glob(osp.join(glob.escape(path), "*"))
             path = "" if len(paths) != 1 else paths[0]
             if not osp.isdir(path) or osp.basename(path) in ignore_dirs:
                 break

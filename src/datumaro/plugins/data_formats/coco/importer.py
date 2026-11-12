@@ -4,7 +4,7 @@
 
 import logging as log
 import os.path as osp
-from glob import glob
+from glob import escape, glob
 from typing import List, Optional
 
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME
@@ -131,7 +131,7 @@ class CocoImporter(Importer):
 
             subset_paths = [path] if path.endswith(".json") else []
         else:
-            subset_paths = glob(osp.join(path, "**", "*_*.json"), recursive=True)
+            subset_paths = glob(osp.join(escape(path), "**", "*_*.json"), recursive=True)
 
         subsets = {}
         for subset_path in subset_paths:
