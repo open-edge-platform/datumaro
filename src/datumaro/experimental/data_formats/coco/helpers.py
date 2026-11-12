@@ -351,6 +351,9 @@ def _serialize_keypoints_for_sample(
 ) -> tuple[list[dict], int]:
     out: list[dict] = []
     keypoints = s.keypoints
+    if isinstance(keypoints, np.ndarray) and keypoints.ndim == 2 and keypoints.shape[0] > 0 and keypoints.shape[1] == 3:
+        # Samples read from a Dataset hold one flat list of (x, y, v) points
+        keypoints = keypoints[np.newaxis]
     num_key_groups = int(keypoints.shape[0]) if isinstance(keypoints, np.ndarray) and keypoints.ndim >= 2 else 0
     for i in range(num_key_groups):
         kpts_flat: list[float] = []
