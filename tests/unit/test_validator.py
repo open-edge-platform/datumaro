@@ -1279,6 +1279,31 @@ class TestValidateAnnotations(_TestValidatorBase):
 
             self.assertEqual(actual_summary, expected_summary)
 
+    def test_validate_annotations_without_label(self):
+        image = Image.from_numpy(data=np.ones((5, 5, 3)))
+        cases = [
+            (DetectionValidator, Bbox(1, 1, 2, 2), Bbox(1, 1, 2, 2, label=1)),
+            (SegmentationValidator, Polygon([1, 1, 4, 1, 4, 4]), Polygon([1, 1, 4, 1, 4, 4], label=1)),
+            (SegmentationValidator, Mask(np.eye(5, dtype=np.uint8)), Mask(np.eye(5, dtype=np.uint8), label=1)),
+        ]
+
+        for validator_type, unlabeled, labeled in cases:
+            with self.subTest(validator=validator_type.__name__, annotation=type(unlabeled).__name__):
+                dataset = Dataset.from_iterable(
+                    [
+                        DatasetItem(id=1, media=image, annotations=[unlabeled]),
+                        DatasetItem(id=2, media=image, annotations=[labeled]),
+                    ],
+                    categories=["label_0", "label_1"],
+                )
+
+                actual_results = validator_type(**self.extra_args).validate(dataset)
+
+                # An annotation without a label is reported, like a label that isn't defined
+                undefined = [r for r in actual_results["validation_reports"] if r["anomaly_type"] == "UndefinedLabel"]
+                self.assertEqual(1, len(undefined))
+                self.assertEqual("1", undefined[0]["item_id"])
+
     def test_validate_annotations_tabular(self):
         validator = TabularValidator(**self.extra_args)
         actual_results = validator.validate(self.tabular_dataset)
