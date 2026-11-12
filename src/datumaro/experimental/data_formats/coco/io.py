@@ -216,7 +216,9 @@ def _detect_subset_image_layout(
     Detect a subset-based image directory layout (e.g., CVAT exports).
 
     In this layout, annotation files follow patterns like ``instances_<subset>.json``
-    and the corresponding images live under ``images/<subset>/``.
+    and the corresponding images live under ``images/<subset>/``, or under
+    ``<subset>/`` next to the annotations directory (e.g., ``train2017/`` and
+    ``val2017/`` in COCO 2017).
 
     Returns:
         A tuple of (images_config, annotations_config) dicts if subset layout is
@@ -237,10 +239,11 @@ def _detect_subset_image_layout(
     images_config: dict[str, str] = {}
     annotations_config: dict[str, list[str]] = {}
     for subset_name, ann_paths in subset_annotations.items():
-        subset_images_dir = images_base_path / subset_name
-        if subset_images_dir.is_dir():
-            images_config[subset_name] = str(subset_images_dir)
-            annotations_config[subset_name] = ann_paths
+        for subset_images_dir in (images_base_path / subset_name, input_dir / subset_name):
+            if subset_images_dir.is_dir():
+                images_config[subset_name] = str(subset_images_dir)
+                annotations_config[subset_name] = ann_paths
+                break
 
     if not images_config:
         return None

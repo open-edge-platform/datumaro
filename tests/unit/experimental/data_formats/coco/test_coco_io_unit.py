@@ -619,3 +619,29 @@ def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
     (root / "README.roboflow.txt").write_text("metadata")
     # find_dataset_root should return root since format is detectable there
     assert find_dataset_root(root) == root.resolve()
+
+
+def test_import_coco_2017_layout_keeps_subsets_and_image_dirs(tmp_path: Path):
+    """``train2017/`` and ``val2017/`` next to ``annotations/`` are loaded as separate subsets."""
+    root = tmp_path / "coco"
+    for image_id, subset in enumerate(("train2017", "val2017"), start=1):
+        (root / subset).mkdir(parents=True)
+        (root / subset / f"{subset}.jpg").write_bytes(b"img")
+        _write_json(
+            root / "annotations" / f"instances_{subset}.json",
+            {
+                "images": [{"id": image_id, "file_name": f"{subset}.jpg", "height": 10, "width": 8}],
+                "annotations": [
+                    {"id": 1, "image_id": image_id, "category_id": 1, "bbox": [1, 2, 3, 4], "area": 12, "iscrowd": 0}
+                ],
+                "categories": [{"id": 1, "name": "cat"}],
+            },
+        )
+
+    dataset = import_coco_dataset(root)
+
+    loaded = {Path(sample.image.path).relative_to(root).as_posix(): sample.subset for sample in dataset}
+    assert loaded == {
+        "train2017/train2017.jpg": Subset.TRAINING,
+        "val2017/val2017.jpg": Subset.VALIDATION,
+    }
