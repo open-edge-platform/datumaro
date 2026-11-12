@@ -38,10 +38,13 @@ class UnionMerge(Merger):
         dict_items: Dict[Tuple[str, str], List[DatasetItem]] = defaultdict(list)
 
         for source_idx, source in enumerate(sources):
+            matching_table = self._matching_table.get(source_idx, None)
             for item in source:
-                if self._matching_table.get(source_idx, None):
-                    for ann in item.annotations:
-                        ann.label = self._matching_table[source_idx][ann.label]
+                if matching_table:
+                    # Remap the labels on copies, so the source dataset keeps its own label ids
+                    item = item.wrap(
+                        annotations=[ann.wrap(label=matching_table[ann.label]) for ann in item.annotations]
+                    )
                 dict_items[item.id, item.subset].append(item)
 
         item_storage = DatasetItemStorage()
