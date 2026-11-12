@@ -11,7 +11,7 @@ from typing import Any, Dict, Optional, Type
 import numpy as np
 import pytest
 
-from datumaro.components.annotation import Bbox
+from datumaro.components.annotation import AnnotationType, Bbox
 from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.exporter import Exporter
@@ -216,3 +216,31 @@ def test_yolo_export_keeps_non_crowd_regions(test_dir, is_crowd_value, caplog):
     assert len(lines) == 2
     assert sorted(line.split(" ")[0] for line in lines) == ["1", "2"]
     assert "crowd region(s)" not in caplog.text
+
+
+def test_yolo_ultralytics_export_non_ascii_names(test_dir):
+    # data.yaml and the subset lists are UTF-8, whatever the platform's default encoding
+    label_names = ["\u732b", "caf\u00e9"]
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                id=item_id,
+                subset=subset,
+                media=Image.from_numpy(data=np.ones((10, 15, 3))),
+                annotations=[Bbox(0, 2, 4, 2, label=0, id=0, group=0)],
+            )
+            for item_id, subset in (("\u00fc_1", "train"), ("\u00fc_2", "val"))
+        ],
+        categories=label_names,
+    )
+
+    YoloUltralyticsExporter.convert(dataset, save_dir=test_dir, save_media=True)
+
+    with open(osp.join(test_dir, "data.yaml"), encoding="utf-8") as f:
+        assert label_names[0] in f.read()
+    with open(osp.join(test_dir, "train.txt"), encoding="utf-8") as f:
+        assert "\u00fc_1" in f.read()
+
+    imported = Dataset.import_from(test_dir, "yolo")
+    assert [label.name for label in imported.categories()[AnnotationType.label]] == label_names
+    assert sorted(item.id for item in imported) == ["\u00fc_1", "\u00fc_2"]
