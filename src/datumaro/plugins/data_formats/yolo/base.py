@@ -391,7 +391,7 @@ class YoloUltralyticsBase(YoloLooseBase):
 
         label_categories = LabelCategories()
 
-        with open(names_path, "r") as fp:
+        with open(names_path, "r", encoding="utf-8") as fp:
             loaded = yaml.safe_load(fp.read())
             if isinstance(loaded["names"], list):
                 label_names = loaded["names"]
