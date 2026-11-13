@@ -620,6 +620,9 @@ def _merge_annotations_from_files(
             # Keypoint annotations
             for ann in annotations:
                 keypoints_by_image[ann["image_id"]].append(ann)
+        elif "segments_info" in sample_ann:
+            # Panoptic annotations have one record per image with no category or bbox
+            logger.warning("[COCO] Panoptic annotations are not supported, skipping them")
         else:
             # Instance annotations (bbox, segmentation)
             for ann in annotations:
