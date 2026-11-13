@@ -73,7 +73,10 @@ class _YoloLooseImporter(Importer):
     @classmethod
     def _check_ann_file_impl(cls, fp: TextIOWrapper) -> bool:
         for line in fp:
-            fields = line.rstrip("\n").split(" ")
+            # Accept what the parser accepts: any whitespace between fields and blank lines
+            fields = line.split()
+            if not fields:
+                continue
             if len(fields) != 5:
                 raise DatasetImportError(
                     f"Yolo format txt file should have 5 fields for each line, "

@@ -216,3 +216,36 @@ def test_yolo_export_keeps_non_crowd_regions(test_dir, is_crowd_value, caplog):
     assert len(lines) == 2
     assert sorted(line.split(" ")[0] for line in lines) == ["1", "2"]
     assert "crowd region(s)" not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "label_line",
+    ["1 0.5 0.5 0.2 0.2 \n", "1  0.5  0.5  0.2  0.2\n", "1\t0.5\t0.5\t0.2\t0.2\n", "\n1 0.5 0.5 0.2 0.2\n"],
+    ids=["trailing_space", "double_spaces", "tabs", "leading_blank_line"],
+)
+def test_yolo_ultralytics_import_accepts_whitespace_variants(test_dir, label_line):
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                id=1,
+                subset=subset,
+                media=Image.from_numpy(data=np.ones((10, 20, 3))),
+                annotations=[Bbox(8, 4, 4, 2, label=1, id=0, group=0)],
+            )
+            for subset in ("train", "val")
+        ],
+        categories=["label_" + str(i) for i in range(3)],
+    )
+    YoloUltralyticsExporter.convert(dataset, save_dir=test_dir, save_media=True)
+    for subset in ("train", "val"):
+        with open(osp.join(test_dir, "labels", subset, "1.txt"), "w", encoding="utf-8") as f:
+            f.write(label_line)
+
+    imported = Dataset.import_from(test_dir, "yolo")
+
+    assert len(imported) == 2
+    for item in imported:
+        assert len(item.annotations) == 1
+        bbox = item.annotations[0]
+        assert bbox.label == 1
+        assert bbox.get_bbox() == pytest.approx([8, 4, 4, 2])
