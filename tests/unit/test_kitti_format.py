@@ -936,6 +936,30 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
+    def test_can_save_detection_with_unlabeled_boxes(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="1_2",
+                    subset="test",
+                    media=Image.from_numpy(data=np.ones((10, 10, 3))),
+                    annotations=[Bbox(0, 1, 2, 2, label=1), Bbox(6, 2, 3, 4)],
+                ),
+            ],
+            categories=["label_0", "label_1"],
+        )
+
+        with TestDir() as test_dir:
+            KittiExporter.convert(source_dataset, test_dir, save_media=True, tasks=KittiTask.detection)
+            parsed_dataset = Dataset.import_from(test_dir, "kitti_detection")
+
+            label_names = parsed_dataset.categories()[AnnotationType.label]
+            boxes = parsed_dataset.get("1_2", "test").annotations
+            self.assertEqual(
+                [("label_1", [0, 1, 2, 2])],
+                [(label_names[box.label].name, box.get_bbox()) for box in boxes],
+            )
+
     def test_can_save_detection_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
