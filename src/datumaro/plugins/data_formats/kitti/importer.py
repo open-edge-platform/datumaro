@@ -65,9 +65,9 @@ class KittiImporter(Importer):
         for extractor_type, task_dir in cls._TASKS.values():
             subset_paths = glob(osp.join(path, "**", task_dir), recursive=True)
             for subset_path in subset_paths:
-                path = osp.normpath(osp.join(subset_path, ".."))
-                subset_name = osp.splitext(osp.basename(path))[0]
-                subsets.setdefault(subset_name, {})[extractor_type] = path
+                subset_dir = osp.normpath(osp.join(subset_path, ".."))
+                subset_name = osp.splitext(osp.basename(subset_dir))[0]
+                subsets.setdefault(subset_name, {})[extractor_type] = subset_dir
 
         return subsets
 
