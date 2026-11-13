@@ -131,6 +131,33 @@ class OpenImagesFormatTest(TestCase):
 
             compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
 
+    def test_can_save_and_load_with_unlabeled_boxes_and_masks(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.zeros((8, 8, 3))),
+                    annotations=[
+                        Bbox(1, 2, 3, 4, label=1),
+                        Bbox(2, 2, 4, 4),
+                        Mask(np.eye(8, dtype=bool)),
+                    ],
+                ),
+            ],
+            categories=["/m/0", "/m/1"],
+        )
+
+        with TestDir() as test_dir:
+            OpenImagesExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "open_images")
+
+            annotations = parsed_dataset.get("a", "train").annotations
+            self.assertEqual(
+                [(AnnotationType.bbox, 1, [1, 2, 3, 4])],
+                [(ann.type, ann.label, ann.get_bbox()) for ann in annotations],
+            )
+
     def test_can_save_and_load_with_no_subsets(self):
         source_dataset = Dataset.from_iterable(
             [
