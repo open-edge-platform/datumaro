@@ -1072,7 +1072,7 @@ class AnnsToLabels(ItemTransform, CliPlugin):
     """
 
     def transform_item(self, item):
-        labels = set(p.label for p in item.annotations if getattr(p, "label") is not None)
+        labels = set(p.label for p in item.annotations if getattr(p, "label", None) is not None)
         annotations = []
         for label in labels:
             annotations.append(Label(label=label))
