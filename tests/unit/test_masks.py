@@ -292,3 +292,22 @@ class FindMaskBboxTest(TestCase):
         mask[1:3, 1:3] = 1
 
         self.assertEqual((1, 1, 2, 2), Mask(image=mask).get_bbox())
+
+    def test_bbox_of_empty_mask_is_empty(self):
+        mask = np.zeros((4, 6), dtype=np.uint8)
+
+        self.assertEqual((0, 0, 0, 0), mask_tools.find_mask_bbox(mask))
+
+    def test_empty_mask_can_be_converted_to_bbox(self):
+        from datumaro.components.annotation import Bbox, Mask
+        from datumaro.components.dataset import Dataset
+        from datumaro.components.dataset_base import DatasetItem
+
+        dataset = Dataset.from_iterable(
+            [DatasetItem(1, annotations=[Mask(image=np.zeros((4, 6), dtype=np.uint8), label=0)])],
+            categories=["a"],
+        )
+
+        annotations = next(iter(dataset.transform("shapes_to_boxes"))).annotations
+
+        self.assertEqual([Bbox(0, 0, 0, 0, label=0)], annotations)
