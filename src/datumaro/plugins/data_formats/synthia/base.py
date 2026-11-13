@@ -56,14 +56,14 @@ def parse_label_map(path):
             if not line or line[0] == "#":
                 continue
 
-            # color, name
-            label_desc = line.split()
+            # color, name. The name is the rest of the line, it can have spaces
+            label_desc = line.split(maxsplit=3)
 
-            if len(label_desc) > 2:
+            if len(label_desc) == 4 and all(c.isdigit() for c in label_desc[:3]):
                 name = label_desc[3]
                 color = tuple([int(c) for c in label_desc[:3]])
             else:
-                name = label_desc[0]
+                name = line
                 color = None
 
             if name in label_map:

@@ -29,6 +29,19 @@ class CamvidFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
+    def test_can_write_and_parse_labelmap_with_spaces_in_names(self):
+        src_label_map = OrderedDict(
+            [("background", (0, 0, 0)), ("traffic light", (250, 170, 30)), ("traffic sign", None)]
+        )
+
+        with TestDir() as test_dir:
+            file_path = osp.join(test_dir, "label_colors.txt")
+
+            Camvid.write_label_map(file_path, src_label_map)
+            dst_label_map = Camvid.parse_label_map(file_path)
+
+            self.assertEqual(src_label_map, dst_label_map)
+
     def test_can_write_and_parse_meta_file(self):
         src_label_map = Camvid.CamvidLabelMap
 
@@ -250,6 +263,29 @@ class CamvidExporterTest(TestCase):
 
         with TestDir() as test_dir:
             self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
+
+    def test_can_save_and_load_label_names_with_spaces(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.ones((1, 5, 3))),
+                    annotations=[
+                        Mask(image=np.array([[1, 1, 0, 0, 0]]), label=0),
+                        Mask(image=np.array([[0, 0, 1, 1, 1]]), label=1),
+                    ],
+                ),
+            ],
+            categories=["traffic light", "traffic sign"],
+        )
+
+        with TestDir() as test_dir:
+            CamvidExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "camvid")
+
+            labels = parsed_dataset.categories()[AnnotationType.label]
+            self.assertEqual(["background", "traffic light", "traffic sign"], [label.name for label in labels])
 
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
