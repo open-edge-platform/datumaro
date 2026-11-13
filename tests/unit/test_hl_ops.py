@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import os
+
 import pytest
 
 from datumaro import Dataset, DatasetItem, HLOps
@@ -161,3 +163,21 @@ class HLOpsTest:
         actual = HLOps.aggregate(dataset, from_subsets=["train", "val", "test"], to_subset="default")
 
         compare_datasets(self, expected, actual)
+
+    def test_can_compare_with_table(self):
+        dataset_a = Dataset.from_iterable(
+            [DatasetItem(0, subset="train", annotations=[Bbox(1, 2, 3, 4, label=0)])],
+            categories=["cat", "dog"],
+        )
+        dataset_b = Dataset.from_iterable(
+            [
+                DatasetItem(0, subset="train", annotations=[Bbox(1, 2, 3, 4, label=0)]),
+                DatasetItem(1, subset="train", annotations=[Bbox(1, 2, 3, 4, label=1)]),
+            ],
+            categories=["cat", "dog"],
+        )
+
+        with TestDir() as test_dir:
+            HLOps.compare(dataset_a, dataset_b, report_dir=test_dir)
+
+            assert set(os.listdir(test_dir)) == {"table_compare.json", "table_compare.txt"}
