@@ -1176,9 +1176,10 @@ class ResizeTransform(ItemTransform):
 
         new_size = (self._height, self._width)
 
-        resized_image = None
         if item.media.has_data:
             resized_image = self._lazy_resize_image(item.media, new_size)
+        else:
+            resized_image = Image.from_numpy(data=None, ext=item.media.ext, size=new_size)
 
         resized_annotations = []
         for ann in item.annotations:
@@ -1278,9 +1279,10 @@ class CropTransform(ItemTransform, CliPlugin):
         crop_w = min(self._width, w - crop_x)
         crop_h = min(self._height, h - crop_y)
 
-        cropped_image = None
         if item.media.has_data:
             cropped_image = self._lazy_crop_image(item.media, crop_x, crop_y, crop_w, crop_h)
+        else:
+            cropped_image = Image.from_numpy(data=None, ext=item.media.ext, size=(crop_h, crop_w))
 
         cropped_annotations = []
         for ann in item.annotations:

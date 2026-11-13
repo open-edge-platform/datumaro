@@ -1722,3 +1722,30 @@ class CleanTest(TestCase):
             result_item = result.__getitem__(i)
             self.assertEqual(expected_item.annotations, result_item.annotations)
             self.assertEqual(expected_item.media, result_item.media)
+
+
+@pytest.mark.parametrize("transform", ["resize", "crop"])
+def test_transform_preserves_image_info_without_pixels(transform):
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                id="sample",
+                media=Image.from_numpy(data=None, size=(100, 200), ext="jpg"),
+                annotations=[Bbox(10, 10, 20, 20)],
+            )
+        ]
+    )
+    options = {"width": 50, "height": 25}
+    if transform == "crop":
+        options.update(x=5, y=5)
+
+    result = dataset.transform(transform, **options)
+    item = result.get("sample")
+
+    assert isinstance(item.media, Image)
+    assert item.media.size == (25, 50)
+    assert item.media.ext == ".jpg"
+    assert not item.media.has_data
+    expected_box = [2.5, 2.5, 5, 5] if transform == "resize" else [5, 5, 20, 20]
+    assert item.annotations[0].get_bbox() == expected_box
+    assert next(iter(result.transform("resize", width=100, height=50))).media.size == (50, 100)
