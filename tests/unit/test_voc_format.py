@@ -847,6 +847,26 @@ class VocExporterTest(TestCase):
                 importer="voc_classification",
             )
 
+    def test_can_save_voc_det_with_unlabeled_boxes(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="1",
+                    subset="a",
+                    media=Image.from_numpy(data=np.ones((10, 10, 3))),
+                    annotations=[Bbox(2, 3, 4, 5, label=2), Bbox(1, 1, 3, 3)],
+                ),
+            ],
+            categories=VOC.make_voc_categories(task=VOC.VocTask.voc_detection),
+        )
+
+        with TestDir() as test_dir:
+            VocDetectionExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "voc_detection")
+
+            boxes = parsed_dataset.get("1", "a").annotations
+            self.assertEqual([(2, [2, 3, 4, 5])], [(box.label, box.get_bbox()) for box in boxes])
+
     def test_can_save_voc_det(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
