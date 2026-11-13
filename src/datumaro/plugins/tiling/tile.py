@@ -252,15 +252,14 @@ class Tile(Transform, CliPlugin):
 
         max_h, max_w = image.size
         n_row, n_col = self._grid_size
-        new_h, new_w = int(max_h / n_row), int(max_w / n_col)
         h_ovl, w_ovl = self._overlap
 
         rois: List[BboxIntCoords] = []
 
         for r in range(n_row):
             for c in range(n_col):
-                y1, x1 = new_h * r, new_w * c
-                y2, x2 = y1 + new_h, x1 + new_w
+                y1, y2 = max_h * r // n_row, max_h * (r + 1) // n_row
+                x1, x2 = max_w * c // n_col, max_w * (c + 1) // n_col
 
                 c_x, c_y, w, h = x1y1x2y2_to_cxcywh(x1, y1, x2, y2)
                 w, h = int(w * (1 + w_ovl)), int(h * (1 + h_ovl))
