@@ -145,7 +145,8 @@ class KittiExporter(Exporter):
                         dtype=np.int32,
                     )
 
-                bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox]
+                # a box without a label has no class name to write
+                bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox and a.label is not None]
                 if bboxes and KittiTask.detection in self._tasks:
                     labels_file = osp.join(self._save_dir, subset_name, KittiPath.LABELS_DIR, "%s.txt" % item.id)
                     os.makedirs(osp.dirname(labels_file), exist_ok=True)
