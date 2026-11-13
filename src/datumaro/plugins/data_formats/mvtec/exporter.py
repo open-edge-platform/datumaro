@@ -14,6 +14,7 @@ from datumaro.components.errors import MediaTypeError
 from datumaro.components.exporter import Exporter
 from datumaro.components.media import Image
 from datumaro.util import parse_str_enum_value
+from datumaro.util.image import save_image
 
 from .format import MvtecPath, MvtecTask
 
@@ -96,7 +97,7 @@ class MvtecExporter(Exporter):
 
                     if not osp.exists(osp.join(self._save_dir, osp.dirname(mask_path))):
                         os.mkdir(osp.join(self._save_dir, osp.dirname(mask_path)))
-                    cv2.imwrite(osp.join(self._save_dir, mask_path), mask * 255)
+                    save_image(osp.join(self._save_dir, mask_path), mask * 255)
 
                 masks = [a for a in item.annotations if a.type == AnnotationType.mask]
                 if masks and MvtecTask.segmentation in self._tasks:
@@ -104,7 +105,7 @@ class MvtecExporter(Exporter):
 
                     if not osp.exists(osp.join(self._save_dir, osp.dirname(mask_path))):
                         os.mkdir(osp.join(self._save_dir, osp.dirname(mask_path)))
-                    cv2.imwrite(osp.join(self._save_dir, mask_path), masks[0].image.astype(np.uint8) * 255)
+                    save_image(osp.join(self._save_dir, mask_path), masks[0].image.astype(np.uint8) * 255)
 
     def get_label(self, label_id):
         return self._extractor.categories()[AnnotationType.label].items[label_id].name
