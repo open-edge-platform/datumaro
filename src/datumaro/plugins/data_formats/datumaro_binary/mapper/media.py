@@ -37,13 +37,14 @@ class MediaMapper(Mapper):
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
         allow_external_media: bool = False,
+        default_image_name: Optional[str] = None,
     ) -> Tuple[Optional[MediaElement], int]:
         (media_type,) = struct.unpack_from("<I", _bytes, offset)
 
         if media_type == MediaType.NONE:
             return None, offset + 4
         if media_type == MediaType.IMAGE:
-            return ImageMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
+            return ImageMapper.backward(_bytes, offset, media_path_prefix, allow_external_media, default_image_name)
         if media_type == MediaType.POINT_CLOUD:
             return PointCloudMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
         if media_type == MediaType.VIDEO:
@@ -86,7 +87,7 @@ class MediaElementMapper(Mapper):
         return {
             "type": media_type,
             "path": path
-            if path == cls.MAGIC_PATH or media_path_prefix is None
+            if path is None or media_path_prefix is None
             else join_media_path(media_path_prefix[cls.MEDIA_TYPE], path),
         }, offset
 
@@ -123,13 +124,22 @@ class ImageMapper(MediaElementMapper):
         offset: int = 0,
         media_path_prefix: Optional[Dict[MediaType, str]] = None,
         allow_external_media: bool = False,
+        default_name: Optional[str] = None,
     ) -> Tuple[Image, int]:
         media_dict, offset = cls.backward_dict(_bytes, offset, media_path_prefix, allow_external_media)
         height, width = struct.unpack_from("<ii", _bytes, offset)
         size = (height, width)
         offset += 8
+
+        path = media_dict["path"]
+        if path is None and default_name:
+            # the image was exported without a file, e.g. from memory with save_media=False
+            path = default_name
+            if media_path_prefix is not None:
+                path = join_within_base(media_path_prefix[cls.MEDIA_TYPE], default_name)
+
         return (
-            Image.from_file(path=media_dict["path"], size=size if size != cls.MAGIC_SIZE_FOR_NONE else None),
+            Image.from_file(path=path, size=size if size != cls.MAGIC_SIZE_FOR_NONE else None),
             offset,
         )
 
