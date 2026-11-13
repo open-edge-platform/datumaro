@@ -7,9 +7,13 @@
 import sys
 from typing import Any
 
+import numpy as np
 import pytest
 
-from datumaro.components.annotation import Annotation
+from datumaro.components.annotation import Annotation, Bbox
+from datumaro.components.dataset import Dataset
+from datumaro.components.dataset_base import DatasetItem
+from datumaro.components.media import Image
 from datumaro.plugins.data_formats.datumaro_binary import DatumaroBinaryExporter, DatumaroBinaryImporter
 from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryPath
 from datumaro.plugins.data_formats.datumaro_binary.mapper import *
@@ -77,6 +81,26 @@ class DatumaroBinaryFormatTest(TestBase):
             helper_tc,
             request,
         )
+
+    def test_can_import_images_exported_from_memory_without_media(self, test_dir):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.ones((10, 6, 3))),
+                    annotations=[Bbox(1, 2, 3, 4, label=0)],
+                )
+            ],
+            categories=["label_0"],
+        )
+        self.exporter.convert(source_dataset, save_dir=test_dir, save_media=False)
+
+        imported = Dataset.import_from(test_dir, self.format)
+
+        item = imported.get("a", "train")
+        assert item.annotations == source_dataset.get("a", "train").annotations
+        assert item.media.size == (10, 6)
 
 
 class MapperTest:
