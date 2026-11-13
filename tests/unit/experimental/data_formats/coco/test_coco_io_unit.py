@@ -619,3 +619,21 @@ def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
     (root / "README.roboflow.txt").write_text("metadata")
     # find_dataset_root should return root since format is detectable there
     assert find_dataset_root(root) == root.resolve()
+
+
+def test_import_coco_dataset_non_ascii_category_names(tmp_path: Path):
+    """COCO files are read as UTF-8, whatever the platform's default encoding is."""
+    name = "\u0441\u043e\u0431\u0430\u043a\u0430"
+    categories = [{"id": 1, "name": name, "supercategory": "none"}]
+    ann_data = _make_roboflow_coco_annotations(categories=categories)
+    subset_dir = tmp_path / "train"
+    subset_dir.mkdir()
+    (subset_dir / "_annotations.coco.json").write_text(json.dumps(ann_data, ensure_ascii=False), encoding="utf-8")
+    for img in ann_data["images"]:
+        (subset_dir / img["file_name"]).write_bytes(b"fake-img")
+
+    assert detect_dataset_format(tmp_path) == DataFormat.COCO
+
+    ds = import_coco_dataset(tmp_path)
+
+    assert list(ds.schema.attributes["labels"].categories.labels) == [name]
