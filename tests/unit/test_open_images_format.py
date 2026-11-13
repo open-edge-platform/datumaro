@@ -131,6 +131,27 @@ class OpenImagesFormatTest(TestCase):
 
             compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
 
+    def test_can_save_and_load_masks_without_boxes(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.zeros((8, 8, 3))),
+                    annotations=[Mask(np.eye(8, dtype=bool), label=1)],
+                ),
+            ],
+            categories=["/m/0", "/m/1"],
+        )
+
+        with TestDir() as test_dir:
+            OpenImagesExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "open_images")
+
+            annotations = parsed_dataset.get("a", "train").annotations
+            self.assertEqual([(AnnotationType.mask, 1)], [(ann.type, ann.label) for ann in annotations])
+            np.testing.assert_array_equal(np.eye(8, dtype=bool), annotations[0].image)
+
     def test_can_save_and_load_with_no_subsets(self):
         source_dataset = Dataset.from_iterable(
             [
