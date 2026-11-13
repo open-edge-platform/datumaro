@@ -4,7 +4,7 @@
 
 import logging as log
 import os.path as osp
-from glob import glob
+from glob import escape, glob
 from typing import List
 
 from datumaro.components.errors import DatasetNotFoundError
@@ -63,7 +63,7 @@ class KittiImporter(Importer):
         subsets = {}
 
         for extractor_type, task_dir in cls._TASKS.values():
-            subset_paths = glob(osp.join(path, "**", task_dir), recursive=True)
+            subset_paths = glob(osp.join(escape(path), "**", task_dir), recursive=True)
             for subset_path in subset_paths:
                 path = osp.normpath(osp.join(subset_path, ".."))
                 subset_name = osp.splitext(osp.basename(path))[0]
