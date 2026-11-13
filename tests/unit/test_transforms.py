@@ -1100,6 +1100,21 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, expected, actual)
 
+    def test_remove_annotations_parser_accepts_item_and_annotation_ids(self):
+        parser = transforms.RemoveAnnotations.build_cmdline_parser()
+
+        args = parser.parse_args(["--id", "1:train", "--id", "1:test:2"])
+
+        self.assertEqual([["1", "train"], ["1", "test", 2]], args.ids)
+
+    def test_remove_transform_parsers_explain_invalid_ids(self):
+        for transform in (transforms.RemoveItems, transforms.RemoveAnnotations, transforms.RemoveAttributes):
+            with (
+                self.subTest(transform=transform.__name__),
+                self.assertRaisesRegex(argparse.ArgumentTypeError, "Invalid id format of 'image1'"),
+            ):
+                transform._parse_id("image1")
+
 
 class RemoveAttributesTest(TestCase):
     def setUp(self):
