@@ -199,6 +199,49 @@ class Market1501FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
+    def test_can_save_items_of_one_track_without_frame_ids(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=item_id,
+                    subset="train",
+                    media=Image.from_numpy(data=np.full((2, 5, 3), value)),
+                    attributes={"person_id": "0007", "camera_id": 0, "track_id": 1},
+                )
+                for item_id, value in [("a", 10), ("b", 20), ("dir/c", 30), ("dir/d", 40)]
+            ],
+        )
+
+        expected = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=item_id,
+                    subset="train",
+                    media=Image.from_numpy(data=np.full((2, 5, 3), value)),
+                    attributes={
+                        "person_id": "0007",
+                        "camera_id": 0,
+                        "track_id": 1,
+                        "frame_id": frame_id,
+                        "bbox_id": 0,
+                        "query": False,
+                    },
+                )
+                for item_id, value, frame_id in [
+                    ("0007_c1s1_000000_00", 10, 0),
+                    ("0007_c1s1_000001_00", 20, 1),
+                    ("dir/0007_c1s1_000002_00", 30, 2),
+                    ("dir/0007_c1s1_000003_00", 40, 3),
+                ]
+            ],
+        )
+
+        with TestDir() as test_dir:
+            Market1501Exporter.convert(source_dataset, test_dir, save_media=True, image_ext=".png")
+            parsed_dataset = Dataset.import_from(test_dir, "market1501")
+
+            compare_datasets(self, expected, parsed_dataset, require_media=True)
+
 
 DUMMY_DATASET_DIR = get_test_asset_path("market1501_dataset")
 
