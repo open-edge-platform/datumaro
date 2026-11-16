@@ -29,6 +29,7 @@ from datumaro.components.operations import find_unique_images, mean_std
 from datumaro.errors import (
     ConflictingCategoriesError,
     FailedAttrVotingError,
+    FailedLabelVotingError,
     MismatchingMediaPathError,
     NoMatchingAnnError,
     NoMatchingItemError,
@@ -490,6 +491,27 @@ class TestMultimerge(TestCase):
         merger(dataset, dataset)
 
         self.assertEqual(3, len([e for e in merger.errors if isinstance(e, WrongGroupError)]), merger.errors)
+
+    def test_can_merge_labels_with_quorum(self):
+        def make_source(label):
+            return Dataset.from_iterable([DatasetItem(1, annotations=[Label(label)])], categories=["a", "b"])
+
+        expected = Dataset.from_iterable([DatasetItem(1, annotations=[Label(0)])], categories=["a", "b"])
+
+        merger = IntersectMerge(conf={"quorum": 2})
+        merged = merger(make_source(0), make_source(1), make_source(0))
+
+        compare_datasets(self, expected, merged, ignored_attrs={"score"})
+        self.assertEqual(
+            [
+                FailedLabelVotingError(
+                    item_id=("1", DEFAULT_SUBSET_NAME),
+                    votes={"a": 2, "b": 1},
+                    sources={0, 2},
+                )
+            ],
+            merger.errors,
+        )
 
     def test_can_merge_classes(self):
         source0 = Dataset.from_iterable(
