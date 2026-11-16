@@ -266,7 +266,7 @@ class _CaptionsExporter(_TaskExporter):
                 try:
                     elem["score"] = float(ann.attributes["score"])
                 except Exception as e:
-                    log.warning("Item '%s', ann #%s: failed to convert attribute 'score': %e" % (item.id, ann_idx, e))
+                    log.warning("Item '%s', ann #%s: failed to convert attribute 'score': %s" % (item.id, ann_idx, e))
             if self._context._allow_attributes:
                 attrs = self._convert_attributes(ann)
                 if attrs:
@@ -462,7 +462,7 @@ class _InstancesExporter(_TaskExporter):
             try:
                 elem["score"] = float(ann.attributes["score"])
             except Exception as e:
-                log.warning("Item '%s': failed to convert attribute 'score': %e" % (item.id, e))
+                log.warning("Item '%s': failed to convert attribute 'score': %s" % (item.id, e))
         if self._context._allow_attributes:
             attrs = self._convert_attributes(ann)
             if attrs:
@@ -588,7 +588,7 @@ class _LabelsExporter(_TaskExporter):
                 try:
                     elem["score"] = float(ann.attributes["score"])
                 except Exception as e:
-                    log.warning("Item '%s': failed to convert attribute 'score': %e" % (item.id, e))
+                    log.warning("Item '%s': failed to convert attribute 'score': %s" % (item.id, e))
             if self._context._allow_attributes:
                 attrs = self._convert_attributes(ann)
                 if attrs:

@@ -3028,3 +3028,32 @@ class CocoExporterTest:
                         raise e.__cause__
                     raise e
             assert "does not match image size" in str(capture.value)
+
+    @pytest.mark.parametrize(
+        "exporter, annotation, ann_file",
+        [
+            (CocoInstancesExporter, Bbox(1, 1, 2, 2, label=0, attributes={"score": "high"}), "instances_train.json"),
+            (CocoCaptionsExporter, Caption("hello", attributes={"score": "high"}), "captions_train.json"),
+            (CocoLabelsExporter, Label(0, attributes={"score": "high"}), "labels_train.json"),
+        ],
+        ids=["instances", "captions", "labels"],
+    )
+    def test_can_save_when_score_is_not_a_number(self, exporter, annotation, ann_file, test_dir):
+        dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.ones((5, 5, 3))),
+                    annotations=[annotation],
+                )
+            ],
+            categories=["label_0"],
+        )
+
+        exporter.convert(dataset, test_dir)
+
+        # The score is left out with a warning; the annotation is still exported
+        anno = parse_json_file(osp.join(test_dir, "annotations", ann_file))
+        assert len(anno["annotations"]) == 1
+        assert "score" not in anno["annotations"][0]
