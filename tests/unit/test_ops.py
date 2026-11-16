@@ -792,6 +792,28 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
 
+    def test_union_merge_does_not_change_sources(self):
+        def make_sources():
+            source0 = Dataset.from_iterable(
+                [DatasetItem("0", annotations=[Label(0)])],
+                categories=["a", "b"],
+            )
+            source1 = Dataset.from_iterable(
+                [DatasetItem("1", annotations=[Label(0), Bbox(1, 2, 3, 4, label=1)])],
+                categories=["c", "b"],
+            )
+            return source0, source1
+
+        source0, source1 = make_sources()
+        expected0, expected1 = make_sources()
+
+        merged = Dataset(source=UnionMerge()(source0, source1))
+        merged_again = Dataset(source=UnionMerge()(source0, source1))
+
+        compare_datasets(self, expected0, source0)
+        compare_datasets(self, expected1, source1)
+        compare_datasets(self, merged, merged_again)
+
     def test_raises_error_exact_merge_different_categories(self):
         source0 = Dataset.from_iterable(
             [
