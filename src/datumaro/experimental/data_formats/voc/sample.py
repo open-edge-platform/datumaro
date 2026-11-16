@@ -50,8 +50,8 @@ class VocSample(Sample):
     image: LazyImage = image_path_field()
     image_info: ImageInfo = image_info_field()
 
-    # Object detection annotations - bboxes in xyxy format for VOC
-    bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="xyxy")
+    # Object detection annotations - bboxes in xyxy (x1y1x2y2) format for VOC
+    bboxes: np.ndarray | None = bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
     labels: np.ndarray | None = label_field(dtype=pl.UInt32(), is_list=True)
 
     # VOC-specific annotation attributes
