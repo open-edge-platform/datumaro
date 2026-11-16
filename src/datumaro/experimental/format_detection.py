@@ -44,7 +44,8 @@ def is_legacy_datumaro_format(input_dir: Path) -> bool:
     """
     Detect if a directory contains a legacy Datumaro-format dataset.
 
-    Legacy Datumaro format is identified by annotations/default.json file with 'dm_format_version' key
+    Legacy Datumaro format is identified by an annotations/<subset>.json file with 'dm_format_version' key.
+    The file is named default.json for items without a subset.
 
     Args:
         input_dir: Path to the directory to check
@@ -52,8 +53,25 @@ def is_legacy_datumaro_format(input_dir: Path) -> bool:
     Returns:
         True if the directory contains a legacy Datumaro-format dataset
     """
-    default_json = input_dir / "annotations" / "default.json"
-    return default_json.exists() and _is_legacy_datumaro_json(default_json)
+    annotations_dir = input_dir / "annotations"
+    default_json = annotations_dir / "default.json"
+    if default_json.exists() and _is_legacy_datumaro_json(default_json):
+        return True
+
+    # One file is written per subset, so there is no default.json when every item has a subset
+    return any(
+        _starts_like_legacy_datumaro_json(json_path) and _is_legacy_datumaro_json(json_path)
+        for json_path in sorted(annotations_dir.glob("*.json"))
+    )
+
+
+def _starts_like_legacy_datumaro_json(json_path: Path) -> bool:
+    """Cheaply check for the 'dm_format_version' key, which is written first, without parsing the whole file."""
+    try:
+        with open(json_path, "rb") as f:
+            return b'"dm_format_version"' in f.read(4096)
+    except OSError:
+        return False
 
 
 def _is_legacy_datumaro_json(json_path: Path) -> bool:
