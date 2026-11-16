@@ -51,7 +51,7 @@ def _write_json(path: Path, obj: dict) -> None:
 def _load_json_or_none(path: Path) -> dict | None:
     if not path.exists():
         return None
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
