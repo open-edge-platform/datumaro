@@ -920,6 +920,10 @@ class OpenImagesExporter(Exporter):
 
                     box_coords = {}
 
+                    # the reader needs the image size to decode the mask
+                    if item.media and item.media.size is not None:
+                        image_meta[item.id] = item.media.size
+
                     if instance_box is not None:
                         if item.media and item.media.size is not None:
                             image_meta[item.id] = item.media.size
