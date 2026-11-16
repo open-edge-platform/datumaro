@@ -2,6 +2,7 @@ from unittest import TestCase
 
 import cv2
 import numpy as np
+import pytest
 
 from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask
 from datumaro.components.dataset import Dataset
@@ -14,6 +15,7 @@ from datumaro.plugins.data_formats.mvtec.importer import (
     MvtecDetectionImporter,
     MvtecSegmentationImporter,
 )
+from datumaro.util.image import load_image, save_image
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -184,12 +186,12 @@ class MvtecImporterTest(TestCase):
                 DatasetItem(
                     id="label_1/000",
                     media=Image.from_numpy(data=np.ones((8, 8, 3))),
-                    annotations=[Bbox(x=0, y=0, w=3, h=3, label=1)],
+                    annotations=[Bbox(x=0, y=0, w=4, h=4, label=1)],
                 ),
                 DatasetItem(
                     id="label_2/000",
                     media=Image.from_numpy(data=np.ones((8, 8, 3))),
-                    annotations=[Bbox(x=4, y=4, w=3, h=3, label=2)],
+                    annotations=[Bbox(x=4, y=4, w=4, h=4, label=2)],
                 ),
             ],
             categories={
@@ -252,3 +254,28 @@ class MVTecExporterTest(TestCase):
         with TestDir() as test_dir:
             MvtecExporter.convert(source_dataset, test_dir, save_media=True)
             assert cv2.imread(test_dir + "/ground_truth/label_1/000_mask.png").max() == 255
+
+
+@pytest.mark.parametrize(
+    "x, y, width, height", [(3, 2, 4, 3), (5, 4, 1, 1), (3, 2, 4, 1), (3, 2, 1, 4), (0, 0, 10, 10)]
+)
+def test_detection_boxes_cover_defect_pixels(tmp_path, x, y, width, height):
+    image_dir = tmp_path / "test" / "defect"
+    mask_dir = tmp_path / "ground_truth" / "defect"
+    image_dir.mkdir(parents=True)
+    mask_dir.mkdir(parents=True)
+    mask = np.zeros((10, 10), dtype=np.uint8)
+    mask[y : y + height, x : x + width] = 255
+    save_image(str(image_dir / "sample.png"), np.zeros((10, 10, 3), dtype=np.uint8))
+    save_image(str(mask_dir / "sample_mask.png"), mask)
+
+    dataset = Dataset.import_from(str(tmp_path), "mvtec_detection")
+
+    annotations = dataset.get("defect/sample", subset="test").annotations
+    assert len(annotations) == 1
+    assert annotations[0].get_bbox() == [x, y, width, height]
+
+    export_dir = tmp_path / "exported"
+    dataset.export(str(export_dir), "mvtec_detection", save_media=True)
+    exported = load_image(str(export_dir / "ground_truth" / "defect" / "sample_mask.png"))
+    np.testing.assert_array_equal(np.squeeze(exported) > 0, mask > 0)

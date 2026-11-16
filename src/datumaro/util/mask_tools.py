@@ -309,17 +309,16 @@ def mask_to_bboxes(mask):
         mask: a 2d binary mask
 
     Returns:
-        A list of bboxes like [[x1,x2,y1,y2], [...]]
+        A list of bboxes like [[x1,x2,y1,y2], [...]]. x2 and y2 are exclusive.
     """
+    import cv2
 
-    contours = extract_contours(mask)
+    contours, _ = cv2.findContours(mask.astype(np.uint8), mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
 
     bboxes = []
     for contour in contours:
-        x1, x2 = min(contour[0::2]), max(contour[0::2])
-        y1, y2 = min(contour[1::2]), max(contour[1::2])
-
-        bboxes.append([x1, x2, y1, y2])
+        x, y, width, height = cv2.boundingRect(contour)
+        bboxes.append([x, x + width, y, y + height])
 
     return bboxes
 
