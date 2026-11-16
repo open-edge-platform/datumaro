@@ -6,6 +6,7 @@ from typing import Dict, Optional, Tuple
 
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import MediaType
+from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryPath
 from datumaro.plugins.data_formats.datumaro_binary.mapper.annotation import AnnotationListMapper
 
 from .common import DictMapper, Mapper, StringMapper
@@ -32,7 +33,13 @@ class DatasetItemMapper(Mapper):
     ) -> Tuple[DatasetItem, int]:
         id, offset = StringMapper.backward(_bytes, offset)
         subset, offset = StringMapper.backward(_bytes, offset)
-        media, offset = MediaMapper.backward(_bytes, offset, media_path_prefix, allow_external_media)
+        media, offset = MediaMapper.backward(
+            _bytes,
+            offset,
+            media_path_prefix,
+            allow_external_media,
+            default_image_name=id + DatumaroBinaryPath.IMAGE_EXT,
+        )
         attributes, offset = DictMapper.backward(_bytes, offset)
         annotations, offset = AnnotationListMapper.backward(_bytes, offset)
         return (
