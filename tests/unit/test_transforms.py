@@ -1722,3 +1722,28 @@ class CleanTest(TestCase):
             result_item = result.__getitem__(i)
             self.assertEqual(expected_item.annotations, result_item.annotations)
             self.assertEqual(expected_item.media, result_item.media)
+
+
+@pytest.mark.parametrize("group", [0, 7])
+def test_cropped_polygon_parts_keep_one_instance(group):
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                "sample",
+                media=Image.from_numpy(np.zeros((10, 10, 3))),
+                annotations=[
+                    Polygon([1, 1, 9, 1, 9, 9, 1, 9], label=0, id=5, group=group),
+                    Polygon([4, 0, 6, 0, 6, 10, 4, 10], label=1, z_order=1),
+                    Bbox(0, 0, 1, 1, label=2, group=5),
+                ],
+            )
+        ]
+    )
+
+    item = next(iter(dataset.transform("crop_covered_segments")))
+    parts = [ann for ann in item.annotations if ann.label == 0]
+
+    assert len(parts) == 2
+    assert {part.group for part in parts} == {group or 6}
+    assert next(ann for ann in item.annotations if ann.label == 1).group == 0
+    assert next(ann for ann in item.annotations if ann.label == 2).group == 5
