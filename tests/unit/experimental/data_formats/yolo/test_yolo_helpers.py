@@ -632,3 +632,20 @@ def test_get_image_size_respects_exif_orientation(tmp_path, orientation, expecte
 
     height, width = _get_image_size(path)
     assert (height, width) == (expected_height, expected_width)
+
+
+def test_parse_yolo_annotation_segmentation_rows_use_polygon_bbox(tmp_path: Path):
+    """A segmentation row is read as the bounding box of its polygon, not as box values."""
+    anno_path = tmp_path / "test.txt"
+    anno_path.write_text(
+        "1 0.1 0.2 0.9 0.2 0.9 0.8 0.1 0.8\n"  # rectangle polygon
+        "0 0.5 0.5 0.2 0.4\n"  # plain box
+        "0 0.25 0.25 0.5 0.25 0.375 0.75\n"  # triangle polygon
+    )
+
+    bboxes, labels = _parse_yolo_annotation(anno_path, image_width=200, image_height=100)
+
+    assert labels == [1, 0, 0]
+    assert bboxes[0] == pytest.approx([100.0, 50.0, 160.0, 60.0])
+    assert bboxes[1] == pytest.approx([100.0, 50.0, 40.0, 40.0])
+    assert bboxes[2] == pytest.approx([75.0, 50.0, 50.0, 50.0])
