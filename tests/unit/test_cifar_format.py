@@ -89,6 +89,42 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
+    def test_can_save_and_load_images_without_three_channels(self):
+        gray = np.arange(10 * 8, dtype=np.uint8).reshape(10, 8)
+        color = np.stack([gray, gray + 1, gray + 2], axis=2)
+
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(id="gray_2d", media=Image.from_numpy(data=gray), annotations=[Label(0)]),
+                DatasetItem(id="gray_3d", media=Image.from_numpy(data=gray[:, :, np.newaxis]), annotations=[Label(1)]),
+                DatasetItem(
+                    id="with_alpha",
+                    media=Image.from_numpy(data=np.dstack([color, np.full((10, 8), 255, dtype=np.uint8)])),
+                    annotations=[Label(1)],
+                ),
+            ],
+            categories=["dog", "cat"],
+        )
+
+        expected_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="gray_2d", media=Image.from_numpy(data=np.dstack([gray, gray, gray])), annotations=[Label(0)]
+                ),
+                DatasetItem(
+                    id="gray_3d", media=Image.from_numpy(data=np.dstack([gray, gray, gray])), annotations=[Label(1)]
+                ),
+                DatasetItem(id="with_alpha", media=Image.from_numpy(data=color), annotations=[Label(1)]),
+            ],
+            categories=["dog", "cat"],
+        )
+
+        with TestDir() as test_dir:
+            CifarExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "cifar")
+
+            compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
+
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         source_dataset = Dataset.from_iterable(
             [
