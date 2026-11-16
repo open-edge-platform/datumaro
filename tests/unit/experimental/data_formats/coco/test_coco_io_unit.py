@@ -619,3 +619,43 @@ def test_find_dataset_root_roboflow_with_extra_files(tmp_path: Path):
     (root / "README.roboflow.txt").write_text("metadata")
     # find_dataset_root should return root since format is detectable there
     assert find_dataset_root(root) == root.resolve()
+
+
+def test_keypoints_survive_save_and_load(tmp_path: Path):
+    """Keypoints loaded from a COCO file are written back with their coordinates."""
+    images_dir = tmp_path / "images"
+    images_dir.mkdir()
+    (images_dir / "img.jpg").write_bytes(b"img")
+
+    annotations_file = tmp_path / "person_keypoints.json"
+    annotations_file.write_text(
+        json.dumps(
+            {
+                "images": [{"id": 1, "file_name": "img.jpg", "width": 640, "height": 480}],
+                "annotations": [
+                    {
+                        "id": 1,
+                        "image_id": 1,
+                        "category_id": 1,
+                        "keypoints": [100, 200, 2, 150, 250, 2, 180, 220, 1],
+                        "num_keypoints": 3,
+                    }
+                ],
+                "categories": [{"id": 1, "name": "person", "keypoints": ["nose", "left_eye", "right_eye"]}],
+            }
+        )
+    )
+
+    dataset = load_coco_dataset(images_dir_path=str(images_dir), annotations_path=str(annotations_file))
+
+    out_images_dir = tmp_path / "out" / "images"
+    out_annotations_file = tmp_path / "out" / "annotations.json"
+    save_coco_dataset(dataset, images_dir_path=str(out_images_dir), annotations_path=str(out_annotations_file))
+
+    saved = json.loads(out_annotations_file.read_text())
+    assert [(ann["keypoints"], ann["num_keypoints"]) for ann in saved["annotations"]] == [
+        ([100.0, 200.0, 2.0, 150.0, 250.0, 2.0, 180.0, 220.0, 1.0], 3)
+    ]
+
+    reloaded = load_coco_dataset(images_dir_path=str(out_images_dir), annotations_path=str(out_annotations_file))
+    np.testing.assert_array_equal(reloaded[0].keypoints, dataset[0].keypoints)
