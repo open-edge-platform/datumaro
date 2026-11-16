@@ -160,7 +160,8 @@ def _parse_annotation_line(line: str) -> Tuple[str, Optional[str]]:
     else:
         objects = line.split()
 
-    if len(objects) > 1:
+    # an image without a mask is written as '"<image>" ""' when its name has spaces
+    if len(objects) > 1 and objects[1]:
         return objects[0], objects[1].lstrip("/")
     return objects[0], None
 
