@@ -152,17 +152,18 @@ class Market1501Exporter(Exporter):
                     cid = int(item.attributes.get("camera_id", 0)) + 1
                     tid = int(item.attributes.get("track_id", 1))
                     bbid = int(item.attributes.get("bbox_id", 0))
-                    fid = int(item.attributes.get("frame_id", max(used_frames.get((pid, cid, tid), [-1])) + 1))
+                    fid = int(item.attributes.get("frame_id", max(used_frames.get((str(pid), cid, tid), [-1])) + 1))
                     image_name = osp.join(osp.dirname(image_name), f"{pid}_c{cid}s{tid}_{fid:06d}_{bbid:02d}")
 
                 image_path = self._make_image_filename(item, name=image_name, subdir=dirname)
                 if self._save_media and item.media:
                     self._save_image(item, osp.join(self._save_dir, image_path))
 
-                attrs = Market1501Path.PATTERN.search(image_name)
+                attrs = Market1501Path.PATTERN.search(osp.basename(image_name))
                 if attrs:
                     attrs = attrs.groups()
-                    used_frames.setdefault(attrs[0:2], []).append(int(attrs[3]))
+                    track = (attrs[0], int(attrs[1]), int(attrs[2]))
+                    used_frames.setdefault(track, []).append(int(attrs[3]))
                 annotation += "%s\n" % image_path
 
             annotation_file = osp.join(self._save_dir, Market1501Path.LIST_PREFIX + subset_name + ".txt")
