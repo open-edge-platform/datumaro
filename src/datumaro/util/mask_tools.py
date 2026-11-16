@@ -85,7 +85,8 @@ def unpaint_mask(painted_mask, inverse_colormap=None, default_id=None):
         if class_id is None and default_id is not None:
             class_id = default_id
         palette.append(class_id)
-    palette = np.array(palette, dtype=np.min_scalar_type(len(uvals)))
+    dtype = np.promote_types(np.min_scalar_type(min(palette, default=0)), np.min_scalar_type(max(palette, default=0)))
+    palette = np.array(palette, dtype=dtype)
     return palette[unpainted_mask].reshape(painted_mask.shape[:2])
 
 
