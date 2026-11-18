@@ -45,6 +45,50 @@ from datumaro.util.image_cache import ImageCache
 from datumaro.util.os_util import find_files
 
 
+def _is_jpeg(image_bytes: bytes) -> bool:
+    return image_bytes[:2] == b"\xff\xd8"
+
+
+def _get_jpeg_exif_orientation(image_bytes: bytes) -> int:
+    """Return the EXIF orientation (1-8) of an encoded JPEG image, 1 if there is none.
+
+    This uses the same parser as ``imagesize.get()``, which ``Image.size`` relies on,
+    so the decoded pixels and the reported image size follow the same orientation.
+    Other formats are left as the decoders return them: the TIFF decoders already
+    apply the orientation tag, and ``imagesize`` doesn't read it for PNG or WebP.
+    """
+    import imagesize
+
+    if not _is_jpeg(image_bytes):
+        return 1
+    try:
+        orientation = imagesize.get_info(BytesIO(image_bytes), dpi=False, colors=False, channels=False).rotation
+    except Exception:
+        return 1
+    return orientation if 2 <= orientation <= 8 else 1
+
+
+def _apply_exif_orientation(image: np.ndarray, orientation: int) -> np.ndarray:
+    """Turn an HW or HWC image from its stored orientation into its displayed orientation."""
+    if orientation == 2:
+        image = image[:, ::-1]
+    elif orientation == 3:
+        image = image[::-1, ::-1]
+    elif orientation == 4:
+        image = image[::-1]
+    elif orientation == 5:
+        image = np.swapaxes(image, 0, 1)
+    elif orientation == 6:
+        image = np.rot90(image, k=-1)
+    elif orientation == 7:
+        image = np.rot90(image, k=-1)[::-1]
+    elif orientation == 8:
+        image = np.rot90(image, k=1)
+    else:
+        return image
+    return np.ascontiguousarray(image)
+
+
 class ImageColorChannel(Enum):
     """Image color channel
 
@@ -61,18 +105,24 @@ class ImageColorChannel(Enum):
         """Convert image color channel for OpenCV image (np.ndarray)."""
         image_buffer = np.frombuffer(image_bytes, dtype=dtype)
 
+        orientation = _get_jpeg_exif_orientation(image_bytes)
+
         if self == ImageColorChannel.UNCHANGED:
-            return cv2.imdecode(image_buffer, cv2.IMREAD_UNCHANGED)
+            img = cv2.imdecode(image_buffer, cv2.IMREAD_UNCHANGED)
+        elif self in (ImageColorChannel.COLOR_BGR, ImageColorChannel.COLOR_RGB):
+            flags = cv2.IMREAD_COLOR
+            if _is_jpeg(image_bytes):
+                # The orientation is applied below, the same way as for IMREAD_UNCHANGED and PIL
+                flags |= cv2.IMREAD_IGNORE_ORIENTATION
+            img = cv2.imdecode(image_buffer, flags)
+            if self == ImageColorChannel.COLOR_RGB:
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        else:
+            raise ValueError
 
-        img = cv2.imdecode(image_buffer, cv2.IMREAD_COLOR)
-
-        if self == ImageColorChannel.COLOR_BGR:
+        if img is None:
             return img
-
-        if self == ImageColorChannel.COLOR_RGB:
-            return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-        raise ValueError
+        return _apply_exif_orientation(img, orientation)
 
     def decode_by_pil(self, image_bytes: bytes) -> np.ndarray:
         """Convert image color channel for PIL Image."""
@@ -81,16 +131,16 @@ class ImageColorChannel(Enum):
         img = Image.open(BytesIO(image_bytes))
 
         if self == ImageColorChannel.UNCHANGED:
-            return np.asarray(img)
-
-        if self == ImageColorChannel.COLOR_BGR:
+            img = np.asarray(img)
+        elif self == ImageColorChannel.COLOR_BGR:
             img = np.asarray(img.convert("RGB"))
-            return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        elif self == ImageColorChannel.COLOR_RGB:
+            img = np.asarray(img.convert("RGB"))
+        else:
+            raise ValueError
 
-        if self == ImageColorChannel.COLOR_RGB:
-            return np.asarray(img.convert("RGB"))
-
-        raise ValueError
+        return _apply_exif_orientation(img, _get_jpeg_exif_orientation(image_bytes))
 
 
 IMAGE_COLOR_CHANNEL: ContextVar[ImageColorChannel] = ContextVar(
