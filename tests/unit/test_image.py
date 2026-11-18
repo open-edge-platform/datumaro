@@ -126,3 +126,59 @@ class ImageDecodeTest:
                 fxt_img_four_channels[:, :, :3] = to_rgb
 
                 assert np.allclose(fxt_img_four_channels, img_decoded)
+
+
+class ImageExifOrientationTest:
+    @staticmethod
+    def _write_jpeg(path: str, orientation: int) -> np.ndarray:
+        """Save a 16x32 (H x W) RGB JPEG with an EXIF orientation tag.
+
+        Returns the RGB pixels in the displayed orientation.
+        """
+        from PIL import Image as PILImage
+        from PIL import ImageOps
+
+        rgb = np.zeros((16, 32, 3), dtype=np.uint8)
+        rgb[:8, :16] = (255, 0, 0)
+        rgb[:8, 16:] = (0, 255, 0)
+        rgb[8:, :16] = (0, 0, 255)
+        rgb[8:, 16:] = (255, 255, 255)
+
+        img = PILImage.fromarray(rgb)
+        exif = img.getexif()
+        exif[0x0112] = orientation
+        img.save(path, format="JPEG", quality=100, subsampling=0, exif=exif.tobytes())
+
+        with PILImage.open(path) as saved:
+            return np.asarray(ImageOps.exif_transpose(saved).convert("RGB"))
+
+    @pytest.mark.parametrize("orientation", range(1, 9))
+    @pytest.mark.parametrize("image_color_channel", list(image_module.ImageColorChannel))
+    @pytest.mark.parametrize("image_backend", list(image_module.ImageBackend))
+    def test_jpeg_is_decoded_in_displayed_orientation(self, tmp_path, image_backend, image_color_channel, orientation):
+        from datumaro.components.media import Image
+
+        path = str(tmp_path / "img.jpg")
+        expected = self._write_jpeg(path, orientation)
+
+        with image_module.decode_image_context(image_backend, image_color_channel):
+            size_first = Image.from_file(path)
+            size = size_first.size
+            data = size_first.data
+
+            data_first = Image.from_file(path)
+            data_first_shape = data_first.data.shape[:2]
+            data_first_size = data_first.size
+
+        assert size == expected.shape[:2]
+        assert data.shape[:2] == expected.shape[:2]
+        assert data_first_shape == data_first_size == expected.shape[:2]
+
+        if image_color_channel == image_module.ImageColorChannel.COLOR_RGB or (
+            image_backend == image_module.ImageBackend.PIL
+            and image_color_channel == image_module.ImageColorChannel.UNCHANGED
+        ):
+            rgb = data
+        else:
+            rgb = data[..., ::-1]
+        assert np.abs(rgb.astype(int) - expected.astype(int)).max() <= 8
