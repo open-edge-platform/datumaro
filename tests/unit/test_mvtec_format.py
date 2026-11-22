@@ -252,3 +252,21 @@ class MVTecExporterTest(TestCase):
         with TestDir() as test_dir:
             MvtecExporter.convert(source_dataset, test_dir, save_media=True)
             assert cv2.imread(test_dir + "/ground_truth/label_1/000_mask.png").max() == 255
+
+    def test_can_save_detection_with_unlabeled_boxes(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="label_1/000",
+                    media=Image.from_numpy(data=np.ones((8, 8, 3))),
+                    annotations=[Bbox(0, 0, 8, 8)],
+                ),
+            ],
+            categories={
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
+            },
+        )
+
+        with TestDir() as test_dir:
+            MvtecExporter.convert(source_dataset, test_dir, save_media=True)
+            assert cv2.imread(test_dir + "/ground_truth/label_1/000_mask.png").max() == 255

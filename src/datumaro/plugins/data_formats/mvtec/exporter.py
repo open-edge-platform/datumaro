@@ -71,11 +71,6 @@ class MvtecExporter(Exporter):
                 os.makedirs(osp.join(self._save_dir, MvtecPath.MASK_DIR), exist_ok=True)
 
             for item in subset:
-                labels = []
-                for ann in item.annotations:
-                    if ann.type in [AnnotationType.label, AnnotationType.mask, AnnotationType.bbox]:
-                        labels.append(self.get_label(ann.label))
-
                 if self._save_media:
                     self._save_image(item, subdir=subset_name)
 
