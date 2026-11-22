@@ -25,7 +25,10 @@ class Kitti3dImporter(Importer):
     def _check_ann_file(cls, fpath: str, context: FormatDetectionContext) -> bool:
         with context.probe_text_file(fpath, "Requirements for the annotation file of Kitti 3D format") as fp:
             for line in fp:
-                fields = line.rstrip("\n").split(" ")
+                # Accept what the parser accepts: any whitespace between fields and blank lines
+                fields = line.split()
+                if not fields:
+                    continue
                 if len(fields) == 15 or len(fields) == 16:
                     return True
                 raise DatasetImportError(
