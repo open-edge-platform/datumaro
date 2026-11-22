@@ -163,6 +163,10 @@ class _SuperviselyPointCloudDumper:
             if ann.type != AnnotationType.cuboid_3d:
                 continue
 
+            if ann.label is None:
+                # an object needs a class title
+                continue
+
             obj_id = cast(ann.attributes.get("track_id", ann.id), int)
             if obj_id is None:
                 # should not be affected by reindex
