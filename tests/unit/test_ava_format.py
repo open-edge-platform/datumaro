@@ -1,3 +1,5 @@
+import os.path as osp
+import shutil
 from unittest import TestCase
 
 import numpy as np
@@ -112,6 +114,25 @@ class AvaImporterTest(TestCase):
 
         dataset = Dataset.import_from(DUMMY_DATASET_DIR, "ava")
         compare_datasets(self, expected_dataset, dataset, require_media=True)
+
+    def test_can_import_label_list_with_non_ascii_names(self):
+        # the label list is UTF-8, whatever the platform's default encoding
+        label_name = "\u8d70\u308b"
+
+        with TestDir() as test_dir:
+            dataset_dir = osp.join(test_dir, "ava")
+            shutil.copytree(DUMMY_DATASET_DIR, dataset_dir)
+
+            label_list_path = osp.join(dataset_dir, AvaPath.ANNOTATION_DIR, AvaPath.LABEL_LIST)
+            with open(label_list_path, encoding="utf-8") as f:
+                label_list = f.read()
+            with open(label_list_path, "w", encoding="utf-8") as f:
+                f.write(label_list.replace("label_1", label_name))
+
+            dataset = Dataset.import_from(dataset_dir, "ava")
+
+            label_names = [label.name for label in dataset.categories()[AnnotationType.label]]
+            self.assertEqual(label_name, label_names[1])
 
     def test_can_detect_ava(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)

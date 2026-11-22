@@ -95,7 +95,7 @@ class AvaBase(SubsetBase):
                 "If not, Datumaro fails to import AVA action dataset.",
             )
 
-        with open(category_path, "r") as f:
+        with open(category_path, "r", encoding="utf-8") as f:
             pbtxt_data = f.read()
 
         label_list = ava_label_pb2.LabelList()
