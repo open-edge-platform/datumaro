@@ -864,6 +864,10 @@ class OpenImagesExporter(Exporter):
             instance_box = next((a for a in instance if a.type is AnnotationType.bbox), None)
 
             for annotation in instance:
+                if getattr(annotation, "label", None) is None:
+                    # every row in the annotation files has a class name
+                    continue
+
                 if annotation.type is AnnotationType.label:
                     label_description_writer.writerow(
                         {

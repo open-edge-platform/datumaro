@@ -266,6 +266,29 @@ class PointCloudConverterTest(TestCase):
                 ignored_attrs={"description"},
             )
 
+    def test_can_save_cuboids_without_label(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="frame1",
+                    annotations=[
+                        Cuboid3d(position=[1, 2, 3], label=0, attributes={"track_id": 1}),
+                        Cuboid3d(position=[4, 5, 6], attributes={"track_id": 2}),
+                    ],
+                    attributes={"frame": 0},
+                ),
+            ],
+            categories=["car"],
+            media_type=PointCloud,
+        )
+
+        with TestDir() as test_dir:
+            SuperviselyPointCloudExporter.convert(source_dataset, test_dir)
+            parsed_dataset = Dataset.import_from(test_dir, "sly_pointcloud")
+
+            cuboids = parsed_dataset.get("frame1").annotations
+            self.assertEqual([(0, [1, 2, 3])], [(c.label, list(c.position)) for c in cuboids])
+
     def test_reindex(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="somename", attributes={"frame": 1234})],

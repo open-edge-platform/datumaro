@@ -328,6 +328,9 @@ class VocExporter(Exporter):
             main_bboxes = []
             layout_bboxes = []
             for bbox in bboxes:
+                if bbox.label is None:
+                    # an object needs a class name
+                    continue
                 label = self.get_label(bbox.label)
                 if self._is_label(label):
                     main_bboxes.append(bbox)

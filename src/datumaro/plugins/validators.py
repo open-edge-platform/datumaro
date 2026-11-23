@@ -238,7 +238,7 @@ class _TaskValidator(Validator, CliPlugin):
             stats["total_ann_count"] += ann_count
 
             for ann in annotations:
-                if not 0 <= ann.label < len(label_categories):
+                if ann.label is None or not 0 <= ann.label < len(label_categories):
                     label_name = ann.label
 
                     label_stats = undefined_label_dist.setdefault(ann.label, deepcopy(undefined_label_template))
@@ -713,7 +713,7 @@ class DetectionValidator(_TaskValidator):
         self._compute_prop_stats_from_dist(dist_by_label, dist_by_attr)
 
         def _is_valid_bbox(item_key, ann):
-            has_defined_label = 0 <= ann.label < len(label_categories)
+            has_defined_label = ann.label is not None and 0 <= ann.label < len(label_categories)
             if not has_defined_label:
                 return False
 
@@ -812,7 +812,7 @@ class DetectionValidator(_TaskValidator):
             point_dist_in_item[item_key] = ann_count
 
             for ann in annotations:
-                if not 0 <= ann.label < len(label_categories):
+                if ann.label is None or not 0 <= ann.label < len(label_categories):
                     label_name = ann.label
                     valid_attrs = set()
                 else:
@@ -1089,7 +1089,7 @@ class SegmentationValidator(DetectionValidator):
         self._compute_prop_stats_from_dist(dist_by_label, dist_by_attr)
 
         def _is_valid_mask(item_key, ann):
-            has_defined_label = 0 <= ann.label < len(label_categories)
+            has_defined_label = ann.label is not None and 0 <= ann.label < len(label_categories)
             if not has_defined_label:
                 return False
 
