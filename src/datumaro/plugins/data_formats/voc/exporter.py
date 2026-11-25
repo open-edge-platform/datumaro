@@ -41,6 +41,15 @@ from .format import (
 )
 
 
+def _to_flag(value):
+    """Converts an attribute value to a VOC 0/1 flag.
+
+    Other formats store levels in these attributes, e.g. the WIDER Face occlusion
+    level 0-2, but VOC readers only accept 0 and 1.
+    """
+    return int(int(value) != 0)
+
+
 def _convert_attr(name, attributes, type_conv, default=None):
     d = object()
     value = attributes.get(name, d)
@@ -354,9 +363,9 @@ class VocExporter(Exporter):
                 if "pose" in attr:
                     ET.SubElement(obj_elem, "pose").text = str(attr["pose"])
 
-                ET.SubElement(obj_elem, "truncated").text = "%d" % _convert_attr("truncated", attr, int, 0)
-                ET.SubElement(obj_elem, "occluded").text = "%d" % _convert_attr("occluded", attr, int, 0)
-                ET.SubElement(obj_elem, "difficult").text = "%d" % _convert_attr("difficult", attr, int, 0)
+                ET.SubElement(obj_elem, "truncated").text = "%d" % _convert_attr("truncated", attr, _to_flag, 0)
+                ET.SubElement(obj_elem, "occluded").text = "%d" % _convert_attr("occluded", attr, _to_flag, 0)
+                ET.SubElement(obj_elem, "difficult").text = "%d" % _convert_attr("difficult", attr, _to_flag, 0)
 
                 bbox = obj.get_bbox()
                 if bbox is not None:

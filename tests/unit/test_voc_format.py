@@ -2066,3 +2066,29 @@ class VocExporterTest(TestCase):
                 test_dir,
                 importer="voc",
             )
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [(2, True), ("2", True), ("0", False), (0, False), (1, True), (True, True), (False, False)],
+)
+def test_can_save_and_load_flag_attributes_with_levels(test_dir, value, expected):
+    """Levels such as the WIDER Face occlusion level 0-2 are saved as valid VOC 0/1 flags."""
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                id="a",
+                subset="train",
+                media=Image.from_numpy(data=np.ones((10, 20, 3))),
+                annotations=[Bbox(1, 2, 3, 4, label=0, id=0, group=0, attributes={"occluded": value})],
+            )
+        ],
+        categories=["label_0"],
+    )
+
+    dataset.export(test_dir, "voc_detection", save_media=True)
+    imported = Dataset.import_from(test_dir, "voc_detection")
+
+    (item,) = list(imported)
+    (bbox,) = [a for a in item.annotations if a.type == AnnotationType.bbox]
+    assert bbox.attributes["occluded"] is expected
