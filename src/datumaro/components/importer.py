@@ -8,7 +8,7 @@ import os
 import os.path as osp
 from contextlib import contextmanager
 from functools import wraps
-from glob import iglob
+from glob import escape, iglob
 from typing import Callable, Dict, List, Optional, Type, TypeVar
 
 from datumaro.components.cli_plugin import CliPlugin
@@ -141,7 +141,7 @@ class Importer(CliPlugin):
             for d in range(max_depth + 1):
                 sources.extend(
                     {"url": p, "format": extractor_name}
-                    for p in iglob(osp.join(path, *("*" * d), dirname, filename + ext), recursive=recursive)
+                    for p in iglob(osp.join(escape(path), *("*" * d), dirname, filename + ext), recursive=recursive)
                     if (callable(file_filter) and file_filter(p)) or (not callable(file_filter))
                 )
                 if sources:
