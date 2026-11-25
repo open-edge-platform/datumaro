@@ -315,7 +315,7 @@ def test_image_callable_converter_error_handling():
 
     # Test TypeError for non-numpy return
     df1 = pl.DataFrame({"my_callable": [bad_callable_1]}, schema={"my_callable": pl.Object})
-    with pytest.raises(RuntimeError, match="must return numpy\.ndarray"):
+    with pytest.raises(RuntimeError, match="must return numpy\\.ndarray"):
         converter_instance.convert(df1)
 
     # Test ValueError for wrong shape
