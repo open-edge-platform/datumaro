@@ -142,7 +142,9 @@ class IcdarTextSegmentationExporter(Exporter):
                 annotation += "\n"
                 group = ann.group
 
-            mask = CompiledMask.from_instance_masks(anns, instance_labels=[m.attributes["index"] + 1 for m in anns])
+            mask = CompiledMask.from_instance_masks(
+                anns, instance_labels=[int(m.attributes.get("index", i)) + 1 for i, m in enumerate(anns)]
+            )
             mask = paint_mask(mask.class_mask, {i: colormap[i] for i in range(len(colormap))})
             save_image(
                 osp.join(self._save_dir, subset_name, item.id + "_GT" + IcdarPath.GT_EXT),

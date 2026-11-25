@@ -365,6 +365,29 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_segmentation",
             )
 
+    def test_can_save_and_load_masks_without_index_attribute(self):
+        first = np.array([[1, 1, 0, 0, 0]], dtype=bool)
+        second = np.array([[0, 0, 0, 1, 1]], dtype=bool)
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="a",
+                    subset="train",
+                    media=Image.from_numpy(data=np.ones((1, 5, 3))),
+                    annotations=[Mask(first), Mask(second)],
+                ),
+            ]
+        )
+
+        with TestDir() as test_dir:
+            IcdarTextSegmentationExporter.convert(source_dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "icdar_text_segmentation")
+
+            masks = parsed_dataset.get("a", "train").annotations
+            self.assertEqual([0, 1], [mask.attributes["index"] for mask in masks])
+            np.testing.assert_array_equal(first, masks[0].image)
+            np.testing.assert_array_equal(second, masks[1].image)
+
     def test_can_save_and_load_masks_with_no_save_media(self):
         expected_dataset = Dataset.from_iterable(
             [
