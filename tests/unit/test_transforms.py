@@ -896,6 +896,21 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, dst_dataset, actual)
 
+    def test_transform_to_labels_skips_annotations_without_label_field(self):
+        src_dataset = Dataset.from_iterable(
+            [DatasetItem(id=1, annotations=[Bbox(1, 2, 3, 4, label=2), Caption("a cat")])],
+            categories=["label%s" % i for i in range(3)],
+        )
+
+        dst_dataset = Dataset.from_iterable(
+            [DatasetItem(id=1, annotations=[Label(2)])],
+            categories=["label%s" % i for i in range(3)],
+        )
+
+        actual = transforms.AnnsToLabels(src_dataset)
+
+        compare_datasets(self, dst_dataset, actual)
+
     def test_bboxes_values_decrement_transform(self):
         src_dataset = Dataset.from_iterable(
             [
