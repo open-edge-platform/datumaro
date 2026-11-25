@@ -67,6 +67,8 @@ def _parse_yolo_annotation(anno_path: Path, image_width: int, image_height: int)
 
     YOLO format: <class_id> <center_x> <center_y> <width> <height>
     All values are normalized to [0, 1] relative to image dimensions.
+    Segmentation rows, <class_id> <x1> <y1> <x2> <y2> ..., are read as the
+    bounding box of their polygon.
 
     Returns:
         Tuple of (bboxes in xywh absolute format, labels)
@@ -90,10 +92,20 @@ def _parse_yolo_annotation(anno_path: Path, image_width: int, image_height: int)
 
             try:
                 label_id = int(parts[0])
-                center_x = float(parts[1])
-                center_y = float(parts[2])
-                width = float(parts[3])
-                height = float(parts[4])
+                num_coords = len(parts) - 1
+                if num_coords >= 6 and num_coords % 2 == 0:
+                    # Segmentation row: <class_id> <x1> <y1> <x2> <y2> ... Use the polygon's bounding box
+                    xs = [float(part) for part in parts[1::2]]
+                    ys = [float(part) for part in parts[2::2]]
+                    width = max(xs) - min(xs)
+                    height = max(ys) - min(ys)
+                    center_x = min(xs) + width / 2
+                    center_y = min(ys) + height / 2
+                else:
+                    center_x = float(parts[1])
+                    center_y = float(parts[2])
+                    width = float(parts[3])
+                    height = float(parts[4])
 
                 # Convert normalized coordinates to absolute xywh format
                 abs_center_x = center_x * image_width
