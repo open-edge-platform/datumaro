@@ -7,6 +7,7 @@ import os.path as osp
 from unittest import TestCase
 
 import numpy as np
+import pytest
 
 from datumaro.components.annotation import Bbox, Label
 from datumaro.components.dataset import Dataset
@@ -516,3 +517,25 @@ class WiderFaceImporterTest(TestCase):
         dataset = Dataset.import_from(DUMMY_DATASET_DIR, "wider_face")
 
         compare_datasets(self, expected_dataset, dataset)
+
+
+@pytest.mark.parametrize("label", [None, 0, 1])
+def test_export_box_with_optional_label(tmp_path, label):
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem(
+                "sample",
+                media=Image.from_numpy(np.zeros((8, 8, 3))),
+                annotations=[Bbox(1, 2, 3, 4, label=label)],
+            )
+        ],
+        categories=["face", "profile"],
+    )
+
+    dataset.export(str(tmp_path), "wider_face", save_media=True)
+    item = next(iter(Dataset.import_from(str(tmp_path), "wider_face")))
+
+    assert len(item.annotations) == 1
+    assert item.annotations[0].get_bbox() == [1, 2, 3, 4]
+    assert item.annotations[0].label == (label or 0)
+    assert item.media.size == (8, 8)
