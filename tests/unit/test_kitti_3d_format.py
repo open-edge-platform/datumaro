@@ -1,4 +1,5 @@
 import os.path as osp
+import shutil
 from unittest import TestCase
 
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
@@ -8,7 +9,7 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.kitti_3d.importer import Kitti3dImporter
 from tests.utils.assets import get_test_asset_path
-from tests.utils.test_utils import compare_datasets_3d
+from tests.utils.test_utils import TestDir, compare_datasets_3d
 
 DUMMY_DATASET_DIR = get_test_asset_path("kitti_dataset", "kitti_3d")
 DUMMY_SUBSET_DATASET_DIR = get_test_asset_path("kitti_dataset", "kitti_3d_with_subset")
@@ -18,6 +19,34 @@ class Kitti3DImporterTest(TestCase):
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([Kitti3dImporter.NAME], detected_formats)
+
+    def test_can_detect_labels_with_whitespace_variants(self):
+        with open(osp.join(DUMMY_DATASET_DIR, "label_2", "000001.txt"), encoding="utf-8") as f:
+            label_lines = f.read().splitlines()
+
+        variants = {
+            "trailing_space": "".join(line + " \n" for line in label_lines),
+            "double_spaces": "".join(line.replace(" ", "  ") + "\n" for line in label_lines),
+            "tabs": "".join(line.replace(" ", "\t") + "\n" for line in label_lines),
+            "leading_blank_line": "\n" + "".join(line + "\n" for line in label_lines),
+        }
+
+        for name, label_text in variants.items():
+            with self.subTest(name), TestDir() as test_dir:
+                dataset_dir = osp.join(test_dir, "kitti_3d")
+                shutil.copytree(DUMMY_DATASET_DIR, dataset_dir)
+                with open(osp.join(dataset_dir, "label_2", "000001.txt"), "w", encoding="utf-8") as f:
+                    f.write(label_text)
+
+                detected_formats = Environment().detect_dataset(dataset_dir)
+                self.assertEqual([Kitti3dImporter.NAME], detected_formats)
+
+                expected = Dataset.import_from(DUMMY_DATASET_DIR, "kitti3d")
+                actual = Dataset.import_from(dataset_dir, "kitti3d")
+                self.assertEqual(
+                    [(ann.label, ann.get_bbox()) for ann in expected.get("000001").annotations],
+                    [(ann.label, ann.get_bbox()) for ann in actual.get("000001").annotations],
+                )
 
     def test_can_load(self):
         """

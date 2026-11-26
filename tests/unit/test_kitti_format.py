@@ -1,6 +1,7 @@
 import os.path as osp
 from collections import OrderedDict
 from functools import partial
+from glob import glob
 from unittest import TestCase
 
 import numpy as np
@@ -935,6 +936,40 @@ class KittiExporterTest(TestCase):
                 partial(KittiExporter.convert, save_media=True, tasks=KittiTask.detection),
                 test_dir,
             )
+
+    def test_can_import_detection_with_blank_lines(self):
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id="1_2",
+                    subset="test",
+                    media=Image.from_numpy(data=np.ones((10, 10, 3))),
+                    annotations=[
+                        Bbox(
+                            0, 1, 2, 2, label=0, id=0, attributes={"truncated": False, "occluded": False, "score": 0.8}
+                        ),
+                        Bbox(
+                            6, 2, 3, 4, label=1, id=1, attributes={"truncated": False, "occluded": True, "score": 0.7}
+                        ),
+                    ],
+                ),
+            ],
+            categories=["label_0", "label_1"],
+        )
+
+        with TestDir() as test_dir:
+            KittiExporter.convert(source_dataset, test_dir, save_media=True, tasks=KittiTask.detection)
+
+            label_paths = glob(osp.join(test_dir, "**", "1_2.txt"), recursive=True)
+            self.assertEqual(len(label_paths), 1)
+            with open(label_paths[0], encoding="utf-8") as f:
+                rows = f.read().splitlines()
+            with open(label_paths[0], "w", encoding="utf-8") as f:
+                f.write(rows[0] + "\n\n" + rows[1] + "\n\n\n")
+
+            parsed_dataset = Dataset.import_from(test_dir, "kitti_detection")
+
+            compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
     def test_can_save_detection_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
