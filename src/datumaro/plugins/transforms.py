@@ -1345,9 +1345,7 @@ class RemoveItems(ItemTransform):
     def _parse_id(s):
         full_id = s.split(":")
         if len(full_id) != 2:
-            raise argparse.ArgumentTypeError(
-                None, message="Invalid id format of '%s'. Expected a 'name:subset' pair." % s
-            )
+            raise argparse.ArgumentTypeError("Invalid id format of '%s'. Expected a 'name:subset' pair." % s)
         return full_id
 
     @classmethod
@@ -1392,10 +1390,9 @@ class RemoveAnnotations(ItemTransform):
         full_id = s.split(":")
         if len(full_id) == 3:
             full_id[-1] = int(full_id[-1])
-        if len(full_id) != 2 or len(full_id) != 3:
+        if len(full_id) not in (2, 3):
             raise argparse.ArgumentTypeError(
-                None,
-                message="Invalid id format of '%s'. Expected 'name:subset:ann_id' or 'name:subset' pair." % s,
+                "Invalid id format of '%s'. Expected 'name:subset:ann_id' or 'name:subset' pair." % s
             )
         return full_id
 
@@ -1462,9 +1459,7 @@ class RemoveAttributes(ItemTransform):
     def _parse_id(s):
         full_id = s.split(":")
         if len(full_id) != 2:
-            raise argparse.ArgumentTypeError(
-                None, message="Invalid id format of '%s'. Expected a 'name:subset' pair." % s
-            )
+            raise argparse.ArgumentTypeError("Invalid id format of '%s'. Expected a 'name:subset' pair." % s)
         return full_id
 
     @classmethod
