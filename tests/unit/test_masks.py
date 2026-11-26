@@ -5,9 +5,11 @@
 from unittest import TestCase
 
 import numpy as np
+import pytest
 
 import datumaro.util.mask_tools as mask_tools
 from datumaro.components.annotation import CompiledMask
+from datumaro.util.image import save_image
 
 
 class PolygonConversionsTest(TestCase):
@@ -292,3 +294,17 @@ class FindMaskBboxTest(TestCase):
         mask[1:3, 1:3] = 1
 
         self.assertEqual((1, 1, 2, 2), Mask(image=mask).get_bbox())
+
+
+@pytest.mark.parametrize("label_id", [1, 256, 65535])
+@pytest.mark.parametrize("default_id", [255, -1])
+def test_load_color_mask_preserves_label_ids(tmp_path, label_id, default_id):
+    path = tmp_path / "mask.png"
+    save_image(str(path), np.array([[[0, 0, 0], [255, 255, 255]]], dtype=np.uint8))
+
+    actual = mask_tools.load_mask(str(path), {(0, 0, 0): label_id}, default_id=default_id)
+
+    np.testing.assert_array_equal(actual, [[label_id, default_id]])
+    assert np.issubdtype(actual.dtype, np.integer)
+    if label_id == 1 and default_id == 255:
+        assert actual.dtype == np.uint8
