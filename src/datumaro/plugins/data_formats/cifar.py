@@ -265,6 +265,13 @@ class CifarExporter(Exporter):
                         data.append(None)
                     else:
                         image = image.data
+                        # CIFAR stores 3 channels per image
+                        if image.ndim == 2:
+                            image = image[:, :, np.newaxis]
+                        if image.shape[2] == 1:
+                            image = np.repeat(image, 3, axis=2)
+                        elif image.shape[2] == 4:
+                            image = image[:, :, :3]
                         data.append(np.transpose(image, (2, 0, 1)).reshape(-1).astype(np.uint8))
                         if image.shape[0] != CifarPath.IMAGE_SIZE or image.shape[1] != CifarPath.IMAGE_SIZE:
                             image_sizes[len(data) - 1] = (image.shape[0], image.shape[1])
