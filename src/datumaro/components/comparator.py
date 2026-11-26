@@ -631,6 +631,6 @@ class TableComparator:
         log.info(f"Saving compare table to {txt_output_file}")
 
         dump_json_file(json_output_file, comparison_dict, indent=True)
-        with open(txt_output_file, "w") as f:
+        with open(txt_output_file, "w", encoding="utf-8") as f:
             f.write(f"High-level Comparison:\n{high_level_table}\n\n")
             f.write(f"Mid-level Comparison:\n{mid_level_table}\n\n")

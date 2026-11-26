@@ -83,7 +83,7 @@ def is_coco_json_file(json_path: Path) -> bool:
         True if the file contains COCO-style data (images and annotations/categories keys)
     """
     try:
-        with open(json_path) as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
             if isinstance(data, dict):
                 return "images" in data and ("annotations" in data or "categories" in data)
@@ -141,7 +141,7 @@ def _is_roboflow_annotation_file(json_path: Path) -> bool:
     ``annotations`` keys to be present and be lists.
     """
     try:
-        with open(json_path) as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
             if isinstance(data, dict):
                 images = data.get("images")

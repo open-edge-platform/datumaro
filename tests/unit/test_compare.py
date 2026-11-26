@@ -422,7 +422,7 @@ class TableComparatorTest(unittest.TestCase):
         mock_dump_json_file.assert_has_calls(calls)
 
         # Check that the open and write function is called with the correct arguments.
-        mock_file.assert_any_call(mock_txt_output_file, "w")
+        mock_file.assert_any_call(mock_txt_output_file, "w", encoding="utf-8")
         mock_file().write.assert_has_calls(
             [
                 call(f"High-level Comparison:\n{mock_high_level_table}\n\n"),

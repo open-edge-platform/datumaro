@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 def _is_voc_labelmap(labelmap_path: Path) -> bool:
     """Check if a file has VOC labelmap structure (name:color:parts:actions)."""
     try:
-        with open(labelmap_path) as f:
+        with open(labelmap_path, encoding="utf-8") as f:
             for raw_line in f:
                 line = raw_line.strip()
                 if not line or line.startswith("#"):
