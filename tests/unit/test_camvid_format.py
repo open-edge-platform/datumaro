@@ -251,6 +251,31 @@ class CamvidExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
 
+    def test_can_save_with_no_masks_and_spaces_in_filename(self):
+        class TestExtractor(TestExtractorBase):
+            def __iter__(self):
+                return iter(
+                    [
+                        DatasetItem(
+                            id="a/image 1",
+                            subset="test",
+                            media=Image.from_numpy(data=np.ones((2, 5, 3))),
+                        ),
+                        DatasetItem(
+                            id="a/image 2",
+                            subset="test",
+                            media=Image.from_numpy(data=np.ones((1, 5, 3))),
+                            annotations=[
+                                Mask(image=np.array([[1, 0, 0, 1, 0]]), label=0),
+                                Mask(image=np.array([[0, 1, 1, 0, 1]]), label=3),
+                            ],
+                        ),
+                    ]
+                )
+
+        with TestDir() as test_dir:
+            self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
+
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
