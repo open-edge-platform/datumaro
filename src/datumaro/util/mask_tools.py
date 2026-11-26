@@ -435,13 +435,15 @@ def find_mask_bbox(mask) -> Tuple[int, int, int, int]:
 
     The extent is the number of covered rows/columns, so the box covers
     every non-zero pixel: a mask that spans columns ``x0..x1`` (inclusive)
-    has width ``x1 - x0 + 1``. The input must contain at least one non-zero
-    pixel.
+    has width ``x1 - x0 + 1``. A mask without non-zero pixels has an empty
+    box at the origin.
 
     Returns: [x, y, w, h]
     """
     cols = np.any(mask, axis=0)
     rows = np.any(mask, axis=1)
+    if not cols.any():
+        return (0, 0, 0, 0)
     x0, x1 = np.where(cols)[0][[0, -1]]
     y0, y1 = np.where(rows)[0][[0, -1]]
     return (x0, y0, x1 - x0 + 1, y1 - y0 + 1)

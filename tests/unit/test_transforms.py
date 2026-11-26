@@ -345,6 +345,36 @@ class TransformsTest(TestCase):
         actual = transforms.CropCoveredSegments(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
+    def test_crop_covered_segments_drops_empty_masks(self):
+        mask = np.zeros((5, 5), dtype=np.uint8)
+        mask[1:4, 1:4] = 1
+        source_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    media=Image.from_numpy(data=np.zeros((5, 5, 3))),
+                    annotations=[
+                        Mask(np.zeros((5, 5), dtype=np.uint8), label=0, z_order=0),
+                        Mask(mask, label=1, z_order=1),
+                    ],
+                ),
+            ],
+            categories=["a", "b"],
+        )
+        target_dataset = Dataset.from_iterable(
+            [
+                DatasetItem(
+                    id=1,
+                    media=Image.from_numpy(data=np.zeros((5, 5, 3))),
+                    annotations=[Mask(mask, label=1, z_order=1)],
+                ),
+            ],
+            categories=["a", "b"],
+        )
+
+        actual = transforms.CropCoveredSegments(source_dataset)
+        compare_datasets(self, target_dataset, actual)
+
     def test_merge_instance_segments(self):
         source_dataset = Dataset.from_iterable(
             [
