@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, call, mock_open, patch
 
 import numpy as np
 import pytest
+from pycocotools.cocoeval import COCOeval
 
 from datumaro.cli.util.compare import DistanceCompareVisualizer
 from datumaro.components.annotation import Bbox, Caption, Label, Mask, Points
@@ -15,6 +16,7 @@ from datumaro.components.comparator import DistanceComparator, EqualityComparato
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetItem
 from datumaro.components.media import Image
+from datumaro.util.annotation_util import OKS
 from tests.utils.assets import get_test_asset_path
 
 
@@ -139,7 +141,7 @@ class DistanceComparatorTest(TestCase):
             ],
         )
 
-        result = DistanceComparator().match_points(item1, item2)
+        result = DistanceComparator(iou_threshold=0.15).match_points(item1, item2)
 
         matches, mismatches, a_greater, b_greater = result
         self.assertEqual(1, len(a_greater))
@@ -466,3 +468,26 @@ class DistanceCompareVisualizerTest:
 
             # Assert non-empty after save()
             assert os.listdir(test_dir)
+
+
+@pytest.mark.parametrize("sigma", [None, [0.1, 0.2]])
+def test_oks_matches_coco(sigma):
+    reference = COCOeval(iouType="keypoints")
+    reference.params.kpt_oks_sigmas = np.array(sigma or [0.1, 0.1])
+    reference._gts[1, 1] = [{"keypoints": [10, 10, 2, 20, 20, 2], "bbox": [10, 10, 10, 10], "area": 100}]
+    reference._dts[1, 1] = [{"keypoints": [12, 12, 2, 22, 22, 2], "score": 1}]
+
+    actual = OKS(Points([10, 10, 20, 20]), Points([12, 12, 22, 22]), sigma=sigma, scale=100)
+
+    assert actual == pytest.approx(reference.computeOks(1, 1)[0, 0])
+
+
+@pytest.mark.parametrize("threshold, expected_matches", [(0.2, 1), (0.5, 0), (0.9, 0)])
+def test_point_matching_uses_average_similarity(threshold, expected_matches):
+    first = DatasetItem("a", annotations=[Points([10, 10, 20, 20], label=0)])
+    second = DatasetItem("b", annotations=[Points([12, 12, 22, 22], label=0)])
+
+    matches, _, missing_first, missing_second = DistanceComparator(iou_threshold=threshold).match_points(first, second)
+
+    assert len(matches) == expected_matches
+    assert len(missing_first) == len(missing_second) == 1 - expected_matches
