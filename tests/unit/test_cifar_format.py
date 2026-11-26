@@ -134,6 +134,23 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, dataset, parsed_dataset, require_media=True)
 
+    def test_can_save_and_load_when_some_items_have_no_image(self):
+        dataset = Dataset.from_iterable(
+            [
+                DatasetItem(id="a", annotations=[Label(0)]),
+                DatasetItem(id="b", media=Image.from_numpy(data=np.ones((10, 8, 3))), annotations=[Label(1)]),
+                DatasetItem(id="c"),
+                DatasetItem(id="d", media=Image.from_numpy(data=np.zeros((32, 32, 3))), annotations=[Label(0)]),
+            ],
+            categories=["label_0", "label_1"],
+        )
+
+        with TestDir() as test_dir:
+            CifarExporter.convert(dataset, test_dir, save_media=True)
+            parsed_dataset = Dataset.import_from(test_dir, "cifar")
+
+            compare_datasets(self, dataset, parsed_dataset, require_media=True)
+
     def test_inplace_save_writes_only_updated_data(self):
         expected = Dataset.from_iterable(
             [

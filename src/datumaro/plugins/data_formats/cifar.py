@@ -268,6 +268,9 @@ class CifarExporter(Exporter):
                         data.append(np.transpose(image, (2, 0, 1)).reshape(-1).astype(np.uint8))
                         if image.shape[0] != CifarPath.IMAGE_SIZE or image.shape[1] != CifarPath.IMAGE_SIZE:
                             image_sizes[len(data) - 1] = (image.shape[0], image.shape[1])
+                elif self._save_media:
+                    # keep 'data' aligned with 'filenames'
+                    data.append(None)
 
             annotation_dict = {}
 
