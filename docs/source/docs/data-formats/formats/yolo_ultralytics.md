@@ -66,7 +66,7 @@ names:
 
 #### Subset files
 
-- Files `train.txt`, `val.txt`, and `test.txt` (optional) should have the following structure:
+In `train.txt`, `val.txt`, and the optional `test.txt`, image paths start with `./` and use forward slashes on all platforms. Ultralytics resolves each path relative to the subset file.
 ```
 ./images/<subset-name>/<image-file-name-1.jpg>
 ./images/<subset-name>/<image-file-name-2.jpg>
