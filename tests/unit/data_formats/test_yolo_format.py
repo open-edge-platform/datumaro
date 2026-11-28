@@ -136,6 +136,24 @@ class YoloFormatTest(TestDataFormatBase):
         )
 
 
+def test_ultralytics_subset_files_use_relative_posix_paths(tmp_path):
+    subsets = ("train", "val", "test")
+    dataset = Dataset.from_iterable(
+        [
+            DatasetItem("nested/frame", subset=subset, media=Image.from_numpy(np.zeros((4, 6, 3), dtype=np.uint8)))
+            for subset in subsets
+        ],
+        categories=["shape"],
+    )
+
+    dataset.export(str(tmp_path), "yolo_ultralytics", save_media=True)
+
+    for subset in subsets:
+        paths = (tmp_path / f"{subset}.txt").read_text(encoding="utf-8").splitlines()
+        assert paths == [f"./images/{subset}/nested/frame.jpg"]
+        assert (tmp_path / paths[0]).is_file()
+
+
 @pytest.mark.parametrize("exporter", [YoloExporter, YoloUltralyticsExporter], ids=["yolo", "yolo_ultralytics"])
 @pytest.mark.parametrize(
     "is_crowd_value",
